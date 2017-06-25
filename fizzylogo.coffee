@@ -62,21 +62,21 @@ class RosettaContext
       temps = contextBeingSearched.self.rosettaClass.tempVariables
       if temps?
         console.log "evaluation " + indentation() + "lookup: checking in " + temps.value
-        if (temps.value.find (element) -> element.value == atomValue)
+        if temps.value? and (temps.value.find (element) -> element.value == atomValue)
           console.log "evaluation " + indentation() + "lookup: found " + atomValue + " in tempVariables"
           return contextBeingSearched.tempVariablesDict
 
       instances = contextBeingSearched.self.rosettaClass.instanceVariables
       if instances?
         console.log "evaluation " + indentation() + "lookup: checking in " + instances.value
-        if (instances.value.find (element) -> element.value == atomValue)
+        if instances.value? and (instances.value.find (element) -> element.value == atomValue)
           console.log "evaluation " + indentation() + "lookup: found " + atomValue + " in instanceVariables"
           return contextBeingSearched.self.instanceVariablesDict
 
       statics = contextBeingSearched.self.rosettaClass.classVariables
       if statics?
         console.log "evaluation " + indentation() + "lookup: checking in " + statics.value
-        if (statics.value.find (element) -> element.value == atomValue)
+        if statics.value? and (statics.value.find (element) -> element.value == atomValue)
           console.log "evaluation " + indentation() + "lookup: found " + atomValue + " in classVariables"
           return contextBeingSearched.self.rosettaClass.classVariablesDict
 
@@ -143,7 +143,29 @@ evalFirstMessageElement = (message, theContext) ->
   restOfMessage = skipNextMessageElement message, theContext
   return [evaledFirstElement, restOfMessage]
 
-messageSend = (object, message, theContext) ->
+# this could be native or non-native
+messageSend = (object, methodBody, theContext) ->
+  # note that this doesn't change the program counter,
+  # because we don't care here what we consume from the body
+  # execution, from the caller perspective it only matters
+  # what we consume from the invocation, which we accounted
+  # for just above.
+  if methodBody.rosettaClass == RList
+    console.log "evaluation " + indentation() + "  matching - method body: " + methodBody.print()
+    # non-native method, i.e. further fizzylogo code
+    # creates a context and evals the message in it
+    # the rest of the message is not used because all of the list should
+    # be run, no remains from the message body should overspill
+    # into the calling context. 
+    [theContext, unusedRestOfMessage] = nonNativeMessageSend object, methodBody, theContext
+  else
+    console.log "evaluation " + indentation() + "  matching - NATIVE method body: " + methodBody
+    # native method, i.e. coffeescript/javascript code
+    theContext.returned = methodBody.call object, theContext.tempVariablesDict
+    rosettaContexts.pop()
+  return theContext
+
+nonNativeMessageSend = (object, message, theContext) ->
   # so, we need to keep the program counter unchanged here,
   # because otherwise we add the consumption of the method BODY
   # which we don't want. From the caller's perspective, we
@@ -159,14 +181,14 @@ messageSend = (object, message, theContext) ->
   return [newContext, message]
 
 
-
 # Note that only part of the message might be consumed
-progressWithMessage = (object, message, theContext, theSelf) ->
-
-  if !theSelf?
-    theSelf = theContext.self
-
-  newContext = new RosettaContext theContext, theSelf, message
+# also note that we are creating a new context, but
+# "self" remains the same since we are still in the
+# same "method call" and the same "object". I.e. this
+# is not a method call, this is progressing within
+# an existing call
+progressWithMessage = (object, message, theContext) ->
+  newContext = new RosettaContext theContext, theContext.self, message
   rosettaContexts.push newContext
   object.evalMessage newContext
   rosettaContexts.pop()
@@ -210,7 +232,7 @@ class RosettaAtomClass extends RosettaPrimitiveClasses
         [theValue, unusedRestOfMessage] = rosettaEval message, theContext
         theContext.returned = theValue
 
-        console.log "evaluation " + indentation() + "value to assign: " + theValue.value
+        console.log "evaluation " + indentation() + "value to assign to atom: " + theAtomName + " : " + theValue.value
 
         dictToPutAtomIn = theContext.lookUpAtomValuePlace @
         dictToPutAtomIn[theAtomName] = theValue
@@ -333,7 +355,7 @@ class RosettaListPrimitiveClass extends RosettaPrimitiveClasses
             # now actually send the message to the receiver. Note that
             # only part of the message might be consumed, this is why
             # we have to keep iterating until the whole message is consumed
-            [newContext, restOfMessage] = progressWithMessage receiver, restOfMessage, theContext, theContext.self
+            [newContext, restOfMessage] = progressWithMessage receiver, restOfMessage, theContext
             receiver = newContext.returned
 
             rosettaContexts.pop()
@@ -426,7 +448,7 @@ class RosettaNumberPrimitiveClass extends RosettaPrimitiveClasses
     toBeReturned.print = ->
       return @value
 
-    toBeReturned.matchMethodAndPassParams = (theContext, methodInvocationToBeChecked) ->
+    toBeReturned.findMessageAndBindParams = (theContext, methodInvocationToBeChecked) ->
       console.log "evaluation " + indentation() + "  !!! looking up method invocation " + methodInvocationToBeChecked.print() + " with signatures!" + " PC: " + theContext.programCounter
       console.log "evaluation " + indentation() + "  !!! looking up method invocation, is method empty? " + methodInvocationToBeChecked.isEmpty() + " PC: " + theContext.programCounter
 
@@ -453,10 +475,11 @@ class RosettaNumberPrimitiveClass extends RosettaPrimitiveClasses
         soFarEverythingMatched = true
         originalMethodStart = method.cursorStart
         until eachSignature.isEmpty() or method.isEmpty()
-          [eachElementOfSignature, eachSignature] = eachSignature.nextElement()
-          [eachElementOfInvocation, method] = method.nextElement()
 
-          console.log "evaluation " + indentation() + "  matching - found: " + eachElementOfSignature.print() + " is list: " + (eachElementOfSignature.rosettaClass == RAtom) + " PC: " + theContext.programCounter
+          console.log "evaluation " + indentation() + "  matching: - next signature piece: " + eachSignature.print() + " is atom: " + " with: " + method.print() + " PC: " + theContext.programCounter
+
+          [eachElementOfSignature, eachSignature] = eachSignature.nextElement()
+
           
           # the element of a signature can only be of two kinds:
           # an atom or an RList containing one parameter (with
@@ -466,7 +489,13 @@ class RosettaNumberPrimitiveClass extends RosettaPrimitiveClasses
             # if the signature contains an atom, the message
             # must contain the same atom, otherwise we don't
             # have a match.
+
+            [eachElementOfInvocation, method] = method.nextElement()
+
             if eachElementOfInvocation.rosettaClass == RAtom
+
+              console.log "evaluation " + indentation() + "  matching atoms: - next signature piece: " + eachElementOfSignature.print() + " is atom: " + (eachElementOfSignature.rosettaClass == RAtom) + " with: " + eachElementOfInvocation.print() + " PC: " + theContext.programCounter
+
               # ok at least the message contains an atom, but
               # now we have to check that they spell the same
               if eachElementOfSignature.value == eachElementOfInvocation.value
@@ -494,42 +523,37 @@ class RosettaNumberPrimitiveClass extends RosettaPrimitiveClasses
             console.dir paramAtom
             console.log "evaluation " + indentation() + "  matching - atom inside the parameter: " + paramAtom.print() + " PC: " + theContext.programCounter
             if isEvaluatingParam(eachElementOfSignature)
-              console.log "evaluation " + indentation() + "  matching - need to evaluate next msg element from: " + method.print() + " and bind to: " + paramAtom.print() + " PC: " + theContext.programCounter
+              console.log "evaluation " + indentation() + "  matching - need to evaluate next msg element from invocation: " + method.print() + " and bind to: " + paramAtom.print() + " PC: " + theContext.programCounter
               [valueToBeBound, method] = evalFirstMessageElement method, theContext
             else
-              console.log "evaluation " + indentation() + "  matching - need to get next msg element from: " + method.print() + " and bind to: " + paramAtom.print() + " PC: " + theContext.programCounter
+              console.log "evaluation " + indentation() + "  matching - need to get next msg element from invocation: " + method.print() + " and bind to: " + paramAtom.print() + " PC: " + theContext.programCounter
               [valueToBeBound, method] = method.nextElement()
             # TODO we should insert without repetition
+            if !theContext.self.rosettaClass.tempVariables?
+              theContext.self.rosettaClass.tempVariables = []
             theContext.self.rosettaClass.tempVariables.push paramAtom
             theContext.tempVariablesDict[paramAtom.value] = valueToBeBound
-            # ok let's keep matching further parts of the signature
+            # ok we matched a paramenter, now let's keep matching further
+            # parts of the signature
             continue
 
-        # ok either the signature or the invocation are completely consumed
+        # ok a the signature has matched completely
         if eachSignature.isEmpty() and soFarEverythingMatched
-          console.log "evaluation " + indentation() + "  matching - found a matching signature: " + eachSignature.print() + " PC: " + theContext.programCounter
-          # we have a matching signature!
-          methodBody = @rosettaClass.methodBodies[countSignaturePosition]
 
           # now, the correct PC that we need to report is
           # the original plus what we consumed from matching the
           # signature.
-          theContext.programCounter += method.cursorStart - originalMethodStart
+          console.log "evaluation " + indentation() + "  matching - consumed from matching this sig: " + (method.cursorStart - originalMethodStart)
 
-          # note that this doesn't change the program counter,
-          # because we don't care here what we consume from the body
-          # execution, from the caller perspective it only matters
-          # what we consume from the invocation, which we accounted
-          # for just above.
-          [newContext, restOfMessage] = messageSend @, methodBody, theContext
+          theContext.programCounter = originalProgramCounter + method.cursorStart - originalMethodStart
 
-
-          theContext.returned =  newContext.returned
-          return theContext.returned
+          return countSignaturePosition
 
       # we are still here trying to match but
       # there are no signatures left, time to quit.
-      # fix the program counter first!
+      # fix the program counter first! Put it back
+      # to what it was because we matched nothing from
+      # the message we were sent.
       console.log "evaluation " + indentation() + "  matching - no match found" + " PC: " + theContext.programCounter
       theContext.programCounter = originalProgramCounter
       return null
@@ -542,40 +566,16 @@ class RosettaNumberPrimitiveClass extends RosettaPrimitiveClasses
       console.log "evaluation " + indentation() + "messaging number " + @value + " with " + message.print()
 
       console.log "evaluation " + indentation() + "before matching game the message is: " + message.print() + " and PC: " + theContext.programCounter
-      returned = @matchMethodAndPassParams(theContext, message)
+      anyMatch = @findMessageAndBindParams(theContext, message)
+      if anyMatch?
+        returned = lookupAndSendFoundMessage @, theContext, anyMatch
       console.log "evaluation " + indentation() + "after matching game the message is: " + message.print() + " and PC: " + theContext.programCounter
 
       if returned?
-        # "matchMethodAndPassParams" has already done the job of
+        # "findMessageAndBindParams" has already done the job of
         # making the call and fixing theContext's PC and
         # updating the return value, we are done here
         return
-
-      if !message.isEmpty()
-        if message.firstElement().value == "print"
-          console.log "evaluation " + indentation() + " RNumber about to print, message: " + message.print() + " and PC: " + theContext.programCounter
-
-          console.log "///////// program printout: " + @value
-
-          message = skipNextMessageElement message, theContext
-
-          theContext.returned = @
-          rosettaContexts.pop()
-          return
-        else if message.firstElement().value == "plus"
-
-          # skip the plus symbol
-          message = skipNextMessageElement message, theContext
-
-
-          # now evaluate the rest of the list
-          # now we are using the message as a list because we have to evaluate it.
-          # to evaluate it, we treat it as a list and we send it the empty message
-          [theValue, unusedRestOfMessage] = rosettaEval message, theContext
-
-          @value += theValue.value
-          theContext.returned = @
-          return
 
 
       if !message.isEmpty()
@@ -585,6 +585,17 @@ class RosettaNumberPrimitiveClass extends RosettaPrimitiveClasses
 
     return toBeReturned
     
+
+lookupAndSendFoundMessage = (object, theContext, countSignaturePosition) ->
+  console.log "evaluation " + indentation() + "  matching - found a matching signature: " + object.rosettaClass.msgPatterns[countSignaturePosition].print() + " , PC: " + theContext.programCounter
+  # we have a matching signature!
+  methodBody = object.rosettaClass.methodBodies[countSignaturePosition]
+
+
+  # this could be a native or non-native message send
+  theContext = messageSend object, methodBody, theContext
+
+  return theContext.returned
 
 
 class RosettaSymbolClass extends RosettaAnonymousClass
@@ -680,6 +691,17 @@ RNumber.methodBodies.push rosettaParse "self print print"
 RNumber.msgPatterns.push rosettaParse "increment"
 RNumber.methodBodies.push rosettaParse "@ self <- self plus 1"
 
+RNumber.msgPatterns.push rosettaParse "print"
+RNumber.methodBodies.push ->
+  console.log "///////// program printout: " + @value
+  return @
+
+RNumber.msgPatterns.push rosettaParse "plus ( addendum )"
+RNumber.methodBodies.push (params) ->
+  addendum = params.addendum
+  @value += addendum.value
+  return @
+
 RNumber.msgPatterns.push rosettaParse "something ( param )"
 RNumber.msgPatterns.push rosettaParse "somethingElse ( @ param )"
 
@@ -694,7 +716,9 @@ RNumber.msgPatterns.push rosettaParse "somethingElse ( @ param )"
 #parsed = rosettaParse "7 anotherPrint"
 #parsed = rosettaParse "7 doublePrint"
 #parsed = rosettaParse "7 print print"
-parsed = rosettaParse "6 doublePrint plus 1"
+#parsed = rosettaParse "6 doublePrint plus 1"
+#parsed = rosettaParse "4 plus 3"
+parsed = rosettaParse "4 plus ( 2 plus 1 )"
 
 console.log parsed.value.length
 for eachParsedItem in parsed.value
