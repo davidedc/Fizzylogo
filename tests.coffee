@@ -1,6 +1,15 @@
 
 
 tests = [
+  "1 plus 1 print"
+  "1"
+
+  "( 1 plus 1 ) print"
+  "2"
+
+  "( 1 plus 1 ) print print"
+  "22"
+
   "@ a <- 5 . a increment . @ a <- a plus 1 . a print",
   "7"
 
@@ -55,10 +64,26 @@ tests = [
   "4 plus 2 plus 1 print"
   "1"
 
+  "( @ ( 1 plus 1 ) ) print"
+  "(  1 plus 1 )"
+
+  "( ( @ ( 1 plus 1 ) ) eval ) print"
+  "2"
+
+  "( @ ( 1 plus 1 ) ) eval print"
+  "2"
+
+  # in this case still the @ ties to the first element
+  # that comes after it i.e. ( 1 plus 1 )
+  " @ ( 1 plus 1 ) eval print"
+  "2"
+
+
   #"@ a <- 5 someUndefinedMessage"
   #"7"
 
 ]
+
 
 rosettaContexts = []
 

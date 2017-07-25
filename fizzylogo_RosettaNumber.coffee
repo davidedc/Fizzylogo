@@ -12,7 +12,7 @@ class RosettaNumberPrimitiveClass extends RosettaPrimitiveClasses
       console.log "evaluation " + indentation() + "messaging number " + @value + " with " + message.print()
 
       console.log "evaluation " + indentation() + "before matching game the message is: " + message.print() + " and PC: " + theContext.programCounter
-      anyMatch = @findMessageAndBindParams(theContext, message)
+      anyMatch = @findMessageAndBindParams theContext, message
       if anyMatch?
         returned = @lookupAndSendFoundMessage theContext, anyMatch
       console.log "evaluation " + indentation() + "after matching game the message is: " + message.print() + " and PC: " + theContext.programCounter
@@ -44,15 +44,16 @@ RNumber.methodBodies.push rosettaParse "@ self <- self plus 1"
 
 environmentPrintout = ""
 RNumber.msgPatterns.push rosettaParse "print"
-RNumber.methodBodies.push ->
+RNumber.methodBodies.push (context) ->
   console.log "///////// program printout: " + @value
   environmentPrintout += @value
   return @
 
 
+
 RNumber.msgPatterns.push rosettaParse "plus ( addendum )"
-RNumber.methodBodies.push (params) ->
-  addendum = params.addendum
+RNumber.methodBodies.push (context) ->
+  addendum = context.tempVariablesDict.addendum
   @value += addendum.value
   return @
 

@@ -69,7 +69,6 @@ class RosettaListPrimitiveClass extends RosettaPrimitiveClasses
       toBePrinted += " )"
       return toBePrinted
 
-    # the first receiver is optional
     toBeReturned.evalMessage = (theContext) ->
       message = theContext.message
       console.log "evaluation " + indentation() + "messaging list with " + message.print()
@@ -118,8 +117,25 @@ class RosettaListPrimitiveClass extends RosettaPrimitiveClasses
 
           console.log "evaluation " + indentation() + "list: nothing more to evaluate"
           theContext.returned = receiver
-          console.log "evaluation " + indentation() + "list: theContext.returned: " + theContext.returned.print()
-          rosettaContexts.pop()
+
+      else
+        anyMatch = @findMessageAndBindParams theContext, message
+        if anyMatch?
+          returned = @lookupAndSendFoundMessage theContext, anyMatch
+        console.log "evaluation " + indentation() + "after matching game the message is: " + message.print() + " and PC: " + theContext.programCounter
+
+        if returned?
+          # "findMessageAndBindParams" has already done the job of
+          # making the call and fixing theContext's PC and
+          # updating the return value, we are done here
+          return
+
+        theContext.returned = @
+
+      console.log "evaluation " + indentation() + "list: theContext.returned: " + theContext.returned.print()
+      rosettaContexts.pop()
+
+
 
     toBeReturned.length = ->
       return @cursorEnd - @cursorStart + 1
@@ -204,4 +220,21 @@ class RosettaListPrimitiveClass extends RosettaPrimitiveClasses
     
 RList = new RosettaListPrimitiveClass()
 
+RList.msgPatterns.push rosettaParse "print"
+RList.methodBodies.push (context) ->
+  console.log "///////// program printout: " + @print()
+  environmentPrintout += @print()
+  return context.returned
+
+
+RList.msgPatterns.push rosettaParse "eval"
+RList.methodBodies.push (theContext) ->
+
+  newContext = new RosettaContext theContext, @, emptyMessage()
+  rosettaContexts.push newContext
+  [toBeReturned, unused2] = @rosettaEval newContext
+  rosettaContexts.pop()
+
+  console.log "RList.eval: unused2: " + unused2.print()
+  return toBeReturned
 

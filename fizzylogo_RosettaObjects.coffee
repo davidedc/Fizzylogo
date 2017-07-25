@@ -161,8 +161,8 @@ class RosettaObjects
     else
       console.log "evaluation " + indentation() + "  matching - NATIVE method body: " + methodBody
       # native method, i.e. coffeescript/javascript code
-      theContext.returned = methodBody.call @, theContext.tempVariablesDict
-      rosettaContexts.pop()
+      theContext.returned = methodBody.call @, theContext
+      #rosettaContexts.pop()
     return theContext
 
 
