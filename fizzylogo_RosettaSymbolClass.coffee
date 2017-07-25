@@ -7,6 +7,12 @@ class RosettaSymbolClass extends RosettaAnonymousClass
     toBeReturned.print = ->
       return @value
 
+    toBeReturned.isEvaluatingParam = ->
+      return false
+
+    toBeReturned.getParamAtom = ->
+      return @
+
     return toBeReturned
 
 RSymbol = new RosettaSymbolClass() # this is a class, an anonymous class
