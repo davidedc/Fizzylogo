@@ -1,5 +1,12 @@
 
 
+RAtom.msgPatterns.push rosettaParse "print"
+RAtom.methodBodies.push (context) ->
+  console.log "///////// program printout (RAtom) : " + @value
+  environmentPrintout += @value
+  return @
+
+
 tests = [
   "1 plus 1 print"
   "1"
@@ -78,6 +85,9 @@ tests = [
   " @ ( 1 plus 1 ) eval print"
   "2"
 
+  "@ a <- 5 . @ b <- @ a  . b print . a print",
+  "a5"
+
 
   #"@ a <- 5 someUndefinedMessage"
   #"7"
@@ -103,6 +113,7 @@ for i in [0...tests.length] by 2
 
     rWorkspace.rosettaClass.instanceVariables = RList.createNew()
     rWorkspace.rosettaClass.instanceVariables.push RAtom.createNew "a"
+    rWorkspace.rosettaClass.instanceVariables.push RAtom.createNew "b"
 
     # outer-most context
     parsed.isFromMessage = true
@@ -111,7 +122,7 @@ for i in [0...tests.length] by 2
     rWorkspace.evalMessage outerMostContext
     console.log "final return: " + outerMostContext.returned.value
     if environmentPrintout == testResult
-      console.log "...test OK"
+      console.log "...test OK, obtained: " + environmentPrintout
     else
       console.log "...test FAIL, test: " + testBody + " obtained: " + environmentPrintout + " expected: " + testResult
 

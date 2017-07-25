@@ -34,11 +34,28 @@ class RosettaAtomClass extends RosettaPrimitiveClasses
 
         console.log "evaluation " + indentation() + "stored value in dictionary"
 
+      else
+        anyMatch = @findMessageAndBindParams theContext, message
+        if anyMatch?
+          returned = @lookupAndSendFoundMessage theContext, anyMatch
+        console.log "evaluation " + indentation() + "after matching game the message is: " + message.print() + " and PC: " + theContext.programCounter
+
+        if returned?
+          # "findMessageAndBindParams" has already done the job of
+          # making the call and fixing theContext's PC and
+          # updating the return value, we are done here
+          return
+
+        theContext.returned = @
+
+
 
 
     return toBeReturned
 
-RAtom = new RosettaAtomClass() # ...
+RAtom = new RosettaAtomClass()
+
+
 
 
 
