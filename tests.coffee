@@ -52,7 +52,7 @@ tests = [
   "4 plus ( 2 plus 1 ) print"
   "7"
 
-  "4 plus  2 plus 1  print"
+  "4 plus 2 plus 1 print"
   "1"
 
   #"@ a <- 5 someUndefinedMessage"
@@ -60,12 +60,13 @@ tests = [
 
 ]
 
+rosettaContexts = []
 
 
 for i in [0...tests.length] by 2
     [testBody, testResult] = tests[i .. i + 1]
     environmentPrintout = ""
-    console.log "starting test: " + i + ": " + testBody
+    console.log "starting test: " + (i/2+1) + ": " + testBody
     
     parsed = rosettaParse testBody
 
