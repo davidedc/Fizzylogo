@@ -1,12 +1,3 @@
-# We code the runtime ONLY in terms of JS/coffeescript classes/code.
-# We don't mimic runtime-created classes/objects with JS/coffee classes/objects,
-# we just model the runtime here i.e. the "ground" mechanisms,
-# i.e. what can't be really changed
-# from the system itself. Stuff like the matching of messages with
-# "method patterns",
-# the primitive classes and objects, what the context is and
-# how it works, how the scoping works, looking up the value
-# of an atom from the correct place, etc.
 
 class RosettaObjects
   rosettaClass: null # the class it belongs to
@@ -203,7 +194,6 @@ class RosettaObjects
 
   # You eval things just by sending them the empty message.
   # Note that if you invoke this on a list, the whole list is evaluated.
-
   rosettaEval: (theContext) ->
     console.log "           " + indentation() + "evaling: " + @print()
     message = @
@@ -214,5 +204,3 @@ class RosettaObjects
 
 
 class RosettaPrimitiveObjects extends RosettaObjects
-
-
