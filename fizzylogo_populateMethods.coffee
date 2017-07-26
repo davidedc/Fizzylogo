@@ -64,7 +64,7 @@ RList.methodBodies.push (context) ->
 RList.msgPatterns.push rosettaParse "eval"
 RList.methodBodies.push (theContext) ->
 
-  newContext = new RosettaContext theContext, @, emptyMessage()
+  newContext = new RosettaContext theContext, @, RList.emptyMessage()
   rosettaContexts.push newContext
   [toBeReturned, unused2] = @rosettaEval newContext
   rosettaContexts.pop()

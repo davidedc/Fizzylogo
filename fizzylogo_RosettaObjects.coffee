@@ -197,7 +197,7 @@ class RosettaObjects
   rosettaEval: (theContext) ->
     console.log "           " + indentation() + "evaling: " + @print()
     message = @
-    [newContext, unusedRestOfMessage] = @progressWithMessage emptyMessage(), theContext
+    [newContext, unusedRestOfMessage] = @progressWithMessage RList.emptyMessage(), theContext
     if @rosettaClass == RList
       message = @advanceMessageBy newContext.programCounter
     return [newContext.returned, message]

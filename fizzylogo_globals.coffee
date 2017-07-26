@@ -34,7 +34,3 @@ rosettaParse = (command) ->
       currentList = listsStack.pop()
   return outerList
 
-emptyMessage = ->
-  newMessage = RList.createNew()
-  newMessage.isFromMessage = true
-  return newMessage

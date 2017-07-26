@@ -23,6 +23,11 @@ class RosettaListPrimitiveClass extends RosettaPrimitiveClasses
   # during interpretation that looks like it's a quadratic
   # operation, so we say no to that.
 
+  emptyMessage: ->
+    newMessage = RList.createNew()
+    newMessage.isFromMessage = true
+    return newMessage
+
   createNew: ->
     toBeReturned = new RosettaPrimitiveObjects()
     toBeReturned.value = []
@@ -169,7 +174,7 @@ class RosettaListPrimitiveClass extends RosettaPrimitiveClasses
     toBeReturned.advanceMessageBy = (numberOfElements) ->
       
       #if numberOfElements > @length()
-      #  return emptyMessage()
+      #  return RList.emptyMessage()
 
       copy = @copy()
       copy.cursorStart += numberOfElements
