@@ -50,14 +50,14 @@ class RosettaObjects
             # an atom or an RList containing one parameter (with
             # prepended "@" in case the parameter doesn't require
             # evaluation)
-            if eachElementOfSignature.rosettaClass == RAtom
+            if eachElementOfSignature.rosettaClass == RAtom or eachElementOfSignature.rosettaClass == RSymbol
               # if the signature contains an atom, the message
               # must contain the same atom, otherwise we don't
               # have a match.
 
               [eachElementOfInvocation, method] = method.nextElement()
 
-              if eachElementOfInvocation.rosettaClass == RAtom
+              if eachElementOfInvocation.rosettaClass == RAtom or eachElementOfInvocation.rosettaClass == RSymbol
 
                 #console.log "evaluation " + indentation() + "  matching atoms: - next signature piece: " + eachElementOfSignature.print() + " is atom: " + (eachElementOfSignature.rosettaClass == RAtom) + " with: " + eachElementOfInvocation.print() + " PC: " + theContext.programCounter
 

@@ -49,6 +49,10 @@ rosettaParse = (command) ->
       console.log eachToken + " is >= symbol"
       currentList.push RMoreOrEqualThanOperatorSymbol
 
+    else  if /^=>$/.test(eachToken)
+      console.log eachToken + " is => symbol"
+      currentList.push RConditionalArrowSymbol
+
     else  if /^\d+$/.test(eachToken)
       console.log eachToken + " is a Number"
       currentList.push (RNumber.createNew eachToken)

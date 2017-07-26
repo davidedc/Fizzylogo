@@ -72,6 +72,22 @@ RBoolean.methodBodies.push (context) ->
   @value = @value and operandum.value
   return @
 
+RBoolean.msgPatterns.push rosettaParse "=> ( @ trueBranch )"
+RBoolean.methodBodies.push (context) ->
+  trueBranch = context.tempVariablesDict.trueBranch
+  console.log "RBoolean => , predicate value is: " + @value
+
+  if @value
+    newContext = new RosettaContext context, @, RList.emptyMessage()
+    rosettaContexts.push newContext
+    [toBeReturned, unused2] = trueBranch.rosettaEval newContext
+    rosettaContexts.pop()
+
+    console.log "RBoolean => returning result of true branch: " + toBeReturned
+    return toBeReturned
+  console.log "RBoolean => returning null"
+  return null
+
 RBoolean.msgPatterns.push rosettaParse "or ( operandum )"
 RBoolean.methodBodies.push (context) ->
   operandum = context.tempVariablesDict.operandum
@@ -92,9 +108,9 @@ RList.methodBodies.push (context) ->
 
 
 RList.msgPatterns.push rosettaParse "eval"
-RList.methodBodies.push (theContext) ->
+RList.methodBodies.push (context) ->
 
-  newContext = new RosettaContext theContext, @, RList.emptyMessage()
+  newContext = new RosettaContext context, @, RList.emptyMessage()
   rosettaContexts.push newContext
   [toBeReturned, unused2] = @rosettaEval newContext
   rosettaContexts.pop()

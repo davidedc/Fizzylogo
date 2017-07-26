@@ -122,11 +122,21 @@ tests = [
   "( not not not not true ) print",
   "true"
 
+  "true => ( 1 print )",
+  "1"
+
+  "false => ( 1 print ) 2 print",
+  "2"
+
   #"@ a <- 5 someUndefinedMessage"
   #"7"
 
 ]
 
+###
+tests = [
+]
+###
 
 rosettaContexts = []
 environmentPrintout = ""
@@ -156,7 +166,7 @@ for i in [0...tests.length] by 2
     rWorkspace.evalMessage outerMostContext
     console.log "final return: " + outerMostContext.returned.value
     if environmentPrintout == testResult
-      console.log "...test OK, obtained: " + environmentPrintout
+      console.log "...test " + (i/2+1) + " OK, obtained: " + environmentPrintout
     else
-      console.log "...test FAIL, test: " + testBody + " obtained: " + environmentPrintout + " expected: " + testResult
+      console.log "...test " + (i/2+1) + " FAIL, test: " + testBody + " obtained: " + environmentPrintout + " expected: " + testResult
 

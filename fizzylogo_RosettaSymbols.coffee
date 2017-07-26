@@ -32,5 +32,6 @@ RLessThanOperatorSymbol = RSymbol.createNew "<"
 RLessOrEqualThanOperatorSymbol = RSymbol.createNew "<="
 RMoreThanOperatorSymbol = RSymbol.createNew ">"
 RMoreOrEqualThanOperatorSymbol = RSymbol.createNew ">="
+RConditionalArrowSymbol = RSymbol.createNew "=>"
 
 
