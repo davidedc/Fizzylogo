@@ -33,30 +33,4 @@ class RosettaNumberPrimitiveClass extends RosettaPrimitiveClasses
     
 
 RNumber = new RosettaNumberPrimitiveClass()
-RNumber.msgPatterns.push rosettaParse "anotherPrint"
-RNumber.methodBodies.push rosettaParse "self print"
-
-RNumber.msgPatterns.push rosettaParse "doublePrint"
-RNumber.methodBodies.push rosettaParse "self print print"
-
-RNumber.msgPatterns.push rosettaParse "increment"
-RNumber.methodBodies.push rosettaParse "@ self <- self plus 1"
-
-environmentPrintout = ""
-RNumber.msgPatterns.push rosettaParse "print"
-RNumber.methodBodies.push (context) ->
-  console.log "///////// program printout: " + @value
-  environmentPrintout += @value
-  return @
-
-
-
-RNumber.msgPatterns.push rosettaParse "plus ( addendum )"
-RNumber.methodBodies.push (context) ->
-  addendum = context.tempVariablesDict.addendum
-  @value += addendum.value
-  return @
-
-RNumber.msgPatterns.push rosettaParse "something ( param )"
-RNumber.msgPatterns.push rosettaParse "somethingElse ( @ param )"
 

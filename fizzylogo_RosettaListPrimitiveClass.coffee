@@ -220,21 +220,4 @@ class RosettaListPrimitiveClass extends RosettaPrimitiveClasses
     
 RList = new RosettaListPrimitiveClass()
 
-RList.msgPatterns.push rosettaParse "print"
-RList.methodBodies.push (context) ->
-  console.log "///////// program printout: " + @print()
-  environmentPrintout += @print()
-  return context.returned
-
-
-RList.msgPatterns.push rosettaParse "eval"
-RList.methodBodies.push (theContext) ->
-
-  newContext = new RosettaContext theContext, @, emptyMessage()
-  rosettaContexts.push newContext
-  [toBeReturned, unused2] = @rosettaEval newContext
-  rosettaContexts.pop()
-
-  console.log "RList.eval: unused2: " + unused2.print()
-  return toBeReturned
 

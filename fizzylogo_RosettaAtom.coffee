@@ -36,7 +36,3 @@ class RosettaAtomClass extends RosettaPrimitiveClasses
 
 RAtom = new RosettaAtomClass()
 
-
-
-
-

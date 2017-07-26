@@ -1,25 +1,5 @@
 
 
-RAtom.msgPatterns.push rosettaParse "print"
-RAtom.methodBodies.push (context) ->
-  console.log "///////// program printout (RAtom) : " + @value
-  environmentPrintout += @value
-  return @
-
-RAtom.msgPatterns.push rosettaParse "<- ( valueToAssign )"
-RAtom.methodBodies.push (context) ->
-  valueToAssign = context.tempVariablesDict.valueToAssign
-
-  theAtomName = @value
-
-  console.log "evaluation " + indentation() + "assignment to atom " + theAtomName
-  console.log "evaluation " + indentation() + "value to assign to atom: " + theAtomName + " : " + valueToAssign.value
-
-  dictToPutAtomIn = context.lookUpAtomValuePlace @
-  dictToPutAtomIn[theAtomName] = valueToAssign
-
-  console.log "evaluation " + indentation() + "stored value in dictionary"
-  return valueToAssign
 
 
 tests = [
