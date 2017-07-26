@@ -110,6 +110,18 @@ tests = [
   "( true or true ) print",
   "true"
 
+  "( not true ) print",
+  "false"
+
+  "( not not true ) print",
+  "true"
+
+  "( not not not true ) print",
+  "false"
+
+  "( not not not not true ) print",
+  "true"
+
   #"@ a <- 5 someUndefinedMessage"
   #"7"
 

@@ -33,6 +33,7 @@ class RosettaListPrimitiveClass extends RosettaPrimitiveClasses
     toBeReturned.value = []
     toBeReturned.rosettaClass = RList
 
+
     # these are only used for messages, which
     # are special kinds of lists
     toBeReturned.cursorStart = 0
@@ -117,6 +118,7 @@ class RosettaListPrimitiveClass extends RosettaPrimitiveClasses
 
             rosettaContexts.pop()
             console.log "evaluation " + indentation() + "list evaluation returned: " + receiver?.value
+            console.dir receiver
 
 
 
@@ -133,12 +135,14 @@ class RosettaListPrimitiveClass extends RosettaPrimitiveClasses
           # "findMessageAndBindParams" has already done the job of
           # making the call and fixing theContext's PC and
           # updating the return value, we are done here
-          return
+          return returned
 
         theContext.returned = @
 
-      console.log "evaluation " + indentation() + "list: theContext.returned: " + theContext.returned.print()
+      console.log "evaluation " + indentation() + "list: theContext.returned: " + theContext.returned
+      console.dir theContext.returned
       rosettaContexts.pop()
+      return theContext
 
 
 

@@ -16,7 +16,8 @@ RLiteralSymbol.evalMessage = (theContext) ->
       theContext.returned = message.firstElement()
       message = message.skipNextMessageElement theContext
 
-    console.log "evaluation " + indentation() + "literal symbol evaluation returning " + theContext.returned.print()
+    console.log "evaluation " + indentation() + "literal symbol evaluation returned " + theContext
+    console.dir theContext
 
     rosettaContexts.pop()
 

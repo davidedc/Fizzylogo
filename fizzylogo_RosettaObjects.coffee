@@ -19,6 +19,12 @@ class RosettaObjects
         originalProgramCounter = theContext.programCounter
 
         countSignaturePosition = -1
+        console.log "evaluation " + indentation() + "  matching - my class patterns: "
+
+        for eachClassPattern in @rosettaClass.msgPatterns
+          console.log "evaluation " + indentation() + eachClassPattern.print()
+
+
         for eachSignature in @rosettaClass.msgPatterns
           #console.log "evaluation " + indentation() + "  matching - checking if this signature matches: " + eachSignature.print() + " PC: " + theContext.programCounter
           method = methodInvocationToBeChecked
@@ -35,7 +41,7 @@ class RosettaObjects
           originalMethodStart = method.cursorStart
           until eachSignature.isEmpty() or method.isEmpty()
 
-            #console.log "evaluation " + indentation() + "  matching: - next signature piece: " + eachSignature.print() + " is atom: " + " with: " + method.print() + " PC: " + theContext.programCounter
+            console.log "evaluation " + indentation() + "  matching: - next signature piece: " + eachSignature.print() + " is atom: " + " with: " + method.print() + " PC: " + theContext.programCounter
 
             [eachElementOfSignature, eachSignature] = eachSignature.nextElement()
 
@@ -99,6 +105,9 @@ class RosettaObjects
               else
                 console.log "evaluation " + indentation() + "  matching - need to get next msg element from invocation: " + method.print() + " and bind to: " + paramAtom.print() + " PC: " + theContext.programCounter
                 [valueToBeBound, method] = method.nextElement()
+              
+              console.log "evaluation " + indentation() + "  matching - adding paramater to tempVariables into this class: "
+              console.dir theContext.self.rosettaClass
               # TODO we should insert without repetition
               if !theContext.self.rosettaClass.tempVariables?
                 theContext.self.rosettaClass.tempVariables = []
@@ -155,8 +164,9 @@ class RosettaObjects
 
       newContext = new RosettaContext theContext, @, methodBody
       rosettaContexts.push newContext
-      methodBody.rosettaEval newContext
+      [ignored1, ignore2, contextToBeReturned] = methodBody.rosettaEval newContext
       rosettaContexts.pop()
+      return contextToBeReturned
 
     else
       console.log "evaluation " + indentation() + "  matching - NATIVE method body: " + methodBody
@@ -175,22 +185,29 @@ class RosettaObjects
   progressWithMessage: (message, theContext) ->
     newContext = new RosettaContext theContext, theContext.self, message
     rosettaContexts.push newContext
-    @evalMessage newContext
+    toBeReturned = @evalMessage newContext
+    console.log "evaluation " + indentation() + "  progressWithMessage - evalMessage returned: " + toBeReturned
+    console.dir toBeReturned
     rosettaContexts.pop()
     theContext.programCounter += newContext.programCounter
     message = message.advanceMessageBy newContext.programCounter
-    return [newContext, message]
+    console.log "evaluation " + indentation() + "  progressWithMessage - returned: " + toBeReturned
+    console.dir toBeReturned
+    return [toBeReturned, message]
 
   lookupAndSendFoundMessage: (theContext, countSignaturePosition) ->
     console.log "evaluation " + indentation() + "  matching - found a matching signature: " + @rosettaClass.msgPatterns[countSignaturePosition].print() + " , PC: " + theContext.programCounter
     # we have a matching signature!
     methodBody = @rosettaClass.methodBodies[countSignaturePosition]
+    console.log "evaluation " + indentation() + "  matching - method body: " + methodBody
 
 
     # this could be a native or non-native message send
     theContext = @messageSend methodBody, theContext
+    console.log "evaluation " + indentation() + "  returned from message send: " + theContext
+    console.dir theContext
 
-    return theContext.returned
+    return theContext
 
   # You eval things just by sending them the empty message.
   # Note that if you invoke this on a list, the whole list is evaluated.
@@ -200,7 +217,7 @@ class RosettaObjects
     [newContext, unusedRestOfMessage] = @progressWithMessage RList.emptyMessage(), theContext
     if @rosettaClass == RList
       message = @advanceMessageBy newContext.programCounter
-    return [newContext.returned, message]
+    return [newContext.returned, message, newContext]
 
 
 class RosettaPrimitiveObjects extends RosettaObjects

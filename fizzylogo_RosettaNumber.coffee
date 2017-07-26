@@ -1,4 +1,5 @@
 class RosettaNumberPrimitiveClass extends RosettaPrimitiveClasses
+
   createNew: (value) ->
     toBeReturned = new RosettaPrimitiveObjects()
     toBeReturned.value = parseFloat(value)
@@ -21,7 +22,7 @@ class RosettaNumberPrimitiveClass extends RosettaPrimitiveClasses
         # "findMessageAndBindParams" has already done the job of
         # making the call and fixing theContext's PC and
         # updating the return value, we are done here
-        return
+        return returned
 
 
       if !message.isEmpty()

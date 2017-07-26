@@ -11,6 +11,7 @@ class RosettaClasses extends RosettaObjects
   classVariablesDict: null # a JS dictionary
 
   constructor: ->
+    super
     @classVariablesDict = {}
     @msgPatterns = []
     @methodBodies = []

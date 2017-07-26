@@ -25,11 +25,11 @@ class RosettaAtomClass extends RosettaPrimitiveClasses
           # "findMessageAndBindParams" has already done the job of
           # making the call and fixing theContext's PC and
           # updating the return value, we are done here
-          return
+          return returned
 
         theContext.returned = @
 
-
+      return theContext
 
 
     return toBeReturned

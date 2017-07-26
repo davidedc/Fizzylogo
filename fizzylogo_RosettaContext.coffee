@@ -41,8 +41,8 @@ class RosettaContext
 
       temps = contextBeingSearched.self.rosettaClass.tempVariables
       if temps?
-        console.log "evaluation " + indentation() + "lookup: checking in " + temps.value
-        if temps.value? and (temps.value.find (element) -> element.value == atomValue)
+        console.log "evaluation " + indentation() + "lookup: checking in " + temps
+        if (temps.find (element) -> element.value == atomValue)
           console.log "evaluation " + indentation() + "lookup: found " + atomValue + " in tempVariables"
           return contextBeingSearched.tempVariablesDict
 

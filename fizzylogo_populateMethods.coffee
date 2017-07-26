@@ -43,7 +43,6 @@ RNumber.methodBodies.push rosettaParse "self print print"
 RNumber.msgPatterns.push rosettaParse "increment"
 RNumber.methodBodies.push rosettaParse "@ self <- self plus 1"
 
-environmentPrintout = ""
 RNumber.msgPatterns.push rosettaParse "print"
 RNumber.methodBodies.push printFunction
 
@@ -79,6 +78,9 @@ RBoolean.methodBodies.push (context) ->
   @value = @value or operandum.value
   return @
 
+# Not --------------------------------------------------------------------------
+RNot.msgPatterns.push rosettaParse "( operandum )"
+RNot.methodBodies.push rosettaParse "operandum negate"
 
 # List -------------------------------------------------------------------------
 
@@ -86,7 +88,7 @@ RList.msgPatterns.push rosettaParse "print"
 RList.methodBodies.push (context) ->
   console.log "///////// program printout: " + @print()
   environmentPrintout += @print()
-  return context.returned
+  return context
 
 
 RList.msgPatterns.push rosettaParse "eval"
