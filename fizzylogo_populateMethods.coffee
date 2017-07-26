@@ -1,12 +1,21 @@
+# methods for everybody ---------------------------------------------------------
+
+### TBC why we can't share these for all instances yet
+printPattern = rosettaParse "print"
+###
+
+printFunction = (context) ->
+  console.log "///////// program printout: " + @value
+  environmentPrintout += @value
+  return @
+
+
 # Atom ---------------------------------------------------------------------------
 
 RAtom = new RosettaAtomClass()
 
 RAtom.msgPatterns.push rosettaParse "print"
-RAtom.methodBodies.push (context) ->
-  console.log "///////// program printout (RAtom) : " + @value
-  environmentPrintout += @value
-  return @
+RAtom.methodBodies.push printFunction
 
 RAtom.msgPatterns.push rosettaParse "<- ( valueToAssign )"
 RAtom.methodBodies.push (context) ->
@@ -36,11 +45,7 @@ RNumber.methodBodies.push rosettaParse "@ self <- self plus 1"
 
 environmentPrintout = ""
 RNumber.msgPatterns.push rosettaParse "print"
-RNumber.methodBodies.push (context) ->
-  console.log "///////// program printout: " + @value
-  environmentPrintout += @value
-  return @
-
+RNumber.methodBodies.push printFunction
 
 
 RNumber.msgPatterns.push rosettaParse "plus ( addendum )"
@@ -51,6 +56,16 @@ RNumber.methodBodies.push (context) ->
 
 RNumber.msgPatterns.push rosettaParse "something ( param )"
 RNumber.msgPatterns.push rosettaParse "somethingElse ( @ param )"
+
+# Boolean -------------------------------------------------------------------------
+
+RBoolean.msgPatterns.push rosettaParse "negate"
+RBoolean.methodBodies.push (context) ->
+  @value = !@value
+  return @
+
+RBoolean.msgPatterns.push rosettaParse "print"
+RBoolean.methodBodies.push printFunction
 
 # List -------------------------------------------------------------------------
 

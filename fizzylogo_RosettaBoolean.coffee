@@ -1,0 +1,36 @@
+class RosettaBooleanPrimitiveClass extends RosettaPrimitiveClasses
+  createNew: (value) ->
+    toBeReturned = new RosettaPrimitiveObjects()
+    toBeReturned.value = value
+    toBeReturned.rosettaClass = RBoolean
+
+    toBeReturned.print = ->
+      return @value
+
+    toBeReturned.evalMessage = (theContext) ->
+      message = theContext.message
+      console.log "evaluation " + indentation() + "messaging boolean " + @value + " with " + message.print()
+
+      console.log "evaluation " + indentation() + "before matching game the message is: " + message.print() + " and PC: " + theContext.programCounter
+      anyMatch = @findMessageAndBindParams theContext, message
+      if anyMatch?
+        returned = @lookupAndSendFoundMessage theContext, anyMatch
+      console.log "evaluation " + indentation() + "after matching game the message is: " + message.print() + " and PC: " + theContext.programCounter
+
+      if returned?
+        # "findMessageAndBindParams" has already done the job of
+        # making the call and fixing theContext's PC and
+        # updating the return value, we are done here
+        return
+
+
+      if !message.isEmpty()
+        console.log "evaluation " + indentation() + "this message to boolean should be empty? " + message.print()
+      theContext.returned = @
+      rosettaContexts.pop()
+
+    return toBeReturned
+    
+
+RBoolean = new RosettaBooleanPrimitiveClass()
+

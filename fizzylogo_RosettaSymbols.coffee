@@ -25,5 +25,11 @@ RNewSymbol = RSymbol.createNew "new"
 RAssignmentSymbol = RSymbol.createNew "<-"
 RStatementSeparatorSymbol = RSymbol.createNew "."
 
+REqualityOperatorSymbol = RSymbol.createNew "=="
+RInequalityOperatorSymbol = RSymbol.createNew "!="
+RLessThanOperatorSymbol = RSymbol.createNew "<"
+RLessOrEqualThanOperatorSymbol = RSymbol.createNew "<="
+RMoreThanOperatorSymbol = RSymbol.createNew ">"
+RMoreOrEqualThanOperatorSymbol = RSymbol.createNew ">="
 
 

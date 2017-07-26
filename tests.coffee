@@ -83,6 +83,9 @@ tests = [
   "@ a <- 5 . @ b <- @ a  . b print . a print",
   "a5"
 
+  "true negate print",
+  "false"
+
 
   #"@ a <- 5 someUndefinedMessage"
   #"7"
@@ -91,6 +94,7 @@ tests = [
 
 
 rosettaContexts = []
+environmentPrintout = ""
 
 
 for i in [0...tests.length] by 2
