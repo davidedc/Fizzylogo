@@ -67,6 +67,19 @@ RBoolean.methodBodies.push (context) ->
 RBoolean.msgPatterns.push rosettaParse "print"
 RBoolean.methodBodies.push printFunction
 
+RBoolean.msgPatterns.push rosettaParse "and ( operandum )"
+RBoolean.methodBodies.push (context) ->
+  operandum = context.tempVariablesDict.operandum
+  @value = @value and operandum.value
+  return @
+
+RBoolean.msgPatterns.push rosettaParse "or ( operandum )"
+RBoolean.methodBodies.push (context) ->
+  operandum = context.tempVariablesDict.operandum
+  @value = @value or operandum.value
+  return @
+
+
 # List -------------------------------------------------------------------------
 
 RList.msgPatterns.push rosettaParse "print"

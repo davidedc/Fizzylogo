@@ -86,6 +86,29 @@ tests = [
   "true negate print",
   "false"
 
+  "( false and false ) print",
+  "false"
+
+  "( false and true ) print",
+  "false"
+
+  "( true and false ) print",
+  "false"
+
+  "( true and true ) print",
+  "true"
+
+  "( false or false ) print",
+  "false"
+
+  "( false or true ) print",
+  "true"
+
+  "( true or false ) print",
+  "true"
+
+  "( true or true ) print",
+  "true"
 
   #"@ a <- 5 someUndefinedMessage"
   #"7"
