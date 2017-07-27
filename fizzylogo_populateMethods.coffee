@@ -158,3 +158,43 @@ RList.methodBodies.push (context) ->
 
   console.log "RList.eval: unused2: " + unused2.print()
   return toBeReturned
+
+# Done -------------------------------------------------------------------------
+
+RDone.msgPatterns.push rosettaParse "print"
+RDone.methodBodies.push printFunction
+
+# Repeat -------------------------------------------------------------------------
+
+RRepeat.msgPatterns.push rosettaParse "print"
+RRepeat.methodBodies.push printFunction
+
+RRepeat.msgPatterns.push rosettaParse "( @ loopCode )"
+RRepeat.methodBodies.push (context) ->
+  loopCode = context.tempVariablesDict.loopCode
+  console.log "RRepeat => , loop code is: " + loopCode.print()
+
+  while true
+    newContext = new RosettaContext context, @, RList.emptyMessage()
+    rosettaContexts.push newContext
+    [toBeReturned, unused2] = loopCode.rosettaEval newContext
+    rosettaContexts.pop()
+
+    console.log "Repeat => returning result after loop cycle: " + toBeReturned
+    console.dir toBeReturned
+    console.log "Repeat => returning result CLASS after loop cycle: "
+    console.dir toBeReturned.rosettaClass
+    console.log "Repeat => remaining message after loop cycle: " + context.message.print()
+    console.log "Repeat => ...with PC:  " + context.programCounter
+    console.log "Repeat => message length:  " + context.message.length()
+    console.log "Repeat => did I receive a Done? " + (if toBeReturned?.rosettaClass == RosettaDoneClass then "yes" else "no")
+
+    if toBeReturned?
+      if toBeReturned.rosettaClass == RDone
+        console.log "Repeat => the loop exited with Done "
+        break
+
+  #context.programCounter = context.message.length()
+  return toBeReturned
+
+

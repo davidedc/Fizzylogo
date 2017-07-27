@@ -17,6 +17,14 @@ rosettaParse = (command) ->
     else  if /^false$/.test(eachToken)
       console.log eachToken + " is Boolean false"
       currentList.push (RBoolean.createNew false)
+
+    else  if /^repeat$/.test(eachToken)
+      console.log eachToken + " is Repeat_object"
+      currentList.push (RRepeat.createNew())
+    else  if /^done$/.test(eachToken)
+      console.log eachToken + " is Done_object"
+      currentList.push (RDone.createNew())
+
     else  if /^[a-zA-Z]+$/.test(eachToken)
       console.log eachToken + " is an Atom"
       currentList.push (RAtom.createNew eachToken)

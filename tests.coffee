@@ -179,6 +179,12 @@ tests = [
   "@ a <- 5 . 1 printAFromDeeperCall",
   "5"
 
+  "@ a <- 5 . repeat ( ( a == 0 ) => ( done ) @ a <- a minus 1 ) . a print",
+  "0"
+
+  "@ a <- 5 . repeat ( ( a == 0 ) => ( done ) @ a <- a minus 1 ) print",
+  "Done_object"
+
   #"@ a <- 5 someUndefinedMessage"
   #"7"
 
@@ -186,8 +192,8 @@ tests = [
 
 ###
 tests = [
-  "2 factorial print",
-  "2"
+  "@ a <- 5 . repeat ( ( a == 0 ) => ( done ) @ a <- a minus 1 ) print",
+  "Done_object"
 ]
 ###
 
