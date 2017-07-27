@@ -12,8 +12,10 @@ tests = [
   "( 1 plus 1 ) print print"
   "22"
 
+  # increment returns a different object
+  # it doesn't modify the receiver in place
   "@ a <- 5 . a increment . @ a <- a plus 1 . a print",
-  "7"
+  "6"
 
   "@ a <- 5 . @ a <- a plus 1 . a increment print"
   "7"
@@ -128,6 +130,52 @@ tests = [
   "false => ( 1 print ) 2 print",
   "2"
 
+  "( 0 == 0 ) print",
+  "true"
+
+  "( 1 == 0 ) print",
+  "false"
+
+  "( 0 amIZero ) print",
+  "true"
+
+  "( 1 amIZero ) print",
+  "false"
+
+  "( 8 minus 1 ) print",
+  "7"
+
+  "true => ( 1 print ) 2 print",
+  "1"
+
+  "0 factorial print",
+  "1"
+
+  "1 factorial print",
+  "1"
+
+  "2 factorial print",
+  "2"
+
+  "7 factorial print",
+  "5040"
+
+  "0 factorialtwo print",
+  "1"
+
+  "1 factorialtwo print",
+  "1"
+
+  "2 factorialtwo print",
+  "2"
+
+  "7 factorialtwo print",
+  "5040"
+
+
+  "7 selftimesminusone print",
+  "42"
+
   #"@ a <- 5 someUndefinedMessage"
   #"7"
 
@@ -135,6 +183,8 @@ tests = [
 
 ###
 tests = [
+  "2 factorial print",
+  "2"
 ]
 ###
 

@@ -43,15 +43,46 @@ RNumber.methodBodies.push rosettaParse "self print print"
 RNumber.msgPatterns.push rosettaParse "increment"
 RNumber.methodBodies.push rosettaParse "@ self <- self plus 1"
 
+RNumber.msgPatterns.push rosettaParse "factorial"
+RNumber.methodBodies.push rosettaParse "( self == 0 ) => ( 1 ) ( self minus 1 ) factorial times self"
+
+RNumber.msgPatterns.push rosettaParse "factorialtwo"
+RNumber.methodBodies.push rosettaParse "( self == 0 ) => ( 1 ) self times ( ( self minus 1 ) factorial )"
+
+RNumber.msgPatterns.push rosettaParse "amIZero"
+RNumber.methodBodies.push rosettaParse "self == 0"
+
 RNumber.msgPatterns.push rosettaParse "print"
 RNumber.methodBodies.push printFunction
 
-
-RNumber.msgPatterns.push rosettaParse "plus ( addendum )"
+RNumber.msgPatterns.push rosettaParse "plus ( operandum )"
 RNumber.methodBodies.push (context) ->
-  addendum = context.tempVariablesDict.addendum
-  @value += addendum.value
-  return @
+  operandum = context.tempVariablesDict.operandum
+  return RNumber.createNew @value + operandum.value
+
+RNumber.msgPatterns.push rosettaParse "minus ( operandum )"
+RNumber.methodBodies.push (context) ->
+  operandum = context.tempVariablesDict.operandum
+  return RNumber.createNew @value - operandum.value
+
+RNumber.msgPatterns.push rosettaParse "selftimesminusone"
+RNumber.methodBodies.push rosettaParse "self times self minus 1"
+
+RNumber.msgPatterns.push rosettaParse "times ( operandum )"
+RNumber.methodBodies.push (context) ->
+  operandum = context.tempVariablesDict.operandum
+  console.log "evaluation " + indentation() + "multiplying " + @value + " to " + operandum.value  
+  return RNumber.createNew @value * operandum.value
+
+
+RNumber.msgPatterns.push rosettaParse "== ( tocampare )"
+RNumber.methodBodies.push (context) ->
+  tocampare = context.tempVariablesDict.tocampare
+  if @value == tocampare.value
+    return RBoolean.createNew true
+  else
+    return RBoolean.createNew false
+
 
 RNumber.msgPatterns.push rosettaParse "something ( param )"
 RNumber.msgPatterns.push rosettaParse "somethingElse ( @ param )"
@@ -84,6 +115,13 @@ RBoolean.methodBodies.push (context) ->
     rosettaContexts.pop()
 
     console.log "RBoolean => returning result of true branch: " + toBeReturned
+    console.log "RBoolean => remaining message after true branch: " + context.message.print()
+    console.log "RBoolean => ...with PC:  " + context.programCounter
+    console.log "RBoolean => message length:  " + context.message.length()
+
+    context.programCounter = context.message.length()
+
+
     return toBeReturned
   console.log "RBoolean => returning null"
   return null

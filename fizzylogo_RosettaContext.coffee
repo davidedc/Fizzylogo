@@ -37,7 +37,7 @@ class RosettaContext
     while contextBeingSearched?
 
       console.log "evaluation " + indentation() + "looking in class: " + contextBeingSearched.self.rosettaClass
-      console.dir contextBeingSearched.self.rosettaClass
+      #console.dir contextBeingSearched.self.rosettaClass
 
       temps = contextBeingSearched.self.rosettaClass.tempVariables
       if temps?
@@ -73,7 +73,7 @@ class RosettaContext
 
     dictWhereValueIs = @lookUpAtomValuePlace theAtom
     console.log "evaluation " + indentation() + "lookup: " + theAtom.value + " found dictionary and it contains:"
-    console.dir dictWhereValueIs
+    #console.dir dictWhereValueIs
     return dictWhereValueIs[theAtom.value]
 
 

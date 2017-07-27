@@ -22,7 +22,7 @@ class RosettaNotClass extends RosettaAnonymousClass
       if anyMatch?
         returned = @lookupAndSendFoundMessage theContext, anyMatch
         console.log "evaluation " + indentation() + "returned from message send: " + returned
-        console.dir returned
+        #console.dir returned
       console.log "evaluation " + indentation() + "after matching game the message is: " + message.print() + " and PC: " + theContext.programCounter
 
       if returned?

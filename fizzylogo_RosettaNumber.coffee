@@ -2,7 +2,7 @@ class RosettaNumberPrimitiveClass extends RosettaPrimitiveClasses
 
   createNew: (value) ->
     toBeReturned = new RosettaPrimitiveObjects()
-    toBeReturned.value = parseFloat(value)
+    toBeReturned.value = parseFloat(value + "")
     toBeReturned.rosettaClass = RNumber
 
     toBeReturned.print = ->
@@ -22,6 +22,8 @@ class RosettaNumberPrimitiveClass extends RosettaPrimitiveClasses
         # "findMessageAndBindParams" has already done the job of
         # making the call and fixing theContext's PC and
         # updating the return value, we are done here
+        if returned.returned?.value?
+          console.log "evaluation " + indentation() + "evalMessage in number returned: " + returned.returned.value
         return returned
 
 

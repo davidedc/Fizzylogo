@@ -85,7 +85,7 @@ class RosettaObjects
               # it requires an evaluation or not
               console.log "evaluation " + indentation() + "  matching - getting the atom inside the parameter: " + eachElementOfSignature.print() + " PC: " + theContext.programCounter
               paramAtom = eachElementOfSignature.getParamAtom()
-              console.dir paramAtom
+              #console.dir paramAtom
               console.log "evaluation " + indentation() + "  matching - atom inside the parameter: " + paramAtom.print() + " PC: " + theContext.programCounter
               if eachElementOfSignature.isEvaluatingParam()
                 console.log "evaluation " + indentation() + "  matching - need to evaluate next msg element from invocation: " + method.print() + " and bind to: " + paramAtom.print() + " PC: " + theContext.programCounter
@@ -107,7 +107,7 @@ class RosettaObjects
                 [valueToBeBound, method] = method.nextElement()
               
               console.log "evaluation " + indentation() + "  matching - adding paramater to tempVariables into this class: "
-              console.dir theContext.self.rosettaClass
+              #console.dir theContext.self.rosettaClass
               # TODO we should insert without repetition
               if !theContext.self.rosettaClass.tempVariables?
                 theContext.self.rosettaClass.tempVariables = []
@@ -144,7 +144,7 @@ class RosettaObjects
         return null
 
   # this could be native or non-native
-  messageSend: (methodBody, theContext) ->
+  messageSend: (methodBody, theContext, newSelf = @) ->
     # note that this doesn't change the program counter,
     # because we don't care here what we consume from the body
     # execution, from the caller perspective it only matters
@@ -162,7 +162,7 @@ class RosettaObjects
       # be run, no remains from the message body should overspill
       # into the calling context. 
 
-      newContext = new RosettaContext theContext, @, methodBody
+      newContext = new RosettaContext theContext, newSelf, methodBody
       rosettaContexts.push newContext
       [ignored1, ignore2, contextToBeReturned] = methodBody.rosettaEval newContext
       rosettaContexts.pop()
@@ -171,7 +171,7 @@ class RosettaObjects
     else
       console.log "evaluation " + indentation() + "  matching - NATIVE method body: " + methodBody
       # native method, i.e. coffeescript/javascript code
-      theContext.returned = methodBody.call @, theContext
+      theContext.returned = methodBody.call newSelf, theContext
       #rosettaContexts.pop()
     return theContext
 
@@ -187,12 +187,12 @@ class RosettaObjects
     rosettaContexts.push newContext
     toBeReturned = @evalMessage newContext
     console.log "evaluation " + indentation() + "  progressWithMessage - evalMessage returned: " + toBeReturned
-    console.dir toBeReturned
+    #console.dir toBeReturned
     rosettaContexts.pop()
     theContext.programCounter += newContext.programCounter
     message = message.advanceMessageBy newContext.programCounter
     console.log "evaluation " + indentation() + "  progressWithMessage - returned: " + toBeReturned
-    console.dir toBeReturned
+    #console.dir toBeReturned
     return [toBeReturned, message]
 
   lookupAndSendFoundMessage: (theContext, countSignaturePosition) ->
@@ -205,7 +205,7 @@ class RosettaObjects
     # this could be a native or non-native message send
     theContext = @messageSend methodBody, theContext
     console.log "evaluation " + indentation() + "  returned from message send: " + theContext
-    console.dir theContext
+    #console.dir theContext
 
     return theContext
 

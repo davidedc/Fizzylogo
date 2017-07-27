@@ -118,7 +118,7 @@ class RosettaListPrimitiveClass extends RosettaPrimitiveClasses
 
             rosettaContexts.pop()
             console.log "evaluation " + indentation() + "list evaluation returned: " + receiver?.value
-            console.dir receiver
+            #console.dir receiver
 
 
 
@@ -140,7 +140,7 @@ class RosettaListPrimitiveClass extends RosettaPrimitiveClasses
         theContext.returned = @
 
       console.log "evaluation " + indentation() + "list: theContext.returned: " + theContext.returned
-      console.dir theContext.returned
+      #console.dir theContext.returned
       rosettaContexts.pop()
       return theContext
 
