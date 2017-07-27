@@ -52,6 +52,9 @@ RNumber.methodBodies.push rosettaParse "( self == 0 ) => ( 1 ) self times ( ( se
 RNumber.msgPatterns.push rosettaParse "amIZero"
 RNumber.methodBodies.push rosettaParse "self == 0"
 
+RNumber.msgPatterns.push rosettaParse "printAFromDeeperCall"
+RNumber.methodBodies.push rosettaParse "a print"
+
 RNumber.msgPatterns.push rosettaParse "print"
 RNumber.methodBodies.push printFunction
 

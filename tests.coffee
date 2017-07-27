@@ -176,6 +176,9 @@ tests = [
   "7 selftimesminusone print",
   "42"
 
+  "@ a <- 5 . 1 printAFromDeeperCall",
+  "5"
+
   #"@ a <- 5 someUndefinedMessage"
   #"7"
 
