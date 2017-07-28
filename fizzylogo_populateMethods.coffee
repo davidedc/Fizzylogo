@@ -162,7 +162,18 @@ RList.methodBodies.push (context) ->
 # Done -------------------------------------------------------------------------
 
 RDone.msgPatterns.push rosettaParse "print"
-RDone.methodBodies.push printFunction
+RDone.methodBodies.push (context) ->
+  console.log "///////// program printout: " + "Done_object"
+  environmentPrintout += "Done_object"
+  return @
+
+
+RDone.msgPatterns.push rosettaParse "with ( valueToReturn )"
+RDone.methodBodies.push (context) ->
+  valueToReturn = context.tempVariablesDict.valueToReturn
+  @value = valueToReturn
+  return @
+
 
 # Repeat -------------------------------------------------------------------------
 
@@ -191,6 +202,8 @@ RRepeat.methodBodies.push (context) ->
 
     if toBeReturned?
       if toBeReturned.rosettaClass == RDone
+        if toBeReturned.value?
+          toBeReturned = toBeReturned.value
         console.log "Repeat => the loop exited with Done "
         break
 

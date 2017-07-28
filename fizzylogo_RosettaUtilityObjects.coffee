@@ -47,7 +47,7 @@ class RosettaDoneClass extends RosettaAnonymousClass
   createNew: ->
     toBeReturned = new RosettaPrimitiveObjects()
     toBeReturned.rosettaClass = RDone
-    toBeReturned.value = "Done_object"
+    toBeReturned.value = null
 
 
     toBeReturned.print = ->

@@ -185,6 +185,9 @@ tests = [
   "@ a <- 5 . repeat ( ( a == 0 ) => ( done ) @ a <- a minus 1 ) print",
   "Done_object"
 
+  "@ a <- 5 . repeat ( ( a == 0 ) => ( done with a plus 1 ) @ a <- a minus 1 ) print",
+  "1"
+
   #"@ a <- 5 someUndefinedMessage"
   #"7"
 
