@@ -188,6 +188,18 @@ tests = [
   "@ a <- 5 . repeat ( ( a == 0 ) => ( done with a plus 1 ) @ a <- a minus 1 ) print",
   "1"
 
+  "Class print",
+  "Class_object"
+
+  "@ something <- 3 . something print",
+  "3"
+
+  "@ Stack <- Class new",
+  ""
+
+  "@ Stack <- Class new . Stack answer ( printtwo ) by ( self print ) . @ myStack <- Stack new . myStack printtwo",
+  "object_from_a_user_class"
+
   #"@ a <- 5 someUndefinedMessage"
   #"7"
 
@@ -195,13 +207,12 @@ tests = [
 
 ###
 tests = [
-  "@ a <- 5 . repeat ( ( a == 0 ) => ( done ) @ a <- a minus 1 ) print",
-  "Done_object"
 ]
 ###
 
 rosettaContexts = []
 environmentPrintout = ""
+rWorkspace = null
 
 
 for i in [0...tests.length] by 2
@@ -217,14 +228,22 @@ for i in [0...tests.length] by 2
 
     rWorkspace = RWorkspace.createNew()
 
-    rWorkspace.rosettaClass.instanceVariables = RList.createNew()
-    rWorkspace.rosettaClass.instanceVariables.push RAtom.createNew "a"
-    rWorkspace.rosettaClass.instanceVariables.push RAtom.createNew "b"
 
     # outer-most context
     parsed.isFromMessage = true
     outerMostContext = new RosettaContext null, rWorkspace, parsed
     rosettaContexts.push outerMostContext
+
+    rWorkspace.rosettaClass.instanceVariables = RList.createNew()
+    
+    ###
+    rWorkspace.rosettaClass.instanceVariables.push RAtom.createNew "a"
+    rWorkspace.rosettaClass.instanceVariables.push RAtom.createNew "b"
+    ###
+
+    rWorkspace.rosettaClass.instanceVariables.push RAtom.createNew "Class"
+    outerMostContext.self.instanceVariablesDict.Class = RClass.createNew()
+
     rWorkspace.evalMessage outerMostContext
     console.log "final return: " + outerMostContext.returned.value
     if environmentPrintout == testResult

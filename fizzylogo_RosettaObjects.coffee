@@ -19,6 +19,7 @@ class RosettaObjects
         originalProgramCounter = theContext.programCounter
 
         countSignaturePosition = -1
+        console.log "evaluation " + indentation() + "  I am: " + @value
         console.log "evaluation " + indentation() + "  matching - my class patterns: "
 
         for eachClassPattern in @rosettaClass.msgPatterns

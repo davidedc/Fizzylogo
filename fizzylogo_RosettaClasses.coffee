@@ -22,10 +22,48 @@ class RosettaClasses extends RosettaObjects
 # implementations here.
 class RosettaPrimitiveClasses extends RosettaClasses
 
-# the root of everything
-rosettaClass = new RosettaPrimitiveClasses()
-rosettaClass.rosettaClass = rosettaClass
 
-class RosettaNonPrimitiveClasses extends RosettaClasses
+# the root of everything. An object of class
+# "Class" (or, more in detail, of RosettaClassPrimitiveClass)
+class RosettaClassPrimitiveClass extends RosettaPrimitiveClasses
+
+  createNew: ->
+    toBeReturned = new RosettaPrimitiveClasses()
+    toBeReturned.rosettaClass = RClass
+    toBeReturned.classVariablesDict = {}
+    toBeReturned.msgPatterns = []
+    toBeReturned.methodBodies = []
+    toBeReturned.instanceVariablesDict = {}
+
+    toBeReturned.evalMessage = (theContext) ->
+      message = theContext.message
+      console.log "evaluation " + indentation() + "messaging number " + @value + " with " + message.print()
+
+      console.log "evaluation " + indentation() + "before matching game the message is: " + message.print() + " and PC: " + theContext.programCounter
+      anyMatch = @findMessageAndBindParams theContext, message
+      if anyMatch?
+        returned = @lookupAndSendFoundMessage theContext, anyMatch
+      console.log "evaluation " + indentation() + "after matching game the message is: " + message.print() + " and PC: " + theContext.programCounter
+
+      if returned?
+        # "findMessageAndBindParams" has already done the job of
+        # making the call and fixing theContext's PC and
+        # updating the return value, we are done here
+        if returned.returned?.value?
+          console.log "evaluation " + indentation() + "evalMessage in number returned: " + returned.returned.value
+        return returned
+
+
+      if !message.isEmpty()
+        console.log "evaluation " + indentation() + "this message to number should be empty? " + message.print()
+      theContext.returned = @
+      rosettaContexts.pop()
+
+    return toBeReturned
+    
+
+RClass = new RosettaClassPrimitiveClass()
+
 
 class RosettaAnonymousClass extends RosettaPrimitiveClasses
+

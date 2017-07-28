@@ -67,6 +67,20 @@ class RosettaContext
 
     console.log "evaluation " + indentation() + "lookup: " + atomValue + " not found!"
 
+    # if the variable doesn't exist anywhere and
+    # we are currently in context linked to the
+    # workspace...
+    if @self == rWorkspace
+      console.log "evaluation " + indentation() + "lookup: creating " + atomValue + " as instance variable in top-most context"
+      @self.rosettaClass.instanceVariables.push RAtom.createNew atomValue
+      return @self.instanceVariablesDict
+    # otherwise, in any other context create it as a temp
+    else
+      console.log "evaluation " + indentation() + "lookup: creating " + atomValue + " as temp variable in current context"
+      @self.rosettaClass.tempVariables.push RAtom.createNew atomValue
+      return @tempVariablesDict
+
+
   lookUpAtomValue: (theAtom) ->
     # we first look _where_ the value of the Atom is,
     # then we fetch it

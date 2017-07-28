@@ -32,6 +32,44 @@ RAtom.methodBodies.push (context) ->
   console.log "evaluation " + indentation() + "stored value in dictionary"
   return valueToAssign
 
+# Class -------------------------------------------------------------------------
+
+RClass.msgPatterns.push rosettaParse "print"
+RClass.methodBodies.push (context) ->
+  console.log "///////// program printout: " + "Class object!"
+  environmentPrintout += "Class_object"
+  return @
+
+RClass.msgPatterns.push rosettaParse "new"
+RClass.methodBodies.push (context) ->
+  console.log "///////// creating a new class for the user!"
+
+  newUserClass = RUserClass.createNew()
+
+  newUserClass.msgPatterns.push rosettaParse "print"
+  newUserClass.methodBodies.push printFunction
+
+  # the class we are creating has a "new"
+  # so user can create objects for it
+  newUserClass.msgPatterns.push rosettaParse "new"
+  newUserClass.methodBodies.push (context) ->
+    console.log "///////// creating a new object from a user class!"
+    return @createNew()
+
+
+  newUserClass.msgPatterns.push rosettaParse "answer ( @ signature ) by ( @ methodBody )"
+  newUserClass.methodBodies.push (context) ->
+    signature = context.tempVariablesDict.signature
+    methodBody = context.tempVariablesDict.methodBody
+
+    @msgPatterns.push signature
+    @methodBodies.push methodBody
+
+    return @
+
+  return newUserClass
+
+
 # Number -------------------------------------------------------------------------
 
 RNumber.msgPatterns.push rosettaParse "anotherPrint"
