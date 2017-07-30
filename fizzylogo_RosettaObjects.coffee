@@ -107,13 +107,13 @@ class RosettaObjects
                 console.log "evaluation " + indentation() + "  matching - need to get next msg element from invocation: " + method.print() + " and bind to: " + paramAtom.print() + " PC: " + theContext.programCounter
                 [valueToBeBound, method] = method.nextElement()
               
-              console.log "evaluation " + indentation() + "  matching - adding paramater to tempVariables into this class: "
+              console.log "evaluation " + indentation() + "  matching - adding paramater " + paramAtom.print() + " to tempVariables into this class: "
               #console.dir theContext.self.rosettaClass
               # TODO we should insert without repetition
               if !theContext.self.rosettaClass.tempVariables?
                 theContext.self.rosettaClass.tempVariables = []
               theContext.self.rosettaClass.tempVariables.push paramAtom
-              theContext.tempVariablesDict[paramAtom.value] = valueToBeBound
+              theContext.tempVariablesDict[ValidID.fromString paramAtom.value] = valueToBeBound
               # ok we matched a paramenter, now let's keep matching further
               # parts of the signature
               continue

@@ -50,7 +50,7 @@ tests = [
   "( 6 doublePrint plus 1 ) print"
   "667"
 
-  "6 doublePrint plus 1  print"
+  "6 doublePrint plus 1 print"
   "661"
 
   "( 4 plus 3 ) print"
@@ -79,10 +79,10 @@ tests = [
 
   # in this case still the @ ties to the first element
   # that comes after it i.e. ( 1 plus 1 )
-  " @ ( 1 plus 1 ) eval print"
+  "@ ( 1 plus 1 ) eval print"
   "2"
 
-  "@ a <- 5 . @ b <- @ a  . b print . a print",
+  "@ a <- 5 . @ b <- @ a . b print . a print",
   "a5"
 
   "true negate print",
@@ -200,6 +200,15 @@ tests = [
   "@ Stack <- Class new . Stack answer ( printtwo ) by ( self print ) . @ myStack <- Stack new . myStack printtwo",
   "object_from_a_user_class"
 
+  "@ false <- true . false => ( 1 print ) 2 print",
+  "1"
+
+  "@ temp <- true . @ true <- false . @ false <- temp . false => ( 1 print ) 2 print",
+  "1"
+
+  "@ temp <- true . @ true <- false . @ false <- temp . true => ( 1 print ) 2 print",
+  "2"
+
   #"@ a <- 5 someUndefinedMessage"
   #"7"
 
@@ -207,6 +216,8 @@ tests = [
 
 ###
 tests = [
+  "( true or false ) print",
+  "true"
 ]
 ###
 
@@ -236,13 +247,36 @@ for i in [0...tests.length] by 2
 
     rWorkspace.rosettaClass.instanceVariables = RList.createNew()
     
-    ###
-    rWorkspace.rosettaClass.instanceVariables.push RAtom.createNew "a"
-    rWorkspace.rosettaClass.instanceVariables.push RAtom.createNew "b"
-    ###
+    keywordsAndTheirInit = [
+      "Class", RClass.createNew()
 
-    rWorkspace.rosettaClass.instanceVariables.push RAtom.createNew "Class"
-    outerMostContext.self.instanceVariablesDict.Class = RClass.createNew()
+      "not", RNot.createNew()
+      "true", RBoolean.createNew true
+      "false", RBoolean.createNew false
+
+      "repeat", RRepeat.createNew()
+      "done", RDone.createNew()
+
+      "<-", RAssignmentSymbol
+
+      "@", RLiteralSymbol
+
+      "==", REqualityOperatorSymbol
+      "!=", RInequalityOperatorSymbol
+      "<", RLessThanOperatorSymbol
+      "<=", RLessOrEqualThanOperatorSymbol
+      ">", RMoreThanOperatorSymbol
+      ">=", RMoreOrEqualThanOperatorSymbol
+
+      "=>", RConditionalArrowSymbol
+
+    ]
+
+    for keywords in [0...keywordsAndTheirInit.length] by 2
+      [keyword, itsInitialisation] = keywordsAndTheirInit[keywords .. keywords + 1]
+      rWorkspace.rosettaClass.instanceVariables.push RKeyword.createNew keyword
+      outerMostContext.self.instanceVariablesDict[ValidID.fromString keyword] = itsInitialisation
+
 
     rWorkspace.evalMessage outerMostContext
     console.log "final return: " + outerMostContext.returned.value

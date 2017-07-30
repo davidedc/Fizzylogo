@@ -87,7 +87,16 @@ class RosettaContext
 
     dictWhereValueIs = @lookUpAtomValuePlace theAtom
     console.log "evaluation " + indentation() + "lookup: " + theAtom.value + " found dictionary and it contains:"
-    #console.dir dictWhereValueIs
-    return dictWhereValueIs[theAtom.value]
+    console.dir dictWhereValueIs
+    console.log "evaluation " + indentation() + "lookup: " + theAtom.value + " also known as " + (ValidID.fromString theAtom.value)
+    if theAtom.value != "self"
+      encodedAtomValue = ValidID.fromString theAtom.value
+    else
+      encodedAtomValue = theAtom.value
+
+    console.log "evaluation " + indentation() + "lookup: " + theAtom.value + " class is: "
+    console.dir dictWhereValueIs[encodedAtomValue].rosettaClass
+
+    return dictWhereValueIs[encodedAtomValue]
 
 

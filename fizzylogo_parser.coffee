@@ -8,69 +8,23 @@ rosettaParse = (command) ->
   for eachToken in simpleTokenization
     console.log "eachToken: " + eachToken
 
-    if /^not$/.test(eachToken)
-      console.log eachToken + " is Not object"
-      currentList.push (RNot.createNew())
-    else  if /^true$/.test(eachToken)
-      console.log eachToken + " is Boolean true"
-      currentList.push (RBoolean.createNew true)
-    else  if /^false$/.test(eachToken)
-      console.log eachToken + " is Boolean false"
-      currentList.push (RBoolean.createNew false)
-
-    else  if /^repeat$/.test(eachToken)
-      console.log eachToken + " is Repeat_object"
-      currentList.push (RRepeat.createNew())
-    else  if /^done$/.test(eachToken)
-      console.log eachToken + " is Done_object"
-      currentList.push (RDone.createNew())
-
-    else  if /^[a-zA-Z]+$/.test(eachToken)
-      console.log eachToken + " is an Atom"
-      currentList.push (RAtom.createNew eachToken)
-    else  if /^@$/.test(eachToken)
-      console.log eachToken + " is @ symbol"
-      currentList.push RLiteralSymbol
-    else  if /^\.$/.test(eachToken)
+    if /^\.$/.test(eachToken)
       console.log eachToken + " is . symbol"
       currentList.push RStatementSeparatorSymbol
-    else  if /^<-$/.test(eachToken)
-      console.log eachToken + " is <- symbol"
-      currentList.push RAssignmentSymbol
-
-    else  if /^==$/.test(eachToken)
-      console.log eachToken + " is == symbol"
-      currentList.push REqualityOperatorSymbol
-    else  if /^!=$/.test(eachToken)
-      console.log eachToken + " is != symbol"
-      currentList.push RInequalityOperatorSymbol
-    else  if /^<$/.test(eachToken)
-      console.log eachToken + " is < symbol"
-      currentList.push RLessThanOperatorSymbol
-    else  if /^<=$/.test(eachToken)
-      console.log eachToken + " is <= symbol"
-      currentList.push RLessOrEqualThanOperatorSymbol
-    else  if /^>$/.test(eachToken)
-      console.log eachToken + " is > symbol"
-      currentList.push RMoreThanOperatorSymbol
-    else  if /^>=$/.test(eachToken)
-      console.log eachToken + " is >= symbol"
-      currentList.push RMoreOrEqualThanOperatorSymbol
-
-    else  if /^=>$/.test(eachToken)
-      console.log eachToken + " is => symbol"
-      currentList.push RConditionalArrowSymbol
-
-    else  if /^\d+$/.test(eachToken)
+    else if /^\d+$/.test(eachToken)
       console.log eachToken + " is a Number"
       currentList.push (RNumber.createNew eachToken)
-    else  if /^\($/.test(eachToken)
+    else if /^\($/.test(eachToken)
       nestedList = RList.createNew()
       currentList.push nestedList
       listsStack.push currentList
       currentList = nestedList
-    else  if /^\)$/.test(eachToken)
+    else if /^\)$/.test(eachToken)
       currentList = listsStack.pop()
+    else
+      console.log eachToken + " is something else"
+      currentList.push RAtom.createNew eachToken
+
   return outerList
 
 

@@ -19,7 +19,7 @@ RAtom.methodBodies.push printFunction
 
 RAtom.msgPatterns.push rosettaParse "<- ( valueToAssign )"
 RAtom.methodBodies.push (context) ->
-  valueToAssign = context.tempVariablesDict.valueToAssign
+  valueToAssign = context.tempVariablesDict[ValidID.fromString "valueToAssign"]
 
   theAtomName = @value
 
@@ -27,7 +27,7 @@ RAtom.methodBodies.push (context) ->
   console.log "evaluation " + indentation() + "value to assign to atom: " + theAtomName + " : " + valueToAssign.value
 
   dictToPutAtomIn = context.lookUpAtomValuePlace @
-  dictToPutAtomIn[theAtomName] = valueToAssign
+  dictToPutAtomIn[ValidID.fromString theAtomName] = valueToAssign
 
   console.log "evaluation " + indentation() + "stored value in dictionary"
   return valueToAssign
@@ -59,8 +59,8 @@ RClass.methodBodies.push (context) ->
 
   newUserClass.msgPatterns.push rosettaParse "answer ( @ signature ) by ( @ methodBody )"
   newUserClass.methodBodies.push (context) ->
-    signature = context.tempVariablesDict.signature
-    methodBody = context.tempVariablesDict.methodBody
+    signature = context.tempVariablesDict[ValidID.fromString "signature"]
+    methodBody = context.tempVariablesDict[ValidID.fromString "methodBody"]
 
     @msgPatterns.push signature
     @methodBodies.push methodBody
@@ -98,12 +98,12 @@ RNumber.methodBodies.push printFunction
 
 RNumber.msgPatterns.push rosettaParse "plus ( operandum )"
 RNumber.methodBodies.push (context) ->
-  operandum = context.tempVariablesDict.operandum
+  operandum = context.tempVariablesDict[ValidID.fromString "operandum"]
   return RNumber.createNew @value + operandum.value
 
 RNumber.msgPatterns.push rosettaParse "minus ( operandum )"
 RNumber.methodBodies.push (context) ->
-  operandum = context.tempVariablesDict.operandum
+  operandum = context.tempVariablesDict[ValidID.fromString "operandum"]
   return RNumber.createNew @value - operandum.value
 
 RNumber.msgPatterns.push rosettaParse "selftimesminusone"
@@ -111,14 +111,14 @@ RNumber.methodBodies.push rosettaParse "self times self minus 1"
 
 RNumber.msgPatterns.push rosettaParse "times ( operandum )"
 RNumber.methodBodies.push (context) ->
-  operandum = context.tempVariablesDict.operandum
+  operandum = context.tempVariablesDict[ValidID.fromString "operandum"]
   console.log "evaluation " + indentation() + "multiplying " + @value + " to " + operandum.value  
   return RNumber.createNew @value * operandum.value
 
 
 RNumber.msgPatterns.push rosettaParse "== ( tocampare )"
 RNumber.methodBodies.push (context) ->
-  tocampare = context.tempVariablesDict.tocampare
+  tocampare = context.tempVariablesDict[ValidID.fromString "tocampare"]
   if @value == tocampare.value
     return RBoolean.createNew true
   else
@@ -132,21 +132,19 @@ RNumber.msgPatterns.push rosettaParse "somethingElse ( @ param )"
 
 RBoolean.msgPatterns.push rosettaParse "negate"
 RBoolean.methodBodies.push (context) ->
-  @value = !@value
-  return @
+  return RBoolean.createNew !@value
 
 RBoolean.msgPatterns.push rosettaParse "print"
 RBoolean.methodBodies.push printFunction
 
 RBoolean.msgPatterns.push rosettaParse "and ( operandum )"
 RBoolean.methodBodies.push (context) ->
-  operandum = context.tempVariablesDict.operandum
-  @value = @value and operandum.value
-  return @
+  operandum = context.tempVariablesDict[ValidID.fromString "operandum"]
+  return RBoolean.createNew @value and operandum.value
 
 RBoolean.msgPatterns.push rosettaParse "=> ( @ trueBranch )"
 RBoolean.methodBodies.push (context) ->
-  trueBranch = context.tempVariablesDict.trueBranch
+  trueBranch = context.tempVariablesDict[ValidID.fromString "trueBranch"]
   console.log "RBoolean => , predicate value is: " + @value
 
   if @value
@@ -169,9 +167,9 @@ RBoolean.methodBodies.push (context) ->
 
 RBoolean.msgPatterns.push rosettaParse "or ( operandum )"
 RBoolean.methodBodies.push (context) ->
-  operandum = context.tempVariablesDict.operandum
-  @value = @value or operandum.value
-  return @
+  console.log "executing an or! "
+  operandum = context.tempVariablesDict[ValidID.fromString "operandum"]
+  return RBoolean.createNew @value or operandum.value
 
 # Not --------------------------------------------------------------------------
 RNot.msgPatterns.push rosettaParse "( operandum )"
@@ -208,7 +206,7 @@ RDone.methodBodies.push (context) ->
 
 RDone.msgPatterns.push rosettaParse "with ( valueToReturn )"
 RDone.methodBodies.push (context) ->
-  valueToReturn = context.tempVariablesDict.valueToReturn
+  valueToReturn = context.tempVariablesDict[ValidID.fromString "valueToReturn"]
   @value = valueToReturn
   return @
 
@@ -220,7 +218,7 @@ RRepeat.methodBodies.push printFunction
 
 RRepeat.msgPatterns.push rosettaParse "( @ loopCode )"
 RRepeat.methodBodies.push (context) ->
-  loopCode = context.tempVariablesDict.loopCode
+  loopCode = context.tempVariablesDict[ValidID.fromString "loopCode"]
   console.log "RRepeat => , loop code is: " + loopCode.print()
 
   while true
