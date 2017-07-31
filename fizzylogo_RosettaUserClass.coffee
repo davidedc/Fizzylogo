@@ -1,19 +1,19 @@
 
-class RosettaNonPrimitiveClass extends RosettaClasses
+class  FLNonPrimitiveClass extends  FLClasses
   createNew: ->
-    toBeReturned = new RosettaClasses()
+    toBeReturned = new  FLClasses()
     toBeReturned.value = "some_custom_class_of_user"
 
-    toBeReturned.rosettaClass = toBeReturned
+    toBeReturned.flClass = toBeReturned
     toBeReturned.classVariablesDict = {}
     toBeReturned.msgPatterns = []
     toBeReturned.methodBodies = []
     toBeReturned.instanceVariablesDict = {}
 
     toBeReturned.createNew = ->
-      objectTBR = new RosettaPrimitiveObjects()
+      objectTBR = new  FLPrimitiveObjects()
       objectTBR.value = "object_from_a_user_class"
-      objectTBR.rosettaClass = toBeReturned
+      objectTBR.flClass = toBeReturned
 
       objectTBR.evalMessage = (theContext) ->
         message = theContext.message
@@ -37,7 +37,7 @@ class RosettaNonPrimitiveClass extends RosettaClasses
         if !message.isEmpty()
           console.log "evaluation " + indentation() + "this message to number should be empty? " + message.print()
         theContext.returned = @
-        rosettaContexts.pop()
+        flContexts.pop()
 
       return objectTBR
 
@@ -63,9 +63,9 @@ class RosettaNonPrimitiveClass extends RosettaClasses
       if !message.isEmpty()
         console.log "evaluation " + indentation() + "this message to number should be empty? " + message.print()
       theContext.returned = @
-      rosettaContexts.pop()
+      flContexts.pop()
 
     return toBeReturned
 
-RUserClass = new RosettaNonPrimitiveClass()
+RUserClass = new  FLNonPrimitiveClass()
 

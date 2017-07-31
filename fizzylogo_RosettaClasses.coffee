@@ -1,12 +1,12 @@
 
-class RosettaClasses extends RosettaObjects
-  name: null #a RosettaString
-  msgPatterns: null # an array of RosettaLists
-  methodBodies: null # an array of RosettaLists
+class  FLClasses extends  FLObjects
+  name: null #a  FLString
+  msgPatterns: null # an array of  FLLists
+  methodBodies: null # an array of  FLLists
 
-  classVariables: null # a RosettaList
-  instanceVariables: null # a RosettaList
-  tempVariables: null # a RosettaList
+  classVariables: null # a  FLList
+  instanceVariables: null # a  FLList
+  tempVariables: null # a  FLList
 
   classVariablesDict: null # a JS dictionary
 
@@ -20,16 +20,16 @@ class RosettaClasses extends RosettaObjects
 # implementation of these is not changeable
 # and not inspectable. "Below the surface" native
 # implementations here.
-class RosettaPrimitiveClasses extends RosettaClasses
+class  FLPrimitiveClasses extends  FLClasses
 
 
 # the root of everything. An object of class
-# "Class" (or, more in detail, of RosettaClassPrimitiveClass)
-class RosettaClassPrimitiveClass extends RosettaPrimitiveClasses
+# "Class" (or, more in detail, of  FLClassPrimitiveClass)
+class  FLClassPrimitiveClass extends  FLPrimitiveClasses
 
   createNew: ->
-    toBeReturned = new RosettaPrimitiveClasses()
-    toBeReturned.rosettaClass = RClass
+    toBeReturned = new  FLPrimitiveClasses()
+    toBeReturned.flClass = RClass
     toBeReturned.classVariablesDict = {}
     toBeReturned.msgPatterns = []
     toBeReturned.methodBodies = []
@@ -57,13 +57,13 @@ class RosettaClassPrimitiveClass extends RosettaPrimitiveClasses
       if !message.isEmpty()
         console.log "evaluation " + indentation() + "this message to number should be empty? " + message.print()
       theContext.returned = @
-      rosettaContexts.pop()
+      flContexts.pop()
 
     return toBeReturned
     
 
-RClass = new RosettaClassPrimitiveClass()
+RClass = new  FLClassPrimitiveClass()
 
 
-class RosettaAnonymousClass extends RosettaPrimitiveClasses
+class  FLAnonymousClass extends  FLPrimitiveClasses
 

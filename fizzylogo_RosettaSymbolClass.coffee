@@ -1,8 +1,8 @@
-class RosettaSymbolClass extends RosettaAnonymousClass
+class  FLSymbolClass extends  FLAnonymousClass
   createNew: (value) ->
-    toBeReturned = new RosettaPrimitiveObjects()
+    toBeReturned = new  FLPrimitiveObjects()
     toBeReturned.value = value
-    toBeReturned.rosettaClass = RSymbol
+    toBeReturned.flClass = RSymbol
 
     toBeReturned.print = ->
       return @value
@@ -15,6 +15,6 @@ class RosettaSymbolClass extends RosettaAnonymousClass
 
     return toBeReturned
 
-RSymbol = new RosettaSymbolClass() # this is a class, an anonymous class
+RSymbol = new  FLSymbolClass() # this is a class, an anonymous class
 
 

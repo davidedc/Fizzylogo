@@ -1,7 +1,7 @@
-class RosettaWorkspaceClass extends RosettaAnonymousClass
+class  FLWorkspaceClass extends  FLAnonymousClass
   createNew: ->
-    toBeReturned = new RosettaPrimitiveObjects()
-    toBeReturned.rosettaClass = RWorkspace
+    toBeReturned = new  FLPrimitiveObjects()
+    toBeReturned.flClass = RWorkspace
 
     toBeReturned.evalMessage = (theContext) ->
       message = theContext.message
@@ -12,7 +12,7 @@ class RosettaWorkspaceClass extends RosettaAnonymousClass
       # note that "self" will remain the current one, since anything that
       # is in here will still refer to "self" as the current self in the
       # overall message.
-      [theValue, unusedRestOfMessage] = message.rosettaEval theContext
+      [theValue, unusedRestOfMessage] = message.flEval theContext
       theContext.returned = theValue
 
       console.log "evaluation " + indentation() + "end of workspace evaluation"
@@ -21,4 +21,4 @@ class RosettaWorkspaceClass extends RosettaAnonymousClass
 
 
 
-RWorkspace = new RosettaWorkspaceClass() # this is a class
+RWorkspace = new  FLWorkspaceClass() # this is a class

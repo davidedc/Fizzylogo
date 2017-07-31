@@ -19,7 +19,7 @@ RLiteralSymbol.evalMessage = (theContext) ->
     console.log "evaluation " + indentation() + "literal symbol evaluation returned " + theContext
     #console.dir theContext
 
-    rosettaContexts.pop()
+    flContexts.pop()
 
 
 RNewSymbol = RSymbol.createNew "new"

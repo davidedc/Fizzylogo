@@ -1,7 +1,7 @@
-class RosettaNotClass extends RosettaAnonymousClass
+class  FLNotClass extends  FLAnonymousClass
   createNew: ->
-    toBeReturned = new RosettaPrimitiveObjects()
-    toBeReturned.rosettaClass = RNot
+    toBeReturned = new  FLPrimitiveObjects()
+    toBeReturned.flClass = RNot
 
 
     toBeReturned.print = ->
@@ -35,18 +35,18 @@ class RosettaNotClass extends RosettaAnonymousClass
       if !message.isEmpty()
         console.log "evaluation " + indentation() + "this message to Not_object should be empty? " + message.print()
       theContext.returned = @
-      rosettaContexts.pop()
+      flContexts.pop()
 
     return toBeReturned
 
-RNot = new RosettaNotClass() # this is a class, an anonymous class
+RNot = new  FLNotClass() # this is a class, an anonymous class
 
 # --------------------------------------------------------------------------------
 
-class RosettaDoneClass extends RosettaAnonymousClass
+class  FLDoneClass extends  FLAnonymousClass
   createNew: ->
-    toBeReturned = new RosettaPrimitiveObjects()
-    toBeReturned.rosettaClass = RDone
+    toBeReturned = new  FLPrimitiveObjects()
+    toBeReturned.flClass = RDone
     toBeReturned.value = null
 
 
@@ -84,10 +84,10 @@ class RosettaDoneClass extends RosettaAnonymousClass
 
 
       theContext.returned = @
-      rosettaContexts.pop()
+      flContexts.pop()
       return theContext
 
     return toBeReturned
 
-RDone = new RosettaDoneClass() # this is a class, an anonymous class
+RDone = new  FLDoneClass() # this is a class, an anonymous class
 

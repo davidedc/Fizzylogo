@@ -1,7 +1,7 @@
-class RosettaRepeatClass extends RosettaAnonymousClass
+class  FLRepeatClass extends  FLAnonymousClass
   createNew: ->
-    toBeReturned = new RosettaPrimitiveObjects()
-    toBeReturned.rosettaClass = RRepeat
+    toBeReturned = new  FLPrimitiveObjects()
+    toBeReturned.flClass = RRepeat
 
 
     toBeReturned.print = ->
@@ -34,9 +34,9 @@ class RosettaRepeatClass extends RosettaAnonymousClass
         return returned
 
       theContext.returned = @
-      rosettaContexts.pop()
+      flContexts.pop()
 
     return toBeReturned
 
-RRepeat = new RosettaRepeatClass() # this is a class, an anonymous class
+RRepeat = new  FLRepeatClass() # this is a class, an anonymous class
 

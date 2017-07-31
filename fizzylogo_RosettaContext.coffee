@@ -1,7 +1,7 @@
-class RosettaContext
-  self: null # a RosettaObject
+class  FLContext
+  self: null # a  FLObject
   programCounter: 0 # an integer
-  message: null # a RosettaMessage, which is an RList and a cursor
+  message: null # a  FLMessage, which is an RList and a cursor
   tempVariablesDict: null # a JS dictionary
   previousContext: null
   returned: null
@@ -24,8 +24,8 @@ class RosettaContext
     #   then the class variables.
     #     if the class lists the atom in the class variables
     #       then the value resides in the class
-    # We always return a rosetta object (or a rosetta class
-    # , which is also a rosetta object)
+    # We always return a fizzylogo object (or a fizzylogo class
+    # , which is also a fizzylogo object)
 
     # check the temporaries
     contextBeingSearched = @
@@ -36,29 +36,29 @@ class RosettaContext
 
     while contextBeingSearched?
 
-      console.log "evaluation " + indentation() + "looking in class: " + contextBeingSearched.self.rosettaClass
-      #console.dir contextBeingSearched.self.rosettaClass
+      console.log "evaluation " + indentation() + "looking in class: " + contextBeingSearched.self.flClass
+      #console.dir contextBeingSearched.self.flClass
 
-      temps = contextBeingSearched.self.rosettaClass.tempVariables
+      temps = contextBeingSearched.self.flClass.tempVariables
       if temps?
         console.log "evaluation " + indentation() + "lookup: checking in " + temps
         if (temps.find (element) -> element.value == atomValue)
           console.log "evaluation " + indentation() + "lookup: found " + atomValue + " in tempVariables"
           return contextBeingSearched.tempVariablesDict
 
-      instances = contextBeingSearched.self.rosettaClass.instanceVariables
+      instances = contextBeingSearched.self.flClass.instanceVariables
       if instances?
         console.log "evaluation " + indentation() + "lookup: checking in " + instances.value
         if instances.value? and (instances.value.find (element) -> element.value == atomValue)
           console.log "evaluation " + indentation() + "lookup: found " + atomValue + " in instanceVariables"
           return contextBeingSearched.self.instanceVariablesDict
 
-      statics = contextBeingSearched.self.rosettaClass.classVariables
+      statics = contextBeingSearched.self.flClass.classVariables
       if statics?
         console.log "evaluation " + indentation() + "lookup: checking in " + statics.value
         if statics.value? and (statics.value.find (element) -> element.value == atomValue)
           console.log "evaluation " + indentation() + "lookup: found " + atomValue + " in classVariables"
-          return contextBeingSearched.self.rosettaClass.classVariablesDict
+          return contextBeingSearched.self.flClass.classVariablesDict
 
       # nothing found from this context, move up
       # to the sender (i.e. the callee)
@@ -72,12 +72,12 @@ class RosettaContext
     # workspace...
     if @self == rWorkspace
       console.log "evaluation " + indentation() + "lookup: creating " + atomValue + " as instance variable in top-most context"
-      @self.rosettaClass.instanceVariables.push RAtom.createNew atomValue
+      @self.flClass.instanceVariables.push RAtom.createNew atomValue
       return @self.instanceVariablesDict
     # otherwise, in any other context create it as a temp
     else
       console.log "evaluation " + indentation() + "lookup: creating " + atomValue + " as temp variable in current context"
-      @self.rosettaClass.tempVariables.push RAtom.createNew atomValue
+      @self.flClass.tempVariables.push RAtom.createNew atomValue
       return @tempVariablesDict
 
 
@@ -95,7 +95,7 @@ class RosettaContext
       encodedAtomValue = theAtom.value
 
     console.log "evaluation " + indentation() + "lookup: " + theAtom.value + " class is: "
-    console.dir dictWhereValueIs[encodedAtomValue].rosettaClass
+    console.dir dictWhereValueIs[encodedAtomValue].flClass
 
     return dictWhereValueIs[encodedAtomValue]
 

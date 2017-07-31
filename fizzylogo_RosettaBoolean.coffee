@@ -1,8 +1,8 @@
-class RosettaBooleanPrimitiveClass extends RosettaPrimitiveClasses
+class  FLBooleanPrimitiveClass extends  FLPrimitiveClasses
   createNew: (value) ->
-    toBeReturned = new RosettaPrimitiveObjects()
+    toBeReturned = new  FLPrimitiveObjects()
     toBeReturned.value = value
-    toBeReturned.rosettaClass = RBoolean
+    toBeReturned.flClass = RBoolean
 
 
     toBeReturned.print = ->
@@ -33,11 +33,11 @@ class RosettaBooleanPrimitiveClass extends RosettaPrimitiveClasses
             console.log "evaluation " + indentation() + "evalMessage in boolean returned: " + returned.returned.value
           return returned
 
-        console.log "evaluation " + indentation() + "evalMessage in boolean matched: " + @rosettaClass.methodBodies[anyMatch]
+        console.log "evaluation " + indentation() + "evalMessage in boolean matched: " + @flClass.methodBodies[anyMatch]
         console.log "evaluation " + indentation() + "boolean keeping evaluation because it got null result"
         console.log "evaluation " + indentation() + "...continuing, message is: " + message.print() + " and PC: " + returned.programCounter
         theContext.returned = @
-        rosettaContexts.pop()
+        flContexts.pop()
 
         if theContext.returned?.value?
           console.log "evaluation " + indentation() + "evalMessage in boolean returned: " + theContext.returned.value
@@ -62,7 +62,7 @@ class RosettaBooleanPrimitiveClass extends RosettaPrimitiveClasses
 
         console.log "evaluation " + indentation() + "  returned from message send: " + theContext
         #console.dir theContext
-        rosettaContexts.pop()
+        flContexts.pop()
 
         if theContext.returned?.value?
           console.log "evaluation " + indentation() + "evalMessage in boolean returned: " + theContext.returned.value
@@ -70,7 +70,7 @@ class RosettaBooleanPrimitiveClass extends RosettaPrimitiveClasses
         return theContext
 
       theContext.returned = @
-      rosettaContexts.pop()
+      flContexts.pop()
 
       if theContext.returned?.value?
         console.log "evaluation " + indentation() + "evalMessage in boolean returned: " + theContext.returned.value
@@ -80,5 +80,5 @@ class RosettaBooleanPrimitiveClass extends RosettaPrimitiveClasses
     return toBeReturned
     
 
-RBoolean = new RosettaBooleanPrimitiveClass()
+RBoolean = new  FLBooleanPrimitiveClass()
 

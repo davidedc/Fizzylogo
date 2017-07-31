@@ -1,5 +1,5 @@
 indentation = ->
-  return " ".repeat(rosettaContexts.length * 2)
+  return " ".repeat(flContexts.length * 2)
 
 # variation of base64, generates valid IDs from
 # an arbitrary string. This should be made

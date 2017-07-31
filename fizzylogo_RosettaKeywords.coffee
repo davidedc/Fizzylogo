@@ -1,8 +1,8 @@
-class RosettaKeywordClass extends RosettaPrimitiveClasses
+class  FLKeywordClass extends  FLPrimitiveClasses
   createNew: (theKeywordName) ->
-    toBeReturned = new RosettaPrimitiveObjects()
+    toBeReturned = new  FLPrimitiveObjects()
     toBeReturned.value = theKeywordName
-    toBeReturned.rosettaClass = RKeyword
+    toBeReturned.flClass = RKeyword
 
     toBeReturned.print = ->
       return @value
@@ -22,5 +22,5 @@ class RosettaKeywordClass extends RosettaPrimitiveClasses
 
     return toBeReturned
 
-RKeyword = new RosettaKeywordClass()
+RKeyword = new  FLKeywordClass()
 

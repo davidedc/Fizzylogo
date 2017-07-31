@@ -194,10 +194,10 @@ tests = [
   "@something<-3.something print",
   "3"
 
-  "@Stack<-Class new",
+  "@MyClass<-Class new",
   ""
 
-  "@Stack<-Class new.Stack answer(printtwo)by(self print).@myStack<-Stack new.myStack printtwo",
+  "@MyClass<-Class new.MyClass answer(printtwo)by(self print).@myObject<-MyClass new.myObject printtwo",
   "object_from_a_user_class"
 
   "@false<-true.false=>(1print)2print",
@@ -221,7 +221,7 @@ tests = [
 ]
 ###
 
-rosettaContexts = []
+flContexts = []
 environmentPrintout = ""
 rWorkspace = null
 
@@ -231,7 +231,7 @@ for i in [0...tests.length] by 2
     environmentPrintout = ""
     console.log "starting test: " + (i/2+1) + ": " + testBody
     
-    parsed = rosettaParse testBody
+    parsed = flParse testBody
 
     console.log parsed.value.length
     for eachParsedItem in parsed.value
@@ -242,10 +242,10 @@ for i in [0...tests.length] by 2
 
     # outer-most context
     parsed.isFromMessage = true
-    outerMostContext = new RosettaContext null, rWorkspace, parsed
-    rosettaContexts.push outerMostContext
+    outerMostContext = new  FLContext null, rWorkspace, parsed
+    flContexts.push outerMostContext
 
-    rWorkspace.rosettaClass.instanceVariables = RList.createNew()
+    rWorkspace.flClass.instanceVariables = RList.createNew()
     
     keywordsAndTheirInit = [
       "Class", RClass.createNew()
@@ -274,7 +274,7 @@ for i in [0...tests.length] by 2
 
     for keywords in [0...keywordsAndTheirInit.length] by 2
       [keyword, itsInitialisation] = keywordsAndTheirInit[keywords .. keywords + 1]
-      rWorkspace.rosettaClass.instanceVariables.push RKeyword.createNew keyword
+      rWorkspace.flClass.instanceVariables.push RKeyword.createNew keyword
       outerMostContext.self.instanceVariablesDict[ValidID.fromString keyword] = itsInitialisation
 
 

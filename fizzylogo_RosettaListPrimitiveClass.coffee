@@ -1,17 +1,17 @@
-class RosettaListPrimitiveClass extends RosettaPrimitiveClasses
+class  FLListPrimitiveClass extends  FLPrimitiveClasses
 
 
   # A note about messages, which are special lists.
-  # ...a rosetta message is just an RList which is meant to
+  # ...a fizzylogo message is just an RList which is meant to
   # be used as a message only, which means that:
   #    - its elements don't change
   #    - it can be split ( "." splits statements)
   #    - we can "consume" one or more elements
-  #    - we don't need messages to be rosetta objects,
+  #    - we don't need messages to be fizzylogo objects,
   #      they are part of the runtime and invisible to
   #      the user.
   #    - a message is never sent a message, because
-  #      a message is not a rosetta object
+  #      a message is not a fizzylogo object
   # so we try to make some of these operations more efficient
   # for messages, since all operations don't modify the elements
   # we can do splits and we can consume things just by moving
@@ -29,9 +29,9 @@ class RosettaListPrimitiveClass extends RosettaPrimitiveClasses
     return newMessage
 
   createNew: ->
-    toBeReturned = new RosettaPrimitiveObjects()
+    toBeReturned = new  FLPrimitiveObjects()
     toBeReturned.value = []
-    toBeReturned.rosettaClass = RList
+    toBeReturned.flClass = RList
 
 
     # these are only used for messages, which
@@ -116,7 +116,7 @@ class RosettaListPrimitiveClass extends RosettaPrimitiveClasses
             [newContext, restOfMessage] = receiver.progressWithMessage restOfMessage, theContext
             receiver = newContext.returned
 
-            rosettaContexts.pop()
+            flContexts.pop()
             console.log "evaluation " + indentation() + "list evaluation returned: " + receiver?.value
             #console.dir receiver
 
@@ -141,7 +141,7 @@ class RosettaListPrimitiveClass extends RosettaPrimitiveClasses
 
       console.log "evaluation " + indentation() + "list: theContext.returned: " + theContext.returned
       #console.dir theContext.returned
-      rosettaContexts.pop()
+      flContexts.pop()
       return theContext
 
 
@@ -162,7 +162,7 @@ class RosettaListPrimitiveClass extends RosettaPrimitiveClasses
     toBeReturned.evalFirstMessageElement = (theContext) ->
       firstElement = @firstElement()
       console.log "           " + indentation() + "evaling element " + firstElement.value
-      [evaledFirstElement, unused] = firstElement.rosettaEval theContext
+      [evaledFirstElement, unused] = firstElement.flEval theContext
       restOfMessage = @skipNextMessageElement theContext
       return [evaledFirstElement, restOfMessage]
 
@@ -227,6 +227,6 @@ class RosettaListPrimitiveClass extends RosettaPrimitiveClasses
     return toBeReturned
 
     
-RList = new RosettaListPrimitiveClass()
+RList = new  FLListPrimitiveClass()
 
 

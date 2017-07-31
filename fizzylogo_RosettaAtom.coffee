@@ -1,8 +1,8 @@
-class RosettaAtomClass extends RosettaPrimitiveClasses
+class  FLAtomClass extends  FLPrimitiveClasses
   createNew: (theAtomName) ->
-    toBeReturned = new RosettaPrimitiveObjects()
+    toBeReturned = new  FLPrimitiveObjects()
     toBeReturned.value = theAtomName
-    toBeReturned.rosettaClass = RAtom
+    toBeReturned.flClass = RAtom
 
     toBeReturned.print = ->
       return @value
@@ -34,5 +34,5 @@ class RosettaAtomClass extends RosettaPrimitiveClasses
 
     return toBeReturned
 
-RAtom = new RosettaAtomClass()
+RAtom = new  FLAtomClass()
 

@@ -1,9 +1,9 @@
-class RosettaNumberPrimitiveClass extends RosettaPrimitiveClasses
+class  FLNumberPrimitiveClass extends  FLPrimitiveClasses
 
   createNew: (value) ->
-    toBeReturned = new RosettaPrimitiveObjects()
+    toBeReturned = new  FLPrimitiveObjects()
     toBeReturned.value = parseFloat(value + "")
-    toBeReturned.rosettaClass = RNumber
+    toBeReturned.flClass = RNumber
 
     toBeReturned.print = ->
       return @value
@@ -30,10 +30,10 @@ class RosettaNumberPrimitiveClass extends RosettaPrimitiveClasses
       if !message.isEmpty()
         console.log "evaluation " + indentation() + "this message to number should be empty? " + message.print()
       theContext.returned = @
-      rosettaContexts.pop()
+      flContexts.pop()
 
     return toBeReturned
     
 
-RNumber = new RosettaNumberPrimitiveClass()
+RNumber = new  FLNumberPrimitiveClass()
 

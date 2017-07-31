@@ -1,4 +1,4 @@
-rosettaParse = (command) ->
+flParse = (command) ->
   listsStack = []
   outerList = RList.createNew()
   listsStack.push outerList

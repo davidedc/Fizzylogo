@@ -1,6 +1,6 @@
 
-class RosettaObjects
-  rosettaClass: null # the class it belongs to
+class  FLObjects
+  flClass: null # the class it belongs to
   instanceVariablesDict: null # a JS dictionary
 
   constructor: ->
@@ -22,11 +22,11 @@ class RosettaObjects
         console.log "evaluation " + indentation() + "  I am: " + @value
         console.log "evaluation " + indentation() + "  matching - my class patterns: "
 
-        for eachClassPattern in @rosettaClass.msgPatterns
+        for eachClassPattern in @flClass.msgPatterns
           console.log "evaluation " + indentation() + eachClassPattern.print()
 
 
-        for eachSignature in @rosettaClass.msgPatterns
+        for eachSignature in @flClass.msgPatterns
           #console.log "evaluation " + indentation() + "  matching - checking if this signature matches: " + eachSignature.print() + " PC: " + theContext.programCounter
           method = methodInvocationToBeChecked
           countSignaturePosition++
@@ -51,16 +51,16 @@ class RosettaObjects
             # an atom or an RList containing one parameter (with
             # prepended "@" in case the parameter doesn't require
             # evaluation)
-            if eachElementOfSignature.rosettaClass == RAtom or eachElementOfSignature.rosettaClass == RSymbol
+            if eachElementOfSignature.flClass == RAtom or eachElementOfSignature.flClass == RSymbol
               # if the signature contains an atom, the message
               # must contain the same atom, otherwise we don't
               # have a match.
 
               [eachElementOfInvocation, method] = method.nextElement()
 
-              if eachElementOfInvocation.rosettaClass == RAtom or eachElementOfInvocation.rosettaClass == RSymbol
+              if eachElementOfInvocation.flClass == RAtom or eachElementOfInvocation.flClass == RSymbol
 
-                #console.log "evaluation " + indentation() + "  matching atoms: - next signature piece: " + eachElementOfSignature.print() + " is atom: " + (eachElementOfSignature.rosettaClass == RAtom) + " with: " + eachElementOfInvocation.print() + " PC: " + theContext.programCounter
+                #console.log "evaluation " + indentation() + "  matching atoms: - next signature piece: " + eachElementOfSignature.print() + " is atom: " + (eachElementOfSignature.flClass == RAtom) + " with: " + eachElementOfInvocation.print() + " PC: " + theContext.programCounter
 
                 # ok at least the message contains an atom, but
                 # now we have to check that they spell the same
@@ -99,20 +99,20 @@ class RosettaObjects
                 # run the evaluation as long as it takes us,
                 # until things "chain" with messages they
                 # understand.
-                if method.firstElement().rosettaClass == RList
+                if method.firstElement().flClass == RList
                   [valueToBeBound, method] = method.evalFirstMessageElement theContext
                 else
-                  [valueToBeBound, method] = method.rosettaEval theContext
+                  [valueToBeBound, method] = method.flEval theContext
               else
                 console.log "evaluation " + indentation() + "  matching - need to get next msg element from invocation: " + method.print() + " and bind to: " + paramAtom.print() + " PC: " + theContext.programCounter
                 [valueToBeBound, method] = method.nextElement()
               
               console.log "evaluation " + indentation() + "  matching - adding paramater " + paramAtom.print() + " to tempVariables into this class: "
-              #console.dir theContext.self.rosettaClass
+              #console.dir theContext.self.flClass
               # TODO we should insert without repetition
-              if !theContext.self.rosettaClass.tempVariables?
-                theContext.self.rosettaClass.tempVariables = []
-              theContext.self.rosettaClass.tempVariables.push paramAtom
+              if !theContext.self.flClass.tempVariables?
+                theContext.self.flClass.tempVariables = []
+              theContext.self.flClass.tempVariables.push paramAtom
               theContext.tempVariablesDict[ValidID.fromString paramAtom.value] = valueToBeBound
               # ok we matched a paramenter, now let's keep matching further
               # parts of the signature
@@ -155,7 +155,7 @@ class RosettaObjects
     # while we matched the correct method, which we account for
     # when we do the matching, not here after the matching happened.
     
-    if methodBody.rosettaClass == RList
+    if methodBody.flClass == RList
       console.log "evaluation " + indentation() + "  matching - method body: " + methodBody.print()
       # non-native method, i.e. further fizzylogo code
       # creates a context and evals the message in it
@@ -163,17 +163,17 @@ class RosettaObjects
       # be run, no remains from the message body should overspill
       # into the calling context. 
 
-      newContext = new RosettaContext theContext, newSelf, methodBody
-      rosettaContexts.push newContext
-      [ignored1, ignore2, contextToBeReturned] = methodBody.rosettaEval newContext
-      rosettaContexts.pop()
+      newContext = new  FLContext theContext, newSelf, methodBody
+      flContexts.push newContext
+      [ignored1, ignore2, contextToBeReturned] = methodBody.flEval newContext
+      flContexts.pop()
       return contextToBeReturned
 
     else
       console.log "evaluation " + indentation() + "  matching - NATIVE method body: " + methodBody
       # native method, i.e. coffeescript/javascript code
       theContext.returned = methodBody.call newSelf, theContext
-      #rosettaContexts.pop()
+      #flContexts.pop()
     return theContext
 
 
@@ -184,12 +184,12 @@ class RosettaObjects
   # is not a method call, this is progressing within
   # an existing call
   progressWithMessage: (message, theContext) ->
-    newContext = new RosettaContext theContext, theContext.self, message
-    rosettaContexts.push newContext
+    newContext = new  FLContext theContext, theContext.self, message
+    flContexts.push newContext
     toBeReturned = @evalMessage newContext
     console.log "evaluation " + indentation() + "  progressWithMessage - evalMessage returned: " + toBeReturned
     #console.dir toBeReturned
-    rosettaContexts.pop()
+    flContexts.pop()
     theContext.programCounter += newContext.programCounter
     message = message.advanceMessageBy newContext.programCounter
     console.log "evaluation " + indentation() + "  progressWithMessage - returned: " + toBeReturned
@@ -197,9 +197,9 @@ class RosettaObjects
     return [toBeReturned, message]
 
   lookupAndSendFoundMessage: (theContext, countSignaturePosition) ->
-    console.log "evaluation " + indentation() + "  matching - found a matching signature: " + @rosettaClass.msgPatterns[countSignaturePosition].print() + " , PC: " + theContext.programCounter
+    console.log "evaluation " + indentation() + "  matching - found a matching signature: " + @flClass.msgPatterns[countSignaturePosition].print() + " , PC: " + theContext.programCounter
     # we have a matching signature!
-    methodBody = @rosettaClass.methodBodies[countSignaturePosition]
+    methodBody = @flClass.methodBodies[countSignaturePosition]
     console.log "evaluation " + indentation() + "  matching - method body: " + methodBody
 
 
@@ -212,13 +212,13 @@ class RosettaObjects
 
   # You eval things just by sending them the empty message.
   # Note that if you invoke this on a list, the whole list is evaluated.
-  rosettaEval: (theContext) ->
+  flEval: (theContext) ->
     console.log "           " + indentation() + "evaling: " + @print()
     message = @
     [newContext, unusedRestOfMessage] = @progressWithMessage RList.emptyMessage(), theContext
-    if @rosettaClass == RList
+    if @flClass == RList
       message = @advanceMessageBy newContext.programCounter
     return [newContext.returned, message, newContext]
 
 
-class RosettaPrimitiveObjects extends RosettaObjects
+class  FLPrimitiveObjects extends  FLObjects
