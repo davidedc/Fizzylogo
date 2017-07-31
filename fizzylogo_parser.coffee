@@ -4,6 +4,19 @@ rosettaParse = (command) ->
   listsStack.push outerList
   currentList = outerList
 
+  # let's normalise the input string so we can
+  # tokenise it just by looking at the spaces.
+  console.log "command before replacements: " + command
+  command = command.replace /\(/g, " ( "
+  command = command.replace /\)/g, " ) "
+  command = command.replace /([$A-Za-z_][0-9a-zA-Z_$]*)/g, " $1 "
+  command = command.replace /([^$A-Za-z_])([0-9]*)/g, " $1 $2 "
+  command = command.replace /@/g, " @ "
+  command = command.replace /[ ]+/g, " "
+  command = command.replace /^[ ]+/g, ""
+  command = command.replace /[ ]+$/g, ""
+  console.log "command after replacements: " + command
+
   simpleTokenization = command.split(" ")
   for eachToken in simpleTokenization
     console.log "eachToken: " + eachToken
