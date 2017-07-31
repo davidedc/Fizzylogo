@@ -274,7 +274,7 @@ for i in [0...tests.length] by 2
 
     for keywords in [0...keywordsAndTheirInit.length] by 2
       [keyword, itsInitialisation] = keywordsAndTheirInit[keywords .. keywords + 1]
-      rWorkspace.flClass.instanceVariables.push FLKeyword.createNew keyword
+      rWorkspace.flClass.instanceVariables.push FLAtom.createNew keyword
       outerMostContext.self.instanceVariablesDict[ValidID.fromString keyword] = itsInitialisation
 
 
