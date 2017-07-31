@@ -48,19 +48,19 @@ class  FLObjects
 
             
             # the element of a signature can only be of two kinds:
-            # an atom or an RList containing one parameter (with
+            # an atom or an FLList containing one parameter (with
             # prepended "@" in case the parameter doesn't require
             # evaluation)
-            if eachElementOfSignature.flClass == RAtom or eachElementOfSignature.flClass == RSymbol
+            if eachElementOfSignature.flClass == FLAtom or eachElementOfSignature.flClass == FLSymbol
               # if the signature contains an atom, the message
               # must contain the same atom, otherwise we don't
               # have a match.
 
               [eachElementOfInvocation, method] = method.nextElement()
 
-              if eachElementOfInvocation.flClass == RAtom or eachElementOfInvocation.flClass == RSymbol
+              if eachElementOfInvocation.flClass == FLAtom or eachElementOfInvocation.flClass == FLSymbol
 
-                #console.log "evaluation " + indentation() + "  matching atoms: - next signature piece: " + eachElementOfSignature.print() + " is atom: " + (eachElementOfSignature.flClass == RAtom) + " with: " + eachElementOfInvocation.print() + " PC: " + theContext.programCounter
+                #console.log "evaluation " + indentation() + "  matching atoms: - next signature piece: " + eachElementOfSignature.print() + " is atom: " + (eachElementOfSignature.flClass == FLAtom) + " with: " + eachElementOfInvocation.print() + " PC: " + theContext.programCounter
 
                 # ok at least the message contains an atom, but
                 # now we have to check that they spell the same
@@ -99,7 +99,7 @@ class  FLObjects
                 # run the evaluation as long as it takes us,
                 # until things "chain" with messages they
                 # understand.
-                if method.firstElement().flClass == RList
+                if method.firstElement().flClass == FLList
                   [valueToBeBound, method] = method.evalFirstMessageElement theContext
                 else
                   [valueToBeBound, method] = method.flEval theContext
@@ -155,7 +155,7 @@ class  FLObjects
     # while we matched the correct method, which we account for
     # when we do the matching, not here after the matching happened.
     
-    if methodBody.flClass == RList
+    if methodBody.flClass == FLList
       console.log "evaluation " + indentation() + "  matching - method body: " + methodBody.print()
       # non-native method, i.e. further fizzylogo code
       # creates a context and evals the message in it
@@ -215,8 +215,8 @@ class  FLObjects
   flEval: (theContext) ->
     console.log "           " + indentation() + "evaling: " + @print()
     message = @
-    [newContext, unusedRestOfMessage] = @progressWithMessage RList.emptyMessage(), theContext
-    if @flClass == RList
+    [newContext, unusedRestOfMessage] = @progressWithMessage FLList.emptyMessage(), theContext
+    if @flClass == FLList
       message = @advanceMessageBy newContext.programCounter
     return [newContext.returned, message, newContext]
 

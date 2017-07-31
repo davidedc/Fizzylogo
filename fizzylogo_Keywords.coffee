@@ -2,7 +2,7 @@ class  FLKeywordClass extends  FLPrimitiveClasses
   createNew: (theKeywordName) ->
     toBeReturned = new  FLPrimitiveObjects()
     toBeReturned.value = theKeywordName
-    toBeReturned.flClass = RKeyword
+    toBeReturned.flClass = FLKeyword
 
     toBeReturned.print = ->
       return @value
@@ -22,5 +22,5 @@ class  FLKeywordClass extends  FLPrimitiveClasses
 
     return toBeReturned
 
-RKeyword = new  FLKeywordClass()
+FLKeyword = new  FLKeywordClass()
 

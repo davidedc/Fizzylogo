@@ -12,13 +12,13 @@ printFunction = (context) ->
 
 # Atom ---------------------------------------------------------------------------
 
-RAtom = new  FLAtomClass()
+FLAtom = new  FLAtomClass()
 
-RAtom.msgPatterns.push flParse "print"
-RAtom.methodBodies.push printFunction
+FLAtom.msgPatterns.push flParse "print"
+FLAtom.methodBodies.push printFunction
 
-RAtom.msgPatterns.push flParse "<- ( valueToAssign )"
-RAtom.methodBodies.push (context) ->
+FLAtom.msgPatterns.push flParse "<- ( valueToAssign )"
+FLAtom.methodBodies.push (context) ->
   valueToAssign = context.tempVariablesDict[ValidID.fromString "valueToAssign"]
 
   theAtomName = @value
@@ -34,17 +34,17 @@ RAtom.methodBodies.push (context) ->
 
 # Class -------------------------------------------------------------------------
 
-RClass.msgPatterns.push flParse "print"
-RClass.methodBodies.push (context) ->
+FLClass.msgPatterns.push flParse "print"
+FLClass.methodBodies.push (context) ->
   console.log "///////// program printout: " + "Class object!"
   environmentPrintout += "Class_object"
   return @
 
-RClass.msgPatterns.push flParse "new"
-RClass.methodBodies.push (context) ->
+FLClass.msgPatterns.push flParse "new"
+FLClass.methodBodies.push (context) ->
   console.log "///////// creating a new class for the user!"
 
-  newUserClass = RUserClass.createNew()
+  newUserClass = FLUserClass.createNew()
 
   newUserClass.msgPatterns.push flParse "print"
   newUserClass.methodBodies.push printFunction
@@ -72,140 +72,140 @@ RClass.methodBodies.push (context) ->
 
 # Number -------------------------------------------------------------------------
 
-RNumber.msgPatterns.push flParse "anotherPrint"
-RNumber.methodBodies.push flParse "self print"
+FLNumber.msgPatterns.push flParse "anotherPrint"
+FLNumber.methodBodies.push flParse "self print"
 
-RNumber.msgPatterns.push flParse "doublePrint"
-RNumber.methodBodies.push flParse "self print print"
+FLNumber.msgPatterns.push flParse "doublePrint"
+FLNumber.methodBodies.push flParse "self print print"
 
-RNumber.msgPatterns.push flParse "increment"
-RNumber.methodBodies.push flParse "@ self <- self plus 1"
+FLNumber.msgPatterns.push flParse "increment"
+FLNumber.methodBodies.push flParse "@ self <- self plus 1"
 
-RNumber.msgPatterns.push flParse "factorial"
-RNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) ( self minus 1 ) factorial times self"
+FLNumber.msgPatterns.push flParse "factorial"
+FLNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) ( self minus 1 ) factorial times self"
 
-RNumber.msgPatterns.push flParse "factorialtwo"
-RNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) self times ( ( self minus 1 ) factorial )"
+FLNumber.msgPatterns.push flParse "factorialtwo"
+FLNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) self times ( ( self minus 1 ) factorial )"
 
-RNumber.msgPatterns.push flParse "amIZero"
-RNumber.methodBodies.push flParse "self == 0"
+FLNumber.msgPatterns.push flParse "amIZero"
+FLNumber.methodBodies.push flParse "self == 0"
 
-RNumber.msgPatterns.push flParse "printAFromDeeperCall"
-RNumber.methodBodies.push flParse "a print"
+FLNumber.msgPatterns.push flParse "printAFromDeeperCall"
+FLNumber.methodBodies.push flParse "a print"
 
-RNumber.msgPatterns.push flParse "print"
-RNumber.methodBodies.push printFunction
+FLNumber.msgPatterns.push flParse "print"
+FLNumber.methodBodies.push printFunction
 
-RNumber.msgPatterns.push flParse "plus ( operandum )"
-RNumber.methodBodies.push (context) ->
+FLNumber.msgPatterns.push flParse "plus ( operandum )"
+FLNumber.methodBodies.push (context) ->
   operandum = context.tempVariablesDict[ValidID.fromString "operandum"]
-  return RNumber.createNew @value + operandum.value
+  return FLNumber.createNew @value + operandum.value
 
-RNumber.msgPatterns.push flParse "minus ( operandum )"
-RNumber.methodBodies.push (context) ->
+FLNumber.msgPatterns.push flParse "minus ( operandum )"
+FLNumber.methodBodies.push (context) ->
   operandum = context.tempVariablesDict[ValidID.fromString "operandum"]
-  return RNumber.createNew @value - operandum.value
+  return FLNumber.createNew @value - operandum.value
 
-RNumber.msgPatterns.push flParse "selftimesminusone"
-RNumber.methodBodies.push flParse "self times self minus 1"
+FLNumber.msgPatterns.push flParse "selftimesminusone"
+FLNumber.methodBodies.push flParse "self times self minus 1"
 
-RNumber.msgPatterns.push flParse "times ( operandum )"
-RNumber.methodBodies.push (context) ->
+FLNumber.msgPatterns.push flParse "times ( operandum )"
+FLNumber.methodBodies.push (context) ->
   operandum = context.tempVariablesDict[ValidID.fromString "operandum"]
   console.log "evaluation " + indentation() + "multiplying " + @value + " to " + operandum.value  
-  return RNumber.createNew @value * operandum.value
+  return FLNumber.createNew @value * operandum.value
 
 
-RNumber.msgPatterns.push flParse "== ( tocampare )"
-RNumber.methodBodies.push (context) ->
+FLNumber.msgPatterns.push flParse "== ( tocampare )"
+FLNumber.methodBodies.push (context) ->
   tocampare = context.tempVariablesDict[ValidID.fromString "tocampare"]
   if @value == tocampare.value
-    return RBoolean.createNew true
+    return FLBoolean.createNew true
   else
-    return RBoolean.createNew false
+    return FLBoolean.createNew false
 
 
-RNumber.msgPatterns.push flParse "something ( param )"
-RNumber.msgPatterns.push flParse "somethingElse ( @ param )"
+FLNumber.msgPatterns.push flParse "something ( param )"
+FLNumber.msgPatterns.push flParse "somethingElse ( @ param )"
 
 # Boolean -------------------------------------------------------------------------
 
-RBoolean.msgPatterns.push flParse "negate"
-RBoolean.methodBodies.push (context) ->
-  return RBoolean.createNew !@value
+FLBoolean.msgPatterns.push flParse "negate"
+FLBoolean.methodBodies.push (context) ->
+  return FLBoolean.createNew !@value
 
-RBoolean.msgPatterns.push flParse "print"
-RBoolean.methodBodies.push printFunction
+FLBoolean.msgPatterns.push flParse "print"
+FLBoolean.methodBodies.push printFunction
 
-RBoolean.msgPatterns.push flParse "and ( operandum )"
-RBoolean.methodBodies.push (context) ->
+FLBoolean.msgPatterns.push flParse "and ( operandum )"
+FLBoolean.methodBodies.push (context) ->
   operandum = context.tempVariablesDict[ValidID.fromString "operandum"]
-  return RBoolean.createNew @value and operandum.value
+  return FLBoolean.createNew @value and operandum.value
 
-RBoolean.msgPatterns.push flParse "=> ( @ trueBranch )"
-RBoolean.methodBodies.push (context) ->
+FLBoolean.msgPatterns.push flParse "=> ( @ trueBranch )"
+FLBoolean.methodBodies.push (context) ->
   trueBranch = context.tempVariablesDict[ValidID.fromString "trueBranch"]
-  console.log "RBoolean => , predicate value is: " + @value
+  console.log "FLBoolean => , predicate value is: " + @value
 
   if @value
-    newContext = new  FLContext context, @, RList.emptyMessage()
+    newContext = new  FLContext context, @, FLList.emptyMessage()
     flContexts.push newContext
     [toBeReturned, unused2] = trueBranch.flEval newContext
     flContexts.pop()
 
-    console.log "RBoolean => returning result of true branch: " + toBeReturned
-    console.log "RBoolean => remaining message after true branch: " + context.message.print()
-    console.log "RBoolean => ...with PC:  " + context.programCounter
-    console.log "RBoolean => message length:  " + context.message.length()
+    console.log "FLBoolean => returning result of true branch: " + toBeReturned
+    console.log "FLBoolean => remaining message after true branch: " + context.message.print()
+    console.log "FLBoolean => ...with PC:  " + context.programCounter
+    console.log "FLBoolean => message length:  " + context.message.length()
 
     context.programCounter = context.message.length()
 
 
     return toBeReturned
-  console.log "RBoolean => returning null"
+  console.log "FLBoolean => returning null"
   return null
 
-RBoolean.msgPatterns.push flParse "or ( operandum )"
-RBoolean.methodBodies.push (context) ->
+FLBoolean.msgPatterns.push flParse "or ( operandum )"
+FLBoolean.methodBodies.push (context) ->
   console.log "executing an or! "
   operandum = context.tempVariablesDict[ValidID.fromString "operandum"]
-  return RBoolean.createNew @value or operandum.value
+  return FLBoolean.createNew @value or operandum.value
 
 # Not --------------------------------------------------------------------------
-RNot.msgPatterns.push flParse "( operandum )"
-RNot.methodBodies.push flParse "operandum negate"
+FLNot.msgPatterns.push flParse "( operandum )"
+FLNot.methodBodies.push flParse "operandum negate"
 
 # List -------------------------------------------------------------------------
 
-RList.msgPatterns.push flParse "print"
-RList.methodBodies.push (context) ->
+FLList.msgPatterns.push flParse "print"
+FLList.methodBodies.push (context) ->
   console.log "///////// program printout: " + @print()
   environmentPrintout += @print()
   return context
 
 
-RList.msgPatterns.push flParse "eval"
-RList.methodBodies.push (context) ->
+FLList.msgPatterns.push flParse "eval"
+FLList.methodBodies.push (context) ->
 
-  newContext = new  FLContext context, @, RList.emptyMessage()
+  newContext = new  FLContext context, @, FLList.emptyMessage()
   flContexts.push newContext
   [toBeReturned, unused2] = @flEval newContext
   flContexts.pop()
 
-  console.log "RList.eval: unused2: " + unused2.print()
+  console.log "FLList.eval: unused2: " + unused2.print()
   return toBeReturned
 
 # Done -------------------------------------------------------------------------
 
-RDone.msgPatterns.push flParse "print"
-RDone.methodBodies.push (context) ->
+FLDone.msgPatterns.push flParse "print"
+FLDone.methodBodies.push (context) ->
   console.log "///////// program printout: " + "Done_object"
   environmentPrintout += "Done_object"
   return @
 
 
-RDone.msgPatterns.push flParse "with ( valueToReturn )"
-RDone.methodBodies.push (context) ->
+FLDone.msgPatterns.push flParse "with ( valueToReturn )"
+FLDone.methodBodies.push (context) ->
   valueToReturn = context.tempVariablesDict[ValidID.fromString "valueToReturn"]
   @value = valueToReturn
   return @
@@ -213,16 +213,16 @@ RDone.methodBodies.push (context) ->
 
 # Repeat -------------------------------------------------------------------------
 
-RRepeat.msgPatterns.push flParse "print"
-RRepeat.methodBodies.push printFunction
+FLRepeat.msgPatterns.push flParse "print"
+FLRepeat.methodBodies.push printFunction
 
-RRepeat.msgPatterns.push flParse "( @ loopCode )"
-RRepeat.methodBodies.push (context) ->
+FLRepeat.msgPatterns.push flParse "( @ loopCode )"
+FLRepeat.methodBodies.push (context) ->
   loopCode = context.tempVariablesDict[ValidID.fromString "loopCode"]
-  console.log "RRepeat => , loop code is: " + loopCode.print()
+  console.log "FLRepeat => , loop code is: " + loopCode.print()
 
   while true
-    newContext = new  FLContext context, @, RList.emptyMessage()
+    newContext = new  FLContext context, @, FLList.emptyMessage()
     flContexts.push newContext
     [toBeReturned, unused2] = loopCode.flEval newContext
     flContexts.pop()
@@ -237,7 +237,7 @@ RRepeat.methodBodies.push (context) ->
     console.log "Repeat => did I receive a Done? " + (if toBeReturned?.flClass ==  FLDoneClass then "yes" else "no")
 
     if toBeReturned?
-      if toBeReturned.flClass == RDone
+      if toBeReturned.flClass == FLDone
         if toBeReturned.value?
           toBeReturned = toBeReturned.value
         console.log "Repeat => the loop exited with Done "

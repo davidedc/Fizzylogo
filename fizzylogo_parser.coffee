@@ -1,6 +1,6 @@
 flParse = (command) ->
   listsStack = []
-  outerList = RList.createNew()
+  outerList = FLList.createNew()
   listsStack.push outerList
   currentList = outerList
 
@@ -26,9 +26,9 @@ flParse = (command) ->
       currentList.push RStatementSeparatorSymbol
     else if /^\d+$/.test(eachToken)
       console.log eachToken + " is a Number"
-      currentList.push (RNumber.createNew eachToken)
+      currentList.push (FLNumber.createNew eachToken)
     else if /^\($/.test(eachToken)
-      nestedList = RList.createNew()
+      nestedList = FLList.createNew()
       currentList.push nestedList
       listsStack.push currentList
       currentList = nestedList
@@ -36,7 +36,7 @@ flParse = (command) ->
       currentList = listsStack.pop()
     else
       console.log eachToken + " is something else"
-      currentList.push RAtom.createNew eachToken
+      currentList.push FLAtom.createNew eachToken
 
   return outerList
 

@@ -3,7 +3,7 @@
 # Literals are things that don't have value, just
 # some sort of role.
 
-RLiteralSymbol = RSymbol.createNew "@"
+RLiteralSymbol = FLSymbol.createNew "@"
 # the signature is: @ (@x), so this consumes only one token
 # example: @x returns the Atom X
 RLiteralSymbol.evalMessage = (theContext) ->
@@ -22,16 +22,16 @@ RLiteralSymbol.evalMessage = (theContext) ->
     flContexts.pop()
 
 
-RNewSymbol = RSymbol.createNew "new"
-RAssignmentSymbol = RSymbol.createNew "<-"
-RStatementSeparatorSymbol = RSymbol.createNew "."
+RNewSymbol = FLSymbol.createNew "new"
+RAssignmentSymbol = FLSymbol.createNew "<-"
+RStatementSeparatorSymbol = FLSymbol.createNew "."
 
-REqualityOperatorSymbol = RSymbol.createNew "=="
-RInequalityOperatorSymbol = RSymbol.createNew "!="
-RLessThanOperatorSymbol = RSymbol.createNew "<"
-RLessOrEqualThanOperatorSymbol = RSymbol.createNew "<="
-RMoreThanOperatorSymbol = RSymbol.createNew ">"
-RMoreOrEqualThanOperatorSymbol = RSymbol.createNew ">="
-RConditionalArrowSymbol = RSymbol.createNew "=>"
+REqualityOperatorSymbol = FLSymbol.createNew "=="
+RInequalityOperatorSymbol = FLSymbol.createNew "!="
+RLessThanOperatorSymbol = FLSymbol.createNew "<"
+RLessOrEqualThanOperatorSymbol = FLSymbol.createNew "<="
+RMoreThanOperatorSymbol = FLSymbol.createNew ">"
+RMoreOrEqualThanOperatorSymbol = FLSymbol.createNew ">="
+RConditionalArrowSymbol = FLSymbol.createNew "=>"
 
 

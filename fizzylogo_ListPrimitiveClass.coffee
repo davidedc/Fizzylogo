@@ -2,7 +2,7 @@ class  FLListPrimitiveClass extends  FLPrimitiveClasses
 
 
   # A note about messages, which are special lists.
-  # ...a fizzylogo message is just an RList which is meant to
+  # ...a fizzylogo message is just an FLList which is meant to
   # be used as a message only, which means that:
   #    - its elements don't change
   #    - it can be split ( "." splits statements)
@@ -24,14 +24,14 @@ class  FLListPrimitiveClass extends  FLPrimitiveClasses
   # operation, so we say no to that.
 
   emptyMessage: ->
-    newMessage = RList.createNew()
+    newMessage = FLList.createNew()
     newMessage.isFromMessage = true
     return newMessage
 
   createNew: ->
     toBeReturned = new  FLPrimitiveObjects()
     toBeReturned.value = []
-    toBeReturned.flClass = RList
+    toBeReturned.flClass = FLList
 
 
     # these are only used for messages, which
@@ -55,7 +55,7 @@ class  FLListPrimitiveClass extends  FLPrimitiveClasses
 
     toBeReturned.push = (theItemToPush) ->
       if @isFromMessage
-        throw "RList deriving from a message should never be modified"
+        throw "FLList deriving from a message should never be modified"
       @value.push theItemToPush
       @cursorEnd++
 
@@ -178,7 +178,7 @@ class  FLListPrimitiveClass extends  FLPrimitiveClasses
     toBeReturned.advanceMessageBy = (numberOfElements) ->
       
       #if numberOfElements > @length()
-      #  return RList.emptyMessage()
+      #  return FLList.emptyMessage()
 
       copy = @copy()
       copy.cursorStart += numberOfElements
@@ -188,7 +188,7 @@ class  FLListPrimitiveClass extends  FLPrimitiveClasses
       return @length() <= 0
 
     toBeReturned.copy = ->
-      copy = RList.createNew()
+      copy = FLList.createNew()
       copy.value = @value
       copy.cursorStart = @cursorStart
       copy.cursorEnd = @cursorEnd
@@ -227,6 +227,6 @@ class  FLListPrimitiveClass extends  FLPrimitiveClasses
     return toBeReturned
 
     
-RList = new  FLListPrimitiveClass()
+FLList = new  FLListPrimitiveClass()
 
 

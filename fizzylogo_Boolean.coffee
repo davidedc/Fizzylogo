@@ -2,7 +2,7 @@ class  FLBooleanPrimitiveClass extends  FLPrimitiveClasses
   createNew: (value) ->
     toBeReturned = new  FLPrimitiveObjects()
     toBeReturned.value = value
-    toBeReturned.flClass = RBoolean
+    toBeReturned.flClass = FLBoolean
 
 
     toBeReturned.print = ->
@@ -80,5 +80,5 @@ class  FLBooleanPrimitiveClass extends  FLPrimitiveClasses
     return toBeReturned
     
 
-RBoolean = new  FLBooleanPrimitiveClass()
+FLBoolean = new  FLBooleanPrimitiveClass()
 

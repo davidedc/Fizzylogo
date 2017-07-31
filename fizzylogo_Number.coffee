@@ -3,7 +3,7 @@ class  FLNumberPrimitiveClass extends  FLPrimitiveClasses
   createNew: (value) ->
     toBeReturned = new  FLPrimitiveObjects()
     toBeReturned.value = parseFloat(value + "")
-    toBeReturned.flClass = RNumber
+    toBeReturned.flClass = FLNumber
 
     toBeReturned.print = ->
       return @value
@@ -35,5 +35,5 @@ class  FLNumberPrimitiveClass extends  FLPrimitiveClasses
     return toBeReturned
     
 
-RNumber = new  FLNumberPrimitiveClass()
+FLNumber = new  FLNumberPrimitiveClass()
 

@@ -237,7 +237,7 @@ for i in [0...tests.length] by 2
     for eachParsedItem in parsed.value
       console.log eachParsedItem.value
 
-    rWorkspace = RWorkspace.createNew()
+    rWorkspace = FLWorkspace.createNew()
 
 
     # outer-most context
@@ -245,17 +245,17 @@ for i in [0...tests.length] by 2
     outerMostContext = new  FLContext null, rWorkspace, parsed
     flContexts.push outerMostContext
 
-    rWorkspace.flClass.instanceVariables = RList.createNew()
+    rWorkspace.flClass.instanceVariables = FLList.createNew()
     
     keywordsAndTheirInit = [
-      "Class", RClass.createNew()
+      "Class", FLClass.createNew()
 
-      "not", RNot.createNew()
-      "true", RBoolean.createNew true
-      "false", RBoolean.createNew false
+      "not", FLNot.createNew()
+      "true", FLBoolean.createNew true
+      "false", FLBoolean.createNew false
 
-      "repeat", RRepeat.createNew()
-      "done", RDone.createNew()
+      "repeat", FLRepeat.createNew()
+      "done", FLDone.createNew()
 
       "<-", RAssignmentSymbol
 
@@ -274,7 +274,7 @@ for i in [0...tests.length] by 2
 
     for keywords in [0...keywordsAndTheirInit.length] by 2
       [keyword, itsInitialisation] = keywordsAndTheirInit[keywords .. keywords + 1]
-      rWorkspace.flClass.instanceVariables.push RKeyword.createNew keyword
+      rWorkspace.flClass.instanceVariables.push FLKeyword.createNew keyword
       outerMostContext.self.instanceVariablesDict[ValidID.fromString keyword] = itsInitialisation
 
 

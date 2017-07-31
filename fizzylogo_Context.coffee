@@ -1,7 +1,7 @@
 class  FLContext
   self: null # a  FLObject
   programCounter: 0 # an integer
-  message: null # a  FLMessage, which is an RList and a cursor
+  message: null # a  FLMessage, which is an FLList and a cursor
   tempVariablesDict: null # a JS dictionary
   previousContext: null
   returned: null
@@ -72,12 +72,12 @@ class  FLContext
     # workspace...
     if @self == rWorkspace
       console.log "evaluation " + indentation() + "lookup: creating " + atomValue + " as instance variable in top-most context"
-      @self.flClass.instanceVariables.push RAtom.createNew atomValue
+      @self.flClass.instanceVariables.push FLAtom.createNew atomValue
       return @self.instanceVariablesDict
     # otherwise, in any other context create it as a temp
     else
       console.log "evaluation " + indentation() + "lookup: creating " + atomValue + " as temp variable in current context"
-      @self.flClass.tempVariables.push RAtom.createNew atomValue
+      @self.flClass.tempVariables.push FLAtom.createNew atomValue
       return @tempVariablesDict
 
 

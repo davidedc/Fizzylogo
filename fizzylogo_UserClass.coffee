@@ -67,5 +67,5 @@ class  FLNonPrimitiveClass extends  FLClasses
 
     return toBeReturned
 
-RUserClass = new  FLNonPrimitiveClass()
+FLUserClass = new  FLNonPrimitiveClass()
 

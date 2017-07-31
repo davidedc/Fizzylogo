@@ -29,7 +29,7 @@ class  FLClassPrimitiveClass extends  FLPrimitiveClasses
 
   createNew: ->
     toBeReturned = new  FLPrimitiveClasses()
-    toBeReturned.flClass = RClass
+    toBeReturned.flClass = FLClass
     toBeReturned.classVariablesDict = {}
     toBeReturned.msgPatterns = []
     toBeReturned.methodBodies = []
@@ -62,7 +62,7 @@ class  FLClassPrimitiveClass extends  FLPrimitiveClasses
     return toBeReturned
     
 
-RClass = new  FLClassPrimitiveClass()
+FLClass = new  FLClassPrimitiveClass()
 
 
 class  FLAnonymousClass extends  FLPrimitiveClasses
