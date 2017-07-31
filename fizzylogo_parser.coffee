@@ -24,9 +24,6 @@ flParse = (command) ->
     if /^\.$/.test(eachToken)
       console.log eachToken + " is . symbol"
       currentList.push RStatementSeparatorSymbol
-    else if /^\d+$/.test(eachToken)
-      console.log eachToken + " is a Number"
-      currentList.push (FLNumber.createNew eachToken)
     else if /^\($/.test(eachToken)
       nestedList = FLList.createNew()
       currentList.push nestedList

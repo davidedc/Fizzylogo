@@ -209,6 +209,9 @@ tests = [
   "@temp<-true.@true<-false.@false<-temp.true=>(1print)2print",
   "2"
 
+  "@2<-10.2print",
+  "10"
+
   #"@ a <- 5 someUndefinedMessage"
   #"7"
 

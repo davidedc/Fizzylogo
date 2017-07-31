@@ -9,6 +9,7 @@ class  FLContext
   constructor: (@previousContext, @self, @message) ->
     @tempVariablesDict = {}
 
+
   lookUpAtomValuePlace: (theAtom) ->
     # we first look in this context, and then we go up
     # context by context until we reach the top without
@@ -66,10 +67,14 @@ class  FLContext
       contextBeingSearched = contextBeingSearched.previousContext
 
     console.log "evaluation " + indentation() + "lookup: " + atomValue + " not found!"
+    return null
 
+
+  createNonExistentValueLookup: (theAtom) ->
     # if the variable doesn't exist anywhere and
     # we are currently in context linked to the
     # workspace...
+    atomValue = theAtom.value
     if @self == rWorkspace
       console.log "evaluation " + indentation() + "lookup: creating " + atomValue + " as instance variable in top-most context"
       @self.flClass.instanceVariables.push FLAtom.createNew atomValue
@@ -81,11 +86,18 @@ class  FLContext
       return @tempVariablesDict
 
 
-  lookUpAtomValue: (theAtom) ->
+  lookUpAtomValue: (theAtom, alreadyKnowWhichDict) ->
     # we first look _where_ the value of the Atom is,
     # then we fetch it
 
-    dictWhereValueIs = @lookUpAtomValuePlace theAtom
+    if alreadyKnowWhichDict?
+      dictWhereValueIs = alreadyKnowWhichDict
+    else  
+      dictWhereValueIs = @lookUpAtomValuePlace theAtom
+
+    if !dictWhereValueIs?
+      dictWhereValueIs = @createNonExistentValueLookup theAtom
+
     console.log "evaluation " + indentation() + "lookup: " + theAtom.value + " found dictionary and it contains:"
     console.dir dictWhereValueIs
     console.log "evaluation " + indentation() + "lookup: " + theAtom.value + " also known as " + (ValidID.fromString theAtom.value)

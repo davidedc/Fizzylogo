@@ -27,6 +27,9 @@ FLAtom.methodBodies.push (context) ->
   console.log "evaluation " + indentation() + "value to assign to atom: " + theAtomName + " : " + valueToAssign.value
 
   dictToPutAtomIn = context.lookUpAtomValuePlace @
+  if !dictToPutAtomIn?
+    dictToPutAtomIn = context.createNonExistentValueLookup @
+
   dictToPutAtomIn[ValidID.fromString theAtomName] = valueToAssign
 
   console.log "evaluation " + indentation() + "stored value in dictionary"
