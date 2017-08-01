@@ -119,10 +119,10 @@ FLNumber.methodBodies.push (context) ->
   return FLNumber.createNew @value * operandum.value
 
 
-FLNumber.msgPatterns.push flParse "== ( tocampare )"
+FLNumber.msgPatterns.push flParse "== ( toCompare )"
 FLNumber.methodBodies.push (context) ->
-  tocampare = context.tempVariablesDict[ValidID.fromString "tocampare"]
-  if @value == tocampare.value
+  toCompare = context.tempVariablesDict[ValidID.fromString "toCompare"]
+  if @value == toCompare.value
     return FLBoolean.createNew true
   else
     return FLBoolean.createNew false
