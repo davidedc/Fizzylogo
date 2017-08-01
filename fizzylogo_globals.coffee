@@ -11,13 +11,6 @@ ValidID =
   _keyStr: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$$_'
   fromString: (input) ->
     output = ''
-    chr1 = undefined
-    chr2 = undefined
-    chr3 = undefined
-    enc1 = undefined
-    enc2 = undefined
-    enc3 = undefined
-    enc4 = undefined
     i = 0
     input = ValidID._utf8_encode(input)
     while i < input.length

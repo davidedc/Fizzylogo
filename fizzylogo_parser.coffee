@@ -1,3 +1,22 @@
+
+tokenizeString = (command) ->
+  # separate parens
+  command = command.replace /\(/g, " ( "
+  command = command.replace /\)/g, " ) "
+  
+  # separate identifiers
+  command = command.replace /([$A-Z_][0-9A-Z_$]*)/gi, " $1 "
+
+  # separate the digits from anything, unless they are part of
+  # an identifier
+  command = command.replace /([^$A-Z_])([0-9]+)/gi, "$1 $2 "
+
+  command = command.replace /@/g, " @ "
+  # collapse all multiple spaces to one
+  command = command.replace /[ ]+/g, " "
+  command = command.trim()
+
+
 flParse = (command) ->
   listsStack = []
   outerList = FLList.createNew()
@@ -7,14 +26,7 @@ flParse = (command) ->
   # let's normalise the input string so we can
   # tokenise it just by looking at the spaces.
   console.log "command before replacements: " + command
-  command = command.replace /\(/g, " ( "
-  command = command.replace /\)/g, " ) "
-  command = command.replace /([$A-Za-z_][0-9a-zA-Z_$]*)/g, " $1 "
-  command = command.replace /([^$A-Za-z_])([0-9]+)/g, "$1 $2 "
-  command = command.replace /@/g, " @ "
-  command = command.replace /[ ]+/g, " "
-  command = command.replace /^[ ]+/g, ""
-  command = command.replace /[ ]+$/g, ""
+  command = tokenizeString command  
   console.log "command after replacements: " + command
 
   simpleTokenization = command.split(" ")
