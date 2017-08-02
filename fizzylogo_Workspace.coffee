@@ -1,6 +1,6 @@
-class  FLWorkspaceClass extends  FLAnonymousClass
+class FLWorkspaceClass extends FLAnonymousClass
   createNew: ->
-    toBeReturned = new  FLPrimitiveObjects()
+    toBeReturned = new FLPrimitiveObjects()
     toBeReturned.flClass = FLWorkspace
 
     toBeReturned.evalMessage = (theContext) ->
@@ -21,4 +21,4 @@ class  FLWorkspaceClass extends  FLAnonymousClass
 
 
 
-FLWorkspace = new  FLWorkspaceClass() # this is a class
+FLWorkspace = new FLWorkspaceClass() # this is a class

@@ -1,7 +1,7 @@
-class  FLContext
-  self: null # a  FLObject
+class FLContext
+  self: null # a FLObject
   programCounter: 0 # an integer
-  message: null # a  FLMessage, which is an FLList and a cursor
+  message: null # a FLMessage, which is an FLList and a cursor
   originalMessage: null # a FLMessage,for debugging
   tempVariablesDict: null # a JS dictionary
   previousContext: null

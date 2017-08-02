@@ -266,7 +266,7 @@ for i in [0...tests.length] by 2
 
     # outer-most context
     parsed.isFromMessage = true
-    outerMostContext = new  FLContext null, rWorkspace, parsed
+    outerMostContext = new FLContext null, rWorkspace, parsed
     flContexts.push outerMostContext
 
     rWorkspace.flClass.instanceVariables = FLList.createNew()

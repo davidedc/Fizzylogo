@@ -1,5 +1,5 @@
 
-class  FLObjects
+class FLObjects
   flClass: null # the class it belongs to
   instanceVariablesDict: null # a JS dictionary
 
@@ -163,7 +163,7 @@ class  FLObjects
       # be run, no remains from the message body should overspill
       # into the calling context. 
 
-      newContext = new  FLContext theContext, newSelf, methodBody
+      newContext = new FLContext theContext, newSelf, methodBody
       flContexts.push newContext
       [ignored1, ignore2, contextToBeReturned] = methodBody.flEval newContext
       flContexts.pop()
@@ -184,7 +184,7 @@ class  FLObjects
   # is not a method call, this is progressing within
   # an existing call
   progressWithMessage: (message, theContext) ->
-    newContext = new  FLContext theContext, theContext.self, message
+    newContext = new FLContext theContext, theContext.self, message
     flContexts.push newContext
     toBeReturned = @evalMessage newContext
     console.log "evaluation " + indentation() + "  progressWithMessage - evalMessage returned: " + toBeReturned
@@ -221,4 +221,4 @@ class  FLObjects
     return [newContext.returned, message, newContext]
 
 
-class  FLPrimitiveObjects extends  FLObjects
+class FLPrimitiveObjects extends FLObjects

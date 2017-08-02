@@ -1,7 +1,7 @@
-class  FLNumberPrimitiveClass extends  FLPrimitiveClasses
+class FLNumberPrimitiveClass extends FLPrimitiveClasses
 
   createNew: (value) ->
-    toBeReturned = new  FLPrimitiveObjects()
+    toBeReturned = new FLPrimitiveObjects()
     toBeReturned.value = parseFloat(value + "")
     toBeReturned.flClass = FLNumber
 
@@ -35,5 +35,5 @@ class  FLNumberPrimitiveClass extends  FLPrimitiveClasses
     return toBeReturned
     
 
-FLNumber = new  FLNumberPrimitiveClass()
+FLNumber = new FLNumberPrimitiveClass()
 

@@ -1,6 +1,6 @@
-class  FLBooleanPrimitiveClass extends  FLPrimitiveClasses
+class FLBooleanPrimitiveClass extends FLPrimitiveClasses
   createNew: (value) ->
-    toBeReturned = new  FLPrimitiveObjects()
+    toBeReturned = new FLPrimitiveObjects()
     toBeReturned.value = value
     toBeReturned.flClass = FLBoolean
 
@@ -80,5 +80,5 @@ class  FLBooleanPrimitiveClass extends  FLPrimitiveClasses
     return toBeReturned
     
 
-FLBoolean = new  FLBooleanPrimitiveClass()
+FLBoolean = new FLBooleanPrimitiveClass()
 

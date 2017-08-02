@@ -1,6 +1,6 @@
-class  FLAtomClass extends  FLPrimitiveClasses
+class FLAtomClass extends FLPrimitiveClasses
   createNew: (theAtomName) ->
-    toBeReturned = new  FLPrimitiveObjects()
+    toBeReturned = new FLPrimitiveObjects()
     toBeReturned.value = theAtomName
     toBeReturned.flClass = FLAtom
 
@@ -44,5 +44,5 @@ class  FLAtomClass extends  FLPrimitiveClasses
 
     return toBeReturned
 
-FLAtom = new  FLAtomClass()
+FLAtom = new FLAtomClass()
 

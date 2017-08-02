@@ -12,7 +12,7 @@ printFunction = (context) ->
 
 # Atom ---------------------------------------------------------------------------
 
-FLAtom = new  FLAtomClass()
+FLAtom = new FLAtomClass()
 
 FLAtom.msgPatterns.push flParse "print"
 FLAtom.methodBodies.push printFunction
@@ -191,7 +191,7 @@ FLBoolean.methodBodies.push (context) ->
   console.log "FLBoolean => , predicate value is: " + @value
 
   if @value
-    newContext = new  FLContext context, context.self, FLList.emptyMessage()
+    newContext = new FLContext context, context.self, FLList.emptyMessage()
     flContexts.push newContext
     [toBeReturned, unused2] = trueBranch.flEval newContext
     flContexts.pop()
@@ -230,7 +230,7 @@ FLList.methodBodies.push (context) ->
 FLList.msgPatterns.push flParse "eval"
 FLList.methodBodies.push (context) ->
 
-  newContext = new  FLContext context, @, FLList.emptyMessage()
+  newContext = new FLContext context, @, FLList.emptyMessage()
   flContexts.push newContext
   [toBeReturned, unused2] = @flEval newContext
   flContexts.pop()
@@ -265,7 +265,7 @@ FLRepeat.methodBodies.push (context) ->
   console.log "FLRepeat => , loop code is: " + loopCode.print()
 
   while true
-    newContext = new  FLContext context, context.self, FLList.emptyMessage()
+    newContext = new FLContext context, context.self, FLList.emptyMessage()
     flContexts.push newContext
     [toBeReturned, unused2] = loopCode.flEval newContext
     flContexts.pop()
@@ -277,7 +277,7 @@ FLRepeat.methodBodies.push (context) ->
     console.log "Repeat => remaining message after loop cycle: " + context.message.print()
     console.log "Repeat => ...with PC:  " + context.programCounter
     console.log "Repeat => message length:  " + context.message.length()
-    console.log "Repeat => did I receive a Done? " + (if toBeReturned?.flClass ==  FLDoneClass then "yes" else "no")
+    console.log "Repeat => did I receive a Done? " + (if toBeReturned?.flClass == FLDoneClass then "yes" else "no")
 
     if toBeReturned?
       if toBeReturned.flClass == FLDone

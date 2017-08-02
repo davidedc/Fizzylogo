@@ -1,6 +1,6 @@
-class  FLNotClass extends  FLAnonymousClass
+class FLNotClass extends FLAnonymousClass
   createNew: ->
-    toBeReturned = new  FLPrimitiveObjects()
+    toBeReturned = new FLPrimitiveObjects()
     toBeReturned.flClass = FLNot
 
 
@@ -39,13 +39,13 @@ class  FLNotClass extends  FLAnonymousClass
 
     return toBeReturned
 
-FLNot = new  FLNotClass() # this is a class, an anonymous class
+FLNot = new FLNotClass() # this is a class, an anonymous class
 
 # --------------------------------------------------------------------------------
 
-class  FLDoneClass extends  FLAnonymousClass
+class FLDoneClass extends FLAnonymousClass
   createNew: ->
-    toBeReturned = new  FLPrimitiveObjects()
+    toBeReturned = new FLPrimitiveObjects()
     toBeReturned.flClass = FLDone
     toBeReturned.value = null
 
@@ -89,5 +89,5 @@ class  FLDoneClass extends  FLAnonymousClass
 
     return toBeReturned
 
-FLDone = new  FLDoneClass() # this is a class, an anonymous class
+FLDone = new FLDoneClass() # this is a class, an anonymous class
 

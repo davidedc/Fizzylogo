@@ -1,6 +1,6 @@
-class  FLRepeatClass extends  FLAnonymousClass
+class FLRepeatClass extends FLAnonymousClass
   createNew: ->
-    toBeReturned = new  FLPrimitiveObjects()
+    toBeReturned = new FLPrimitiveObjects()
     toBeReturned.flClass = FLRepeat
 
 
@@ -38,5 +38,5 @@ class  FLRepeatClass extends  FLAnonymousClass
 
     return toBeReturned
 
-FLRepeat = new  FLRepeatClass() # this is a class, an anonymous class
+FLRepeat = new FLRepeatClass() # this is a class, an anonymous class
 

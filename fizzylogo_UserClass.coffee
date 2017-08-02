@@ -1,7 +1,7 @@
 
-class  FLNonPrimitiveClass extends  FLClasses
+class FLNonPrimitiveClass extends FLClasses
   createNew: ->
-    toBeReturned = new  FLClasses()
+    toBeReturned = new FLClasses()
     toBeReturned.value = "some_custom_class_of_user"
 
     toBeReturned.flClass = toBeReturned
@@ -11,7 +11,7 @@ class  FLNonPrimitiveClass extends  FLClasses
     toBeReturned.instanceVariablesDict = {}
 
     toBeReturned.createNew = ->
-      objectTBR = new  FLPrimitiveObjects()
+      objectTBR = new FLPrimitiveObjects()
       objectTBR.value = "object_from_a_user_class"
       objectTBR.flClass = toBeReturned
 
@@ -67,5 +67,5 @@ class  FLNonPrimitiveClass extends  FLClasses
 
     return toBeReturned
 
-FLUserClass = new  FLNonPrimitiveClass()
+FLUserClass = new FLNonPrimitiveClass()
 
