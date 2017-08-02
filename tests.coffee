@@ -227,6 +227,9 @@ tests = [
   "@ ' <- @. 'a<-8.a print",
   "8"
 
+  #"8 tdict print",
+  #"empty message"
+
   "8 idict print",
   "empty message"
 
@@ -240,8 +243,8 @@ tests = [
 
 ###
 tests = [
-  "7factorialthree print",
-  "5040"
+  "4plus(2plus 1)print"
+  "7"
 ]
 ###
 

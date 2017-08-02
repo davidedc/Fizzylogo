@@ -22,6 +22,8 @@ class FLContext
 
   # effectively climbs up the context chain
   # up to the last method invocation
+  # TODO this can be done cleaner, looking at where
+  # the self changes seems a little risky...
   topMostContextWithThisSelf: ->
     currentSelf = @self
     ascendingTheContext = @previousContext
@@ -111,7 +113,10 @@ class FLContext
       return @self.instanceVariablesDict
     # otherwise, in any other context create it as a temp
     else
-      console.log "evaluation " + indentation() + "lookup: creating " + atomValue + " as temp variable in current context"
+      console.log "evaluation " + indentation() + "lookup: creating " + atomValue + " as temp variable in current context at depth: " + @depth()
+      if !@self.flClass.tempVariables?
+        @self.flClass.tempVariables = FLList.createNew()
+
       @self.flClass.tempVariables.push FLAtom.createNew atomValue
       return @tempVariablesDict
 

@@ -25,6 +25,11 @@ class FLObjects
         for eachClassPattern in @flClass.msgPatterns
           console.log "evaluation " + indentation() + eachClassPattern.print()
 
+        # fake context push so that we can make
+        # the context stack handling easier
+        # the for loop
+        # TODO check that this is not left hanging
+        flContexts.push null
 
         for eachSignature in @flClass.msgPatterns
           #console.log "evaluation " + indentation() + "  matching - checking if this signature matches: " + eachSignature.print() + " PC: " + theContext.programCounter
@@ -34,15 +39,23 @@ class FLObjects
           # as we might have failed a match of a signature, we need to restore
           # the program counter so we keep the correct tab of how much
           # of the message (in the context) we consume.
-          theContext.programCounter = originalProgramCounter
+          
+          # remove the previous context because it was a
+          # botched attempt to match a signature
+          flContexts.pop()
+          console.log "evaluation " + indentation() + "  ////////////////////////////////////// CREATING NEW CONTEXT WITH NEW SELF " + @
 
-          #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + method.print() + " PC: " + theContext.programCounter
+          # this is the ONLY place where we change self!
+          newContext = new FLContext theContext, @, method
+          flContexts.push newContext
+          #theContext.programCounter = originalProgramCounter
+          #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + method.print() + " PC: " + theContext.programCounter             #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + method.print() + " PC: " + newContext.programCounter
 
           soFarEverythingMatched = true
           originalMethodStart = method.cursorStart
           until eachSignature.isEmpty() or method.isEmpty()
 
-            console.log "evaluation " + indentation() + "  matching: - next signature piece: " + eachSignature.print() + " is atom: " + " with: " + method.print() + " PC: " + theContext.programCounter
+            console.log "evaluation " + indentation() + "  matching: - next signature piece: " + eachSignature.print() + " is atom: " + " with: " + method.print() + " PC: " + newContext.programCounter
 
             [eachElementOfSignature, eachSignature] = eachSignature.nextElement()
 
@@ -60,12 +73,12 @@ class FLObjects
 
               if eachElementOfInvocation.flClass == FLAtom or eachElementOfInvocation.flClass == FLSymbol
 
-                #console.log "evaluation " + indentation() + "  matching atoms: - next signature piece: " + eachElementOfSignature.print() + " is atom: " + (eachElementOfSignature.flClass == FLAtom) + " with: " + eachElementOfInvocation.print() + " PC: " + theContext.programCounter
+                #console.log "evaluation " + indentation() + "  matching atoms: - next signature piece: " + eachElementOfSignature.print() + " is atom: " + (eachElementOfSignature.flClass == FLAtom) + " with: " + eachElementOfInvocation.print() + " PC: " + newContext.programCounter
 
                 # ok at least the message contains an atom, but
                 # now we have to check that they spell the same
                 if eachElementOfSignature.value == eachElementOfInvocation.value
-                  console.log "evaluation " + indentation() + "  matching - atom matched: " + eachElementOfSignature.print() + " PC: " + theContext.programCounter
+                  console.log "evaluation " + indentation() + "  matching - atom matched: " + eachElementOfSignature.print() + " PC: " + newContext.programCounter
                   # OK good match of atomsr,
                   # check the next token in the signature
                   continue
@@ -77,19 +90,19 @@ class FLObjects
                 # the signature sais "atom" but the message contains
                 # something else: no match, check the next
                 # signature
-                #console.log "evaluation " + indentation() + "  matching - no match: " + eachElementOfSignature.print() + " vs. " + eachElementOfInvocation.print() + " PC: " + theContext.programCounter
+                #console.log "evaluation " + indentation() + "  matching - no match: " + eachElementOfSignature.print() + " vs. " + eachElementOfInvocation.print() + " PC: " + newContext.programCounter
                 # this signature doesn't match check the next one
                 soFarEverythingMatched = false
                 break
             else
               # the signature has a param. we have to check if
               # it requires an evaluation or not
-              console.log "evaluation " + indentation() + "  matching - getting the atom inside the parameter: " + eachElementOfSignature.print() + " PC: " + theContext.programCounter
+              console.log "evaluation " + indentation() + "  matching - getting the atom inside the parameter: " + eachElementOfSignature.print() + " PC: " + newContext.programCounter
               paramAtom = eachElementOfSignature.getParamAtom()
               #console.dir paramAtom
-              console.log "evaluation " + indentation() + "  matching - atom inside the parameter: " + paramAtom.print() + " PC: " + theContext.programCounter
+              console.log "evaluation " + indentation() + "  matching - atom inside the parameter: " + paramAtom.print() + " PC: " + newContext.programCounter
               if eachElementOfSignature.isEvaluatingParam()
-                console.log "evaluation " + indentation() + "  matching - need to evaluate next msg element from invocation: " + method.print() + " and bind to: " + paramAtom.print() + " PC: " + theContext.programCounter
+                console.log "evaluation " + indentation() + "  matching - need to evaluate next msg element from invocation: " + method.print() + " and bind to: " + paramAtom.print() + " PC: " + newContext.programCounter
                 # if the first element is a list,
                 # then the list is evaluated on
                 # its own, without considering what comes after it.
@@ -99,21 +112,40 @@ class FLObjects
                 # run the evaluation as long as it takes us,
                 # until things "chain" with messages they
                 # understand.
+  
+                # note how we need to evaluate the params in the ORIGINAL context, not the new one that
+                # we are creating, otherwise, say, passing self, self would always bind
+                # to the receiver, which we don't want
+                # like in "7 times self" we don't want to bind self to 7
+
                 if method.firstElement().flClass == FLList
                   [valueToBeBound, method] = method.evalFirstMessageElement theContext
                 else
                   [valueToBeBound, method] = method.flEval theContext
               else
-                console.log "evaluation " + indentation() + "  matching - need to get next msg element from invocation: " + method.print() + " and bind to: " + paramAtom.print() + " PC: " + theContext.programCounter
+                console.log "evaluation " + indentation() + "  matching - need to get next msg element from invocation: " + method.print() + " and bind to: " + paramAtom.print() + " PC: " + newContext.programCounter
                 [valueToBeBound, method] = method.nextElement()
+
               
               console.log "evaluation " + indentation() + "  matching - adding paramater " + paramAtom.print() + " to tempVariables into this class: "
               #console.dir theContext.self.flClass
               # TODO we should insert without repetition
-              if !theContext.self.flClass.tempVariables?
-                theContext.self.flClass.tempVariables = FLList.createNew()
-              theContext.self.flClass.tempVariables.push paramAtom
-              theContext.tempVariablesDict[ValidID.fromString paramAtom.value] = valueToBeBound
+              if !newContext.self.flClass.tempVariables?
+                newContext.self.flClass.tempVariables = FLList.createNew()
+              newContext.self.flClass.tempVariables.push paramAtom
+              newContext.tempVariablesDict[ValidID.fromString paramAtom.value] = valueToBeBound
+
+              # there should be no temps in the mother context
+              # they should all be in the new context we are
+              # creating explicitly for the function call.
+              #console.log "evaluation " + indentation() + "# theContext temps: " 
+              #for keys of theContext.tempVariablesDict
+              #  console.log "evaluation " + indentation() + "#       #: " + keys
+              #
+              #console.log "evaluation " + indentation() + "# newContext temps: " 
+              #for keys of newContext.tempVariablesDict
+              #  console.log "evaluation " + indentation() + "#       #: " + keys
+
               # ok we matched a paramenter, now let's keep matching further
               # parts of the signature
               continue
@@ -129,11 +161,17 @@ class FLObjects
 
             console.log "originalProgramCounter + method.cursorStart - originalMethodStart: " + originalProgramCounter + " " + method.cursorStart  + " " + originalMethodStart
             console.log "theContext.programCounter BEFORE: " + theContext.programCounter
+            console.log "theContext message BEFORE: " + theContext.message.print()
+            #theContext.programCounter += method.cursorStart - originalMethodStart
             theContext.programCounter = originalProgramCounter + method.cursorStart - originalMethodStart
             console.log "theContext.programCounter AFTER: " + theContext.programCounter
+            console.log "theContext message AFTER: " + theContext.message.print()
 
             #console.log "countSignaturePosition: " + countSignaturePosition
-            return countSignaturePosition
+            #return countSignaturePosition
+
+            return @lookupAndSendFoundMessage newContext, countSignaturePosition
+
 
         # we are still here trying to match but
         # there are no signatures left, time to quit.
@@ -141,8 +179,22 @@ class FLObjects
         # to what it was because we matched nothing from
         # the message we were sent.
         console.log "evaluation " + indentation() + "  matching - no match found" + " PC: " + theContext.programCounter
-        theContext.programCounter = originalProgramCounter
+        #theContext.programCounter = originalProgramCounter
         return null
+
+  lookupAndSendFoundMessage: (theContext, countSignaturePosition) ->
+    console.log "evaluation " + indentation() + "  matching - found a matching signature: " + @flClass.msgPatterns[countSignaturePosition].print() + " , PC: " + theContext.programCounter
+    # we have a matching signature!
+    methodBody = @flClass.methodBodies[countSignaturePosition]
+    console.log "evaluation " + indentation() + "  matching - method body: " + methodBody
+
+    # this could be a native or non-native message send
+    returnedContext = @messageSend methodBody, theContext
+    console.log "evaluation " + indentation() + "  returned from message send: " + theContext
+    flContexts.pop() # pops the theContext
+    #console.dir theContext
+
+    return returnedContext
 
   # this could be native or non-native
   messageSend: (methodBody, theContext, newSelf = @) ->
@@ -162,19 +214,14 @@ class FLObjects
       # the rest of the message is not used because all of the list should
       # be run, no remains from the message body should overspill
       # into the calling context. 
-
-      newContext = new FLContext theContext, newSelf, methodBody
-      flContexts.push newContext
-      [ignored1, ignore2, contextToBeReturned] = methodBody.flEval newContext
-      flContexts.pop()
-      return contextToBeReturned
-
+      [ignored1, ignore2, contextToBeReturned] = methodBody.flEval theContext
     else
       console.log "evaluation " + indentation() + "  matching - NATIVE method body: " + methodBody
       # native method, i.e. coffeescript/javascript code
       theContext.returned = methodBody.call newSelf, theContext
-      #flContexts.pop()
-    return theContext
+      contextToBeReturned = theContext
+
+    return contextToBeReturned
 
 
   # Note that only part of the message might be consumed
@@ -196,19 +243,6 @@ class FLObjects
     #console.dir toBeReturned
     return [toBeReturned, message]
 
-  lookupAndSendFoundMessage: (theContext, countSignaturePosition) ->
-    console.log "evaluation " + indentation() + "  matching - found a matching signature: " + @flClass.msgPatterns[countSignaturePosition].print() + " , PC: " + theContext.programCounter
-    # we have a matching signature!
-    methodBody = @flClass.methodBodies[countSignaturePosition]
-    console.log "evaluation " + indentation() + "  matching - method body: " + methodBody
-
-
-    # this could be a native or non-native message send
-    theContext = @messageSend methodBody, theContext
-    console.log "evaluation " + indentation() + "  returned from message send: " + theContext
-    #console.dir theContext
-
-    return theContext
 
   # You eval things just by sending them the empty message.
   # Note that if you invoke this on a list, the whole list is evaluated.

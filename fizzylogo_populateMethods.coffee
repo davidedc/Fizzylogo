@@ -26,7 +26,10 @@ FLAtom.methodBodies.push (context) ->
   console.log "evaluation " + indentation() + "assignment to atom " + theAtomName
   console.log "evaluation " + indentation() + "value to assign to atom: " + theAtomName + " : " + valueToAssign.value
 
-  topMostContextWithThisSelf = context.topMostContextWithThisSelf()
+  # this is the place where we come to create new temp variables
+  # and we can't create them in this very call context, that would
+  # be useless, we place it in the context of the _previous_ method call
+  topMostContextWithThisSelf = context.previousContext.topMostContextWithThisSelf()
   dictToPutAtomIn = topMostContextWithThisSelf.lookUpAtomValuePlace @
   if !dictToPutAtomIn?
     dictToPutAtomIn = topMostContextWithThisSelf.createNonExistentValueLookup @
@@ -201,7 +204,11 @@ FLBoolean.methodBodies.push (context) ->
     console.log "FLBoolean => ...with PC:  " + context.programCounter
     console.log "FLBoolean => message length:  " + context.message.length()
 
-    context.programCounter = context.message.length()
+    # in this context we only have visibility of the true branch
+    # but we have to make sure that in the context above the false
+    # branch is never executed. So we "exhaust" the message in the
+    # context above.
+    context.previousContext.programCounter = context.previousContext.message.length()
 
 
     return toBeReturned
@@ -230,7 +237,7 @@ FLList.methodBodies.push (context) ->
 FLList.msgPatterns.push flParse "eval"
 FLList.methodBodies.push (context) ->
 
-  newContext = new FLContext context, @, FLList.emptyMessage()
+  newContext = new FLContext context, context.self, FLList.emptyMessage()
   flContexts.push newContext
   [toBeReturned, unused2] = @flEval newContext
   flContexts.pop()
