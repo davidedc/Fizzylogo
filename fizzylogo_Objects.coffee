@@ -111,7 +111,7 @@ class  FLObjects
               #console.dir theContext.self.flClass
               # TODO we should insert without repetition
               if !theContext.self.flClass.tempVariables?
-                theContext.self.flClass.tempVariables = []
+                theContext.self.flClass.tempVariables = FLList.createNew()
               theContext.self.flClass.tempVariables.push paramAtom
               theContext.tempVariablesDict[ValidID.fromString paramAtom.value] = valueToBeBound
               # ok we matched a paramenter, now let's keep matching further

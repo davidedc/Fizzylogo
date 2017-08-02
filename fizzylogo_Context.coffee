@@ -20,6 +20,16 @@ class  FLContext
       ascendingTheContext = ascendingTheContext.previousContext
     depthCount
 
+  # effectively climbs up the context chain
+  # up to the last method invocation
+  topMostContextWithThisSelf: ->
+    currentSelf = @self
+    ascendingTheContext = @previousContext
+    chosenContext = @
+    while ascendingTheContext? and (currentSelf == ascendingTheContext.self)
+      chosenContext = ascendingTheContext
+      ascendingTheContext = ascendingTheContext.previousContext
+    chosenContext
 
   lookUpAtomValuePlace: (theAtom) ->
     # we first look in this context, and then we go up
@@ -61,7 +71,11 @@ class  FLContext
         console.log "evaluation " + indentation() + "lookup: checking in " + temps.print()
         if (temps.value.find (element) -> element.value == atomValue)
           console.log "evaluation " + indentation() + "lookup: found " + atomValue + " in tempVariables"
-          return contextBeingSearched.tempVariablesDict
+          # even though the tempVariables contains the temp, it doesn't
+          # mean it's in this context, it could be higher up, so
+          # check for existence.
+          if contextBeingSearched.tempVariablesDict[atomValue]?
+            return contextBeingSearched.tempVariablesDict
 
       instances = contextBeingSearched.self.flClass.instanceVariables
       if instances?

@@ -10,6 +10,10 @@ indentation = ->
 ValidID = 
   _keyStr: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$$_'
   fromString: (input) ->
+
+    if /([$A-Z_][0-9A-Z_$]*)/gi.test input
+      return input
+
     output = ''
     i = 0
     input = ValidID._utf8_encode(input)

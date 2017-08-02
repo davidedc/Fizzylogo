@@ -12,10 +12,8 @@ tests = [
   "(1plus 1)print print"
   "22"
 
-  # increment returns a different object
-  # it doesn't modify the receiver in place
   "@a<-5.a increment.@a<-a plus 1.a print",
-  "6"
+  "7"
 
   "@a<-5.@a<-a plus 1.a increment print"
   "7"
@@ -39,6 +37,12 @@ tests = [
   "7"
 
   "7anotherPrint"
+  "7"
+
+  "7anotherPrinttwo"
+  "7"
+
+  "7anotherPrintthree"
   "7"
 
   "7doublePrint"
@@ -172,6 +176,14 @@ tests = [
   "7factorialtwo print",
   "5040"
 
+  "7factorialthree print",
+  "5040"
+
+  "7factorialfour print",
+  "5040"
+
+  "7factorialfive print",
+  "5040"
 
   "7selftimesminusone print",
   "42"
@@ -215,6 +227,12 @@ tests = [
   "@ ' <- @. 'a<-8.a print",
   "8"
 
+  "8 idict print",
+  "empty message"
+
+  "8 cdict print",
+  "empty message"
+
   #"@ a <- 5 someUndefinedMessage"
   #"7"
 
@@ -222,8 +240,8 @@ tests = [
 
 ###
 tests = [
-  "( true or false ) print",
-  "true"
+  "7factorialthree print",
+  "5040"
 ]
 ###
 

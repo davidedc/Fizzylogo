@@ -26,9 +26,10 @@ FLAtom.methodBodies.push (context) ->
   console.log "evaluation " + indentation() + "assignment to atom " + theAtomName
   console.log "evaluation " + indentation() + "value to assign to atom: " + theAtomName + " : " + valueToAssign.value
 
-  dictToPutAtomIn = context.lookUpAtomValuePlace @
+  topMostContextWithThisSelf = context.topMostContextWithThisSelf()
+  dictToPutAtomIn = topMostContextWithThisSelf.lookUpAtomValuePlace @
   if !dictToPutAtomIn?
-    dictToPutAtomIn = context.createNonExistentValueLookup @
+    dictToPutAtomIn = topMostContextWithThisSelf.createNonExistentValueLookup @
 
   dictToPutAtomIn[ValidID.fromString theAtomName] = valueToAssign
 
@@ -78,17 +79,32 @@ FLClass.methodBodies.push (context) ->
 FLNumber.msgPatterns.push flParse "anotherPrint"
 FLNumber.methodBodies.push flParse "self print"
 
+FLNumber.msgPatterns.push flParse "anotherPrinttwo"
+FLNumber.methodBodies.push flParse "(self print)"
+
+FLNumber.msgPatterns.push flParse "anotherPrintthree"
+FLNumber.methodBodies.push flParse "(((((((((self))) print))))))"
+
 FLNumber.msgPatterns.push flParse "doublePrint"
 FLNumber.methodBodies.push flParse "self print print"
 
 FLNumber.msgPatterns.push flParse "increment"
-FLNumber.methodBodies.push flParse "@ self <- self plus 1"
+FLNumber.methodBodies.push flParse "self <- self plus 1"
 
 FLNumber.msgPatterns.push flParse "factorial"
 FLNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) ( self minus 1 ) factorial times self"
 
 FLNumber.msgPatterns.push flParse "factorialtwo"
 FLNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) self times ( ( self minus 1 ) factorial )"
+
+FLNumber.msgPatterns.push flParse "factorialthree"
+FLNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) (@temp <- self. ( self minus 1 ) factorial times temp )"
+
+FLNumber.msgPatterns.push flParse "factorialfour"
+FLNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) (((((@temp <- self)))). ( self minus 1 ) factorial times temp )"
+
+FLNumber.msgPatterns.push flParse "factorialfive"
+FLNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) (1 plus 1.((((@temp <- self)))). ( self minus 1 ) factorial times temp )"
 
 FLNumber.msgPatterns.push flParse "amIZero"
 FLNumber.methodBodies.push flParse "self == 0"
@@ -127,9 +143,33 @@ FLNumber.methodBodies.push (context) ->
   else
     return FLBoolean.createNew false
 
+FLNumber.msgPatterns.push flParse "<- ( valueToAssign )"
+FLNumber.methodBodies.push (context) ->
+  valueToAssign = context.tempVariablesDict[ValidID.fromString "valueToAssign"]
+  @value = valueToAssign.value
+  return @
 
-FLNumber.msgPatterns.push flParse "something ( param )"
-FLNumber.msgPatterns.push flParse "somethingElse ( @ param )"
+FLNumber.msgPatterns.push flParse "tdict"
+FLNumber.methodBodies.push (context) ->
+  if !@flClass.tempVariables?
+    @flClass.tempVariables = FLList.emptyMessage()
+  return @flClass.tempVariables
+
+FLNumber.msgPatterns.push flParse "idict"
+FLNumber.methodBodies.push (context) ->
+
+  if !@flClass.instanceVariables?
+    @flClass.instanceVariables = FLList.emptyMessage()
+
+  console.log "idict: context.self.flClass: "
+  console.dir @flClass
+  return @flClass.instanceVariables
+
+FLNumber.msgPatterns.push flParse "cdict"
+FLNumber.methodBodies.push (context) ->
+  if !@flClass.classVariables?
+    @flClass.classVariables = FLList.emptyMessage()
+  return @flClass.classVariables
 
 # Boolean -------------------------------------------------------------------------
 
