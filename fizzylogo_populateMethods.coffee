@@ -191,7 +191,7 @@ FLBoolean.methodBodies.push (context) ->
   console.log "FLBoolean => , predicate value is: " + @value
 
   if @value
-    newContext = new  FLContext context, @, FLList.emptyMessage()
+    newContext = new  FLContext context, context.self, FLList.emptyMessage()
     flContexts.push newContext
     [toBeReturned, unused2] = trueBranch.flEval newContext
     flContexts.pop()
@@ -265,7 +265,7 @@ FLRepeat.methodBodies.push (context) ->
   console.log "FLRepeat => , loop code is: " + loopCode.print()
 
   while true
-    newContext = new  FLContext context, @, FLList.emptyMessage()
+    newContext = new  FLContext context, context.self, FLList.emptyMessage()
     flContexts.push newContext
     [toBeReturned, unused2] = loopCode.flEval newContext
     flContexts.pop()
