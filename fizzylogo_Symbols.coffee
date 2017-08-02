@@ -31,16 +31,4 @@ RLiteralSymbol.evalMessage = (theContext) ->
     flContexts.pop()
 
 
-RNewSymbol = FLSymbol.createNew "new"
-RAssignmentSymbol = FLSymbol.createNew "<-"
 RStatementSeparatorSymbol = FLSymbol.createNew "."
-
-REqualityOperatorSymbol = FLSymbol.createNew "=="
-RInequalityOperatorSymbol = FLSymbol.createNew "!="
-RLessThanOperatorSymbol = FLSymbol.createNew "<"
-RLessOrEqualThanOperatorSymbol = FLSymbol.createNew "<="
-RMoreThanOperatorSymbol = FLSymbol.createNew ">"
-RMoreOrEqualThanOperatorSymbol = FLSymbol.createNew ">="
-RConditionalArrowSymbol = FLSymbol.createNew "=>"
-
-

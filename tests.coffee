@@ -284,18 +284,18 @@ for i in [0...tests.length] by 2
       "repeat", FLRepeat.createNew()
       "done", FLDone.createNew()
 
-      "<-", RAssignmentSymbol
+      #"<-", RAssignmentSymbol
 
       "@", RLiteralSymbol
 
-      "==", REqualityOperatorSymbol
-      "!=", RInequalityOperatorSymbol
-      "<", RLessThanOperatorSymbol
-      "<=", RLessOrEqualThanOperatorSymbol
-      ">", RMoreThanOperatorSymbol
-      ">=", RMoreOrEqualThanOperatorSymbol
+      #"==", REqualityOperatorSymbol
+      #"!=", RInequalityOperatorSymbol
+      #"<", RLessThanOperatorSymbol
+      #"<=", RLessOrEqualThanOperatorSymbol
+      #">", RMoreThanOperatorSymbol
+      #">=", RMoreOrEqualThanOperatorSymbol
 
-      "=>", RConditionalArrowSymbol
+      #"=>", RConditionalArrowSymbol
 
     ]
 
