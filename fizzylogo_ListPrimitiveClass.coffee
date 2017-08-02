@@ -134,10 +134,11 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
         console.log "evaluation " + indentation() + "after having sent message: " + message.print() + " and PC: " + theContext.programCounter
 
         if returnedContext?
-          # "findMessageAndBindParams" has already done the job of
-          # making the call and fixing theContext's PC and
-          # updating the return value, we are done here
-          return returnedContext
+          if returnedContext.returned?
+            # "findMessageAndBindParams" has already done the job of
+            # making the call and fixing theContext's PC and
+            # updating the return value, we are done here
+            return returnedContext
 
         theContext.returned = @
 

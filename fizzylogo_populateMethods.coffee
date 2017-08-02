@@ -215,11 +215,36 @@ FLBoolean.methodBodies.push (context) ->
   console.log "FLBoolean => returning null"
   return null
 
+
 FLBoolean.msgPatterns.push flParse "or ( operandum )"
 FLBoolean.methodBodies.push (context) ->
   console.log "executing an or! "
   operandum = context.tempVariablesDict[ValidID.fromString "operandum"]
   return FLBoolean.createNew @value or operandum.value
+
+# any boolean with any left piece of code will just
+# eval the code and return its result.
+# this is how the false branch of => is executed in
+#     predicate => (trueBranch) falseBranch
+# for example, the => (true branch) is first
+# consumed by the => call and the predicate result is
+# returned, and then the predicate result (a false)
+# receives the falseBranch, i.e. :
+#   receiver: predicate result
+#    message: falseBranch
+# at which point, because of this below, the falseBranch
+# is executed.
+FLBoolean.msgPatterns.push flParse "(resultOfAnyOtherCode)"
+FLBoolean.methodBodies.push (context) ->
+  resultOfAnyOtherCode = context.tempVariablesDict[ValidID.fromString "resultOfAnyOtherCode"]
+  return resultOfAnyOtherCode
+
+# FLSymbol --------------------------------------------------------------------------
+
+FLSymbol.msgPatterns.push flParse "( @ operandum )"
+FLSymbol.methodBodies.push (context) ->
+  operandum = context.tempVariablesDict[ValidID.fromString "operandum"]
+  return operandum
 
 # Not --------------------------------------------------------------------------
 FLNot.msgPatterns.push flParse "( operandum )"

@@ -19,17 +19,22 @@ class FLRepeatClass extends FLAnonymousClass
 
       console.log "evaluation " + indentation() + "before matching game the message is: " + message.print() + " and PC: " + theContext.programCounter
 
-      returnedContext = @findMessageAndBindParams theContext, message
-      console.log "evaluation " + indentation() + "after having sent message: " + message.print() + " and PC: " + theContext.programCounter
+      if message.isEmpty()
+        theContext.returned = @
 
-      if returnedContext?
-        # "findMessageAndBindParams" has already done the job of
-        # making the call and fixing theContext's PC and
-        # updating the return value, we are done here
-        return returnedContext
+      else
+        returnedContext = @findMessageAndBindParams theContext, message
+        console.log "evaluation " + indentation() + "after having sent message: " + message.print() + " and PC: " + theContext.programCounter
+
+        if returnedContext?
+          if returnedContext.returned?
+            # "findMessageAndBindParams" has already done the job of
+            # making the call and fixing theContext's PC and
+            # updating the return value, we are done here
+            return returnedContext
 
 
-      theContext.returned = @
+        theContext.returned = @
       flContexts.pop()
 
     return toBeReturned

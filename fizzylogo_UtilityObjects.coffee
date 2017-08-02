@@ -19,20 +19,28 @@ class FLNotClass extends FLAnonymousClass
 
       console.log "evaluation " + indentation() + "before matching game the message is: " + message.print() + " and PC: " + theContext.programCounter
 
-      returnedContext = @findMessageAndBindParams theContext, message
-      console.log "evaluation " + indentation() + "after having sent message: " + message.print() + " and PC: " + theContext.programCounter
+      if message.isEmpty()
+        theContext.returned = @
 
-      if returnedContext?
-        # "findMessageAndBindParams" has already done the job of
-        # making the call and fixing theContext's PC and
-        # updating the return value, we are done here
-        return returnedContext
+      else
+
+        returnedContext = @findMessageAndBindParams theContext, message
+        console.log "evaluation " + indentation() + "after having sent message: " + message.print() + " and PC: " + theContext.programCounter
+
+        if returnedContext?
+          if returnedContext.returned?
+            # "findMessageAndBindParams" has already done the job of
+            # making the call and fixing theContext's PC and
+            # updating the return value, we are done here
+            return returnedContext
+
+        theContext.returned = @
 
 
-      if !message.isEmpty()
-        console.log "evaluation " + indentation() + "this message to Not_object should be empty? " + message.print()
-      theContext.returned = @
-      flContexts.pop()
+      #if !message.isEmpty()
+      #  console.log "evaluation " + indentation() + "this message to Not_object should be empty? " + message.print()
+      #flContexts.pop()
+      return theContext
 
     return toBeReturned
 
@@ -62,23 +70,30 @@ class FLDoneClass extends FLAnonymousClass
 
       console.log "evaluation " + indentation() + "before matching game the message is: " + message.print() + " and PC: " + theContext.programCounter
 
-      returnedContext = @findMessageAndBindParams theContext, message
-      console.log "evaluation " + indentation() + "after having sent message: " + message.print() + " and PC: " + theContext.programCounter
+      if message.isEmpty()
+        theContext.returned = @
 
-      if returnedContext?
-        # "findMessageAndBindParams" has already done the job of
-        # making the call and fixing theContext's PC and
-        # updating the return value, we are done here
-        return returnedContext
+      else
+
+        returnedContext = @findMessageAndBindParams theContext, message
+        console.log "evaluation " + indentation() + "after having sent message: " + message.print() + " and PC: " + theContext.programCounter
+
+        if returnedContext?
+          if returnedContext.returned?
+            # "findMessageAndBindParams" has already done the job of
+            # making the call and fixing theContext's PC and
+            # updating the return value, we are done here
+            return returnedContext
+      
+        theContext.returned = @
 
 
-      if !message.isEmpty()
-        console.log "evaluation " + indentation() + "this message to Done_object should be empty? " + message.print()
-        return theContext
+      #if !message.isEmpty()
+      #  console.log "evaluation " + indentation() + "this message to Done_object should be empty? " + message.print()
+      #  return theContext
 
 
-      theContext.returned = @
-      flContexts.pop()
+      #flContexts.pop()
       return theContext
 
     return toBeReturned
