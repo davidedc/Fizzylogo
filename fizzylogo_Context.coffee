@@ -2,12 +2,23 @@ class  FLContext
   self: null # a  FLObject
   programCounter: 0 # an integer
   message: null # a  FLMessage, which is an FLList and a cursor
+  originalMessage: null # a FLMessage,for debugging
   tempVariablesDict: null # a JS dictionary
   previousContext: null
   returned: null
 
   constructor: (@previousContext, @self, @message) ->
     @tempVariablesDict = {}
+    @originalMessage = @message.copy()
+    #console.log "evaluation " + indentation() + "######### constructing new context at depth: " + @depth() + " with message: " + @message.print()
+
+  depth: ->
+    depthCount = 0
+    ascendingTheContext = @previousContext
+    while ascendingTheContext?
+      depthCount++
+      ascendingTheContext = ascendingTheContext.previousContext
+    depthCount
 
 
   lookUpAtomValuePlace: (theAtom) ->
