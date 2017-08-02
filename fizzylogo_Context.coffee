@@ -48,26 +48,31 @@ class  FLContext
 
     while contextBeingSearched?
 
+      console.log "evaluation " + indentation() + "looking in context with original message: " + contextBeingSearched.originalMessage.print() + " and current message: " + contextBeingSearched.message.print() 
+      console.log "evaluation " + indentation() + "context temps: " 
+      for keys of contextBeingSearched.tempVariablesDict
+        console.log keys
+
       console.log "evaluation " + indentation() + "looking in class: " + contextBeingSearched.self.flClass
       #console.dir contextBeingSearched.self.flClass
 
       temps = contextBeingSearched.self.flClass.tempVariables
       if temps?
-        console.log "evaluation " + indentation() + "lookup: checking in " + temps
-        if (temps.find (element) -> element.value == atomValue)
+        console.log "evaluation " + indentation() + "lookup: checking in " + temps.print()
+        if (temps.value.find (element) -> element.value == atomValue)
           console.log "evaluation " + indentation() + "lookup: found " + atomValue + " in tempVariables"
           return contextBeingSearched.tempVariablesDict
 
       instances = contextBeingSearched.self.flClass.instanceVariables
       if instances?
-        console.log "evaluation " + indentation() + "lookup: checking in " + instances.value
+        console.log "evaluation " + indentation() + "lookup: checking in " + instances.print()
         if instances.value? and (instances.value.find (element) -> element.value == atomValue)
           console.log "evaluation " + indentation() + "lookup: found " + atomValue + " in instanceVariables"
           return contextBeingSearched.self.instanceVariablesDict
 
       statics = contextBeingSearched.self.flClass.classVariables
       if statics?
-        console.log "evaluation " + indentation() + "lookup: checking in " + statics.value
+        console.log "evaluation " + indentation() + "lookup: checking in " + statics.print()
         if statics.value? and (statics.value.find (element) -> element.value == atomValue)
           console.log "evaluation " + indentation() + "lookup: found " + atomValue + " in classVariables"
           return contextBeingSearched.self.flClass.classVariablesDict
@@ -109,16 +114,16 @@ class  FLContext
     if !dictWhereValueIs?
       dictWhereValueIs = @createNonExistentValueLookup theAtom
 
-    console.log "evaluation " + indentation() + "lookup: " + theAtom.value + " found dictionary and it contains:"
-    console.dir dictWhereValueIs
+    #console.log "evaluation " + indentation() + "lookup: " + theAtom.value + " found dictionary and it contains:"
+    #console.dir dictWhereValueIs
     console.log "evaluation " + indentation() + "lookup: " + theAtom.value + " also known as " + (ValidID.fromString theAtom.value)
     if theAtom.value != "self"
       encodedAtomValue = ValidID.fromString theAtom.value
     else
       encodedAtomValue = theAtom.value
 
-    console.log "evaluation " + indentation() + "lookup: " + theAtom.value + " class is: "
-    console.dir dictWhereValueIs[encodedAtomValue].flClass
+    #console.log "evaluation " + indentation() + "lookup: " + theAtom.value + " class is: "
+    #console.dir dictWhereValueIs[encodedAtomValue].flClass
 
     return dictWhereValueIs[encodedAtomValue]
 

@@ -105,6 +105,10 @@ class  FLListPrimitiveClass extends  FLPrimitiveClasses
           console.log "evaluation " + indentation() + "remaining part of list to be sent as message is: " + restOfMessage.print()
 
           # now that we have the receiver, we send it the rest of the original message
+          # hence getting a new receiver, whom we send again the rest of the message
+          # and so and and so forth. We keep using the same context, so we
+          # accrete the state changes to the same context i.e. the one we
+          # are running the method body in.
           until restOfMessage.isEmpty()
 
             console.log "evaluation " + indentation() + "receiver: " + receiver.value
