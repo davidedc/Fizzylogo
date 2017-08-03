@@ -284,19 +284,7 @@ for i in [0...tests.length] by 2
       "repeat", FLRepeat.createNew()
       "done", FLDone.createNew()
 
-      #"<-", RAssignmentSymbol
-
-      "@", RLiteralSymbol
-
-      #"==", REqualityOperatorSymbol
-      #"!=", RInequalityOperatorSymbol
-      #"<", RLessThanOperatorSymbol
-      #"<=", RLessOrEqualThanOperatorSymbol
-      #">", RMoreThanOperatorSymbol
-      #">=", RMoreOrEqualThanOperatorSymbol
-
-      #"=>", RConditionalArrowSymbol
-
+      "@", FLQuote.createNew()
     ]
 
     for keywords in [0...keywordsAndTheirInit.length] by 2

@@ -239,10 +239,10 @@ FLBoolean.methodBodies.push (context) ->
   resultOfAnyOtherCode = context.tempVariablesDict[ValidID.fromString "resultOfAnyOtherCode"]
   return resultOfAnyOtherCode
 
-# FLSymbol --------------------------------------------------------------------------
+# FLQuote --------------------------------------------------------------------------
 
-FLSymbol.msgPatterns.push flParse "( @ operandum )"
-FLSymbol.methodBodies.push (context) ->
+FLQuote.msgPatterns.push flParse "( @ operandum )"
+FLQuote.methodBodies.push (context) ->
   operandum = context.tempVariablesDict[ValidID.fromString "operandum"]
   return operandum
 
