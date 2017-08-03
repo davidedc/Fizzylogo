@@ -19,7 +19,7 @@ FLAtom.methodBodies.push printFunction
 
 FLAtom.msgPatterns.push flParse "<- ( valueToAssign )"
 FLAtom.methodBodies.push (context) ->
-  valueToAssign = context.tempVariablesDict[ValidID.fromString "valueToAssign"]
+  valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
 
   theAtomName = @value
 
@@ -34,7 +34,7 @@ FLAtom.methodBodies.push (context) ->
   if !dictToPutAtomIn?
     dictToPutAtomIn = topMostContextWithThisSelf.createNonExistentValueLookup @
 
-  dictToPutAtomIn[ValidID.fromString theAtomName] = valueToAssign
+  dictToPutAtomIn[ValidIDfromString theAtomName] = valueToAssign
 
   console.log "evaluation " + indentation() + "stored value in dictionary"
   return valueToAssign
@@ -66,8 +66,8 @@ FLClass.methodBodies.push (context) ->
 
   newUserClass.msgPatterns.push flParse "answer ( @ signature ) by ( @ methodBody )"
   newUserClass.methodBodies.push (context) ->
-    signature = context.tempVariablesDict[ValidID.fromString "signature"]
-    methodBody = context.tempVariablesDict[ValidID.fromString "methodBody"]
+    signature = context.tempVariablesDict[ValidIDfromString "signature"]
+    methodBody = context.tempVariablesDict[ValidIDfromString "methodBody"]
 
     @msgPatterns.push signature
     @methodBodies.push methodBody
@@ -120,12 +120,12 @@ FLNumber.methodBodies.push printFunction
 
 FLNumber.msgPatterns.push flParse "plus ( operandum )"
 FLNumber.methodBodies.push (context) ->
-  operandum = context.tempVariablesDict[ValidID.fromString "operandum"]
+  operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
   return FLNumber.createNew @value + operandum.value
 
 FLNumber.msgPatterns.push flParse "minus ( operandum )"
 FLNumber.methodBodies.push (context) ->
-  operandum = context.tempVariablesDict[ValidID.fromString "operandum"]
+  operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
   return FLNumber.createNew @value - operandum.value
 
 FLNumber.msgPatterns.push flParse "selftimesminusone"
@@ -133,14 +133,14 @@ FLNumber.methodBodies.push flParse "self times self minus 1"
 
 FLNumber.msgPatterns.push flParse "times ( operandum )"
 FLNumber.methodBodies.push (context) ->
-  operandum = context.tempVariablesDict[ValidID.fromString "operandum"]
+  operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
   console.log "evaluation " + indentation() + "multiplying " + @value + " to " + operandum.value  
   return FLNumber.createNew @value * operandum.value
 
 
 FLNumber.msgPatterns.push flParse "== ( toCompare )"
 FLNumber.methodBodies.push (context) ->
-  toCompare = context.tempVariablesDict[ValidID.fromString "toCompare"]
+  toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
   if @value == toCompare.value
     return FLBoolean.createNew true
   else
@@ -148,7 +148,7 @@ FLNumber.methodBodies.push (context) ->
 
 FLNumber.msgPatterns.push flParse "<- ( valueToAssign )"
 FLNumber.methodBodies.push (context) ->
-  valueToAssign = context.tempVariablesDict[ValidID.fromString "valueToAssign"]
+  valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
   @value = valueToAssign.value
   return @
 
@@ -185,12 +185,12 @@ FLBoolean.methodBodies.push printFunction
 
 FLBoolean.msgPatterns.push flParse "and ( operandum )"
 FLBoolean.methodBodies.push (context) ->
-  operandum = context.tempVariablesDict[ValidID.fromString "operandum"]
+  operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
   return FLBoolean.createNew @value and operandum.value
 
 FLBoolean.msgPatterns.push flParse "=> ( @ trueBranch )"
 FLBoolean.methodBodies.push (context) ->
-  trueBranch = context.tempVariablesDict[ValidID.fromString "trueBranch"]
+  trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
   console.log "FLBoolean => , predicate value is: " + @value
 
   if @value
@@ -219,7 +219,7 @@ FLBoolean.methodBodies.push (context) ->
 FLBoolean.msgPatterns.push flParse "or ( operandum )"
 FLBoolean.methodBodies.push (context) ->
   console.log "executing an or! "
-  operandum = context.tempVariablesDict[ValidID.fromString "operandum"]
+  operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
   return FLBoolean.createNew @value or operandum.value
 
 # any boolean with any left piece of code will just
@@ -236,14 +236,14 @@ FLBoolean.methodBodies.push (context) ->
 # is executed.
 FLBoolean.msgPatterns.push flParse "(resultOfAnyOtherCode)"
 FLBoolean.methodBodies.push (context) ->
-  resultOfAnyOtherCode = context.tempVariablesDict[ValidID.fromString "resultOfAnyOtherCode"]
+  resultOfAnyOtherCode = context.tempVariablesDict[ValidIDfromString "resultOfAnyOtherCode"]
   return resultOfAnyOtherCode
 
 # FLQuote --------------------------------------------------------------------------
 
 FLQuote.msgPatterns.push flParse "( @ operandum )"
 FLQuote.methodBodies.push (context) ->
-  operandum = context.tempVariablesDict[ValidID.fromString "operandum"]
+  operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
   return operandum
 
 # Not --------------------------------------------------------------------------
@@ -281,7 +281,7 @@ FLDone.methodBodies.push (context) ->
 
 FLDone.msgPatterns.push flParse "with ( valueToReturn )"
 FLDone.methodBodies.push (context) ->
-  valueToReturn = context.tempVariablesDict[ValidID.fromString "valueToReturn"]
+  valueToReturn = context.tempVariablesDict[ValidIDfromString "valueToReturn"]
   @value = valueToReturn
   return @
 
@@ -293,7 +293,7 @@ FLRepeat.methodBodies.push printFunction
 
 FLRepeat.msgPatterns.push flParse "( @ loopCode )"
 FLRepeat.methodBodies.push (context) ->
-  loopCode = context.tempVariablesDict[ValidID.fromString "loopCode"]
+  loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
   console.log "FLRepeat => , loop code is: " + loopCode.print()
 
   while true

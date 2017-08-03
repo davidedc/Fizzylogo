@@ -133,7 +133,7 @@ class FLObjects
               if !newContext.self.flClass.tempVariables?
                 newContext.self.flClass.tempVariables = FLList.createNew()
               newContext.self.flClass.tempVariables.push paramAtom
-              newContext.tempVariablesDict[ValidID.fromString paramAtom.value] = valueToBeBound
+              newContext.tempVariablesDict[ValidIDfromString paramAtom.value] = valueToBeBound
 
               # there should be no temps in the mother context
               # they should all be in the new context we are

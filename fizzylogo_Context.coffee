@@ -76,7 +76,7 @@ class FLContext
           # even though the tempVariables contains the temp, it doesn't
           # mean it's in this context, it could be higher up, so
           # check for existence.
-          if contextBeingSearched.tempVariablesDict[atomValue]?
+          if contextBeingSearched.tempVariablesDict[ValidIDfromString atomValue]?
             return contextBeingSearched.tempVariablesDict
 
       instances = contextBeingSearched.self.flClass.instanceVariables
@@ -135,15 +135,11 @@ class FLContext
 
     #console.log "evaluation " + indentation() + "lookup: " + theAtom.value + " found dictionary and it contains:"
     #console.dir dictWhereValueIs
-    console.log "evaluation " + indentation() + "lookup: " + theAtom.value + " also known as " + (ValidID.fromString theAtom.value)
-    if theAtom.value != "self"
-      encodedAtomValue = ValidID.fromString theAtom.value
-    else
-      encodedAtomValue = theAtom.value
+    console.log "evaluation " + indentation() + "lookup: " + theAtom.value + " also known as " + (ValidIDfromString theAtom.value)
 
     #console.log "evaluation " + indentation() + "lookup: " + theAtom.value + " class is: "
     #console.dir dictWhereValueIs[encodedAtomValue].flClass
 
-    return dictWhereValueIs[encodedAtomValue]
+    return dictWhereValueIs[ValidIDfromString theAtom.value]
 
 
