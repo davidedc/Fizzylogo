@@ -125,7 +125,7 @@ class FLObjects
                 # we are creating with the new SELF of the callee, otherwise, say,
                 # passing self, self would always bind
                 # to the receiver, which we don't want
-                # like in "7 times self" we don't want to bind self to 7
+                # like in "7 * self" we don't want to bind self to 7
 
                 if methodInvocation.firstElement().flClass == FLList
                   [valueToBeBound, methodInvocation] = methodInvocation.evalAndConsumeFirstMessageElement theContext

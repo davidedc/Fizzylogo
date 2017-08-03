@@ -95,19 +95,19 @@ FLNumber.msgPatterns.push flParse "increment"
 FLNumber.methodBodies.push flParse "self <- self plus 1"
 
 FLNumber.msgPatterns.push flParse "factorial"
-FLNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) ( self minus 1 ) factorial times self"
+FLNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) ( self minus 1 ) factorial * self"
 
 FLNumber.msgPatterns.push flParse "factorialtwo"
-FLNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) self times ( ( self minus 1 ) factorial )"
+FLNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) self * ( ( self minus 1 ) factorial )"
 
 FLNumber.msgPatterns.push flParse "factorialthree"
-FLNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) (@temp <- self. ( self minus 1 ) factorial times temp )"
+FLNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) (@temp <- self. ( self minus 1 ) factorial * temp )"
 
 FLNumber.msgPatterns.push flParse "factorialfour"
-FLNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) (((((@temp <- self)))). ( self minus 1 ) factorial times temp )"
+FLNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) (((((@temp <- self)))). ( self minus 1 ) factorial * temp )"
 
 FLNumber.msgPatterns.push flParse "factorialfive"
-FLNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) (1 plus 1.((((@temp <- self)))). ( self minus 1 ) factorial times temp )"
+FLNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) (1 plus 1.((((@temp <- self)))). ( self minus 1 ) factorial * temp )"
 
 FLNumber.msgPatterns.push flParse "amIZero"
 FLNumber.methodBodies.push flParse "self == 0"
@@ -129,13 +129,34 @@ FLNumber.methodBodies.push (context) ->
   return FLNumber.createNew @value - operandum.value
 
 FLNumber.msgPatterns.push flParse "selftimesminusone"
-FLNumber.methodBodies.push flParse "self times self minus 1"
+FLNumber.methodBodies.push flParse "self * self minus 1"
 
-FLNumber.msgPatterns.push flParse "times ( operandum )"
+FLNumber.msgPatterns.push flParse "* ( operandum )"
 FLNumber.methodBodies.push (context) ->
   operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
   console.log "evaluation " + indentation() + "multiplying " + @value + " to " + operandum.value  
   return FLNumber.createNew @value * operandum.value
+
+FLNumber.msgPatterns.push flParse "times ( @ loopCode )"
+FLNumber.methodBodies.push (context) ->
+  loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
+  console.log "FLNumber => DO loop code is: " + loopCode.print()
+
+  for i in [0...@value]
+    newContext = new FLContext context, context.self, FLList.emptyMessage()
+    flContexts.push newContext
+    toBeReturned = (loopCode.eval newContext).returned
+
+    flContexts.pop()
+
+    if toBeReturned?
+      if toBeReturned.flClass == FLDone
+        if toBeReturned.value?
+          toBeReturned = toBeReturned.value
+        console.log "Do => the loop exited with Done "
+        break
+
+  return toBeReturned
 
 
 FLNumber.msgPatterns.push flParse "== ( toCompare )"
@@ -322,4 +343,44 @@ FLRepeat.methodBodies.push (context) ->
   #context.programCounter = context.message.length()
   return toBeReturned
 
+# For -----------------------------------------------------------------------------
+
+FLFor.msgPatterns.push flParse "( @ loopVar ) <- ( startIndex ) to ( endIndex ) do ( @ loopCode )"
+FLFor.methodBodies.push (context) ->
+
+
+  loopVar = context.tempVariablesDict[ValidIDfromString "loopVar"]
+  startIndex = context.tempVariablesDict[ValidIDfromString "startIndex"]
+  endIndex = context.tempVariablesDict[ValidIDfromString "endIndex"]
+  loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
+
+  loopVarName = loopVar.value
+
+  forContext = new FLContext context, context.self, FLList.emptyMessage()
+  forContext.self.flClass.tempVariables.push loopVar
+  flContexts.push forContext
+
+  console.log "FLFor => loop code is: " + loopCode.print()
+
+  for i in [startIndex.value..endIndex.value]
+    console.log "FLFor => loop iterating variable to " + i
+
+    forContext.tempVariablesDict[ValidIDfromString loopVarName] = FLNumber.createNew i
+
+    newContext = new FLContext forContext, forContext.self, FLList.emptyMessage()
+    flContexts.push newContext
+    toBeReturned = (loopCode.eval newContext).returned
+
+    flContexts.pop()
+
+    if toBeReturned?
+      if toBeReturned.flClass == FLDone
+        if toBeReturned.value?
+          toBeReturned = toBeReturned.value
+        console.log "For => the loop exited with Done "
+        break
+
+  flContexts.pop()
+
+  return toBeReturned
 

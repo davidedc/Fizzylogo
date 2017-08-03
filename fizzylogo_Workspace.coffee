@@ -5,6 +5,7 @@ class FLWorkspaceClass extends FLAnonymousClass
 
     toBeReturned.eval = (theContext) ->
       message = theContext.message
+      messageLength = message.length()
       console.log "evaluation " + indentation() + "messaging workspace with " + message.print()
 
       # now we are using the message as a list because we have to evaluate it.
@@ -13,10 +14,16 @@ class FLWorkspaceClass extends FLAnonymousClass
       # is in here will still refer to "self" as the current self in the
       # overall message.
       
-      toBeReturned = (message.eval theContext).returned
+      returnedContext = message.eval theContext
+      toBeReturned = returnedContext.returned
       theContext.returned = toBeReturned
 
       console.log "evaluation " + indentation() + "end of workspace evaluation"
+
+      if returnedContext.unparsedMessage
+        console.log "evaluation " + indentation() + "something was not understood: " + returnedContext.unparsedMessage.print()
+        environmentPrintout += "! something was not understood: " + returnedContext.unparsedMessage.print()
+
 
     return toBeReturned
 

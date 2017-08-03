@@ -133,13 +133,22 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
           # we'll have to find the result from what we can consume and then
           # sent the remaining part to such reult. This is why
           # we have to keep iterating until the whole message is consumed
+          origPC = theContext.programCounter
           [newContext, restOfMessage] = receiver.progressWithNonEmptyMessage restOfMessage, theContext
           receiver = newContext.returned
 
           flContexts.pop()
           console.log "evaluation " + indentation() + "list evaluation returned: " + receiver?.value
-          #console.dir receiver
-
+          console.log "evaluation " + indentation() + "comparison of program counters: " + theContext.programCounter + " " + newContext.programCounter
+          # if there is no change in the program counter it means that there
+          # was no progress, i.e. the receiver can't do anything with the message
+          # so it's time to break even if there is something left in the
+          # message
+          if origPC == theContext.programCounter
+            console.log "evaluation " + indentation() + " breaking because of programCounter check "
+            theContext.returned = receiver
+            theContext.unparsedMessage = restOfMessage
+            return theContext
 
 
         console.log "evaluation " + indentation() + "list: nothing more to evaluate"

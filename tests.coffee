@@ -236,6 +236,18 @@ tests = [
   "8 cdict print",
   "empty message"
 
+  "(4*2)times(1print)",
+  "11111111"
+
+  "for k<-(1)to(10)do(k print)"
+  "12345678910"
+
+  "for k<-1to 10do(k print)"
+  "12345678910"
+
+  "8 unintelligibleMessage"
+  "! something was not understood: (  unintelligibleMessage )"
+
   #"@ a <- 5 someUndefinedMessage"
   #"7"
 
@@ -243,8 +255,8 @@ tests = [
 
 ###
 tests = [
-  "4plus(2plus 1)print"
-  "7"
+  "8 unintelligibleMessage"
+  "12345678910"
 ]
 ###
 
@@ -281,6 +293,7 @@ for i in [0...tests.length] by 2
       "true", FLBoolean.createNew true
       "false", FLBoolean.createNew false
 
+      "for", FLFor.createNew()
       "repeat", FLRepeat.createNew()
       "done", FLDone.createNew()
 
