@@ -196,7 +196,7 @@ FLBoolean.methodBodies.push (context) ->
   if @value
     newContext = new FLContext context, context.self, FLList.emptyMessage()
     flContexts.push newContext
-    [toBeReturned, unused2] = trueBranch.flEval newContext
+    toBeReturned = (trueBranch.eval newContext).returned
     flContexts.pop()
 
     console.log "FLBoolean => returning result of true branch: " + toBeReturned
@@ -264,10 +264,10 @@ FLList.methodBodies.push (context) ->
 
   newContext = new FLContext context, context.self, FLList.emptyMessage()
   flContexts.push newContext
-  [toBeReturned, unused2] = @flEval newContext
+  toBeReturned = (@eval newContext).returned
+
   flContexts.pop()
 
-  console.log "FLList.eval: unused2: " + unused2.print()
   return toBeReturned
 
 # Done -------------------------------------------------------------------------
@@ -299,7 +299,8 @@ FLRepeat.methodBodies.push (context) ->
   while true
     newContext = new FLContext context, context.self, FLList.emptyMessage()
     flContexts.push newContext
-    [toBeReturned, unused2] = loopCode.flEval newContext
+    toBeReturned = (loopCode.eval newContext).returned
+
     flContexts.pop()
 
     console.log "Repeat => returning result after loop cycle: " + toBeReturned

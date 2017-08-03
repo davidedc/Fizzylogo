@@ -293,7 +293,7 @@ for i in [0...tests.length] by 2
       outerMostContext.self.instanceVariablesDict[ValidIDfromString keyword] = itsInitialisation
 
 
-    rWorkspace.evalMessage outerMostContext
+    rWorkspace.eval outerMostContext
     console.log "final return: " + outerMostContext.returned.value
     if environmentPrintout == testResult
       console.log "...test " + (i/2+1) + " OK, obtained: " + environmentPrintout

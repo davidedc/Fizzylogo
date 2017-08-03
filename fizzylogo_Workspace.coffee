@@ -3,7 +3,7 @@ class FLWorkspaceClass extends FLAnonymousClass
     toBeReturned = new FLPrimitiveObjects()
     toBeReturned.flClass = FLWorkspace
 
-    toBeReturned.evalMessage = (theContext) ->
+    toBeReturned.eval = (theContext) ->
       message = theContext.message
       console.log "evaluation " + indentation() + "messaging workspace with " + message.print()
 
@@ -12,13 +12,12 @@ class FLWorkspaceClass extends FLAnonymousClass
       # note that "self" will remain the current one, since anything that
       # is in here will still refer to "self" as the current self in the
       # overall message.
-      [theValue, unusedRestOfMessage] = message.flEval theContext
-      theContext.returned = theValue
+      
+      toBeReturned = (message.eval theContext).returned
+      theContext.returned = toBeReturned
 
       console.log "evaluation " + indentation() + "end of workspace evaluation"
 
     return toBeReturned
-
-
 
 FLWorkspace = new FLWorkspaceClass() # this is a class

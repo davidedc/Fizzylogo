@@ -75,72 +75,76 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
       toBePrinted += " )"
       return toBePrinted
 
-    toBeReturned.evalMessage = (theContext) ->
+    # it's like eval but it does it in a new
+    # context and keeps track of hum much the
+    # current message is consumed.
+    toBeReturned.evalAndConsume = (theContext) ->
+      originalPC = theContext.programCounter
+      toBeReturned = @eval theContext
+
+
+      console.log "evaluation " + indentation() + "  progressWithNonEmptyMessage - eval returned: " + toBeReturned
+      #console.dir toBeReturned
+      console.log "evaluation " + indentation() + "  progressWithNonEmptyMessage - returned: " + toBeReturned
+
+      #console.dir toBeReturned
+      return [toBeReturned.returned, @advanceMessageBy theContext.programCounter - originalPC]
+
+    toBeReturned.eval = (theContext) ->
       message = theContext.message
       console.log "evaluation " + indentation() + "messaging list with " + message.print()
 
-      if message.isEmpty()
-        # a list without any messages just evaluates itself, which
-        # consists of the following:
-        #  a) separate all the statements (parts separated by ".")
-        #  b) for each statement, evaluate its first element as the receiver
-        #  c) send to the receiver the remaining part of the statement, as the message
+      # a list without any messages just evaluates itself, which
+      # consists of the following:
+      #  a) separate all the statements (parts separated by ".")
+      #  b) for each statement, evaluate its first element as the receiver
+      #  c) send to the receiver the remaining part of the statement, as the message
 
-        console.log "evaluation " + indentation() + "list received empty message, evaluating content of list"
-        console.log "evaluation " + indentation() + "  i.e. " + @print()
+      console.log "evaluation " + indentation() + "list received empty message, evaluating content of list"
+      console.log "evaluation " + indentation() + "  i.e. " + @print()
 
-        @isFromMessage = true
+      @isFromMessage = true
 
-        statements = @separateStatements()
+      statements = @separateStatements()
 
-        for eachStatement in statements
+      for eachStatement in statements
 
-          list = eachStatement.toList()
+        list = eachStatement.toList()
 
-          console.log "evaluation " + indentation() + "evaluating single statement"
-          console.log "evaluation " + indentation() + "  i.e. " + list.print()
+        console.log "evaluation " + indentation() + "evaluating single statement"
+        console.log "evaluation " + indentation() + "  i.e. " + list.print()
 
-          [receiver, restOfMessage] = list.evalFirstMessageElement theContext
+        [receiver, restOfMessage] = list.evalAndConsumeFirstMessageElement theContext
 
-          console.log "evaluation " + indentation() + "remaining part of list to be sent as message is: " + restOfMessage.print()
+        console.log "evaluation " + indentation() + "remaining part of list to be sent as message is: " + restOfMessage.print()
 
-          # now that we have the receiver, we send it the rest of the original message
-          # hence getting a new receiver, whom we send again the rest of the message
-          # and so and and so forth. We keep using the same context, so we
-          # accrete the state changes to the same context i.e. the one we
-          # are running the method body in.
-          until restOfMessage.isEmpty()
+        # now that we have the receiver, we send it the rest of the original message
+        # hence getting a new receiver, whom we send again the rest of the message
+        # and so and and so forth. We keep using the same context, so we
+        # accrete the state changes to the same context i.e. the one we
+        # are running the method body in.
+        until restOfMessage.isEmpty()
 
-            console.log "evaluation " + indentation() + "receiver: " + receiver.value
-            console.log "evaluation " + indentation() + "message: " + restOfMessage.print()
+          console.log "evaluation " + indentation() + "receiver: " + receiver.value
+          console.log "evaluation " + indentation() + "message: " + restOfMessage.print()
 
-            # now actually send the message to the receiver. Note that
-            # only part of the message might be consumed, this is why
-            # we have to keep iterating until the whole message is consumed
-            [newContext, restOfMessage] = receiver.progressWithMessage restOfMessage, theContext
-            receiver = newContext.returned
+          # now actually send the message to the receiver. Note that
+          # only part of the message might be consumed, in which case
+          # we'll have to find the result from what we can consume and then
+          # sent the remaining part to such reult. This is why
+          # we have to keep iterating until the whole message is consumed
+          [newContext, restOfMessage] = receiver.progressWithNonEmptyMessage restOfMessage, theContext
+          receiver = newContext.returned
 
-            flContexts.pop()
-            console.log "evaluation " + indentation() + "list evaluation returned: " + receiver?.value
-            #console.dir receiver
+          flContexts.pop()
+          console.log "evaluation " + indentation() + "list evaluation returned: " + receiver?.value
+          #console.dir receiver
 
 
 
-          console.log "evaluation " + indentation() + "list: nothing more to evaluate"
-          theContext.returned = receiver
+        console.log "evaluation " + indentation() + "list: nothing more to evaluate"
+        theContext.returned = receiver
 
-      else
-        returnedContext = @findSignatureBindParamsAndMakeCall theContext, message
-        console.log "evaluation " + indentation() + "after having sent message: " + message.print() + " and PC: " + theContext.programCounter
-
-        if returnedContext?
-          if returnedContext.returned?
-            # "findSignatureBindParamsAndMakeCall" has already done the job of
-            # making the call and fixing theContext's PC and
-            # updating the return value, we are done here
-            return returnedContext
-
-        theContext.returned = @
 
       console.log "evaluation " + indentation() + "list: theContext.returned: " + theContext.returned
       #console.dir theContext.returned
@@ -162,10 +166,10 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
         throw "no first element, array is empty"
       return @elementAt 0
 
-    toBeReturned.evalFirstMessageElement = (theContext) ->
+    toBeReturned.evalAndConsumeFirstMessageElement = (theContext) ->
       firstElement = @firstElement()
       console.log "           " + indentation() + "evaling element " + firstElement.value
-      [evaledFirstElement, unused] = firstElement.flEval theContext
+      evaledFirstElement = (firstElement.eval theContext).returned
       restOfMessage = @skipNextMessageElement theContext
       return [evaledFirstElement, restOfMessage]
 

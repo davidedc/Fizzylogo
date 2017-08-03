@@ -7,6 +7,13 @@ class FLObjects
     #console.log " instanceVariablesDict initiated "
     @instanceVariablesDict = {}
 
+  eval: (theContext) ->
+    message = theContext.message
+    console.log "evaluation " + indentation() + "messaging object with " + message.print()
+    console.log "evaluation " + indentation() + "before matching game the message is: " + message.print() + " and PC: " + theContext.programCounter
+    theContext.returned = @
+    return theContext
+
   findSignatureBindParamsAndMakeCall: (theContext, methodInvocationToBeChecked) ->
         console.log "evaluation " + indentation() + "  !!! looking up method invocation " + methodInvocationToBeChecked.print() + " with signatures!" + " PC: " + theContext.programCounter
         console.log "evaluation " + indentation() + "  !!! looking up method invocation, is method empty? " + methodInvocationToBeChecked.isEmpty() + " PC: " + theContext.programCounter
@@ -33,7 +40,7 @@ class FLObjects
 
         for eachSignature in @flClass.msgPatterns
           #console.log "evaluation " + indentation() + "  matching - checking if this signature matches: " + eachSignature.print() + " PC: " + theContext.programCounter
-          method = methodInvocationToBeChecked
+          methodInvocation = methodInvocationToBeChecked
           countSignaturePosition++
 
           # as we might have failed a match of a signature, we need to restore
@@ -46,16 +53,16 @@ class FLObjects
           console.log "evaluation " + indentation() + "  ////////////////////////////////////// CREATING NEW CONTEXT WITH NEW SELF " + @
 
           # this is the ONLY place where we change self!
-          newContext = new FLContext theContext, @, method
+          newContext = new FLContext theContext, @, methodInvocation
           flContexts.push newContext
           #theContext.programCounter = originalProgramCounter
-          #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + method.print() + " PC: " + theContext.programCounter             #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + method.print() + " PC: " + newContext.programCounter
+          #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.print() + " PC: " + theContext.programCounter             #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.print() + " PC: " + newContext.programCounter
 
           soFarEverythingMatched = true
-          originalMethodStart = method.cursorStart
-          until eachSignature.isEmpty() or method.isEmpty()
+          originalMethodInvocationStart = methodInvocation.cursorStart
+          until eachSignature.isEmpty() or methodInvocation.isEmpty()
 
-            console.log "evaluation " + indentation() + "  matching: - next signature piece: " + eachSignature.print() + " is atom: " + " with: " + method.print() + " PC: " + newContext.programCounter
+            console.log "evaluation " + indentation() + "  matching: - next signature piece: " + eachSignature.print() + " is atom: " + " with: " + methodInvocation.print() + " PC: " + newContext.programCounter
 
             [eachElementOfSignature, eachSignature] = eachSignature.nextElement()
 
@@ -69,7 +76,7 @@ class FLObjects
               # must contain the same atom, otherwise we don't
               # have a match.
 
-              [eachElementOfInvocation, method] = method.nextElement()
+              [eachElementOfInvocation, methodInvocation] = methodInvocation.nextElement()
 
               if eachElementOfInvocation.flClass == FLAtom or eachElementOfInvocation.flClass == FLSymbol
 
@@ -102,7 +109,7 @@ class FLObjects
               #console.dir paramAtom
               console.log "evaluation " + indentation() + "  matching - atom inside the parameter: " + paramAtom.print() + " PC: " + newContext.programCounter
               if eachElementOfSignature.isEvaluatingParam()
-                console.log "evaluation " + indentation() + "  matching - need to evaluate next msg element from invocation: " + method.print() + " and bind to: " + paramAtom.print() + " PC: " + newContext.programCounter
+                console.log "evaluation " + indentation() + "  matching - need to evaluate next msg element from invocation: " + methodInvocation.print() + " and bind to: " + paramAtom.print() + " PC: " + newContext.programCounter
                 # if the first element is a list,
                 # then the list is evaluated on
                 # its own, without considering what comes after it.
@@ -110,21 +117,25 @@ class FLObjects
                 # used as a parameter as is
                 # If the first element is not a list, then we
                 # run the evaluation as long as it takes us,
-                # until things "chain" with messages they
+                # as far as things "chain" with messages they
                 # understand.
   
-                # note how we need to evaluate the params in the ORIGINAL context, not the new one that
-                # we are creating, otherwise, say, passing self, self would always bind
+                # note how we need to evaluate the params in a context that has the
+                # same SELF as the calling one, not the new one that
+                # we are creating with the new SELF of the callee, otherwise, say,
+                # passing self, self would always bind
                 # to the receiver, which we don't want
                 # like in "7 times self" we don't want to bind self to 7
 
-                if method.firstElement().flClass == FLList
-                  [valueToBeBound, method] = method.evalFirstMessageElement theContext
+                if methodInvocation.firstElement().flClass == FLList
+                  [valueToBeBound, methodInvocation] = methodInvocation.evalAndConsumeFirstMessageElement theContext
                 else
-                  [valueToBeBound, method] = method.flEval theContext
+                  [valueToBeBound, methodInvocation] = methodInvocation.evalAndConsume theContext
+                
+
               else
-                console.log "evaluation " + indentation() + "  matching - need to get next msg element from invocation: " + method.print() + " and bind to: " + paramAtom.print() + " PC: " + newContext.programCounter
-                [valueToBeBound, method] = method.nextElement()
+                console.log "evaluation " + indentation() + "  matching - need to get next msg element from invocation: " + methodInvocation.print() + " and bind to: " + paramAtom.print() + " PC: " + newContext.programCounter
+                [valueToBeBound, methodInvocation] = methodInvocation.nextElement()
 
               
               console.log "evaluation " + indentation() + "  matching - adding paramater " + paramAtom.print() + " to tempVariables into this class: "
@@ -156,14 +167,14 @@ class FLObjects
             # now, the correct PC that we need to report is
             # the original plus what we consumed from matching the
             # signature.
-            console.log "evaluation " + indentation() + "  matching - consumed from matching this sig: " + (method.cursorStart - originalMethodStart)
-            console.log "evaluation " + indentation() + "             method: " + method.print() + " cursor start: " + method.cursorStart  + " original method start: " + originalMethodStart
+            console.log "evaluation " + indentation() + "  matching - consumed from matching this sig: " + (methodInvocation.cursorStart - originalMethodInvocationStart)
+            console.log "evaluation " + indentation() + "             methodInvocation: " + methodInvocation.print() + " cursor start: " + methodInvocation.cursorStart  + " original methodInvocation start: " + originalMethodInvocationStart
 
-            console.log "originalProgramCounter + method.cursorStart - originalMethodStart: " + originalProgramCounter + " " + method.cursorStart  + " " + originalMethodStart
+            console.log "originalProgramCounter + methodInvocation.cursorStart - originalMethodInvocationStart: " + originalProgramCounter + " " + methodInvocation.cursorStart  + " " + originalMethodInvocationStart
             console.log "theContext.programCounter BEFORE: " + theContext.programCounter
             console.log "theContext message BEFORE: " + theContext.message.print()
-            #theContext.programCounter += method.cursorStart - originalMethodStart
-            theContext.programCounter = originalProgramCounter + method.cursorStart - originalMethodStart
+            #theContext.programCounter += methodInvocation.cursorStart - originalMethodInvocationStart
+            theContext.programCounter = originalProgramCounter + methodInvocation.cursorStart - originalMethodInvocationStart
             console.log "theContext.programCounter AFTER: " + theContext.programCounter
             console.log "theContext message AFTER: " + theContext.message.print()
 
@@ -188,24 +199,27 @@ class FLObjects
     methodBody = @flClass.methodBodies[countSignaturePosition]
     console.log "evaluation " + indentation() + "  matching - method body: " + methodBody
 
-    # this could be a native or non-native message send
-    returnedContext = @messageSend methodBody, theContext
+    returnedContext = @methodCall methodBody, theContext
     console.log "evaluation " + indentation() + "  returned from message send: " + theContext
     flContexts.pop() # pops the theContext
     #console.dir theContext
 
     return returnedContext
 
-  # this could be native or non-native
-  messageSend: (methodBody, theContext, newSelf = @) ->
-    # note that this doesn't change the program counter,
-    # because we don't care here what we consume from the body
-    # execution, from the caller perspective it only matters
+  # this could be native, in which case it's a JS call,
+  # or non-native, in which case it will result into
+  # evaluation of the message that makes up the body.
+  methodCall: (methodBody, theContext, newSelf = @) ->
+    # note that this doesn't change the program counter of the calling
+    # context, because from the caller perspective it only matters
     # what we consume from the invocation, which we accounted
-    # for just above.
+    # for already in the process of finding the signature and
+    # binding the parameters.
     # i.e. we just consume
     # while we matched the correct method, which we account for
     # when we do the matching, not here after the matching happened.
+    #
+    # However we do affect the PC of the callee context.
     
     if methodBody.flClass == FLList
       console.log "evaluation " + indentation() + "  matching - method body: " + methodBody.print()
@@ -214,7 +228,7 @@ class FLObjects
       # the rest of the message is not used because all of the list should
       # be run, no remains from the message body should overspill
       # into the calling context. 
-      [ignored1, ignore2, contextToBeReturned] = methodBody.flEval theContext
+      contextToBeReturned = methodBody.eval theContext
     else
       console.log "evaluation " + indentation() + "  matching - NATIVE method body: " + methodBody
       # native method, i.e. coffeescript/javascript code
@@ -230,29 +244,30 @@ class FLObjects
   # same "method call" and the same "object". I.e. this
   # is not a method call, this is progressing within
   # an existing call
-  progressWithMessage: (message, theContext) ->
+  progressWithNonEmptyMessage: (message, theContext) ->
     newContext = new FLContext theContext, theContext.self, message
     flContexts.push newContext
-    toBeReturned = @evalMessage newContext
-    console.log "evaluation " + indentation() + "  progressWithMessage - evalMessage returned: " + toBeReturned
+
+    returnedContext = @findSignatureBindParamsAndMakeCall newContext, newContext.message
+    console.log "evaluation " + indentation() + "after having sent message: " + newContext.message.print() + " and PC: " + newContext.programCounter
+
+    if returnedContext? and returnedContext.returned?
+        # "findSignatureBindParamsAndMakeCall" has already done the job of
+        # making the call and fixing newContext's PC and
+        # updating the return value, we are done here
+        toBeReturned = returnedContext
+    else
+      newContext.returned = @
+      toBeReturned = newContext
+
+    console.log "evaluation " + indentation() + "  progressWithNonEmptyMessage - eval returned: " + toBeReturned
     #console.dir toBeReturned
     flContexts.pop()
     theContext.programCounter += newContext.programCounter
     message = message.advanceMessageBy newContext.programCounter
-    console.log "evaluation " + indentation() + "  progressWithMessage - returned: " + toBeReturned
+    console.log "evaluation " + indentation() + "  progressWithNonEmptyMessage - returned: " + toBeReturned
     #console.dir toBeReturned
     return [toBeReturned, message]
-
-
-  # You eval things just by sending them the empty message.
-  # Note that if you invoke this on a list, the whole list is evaluated.
-  flEval: (theContext) ->
-    console.log "           " + indentation() + "evaling: " + @print()
-    message = @
-    [newContext, unusedRestOfMessage] = @progressWithMessage FLList.emptyMessage(), theContext
-    if @flClass == FLList
-      message = @advanceMessageBy newContext.programCounter
-    return [newContext.returned, message, newContext]
 
 
 class FLPrimitiveObjects extends FLObjects
