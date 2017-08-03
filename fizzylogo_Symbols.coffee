@@ -1,16 +1,22 @@
-class FLNumberPrimitiveClass extends FLPrimitiveClasses
+class FLQuoteClass extends FLAnonymousClass
 
-  createNew: (value) ->
+  createNew: ->
     toBeReturned = new FLPrimitiveObjects()
-    toBeReturned.value = parseFloat(value + "")
-    toBeReturned.flClass = FLNumber
+    toBeReturned.flClass = FLQuote
+    toBeReturned.value = "@"
 
     toBeReturned.print = ->
-      return @value
+      return "Not_object"
+
+    toBeReturned.isEvaluatingParam = ->
+      return false
+
+    toBeReturned.getParamAtom = ->
+      return @
 
     toBeReturned.evalMessage = (theContext) ->
       message = theContext.message
-      console.log "evaluation " + indentation() + "messaging number " + @value + " with " + message.print()
+      console.log "evaluation " + indentation() + "messaging Not_object with " + message.print()
 
       console.log "evaluation " + indentation() + "before matching game the message is: " + message.print() + " and PC: " + theContext.programCounter
 
@@ -31,15 +37,13 @@ class FLNumberPrimitiveClass extends FLPrimitiveClasses
 
         theContext.returned = @
 
+
       #if !message.isEmpty()
-      #  console.log "evaluation " + indentation() + "this message to number should be empty? " + message.print()
-
+      #  console.log "evaluation " + indentation() + "this message to Not_object should be empty? " + message.print()
       #flContexts.pop()
-
       return theContext
 
     return toBeReturned
-    
 
-FLNumber = new FLNumberPrimitiveClass()
+FLQuote = new FLQuoteClass() # this is a class, an anonymous class
 

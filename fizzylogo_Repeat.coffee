@@ -23,12 +23,12 @@ class FLRepeatClass extends FLAnonymousClass
         theContext.returned = @
 
       else
-        returnedContext = @findMessageAndBindParams theContext, message
+        returnedContext = @findSignatureBindParamsAndMakeCall theContext, message
         console.log "evaluation " + indentation() + "after having sent message: " + message.print() + " and PC: " + theContext.programCounter
 
         if returnedContext?
           if returnedContext.returned?
-            # "findMessageAndBindParams" has already done the job of
+            # "findSignatureBindParamsAndMakeCall" has already done the job of
             # making the call and fixing theContext's PC and
             # updating the return value, we are done here
             return returnedContext

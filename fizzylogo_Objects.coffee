@@ -7,7 +7,7 @@ class FLObjects
     #console.log " instanceVariablesDict initiated "
     @instanceVariablesDict = {}
 
-  findMessageAndBindParams: (theContext, methodInvocationToBeChecked) ->
+  findSignatureBindParamsAndMakeCall: (theContext, methodInvocationToBeChecked) ->
         console.log "evaluation " + indentation() + "  !!! looking up method invocation " + methodInvocationToBeChecked.print() + " with signatures!" + " PC: " + theContext.programCounter
         console.log "evaluation " + indentation() + "  !!! looking up method invocation, is method empty? " + methodInvocationToBeChecked.isEmpty() + " PC: " + theContext.programCounter
 
