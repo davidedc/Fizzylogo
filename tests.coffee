@@ -73,7 +73,7 @@ tests = [
   "1"
 
   "(@(1plus 1))print"
-  "(  1 plus 1 )"
+  "( 1 plus 1 )"
 
   "((@(1plus 1))eval)print"
   "2"
@@ -246,13 +246,33 @@ tests = [
   "12345678910"
 
   "8 unintelligibleMessage"
-  "! something was not understood: (  unintelligibleMessage )"
+  "! something was not understood: ( unintelligibleMessage )"
 
   '"hello world" print'
   'hello world'
 
-  "(@(1) + 2) print"
-  "(  1 2 )"
+  "(@(1)+2)print"
+  "( 1 2 )"
+
+  "(@(1)+(2plus 1))print"
+  "( 1 3 )"
+
+  # note that the + evaluates
+  # its argument, so the passed list
+  # is evaluated. If you want to pass
+  # a list you need to quote it, see
+  # afterwards.
+  "(@(1)+(2))print"
+  "( 1 2 )"
+
+  "(@(1)+@(2))print"
+  "( 1 ( 2 ) )"
+
+  "(@((1))+2)print"
+  "( ( 1 ) 2 )"
+
+  "(@((1))+@(2))print"
+  "( ( 1 ) ( 2 ) )"
 
   #"@ a <- 5 someUndefinedMessage"
   #"7"

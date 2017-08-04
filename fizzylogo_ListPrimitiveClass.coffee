@@ -69,7 +69,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
       #console.log "list print: length: " + @length()
       if @length() <= 0
         return "empty message"
-      toBePrinted = "( "
+      toBePrinted = "("
       for i in [0...@length()]
         #console.log "@value element " + i + " : " + @value[i]
         #console.log "@value element " + i + " content: " + @value[i].value
