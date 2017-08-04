@@ -16,4 +16,4 @@ class FLForClass extends FLAnonymousClass
     return toBeReturned
 
 FLFor = new FLForClass() # this is a class, an anonymous class
-
+FLFor.flClass = FLFor

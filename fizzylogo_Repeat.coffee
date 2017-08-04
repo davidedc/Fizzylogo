@@ -16,4 +16,4 @@ class FLRepeatClass extends FLAnonymousClass
     return toBeReturned
 
 FLRepeat = new FLRepeatClass() # this is a class, an anonymous class
-
+FLRepeat.flClass = FLRepeat

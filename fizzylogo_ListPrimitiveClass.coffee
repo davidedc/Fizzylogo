@@ -251,5 +251,5 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
 
     
 FLList = new FLListPrimitiveClass()
-
+FLList.flClass = FLList
 

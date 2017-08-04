@@ -12,8 +12,6 @@ printFunction = (context) ->
 
 # Atom ---------------------------------------------------------------------------
 
-FLAtom = new FLAtomClass()
-
 FLAtom.msgPatterns.jsArrayPush flParse "print"
 FLAtom.methodBodies.jsArrayPush printFunction
 
@@ -78,8 +76,17 @@ FLClass.methodBodies.jsArrayPush (context) ->
 
 # String -------------------------------------------------------------------------
 
+FLString.msgPatterns.jsArrayPush flParse "new"
+FLString.methodBodies.jsArrayPush (context) ->
+  return @flClass.createNew ""
+
 FLString.msgPatterns.jsArrayPush flParse "print"
 FLString.methodBodies.jsArrayPush printFunction
+
+FLString.msgPatterns.jsArrayPush flParse "+ ( stringToBeAppended )"
+FLString.methodBodies.jsArrayPush (context) ->
+  stringToBeAppended = context.tempVariablesDict[ValidIDfromString "stringToBeAppended"]
+  return FLString.createNew @value + stringToBeAppended.print()
 
 
 # Number -------------------------------------------------------------------------
@@ -277,6 +284,10 @@ FLNot.msgPatterns.jsArrayPush flParse "( operandum )"
 FLNot.methodBodies.jsArrayPush flParse "operandum negate"
 
 # List -------------------------------------------------------------------------
+
+FLList.msgPatterns.jsArrayPush flParse "new"
+FLList.methodBodies.jsArrayPush (context) ->
+  return @flClass.createNew()
 
 FLList.msgPatterns.jsArrayPush flParse "print"
 FLList.methodBodies.jsArrayPush (context) ->

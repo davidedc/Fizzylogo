@@ -16,4 +16,4 @@ class FLQuoteClass extends FLAnonymousClass
     return toBeReturned
 
 FLQuote = new FLQuoteClass() # this is a class, an anonymous class
-
+FLQuote.flClass = FLQuote

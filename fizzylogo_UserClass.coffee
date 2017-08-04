@@ -21,4 +21,5 @@ class FLNonPrimitiveClass extends FLClasses
     return toBeReturned
 
 FLUserClass = new FLNonPrimitiveClass()
+FLUserClass.flClass = FLUserClass
 

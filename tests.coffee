@@ -274,6 +274,12 @@ tests = [
   "(@((1))+@(2))print"
   "( ( 1 ) ( 2 ) )"
 
+  "@ myList <- List new. myList print. @ myList <- myList + 2. myList print"
+  "empty message( 2 )"
+
+  '@ myString <- String new. myString print. @ myString <- myString + "Hello ". @ myString <- myString + "world". myString print'
+  'Hello world'
+
   #"@ a <- 5 someUndefinedMessage"
   #"7"
 
@@ -281,8 +287,6 @@ tests = [
 
 ###
 tests = [
-  "8 unintelligibleMessage"
-  "12345678910"
 ]
 ###
 
@@ -314,6 +318,8 @@ for i in [0...tests.length] by 2
     
     keywordsAndTheirInit = [
       "Class", FLClass.createNew()
+      "List", FLList
+      "String", FLString
 
       "not", FLNot.createNew()
       "true", FLBoolean.createNew true

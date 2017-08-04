@@ -28,3 +28,4 @@ class FLWorkspaceClass extends FLAnonymousClass
     return toBeReturned
 
 FLWorkspace = new FLWorkspaceClass() # this is a class
+FLWorkspace.flClass = FLWorkspace

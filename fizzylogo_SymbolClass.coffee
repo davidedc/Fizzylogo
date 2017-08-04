@@ -20,6 +20,8 @@ class FLSymbolClass extends FLAnonymousClass
     return toBeReturned
 
 FLSymbol = new FLSymbolClass() # this is a class, an anonymous class
+FLSymbol.flClass = FLSymbol
+
 RStatementSeparatorSymbol = FLSymbol.createNew "."
 
 

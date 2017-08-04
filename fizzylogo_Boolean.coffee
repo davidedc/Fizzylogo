@@ -12,4 +12,4 @@ class FLBooleanPrimitiveClass extends FLPrimitiveClasses
     
 
 FLBoolean = new FLBooleanPrimitiveClass()
-
+FLBoolean.flClass = FLBoolean

@@ -12,4 +12,4 @@ class FLNumberPrimitiveClass extends FLPrimitiveClasses
     
 
 FLNumber = new FLNumberPrimitiveClass()
-
+FLNumber.flClass = FLNumber

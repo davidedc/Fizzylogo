@@ -39,7 +39,7 @@ class FLClassPrimitiveClass extends FLPrimitiveClasses
     
 
 FLClass = new FLClassPrimitiveClass()
-
+FLClass.flClass = FLClass
 
 class FLAnonymousClass extends FLPrimitiveClasses
 

@@ -30,4 +30,4 @@ class FLAtomClass extends FLPrimitiveClasses
     return toBeReturned
 
 FLAtom = new FLAtomClass()
-
+FLAtom.flClass = FLAtom

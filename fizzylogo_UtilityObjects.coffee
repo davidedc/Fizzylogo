@@ -16,6 +16,7 @@ class FLNotClass extends FLAnonymousClass
     return toBeReturned
 
 FLNot = new FLNotClass() # this is a class, an anonymous class
+FLNot.flClass = FLNot
 
 # --------------------------------------------------------------------------------
 
@@ -38,4 +39,4 @@ class FLDoneClass extends FLAnonymousClass
     return toBeReturned
 
 FLDone = new FLDoneClass() # this is a class, an anonymous class
-
+FLDone.flClass = FLDone

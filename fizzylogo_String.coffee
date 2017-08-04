@@ -12,4 +12,5 @@ class FLStringPrimitiveClass extends FLPrimitiveClasses
     
 
 FLString = new FLStringPrimitiveClass()
+FLString.flClass = FLString
 
