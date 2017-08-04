@@ -4,16 +4,34 @@
 printPattern = flParse "print"
 ###
 
-printFunction = (context) ->
+commonPrintFunction = (context) ->
   console.log "///////// program printout: " + @value
   environmentPrintout += @value
   return @
+
+commonTdictFunction = (context) ->
+  if !@flClass.tempVariables?
+    @flClass.tempVariables = FLList.emptyList()
+  return @flClass.tempVariables
+
+commonIdictFunction = (context) ->
+  if !@flClass.instanceVariables?
+    @flClass.instanceVariables = FLList.emptyList()
+
+  console.log "idict: context.self.flClass: "
+  console.dir @flClass
+  return @flClass.instanceVariables
+
+commonCdictFunction = (context) ->
+  if !@flClass.classVariables?
+    @flClass.classVariables = FLList.emptyList()
+  return @flClass.classVariables
 
 
 # Atom ---------------------------------------------------------------------------
 
 FLAtom.msgPatterns.jsArrayPush flParse "print"
-FLAtom.methodBodies.jsArrayPush printFunction
+FLAtom.methodBodies.jsArrayPush commonPrintFunction
 
 FLAtom.msgPatterns.jsArrayPush flParse "<- ( valueToAssign )"
 FLAtom.methodBodies.jsArrayPush (context) ->
@@ -37,6 +55,11 @@ FLAtom.methodBodies.jsArrayPush (context) ->
   console.log "evaluation " + indentation() + "stored value in dictionary"
   return valueToAssign
 
+# Nil ---------------------------------------------------------------------------
+
+FLNil.msgPatterns.jsArrayPush flParse "print"
+FLNil.methodBodies.jsArrayPush commonPrintFunction
+
 # Class -------------------------------------------------------------------------
 
 FLClass.msgPatterns.jsArrayPush flParse "print"
@@ -52,14 +75,23 @@ FLClass.methodBodies.jsArrayPush (context) ->
   newUserClass = FLUserClass.createNew()
 
   newUserClass.msgPatterns.jsArrayPush flParse "print"
-  newUserClass.methodBodies.jsArrayPush printFunction
+  newUserClass.methodBodies.jsArrayPush commonPrintFunction
 
   # the class we are creating has a "new"
   # so user can create objects for it
   newUserClass.msgPatterns.jsArrayPush flParse "new"
   newUserClass.methodBodies.jsArrayPush (context) ->
     console.log "///////// creating a new object from a user class!"
-    return @createNew()
+    objectTBR = @createNew()
+    console.log "///////// creating a new object from a user class - user class of object: " + objectTBR.flClass.value
+    console.log "///////// creating a new object from a user class - objectTBR.value: " + objectTBR.value
+    console.log "///////// creating a new object from a user class - making space for instanceVariables"
+    console.log "///////// creating a new object from a user class - instance variables in this class: " + objectTBR.flClass.instanceVariables.print()
+    for eachInstanceVariable in objectTBR.flClass.instanceVariables.value
+      console.log "///////// creating a new object from a user class - adding this to dict: " + ValidIDfromString eachInstanceVariable.value
+      objectTBR.instanceVariablesDict[ValidIDfromString eachInstanceVariable.value] = FLNil.createNew()
+
+    return objectTBR
 
 
   newUserClass.msgPatterns.jsArrayPush flParse "answer ( @ signature ) by ( @ methodBody )"
@@ -72,7 +104,31 @@ FLClass.methodBodies.jsArrayPush (context) ->
 
     return @
 
+  newUserClass.msgPatterns.jsArrayPush flParse "tdict"
+  newUserClass.methodBodies.jsArrayPush commonTdictFunction
+
+  newUserClass.msgPatterns.jsArrayPush flParse "idict <- ( variable )"
+  newUserClass.methodBodies.jsArrayPush (context) ->
+    variable = context.tempVariablesDict[ValidIDfromString "variable"]
+    console.log "idict adding varible: @flClass.value " + @flClass.value
+    if !@flClass.instanceVariables?
+      @flClass.instanceVariables = FLList.emptyList()
+
+    console.log "idict: context.self.flClass: "
+    console.dir @flClass
+
+    @flClass.instanceVariables = @flClass.instanceVariables.flListImmutablePush variable
+
+    return @
+
+  newUserClass.msgPatterns.jsArrayPush flParse "idict"
+  newUserClass.methodBodies.jsArrayPush commonIdictFunction
+
+  newUserClass.msgPatterns.jsArrayPush flParse "cdict"
+  newUserClass.methodBodies.jsArrayPush commonCdictFunction
+
   return newUserClass
+
 
 # String -------------------------------------------------------------------------
 
@@ -81,7 +137,7 @@ FLString.methodBodies.jsArrayPush (context) ->
   return @flClass.createNew ""
 
 FLString.msgPatterns.jsArrayPush flParse "print"
-FLString.methodBodies.jsArrayPush printFunction
+FLString.methodBodies.jsArrayPush commonPrintFunction
 
 FLString.msgPatterns.jsArrayPush flParse "+ ( stringToBeAppended )"
 FLString.methodBodies.jsArrayPush (context) ->
@@ -128,7 +184,7 @@ FLNumber.msgPatterns.jsArrayPush flParse "printAFromDeeperCall"
 FLNumber.methodBodies.jsArrayPush flParse "a print"
 
 FLNumber.msgPatterns.jsArrayPush flParse "print"
-FLNumber.methodBodies.jsArrayPush printFunction
+FLNumber.methodBodies.jsArrayPush commonPrintFunction
 
 FLNumber.msgPatterns.jsArrayPush flParse "plus ( operandum )"
 FLNumber.methodBodies.jsArrayPush (context) ->
@@ -186,26 +242,13 @@ FLNumber.methodBodies.jsArrayPush (context) ->
   return @
 
 FLNumber.msgPatterns.jsArrayPush flParse "tdict"
-FLNumber.methodBodies.jsArrayPush (context) ->
-  if !@flClass.tempVariables?
-    @flClass.tempVariables = FLList.emptyMessage()
-  return @flClass.tempVariables
+FLNumber.methodBodies.jsArrayPush commonTdictFunction
 
 FLNumber.msgPatterns.jsArrayPush flParse "idict"
-FLNumber.methodBodies.jsArrayPush (context) ->
-
-  if !@flClass.instanceVariables?
-    @flClass.instanceVariables = FLList.emptyMessage()
-
-  console.log "idict: context.self.flClass: "
-  console.dir @flClass
-  return @flClass.instanceVariables
+FLNumber.methodBodies.jsArrayPush commonIdictFunction
 
 FLNumber.msgPatterns.jsArrayPush flParse "cdict"
-FLNumber.methodBodies.jsArrayPush (context) ->
-  if !@flClass.classVariables?
-    @flClass.classVariables = FLList.emptyMessage()
-  return @flClass.classVariables
+FLNumber.methodBodies.jsArrayPush commonCdictFunction
 
 # Boolean -------------------------------------------------------------------------
 
@@ -214,7 +257,7 @@ FLBoolean.methodBodies.jsArrayPush (context) ->
   return FLBoolean.createNew !@value
 
 FLBoolean.msgPatterns.jsArrayPush flParse "print"
-FLBoolean.methodBodies.jsArrayPush printFunction
+FLBoolean.methodBodies.jsArrayPush commonPrintFunction
 
 FLBoolean.msgPatterns.jsArrayPush flParse "and ( operandum )"
 FLBoolean.methodBodies.jsArrayPush (context) ->
@@ -330,7 +373,7 @@ FLDone.methodBodies.jsArrayPush (context) ->
 # Repeat -------------------------------------------------------------------------
 
 FLRepeat.msgPatterns.jsArrayPush flParse "print"
-FLRepeat.methodBodies.jsArrayPush printFunction
+FLRepeat.methodBodies.jsArrayPush commonPrintFunction
 
 FLRepeat.msgPatterns.jsArrayPush flParse "( @ loopCode )"
 FLRepeat.methodBodies.jsArrayPush (context) ->

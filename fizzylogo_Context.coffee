@@ -115,7 +115,7 @@ class FLContext
     else
       console.log "evaluation " + indentation() + "lookup: creating " + atomValue + " as temp variable in current context at depth: " + @depth()
       if !@self.flClass.tempVariables?
-        @self.flClass.tempVariables = FLList.createNew()
+        @self.flClass.tempVariables = FLList.emptyList()
 
       @self.flClass.tempVariables = @self.flClass.tempVariables.flListImmutablePush FLAtom.createNew atomValue
       return @tempVariablesDict
@@ -137,8 +137,8 @@ class FLContext
     #console.dir dictWhereValueIs
     console.log "evaluation " + indentation() + "lookup: " + theAtom.value + " also known as " + (ValidIDfromString theAtom.value)
 
-    #console.log "evaluation " + indentation() + "lookup: " + theAtom.value + " class is: "
-    #console.dir dictWhereValueIs[encodedAtomValue].flClass
+    console.log "evaluation " + indentation() + "lookup: value looked up: "
+    console.dir dictWhereValueIs[ValidIDfromString theAtom.value]
 
     return dictWhereValueIs[ValidIDfromString theAtom.value]
 

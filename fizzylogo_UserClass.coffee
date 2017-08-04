@@ -5,10 +5,19 @@ class FLNonPrimitiveClass extends FLClasses
     toBeReturned.value = "some_custom_class_of_user"
 
     toBeReturned.flClass = toBeReturned
-    toBeReturned.classVariablesDict = {}
+
     toBeReturned.msgPatterns = []
     toBeReturned.methodBodies = []
-    toBeReturned.instanceVariablesDict = {}
+
+    toBeReturned.instanceVariables = FLList.emptyList()
+    toBeReturned.classVariables = FLList.emptyList()
+    toBeReturned.tempVariables = FLList.emptyList()
+
+    # the temp variables contents
+    # are in the context, not here in the class
+    # similarly, the instance variables contents
+    # are in the object, not here in the class
+    toBeReturned.classVariablesDict = {}
 
     toBeReturned.createNew = ->
       objectTBR = new FLPrimitiveObjects()

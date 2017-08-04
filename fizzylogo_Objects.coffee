@@ -142,7 +142,7 @@ class FLObjects
               #console.dir theContext.self.flClass
               # TODO we should insert without repetition
               if !newContext.self.flClass.tempVariables?
-                newContext.self.flClass.tempVariables = FLList.createNew()
+                newContext.self.flClass.tempVariables = FLList.emptyList()
               newContext.self.flClass.tempVariables = newContext.self.flClass.tempVariables.flListImmutablePush paramAtom
               newContext.tempVariablesDict[ValidIDfromString paramAtom.value] = valueToBeBound
 

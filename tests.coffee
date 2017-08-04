@@ -274,11 +274,14 @@ tests = [
   "(@((1))+@(2))print"
   "( ( 1 ) ( 2 ) )"
 
-  "@ myList <- List new. myList print. @ myList <- myList + 2. myList print"
+  "@myList<-List new.myList print.@myList<-myList+2.myList print"
   "empty message( 2 )"
 
-  '@ myString <- String new. myString print. @ myString <- myString + "Hello ". @ myString <- myString + "world". myString print'
+  '@myString<-String new.myString print.@myString<-myString+"Hello ".@myString<-myString+"world".myString print'
   'Hello world'
+
+  "@MyClass<-Class new.MyClass idict<-@counter.MyClass answer(setCounterToTwo)by(@counter<-2).MyClass answer(printCounter)by(counter print).@myObject<-MyClass new.myObject printCounter.myObject setCounterToTwo.myObject printCounter",
+  "nil2"
 
   #"@ a <- 5 someUndefinedMessage"
   #"7"
@@ -287,6 +290,10 @@ tests = [
 
 ###
 tests = [
+
+  "@MyClass<-Class new.MyClass answer(printtwo)by(self print).@myObject<-MyClass new.myObject printtwo",
+  "object_from_a_user_class"
+
 ]
 ###
 
@@ -314,7 +321,7 @@ for i in [0...tests.length] by 2
     outerMostContext = new FLContext null, rWorkspace, parsed
     flContexts.jsArrayPush outerMostContext
 
-    rWorkspace.flClass.instanceVariables = FLList.createNew()
+    rWorkspace.flClass.instanceVariables = FLList.emptyList()
     
     keywordsAndTheirInit = [
       "Class", FLClass.createNew()

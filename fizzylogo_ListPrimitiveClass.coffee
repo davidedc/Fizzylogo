@@ -28,6 +28,11 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
     newMessage.isFromMessage = true
     return newMessage
 
+  emptyList: ->
+    newMessage = FLList.createNew()
+    newMessage.isFromMessage = false
+    return newMessage
+
   createNew: ->
     toBeReturned = new FLPrimitiveObjects()
     toBeReturned.value = []
