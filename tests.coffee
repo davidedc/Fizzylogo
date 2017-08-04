@@ -248,6 +248,9 @@ tests = [
   "8 unintelligibleMessage"
   "! something was not understood: (  unintelligibleMessage )"
 
+  '"hello world" print'
+  'hello world'
+
   #"@ a <- 5 someUndefinedMessage"
   #"7"
 

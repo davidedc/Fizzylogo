@@ -76,6 +76,11 @@ FLClass.methodBodies.push (context) ->
 
   return newUserClass
 
+# String -------------------------------------------------------------------------
+
+FLString.msgPatterns.push flParse "print"
+FLString.methodBodies.push printFunction
+
 
 # Number -------------------------------------------------------------------------
 
