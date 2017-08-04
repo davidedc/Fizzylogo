@@ -264,13 +264,13 @@ tests = [
 ###
 
 flContexts = []
-environmentPrintout = ""
 rWorkspace = null
 
 
 for i in [0...tests.length] by 2
     [testBody, testResult] = tests[i .. i + 1]
     environmentPrintout = ""
+    environmentErrors = ""
     console.log "starting test: " + (i/2+1) + ": " + testBody
     
     parsed = flParse testBody
@@ -311,8 +311,8 @@ for i in [0...tests.length] by 2
 
     rWorkspace.eval outerMostContext
     console.log "final return: " + outerMostContext.returned.value
-    if environmentPrintout == testResult
-      console.log "...test " + (i/2+1) + " OK, obtained: " + environmentPrintout
+    if environmentPrintout + environmentErrors == testResult
+      console.log "...test " + (i/2+1) + " OK, obtained: " + environmentPrintout + environmentErrors
     else
-      console.log "...test " + (i/2+1) + " FAIL, test: " + testBody + " obtained: " + environmentPrintout + " expected: " + testResult
+      console.log "...test " + (i/2+1) + " FAIL, test: " + testBody + " obtained: " + environmentPrintout + environmentErrors + " expected: " + testResult
 

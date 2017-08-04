@@ -22,7 +22,7 @@ class FLWorkspaceClass extends FLAnonymousClass
 
       if returnedContext.unparsedMessage
         console.log "evaluation " + indentation() + "something was not understood: " + returnedContext.unparsedMessage.print()
-        environmentPrintout += "! something was not understood: " + returnedContext.unparsedMessage.print()
+        environmentErrors += "! something was not understood: " + returnedContext.unparsedMessage.print()
 
 
     return toBeReturned
