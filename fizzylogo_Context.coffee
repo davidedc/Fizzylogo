@@ -109,7 +109,7 @@ class FLContext
     atomValue = theAtom.value
     if @self == rWorkspace
       console.log "evaluation " + indentation() + "lookup: creating " + atomValue + " as instance variable in top-most context"
-      @self.flClass.instanceVariables.push FLAtom.createNew atomValue
+      @self.flClass.instanceVariables = @self.flClass.instanceVariables.flListImmutablePush FLAtom.createNew atomValue
       return @self.instanceVariablesDict
     # otherwise, in any other context create it as a temp
     else
@@ -117,7 +117,7 @@ class FLContext
       if !@self.flClass.tempVariables?
         @self.flClass.tempVariables = FLList.createNew()
 
-      @self.flClass.tempVariables.push FLAtom.createNew atomValue
+      @self.flClass.tempVariables = @self.flClass.tempVariables.flListImmutablePush FLAtom.createNew atomValue
       return @tempVariablesDict
 
 

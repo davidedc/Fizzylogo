@@ -36,7 +36,7 @@ class FLObjects
         # the context stack handling easier
         # the for loop
         # TODO check that this is not left hanging
-        flContexts.push null
+        flContexts.jsArrayPush null
 
         for eachSignature in @flClass.msgPatterns
           #console.log "evaluation " + indentation() + "  matching - checking if this signature matches: " + eachSignature.print() + " PC: " + theContext.programCounter
@@ -54,7 +54,7 @@ class FLObjects
 
           # this is the ONLY place where we change self!
           newContext = new FLContext theContext, @, methodInvocation
-          flContexts.push newContext
+          flContexts.jsArrayPush newContext
           #theContext.programCounter = originalProgramCounter
           #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.print() + " PC: " + theContext.programCounter             #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.print() + " PC: " + newContext.programCounter
 
@@ -143,7 +143,7 @@ class FLObjects
               # TODO we should insert without repetition
               if !newContext.self.flClass.tempVariables?
                 newContext.self.flClass.tempVariables = FLList.createNew()
-              newContext.self.flClass.tempVariables.push paramAtom
+              newContext.self.flClass.tempVariables = newContext.self.flClass.tempVariables.flListImmutablePush paramAtom
               newContext.tempVariablesDict[ValidIDfromString paramAtom.value] = valueToBeBound
 
               # there should be no temps in the mother context
@@ -246,7 +246,7 @@ class FLObjects
   # an existing call
   progressWithNonEmptyMessage: (message, theContext) ->
     newContext = new FLContext theContext, theContext.self, message
-    flContexts.push newContext
+    flContexts.jsArrayPush newContext
 
     returnedContext = @findSignatureBindParamsAndMakeCall newContext, newContext.message
     console.log "evaluation " + indentation() + "after having sent message: " + newContext.message.print() + " and PC: " + newContext.programCounter

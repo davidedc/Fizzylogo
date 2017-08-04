@@ -1,6 +1,12 @@
 indentation = ->
   return " ".repeat(flContexts.length * 2)
 
+# to disambiguate between when we are operating
+# on JS arrays from when we are operating
+# on fizzylogo lists.
+Array::jsArrayPush = (element) ->
+  @push element
+
 # variation of base64, generates valid IDs from
 # an arbitrary string. This should be made
 # tighter, as the encoding is not unique

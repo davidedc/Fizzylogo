@@ -14,11 +14,11 @@ printFunction = (context) ->
 
 FLAtom = new FLAtomClass()
 
-FLAtom.msgPatterns.push flParse "print"
-FLAtom.methodBodies.push printFunction
+FLAtom.msgPatterns.jsArrayPush flParse "print"
+FLAtom.methodBodies.jsArrayPush printFunction
 
-FLAtom.msgPatterns.push flParse "<- ( valueToAssign )"
-FLAtom.methodBodies.push (context) ->
+FLAtom.msgPatterns.jsArrayPush flParse "<- ( valueToAssign )"
+FLAtom.methodBodies.jsArrayPush (context) ->
   valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
 
   theAtomName = @value
@@ -41,36 +41,36 @@ FLAtom.methodBodies.push (context) ->
 
 # Class -------------------------------------------------------------------------
 
-FLClass.msgPatterns.push flParse "print"
-FLClass.methodBodies.push (context) ->
+FLClass.msgPatterns.jsArrayPush flParse "print"
+FLClass.methodBodies.jsArrayPush (context) ->
   console.log "///////// program printout: " + "Class object!"
   environmentPrintout += "Class_object"
   return @
 
-FLClass.msgPatterns.push flParse "new"
-FLClass.methodBodies.push (context) ->
+FLClass.msgPatterns.jsArrayPush flParse "new"
+FLClass.methodBodies.jsArrayPush (context) ->
   console.log "///////// creating a new class for the user!"
 
   newUserClass = FLUserClass.createNew()
 
-  newUserClass.msgPatterns.push flParse "print"
-  newUserClass.methodBodies.push printFunction
+  newUserClass.msgPatterns.jsArrayPush flParse "print"
+  newUserClass.methodBodies.jsArrayPush printFunction
 
   # the class we are creating has a "new"
   # so user can create objects for it
-  newUserClass.msgPatterns.push flParse "new"
-  newUserClass.methodBodies.push (context) ->
+  newUserClass.msgPatterns.jsArrayPush flParse "new"
+  newUserClass.methodBodies.jsArrayPush (context) ->
     console.log "///////// creating a new object from a user class!"
     return @createNew()
 
 
-  newUserClass.msgPatterns.push flParse "answer ( @ signature ) by ( @ methodBody )"
-  newUserClass.methodBodies.push (context) ->
+  newUserClass.msgPatterns.jsArrayPush flParse "answer ( @ signature ) by ( @ methodBody )"
+  newUserClass.methodBodies.jsArrayPush (context) ->
     signature = context.tempVariablesDict[ValidIDfromString "signature"]
     methodBody = context.tempVariablesDict[ValidIDfromString "methodBody"]
 
-    @msgPatterns.push signature
-    @methodBodies.push methodBody
+    @msgPatterns.jsArrayPush signature
+    @methodBodies.jsArrayPush methodBody
 
     return @
 
@@ -78,78 +78,78 @@ FLClass.methodBodies.push (context) ->
 
 # String -------------------------------------------------------------------------
 
-FLString.msgPatterns.push flParse "print"
-FLString.methodBodies.push printFunction
+FLString.msgPatterns.jsArrayPush flParse "print"
+FLString.methodBodies.jsArrayPush printFunction
 
 
 # Number -------------------------------------------------------------------------
 
-FLNumber.msgPatterns.push flParse "anotherPrint"
-FLNumber.methodBodies.push flParse "self print"
+FLNumber.msgPatterns.jsArrayPush flParse "anotherPrint"
+FLNumber.methodBodies.jsArrayPush flParse "self print"
 
-FLNumber.msgPatterns.push flParse "anotherPrinttwo"
-FLNumber.methodBodies.push flParse "(self print)"
+FLNumber.msgPatterns.jsArrayPush flParse "anotherPrinttwo"
+FLNumber.methodBodies.jsArrayPush flParse "(self print)"
 
-FLNumber.msgPatterns.push flParse "anotherPrintthree"
-FLNumber.methodBodies.push flParse "(((((((((self))) print))))))"
+FLNumber.msgPatterns.jsArrayPush flParse "anotherPrintthree"
+FLNumber.methodBodies.jsArrayPush flParse "(((((((((self))) print))))))"
 
-FLNumber.msgPatterns.push flParse "doublePrint"
-FLNumber.methodBodies.push flParse "self print print"
+FLNumber.msgPatterns.jsArrayPush flParse "doublePrint"
+FLNumber.methodBodies.jsArrayPush flParse "self print print"
 
-FLNumber.msgPatterns.push flParse "increment"
-FLNumber.methodBodies.push flParse "self <- self plus 1"
+FLNumber.msgPatterns.jsArrayPush flParse "increment"
+FLNumber.methodBodies.jsArrayPush flParse "self <- self plus 1"
 
-FLNumber.msgPatterns.push flParse "factorial"
-FLNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) ( self minus 1 ) factorial * self"
+FLNumber.msgPatterns.jsArrayPush flParse "factorial"
+FLNumber.methodBodies.jsArrayPush flParse "( self == 0 ) => ( 1 ) ( self minus 1 ) factorial * self"
 
-FLNumber.msgPatterns.push flParse "factorialtwo"
-FLNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) self * ( ( self minus 1 ) factorial )"
+FLNumber.msgPatterns.jsArrayPush flParse "factorialtwo"
+FLNumber.methodBodies.jsArrayPush flParse "( self == 0 ) => ( 1 ) self * ( ( self minus 1 ) factorial )"
 
-FLNumber.msgPatterns.push flParse "factorialthree"
-FLNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) (@temp <- self. ( self minus 1 ) factorial * temp )"
+FLNumber.msgPatterns.jsArrayPush flParse "factorialthree"
+FLNumber.methodBodies.jsArrayPush flParse "( self == 0 ) => ( 1 ) (@temp <- self. ( self minus 1 ) factorial * temp )"
 
-FLNumber.msgPatterns.push flParse "factorialfour"
-FLNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) (((((@temp <- self)))). ( self minus 1 ) factorial * temp )"
+FLNumber.msgPatterns.jsArrayPush flParse "factorialfour"
+FLNumber.methodBodies.jsArrayPush flParse "( self == 0 ) => ( 1 ) (((((@temp <- self)))). ( self minus 1 ) factorial * temp )"
 
-FLNumber.msgPatterns.push flParse "factorialfive"
-FLNumber.methodBodies.push flParse "( self == 0 ) => ( 1 ) (1 plus 1.((((@temp <- self)))). ( self minus 1 ) factorial * temp )"
+FLNumber.msgPatterns.jsArrayPush flParse "factorialfive"
+FLNumber.methodBodies.jsArrayPush flParse "( self == 0 ) => ( 1 ) (1 plus 1.((((@temp <- self)))). ( self minus 1 ) factorial * temp )"
 
-FLNumber.msgPatterns.push flParse "amIZero"
-FLNumber.methodBodies.push flParse "self == 0"
+FLNumber.msgPatterns.jsArrayPush flParse "amIZero"
+FLNumber.methodBodies.jsArrayPush flParse "self == 0"
 
-FLNumber.msgPatterns.push flParse "printAFromDeeperCall"
-FLNumber.methodBodies.push flParse "a print"
+FLNumber.msgPatterns.jsArrayPush flParse "printAFromDeeperCall"
+FLNumber.methodBodies.jsArrayPush flParse "a print"
 
-FLNumber.msgPatterns.push flParse "print"
-FLNumber.methodBodies.push printFunction
+FLNumber.msgPatterns.jsArrayPush flParse "print"
+FLNumber.methodBodies.jsArrayPush printFunction
 
-FLNumber.msgPatterns.push flParse "plus ( operandum )"
-FLNumber.methodBodies.push (context) ->
+FLNumber.msgPatterns.jsArrayPush flParse "plus ( operandum )"
+FLNumber.methodBodies.jsArrayPush (context) ->
   operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
   return FLNumber.createNew @value + operandum.value
 
-FLNumber.msgPatterns.push flParse "minus ( operandum )"
-FLNumber.methodBodies.push (context) ->
+FLNumber.msgPatterns.jsArrayPush flParse "minus ( operandum )"
+FLNumber.methodBodies.jsArrayPush (context) ->
   operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
   return FLNumber.createNew @value - operandum.value
 
-FLNumber.msgPatterns.push flParse "selftimesminusone"
-FLNumber.methodBodies.push flParse "self * self minus 1"
+FLNumber.msgPatterns.jsArrayPush flParse "selftimesminusone"
+FLNumber.methodBodies.jsArrayPush flParse "self * self minus 1"
 
-FLNumber.msgPatterns.push flParse "* ( operandum )"
-FLNumber.methodBodies.push (context) ->
+FLNumber.msgPatterns.jsArrayPush flParse "* ( operandum )"
+FLNumber.methodBodies.jsArrayPush (context) ->
   operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
   console.log "evaluation " + indentation() + "multiplying " + @value + " to " + operandum.value  
   return FLNumber.createNew @value * operandum.value
 
-FLNumber.msgPatterns.push flParse "times ( @ loopCode )"
-FLNumber.methodBodies.push (context) ->
+FLNumber.msgPatterns.jsArrayPush flParse "times ( @ loopCode )"
+FLNumber.methodBodies.jsArrayPush (context) ->
   loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
   console.log "FLNumber => DO loop code is: " + loopCode.print()
 
   for i in [0...@value]
     newContext = new FLContext context, context.self, FLList.emptyMessage()
-    flContexts.push newContext
+    flContexts.jsArrayPush newContext
     toBeReturned = (loopCode.eval newContext).returned
 
     flContexts.pop()
@@ -164,28 +164,28 @@ FLNumber.methodBodies.push (context) ->
   return toBeReturned
 
 
-FLNumber.msgPatterns.push flParse "== ( toCompare )"
-FLNumber.methodBodies.push (context) ->
+FLNumber.msgPatterns.jsArrayPush flParse "== ( toCompare )"
+FLNumber.methodBodies.jsArrayPush (context) ->
   toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
   if @value == toCompare.value
     return FLBoolean.createNew true
   else
     return FLBoolean.createNew false
 
-FLNumber.msgPatterns.push flParse "<- ( valueToAssign )"
-FLNumber.methodBodies.push (context) ->
+FLNumber.msgPatterns.jsArrayPush flParse "<- ( valueToAssign )"
+FLNumber.methodBodies.jsArrayPush (context) ->
   valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
   @value = valueToAssign.value
   return @
 
-FLNumber.msgPatterns.push flParse "tdict"
-FLNumber.methodBodies.push (context) ->
+FLNumber.msgPatterns.jsArrayPush flParse "tdict"
+FLNumber.methodBodies.jsArrayPush (context) ->
   if !@flClass.tempVariables?
     @flClass.tempVariables = FLList.emptyMessage()
   return @flClass.tempVariables
 
-FLNumber.msgPatterns.push flParse "idict"
-FLNumber.methodBodies.push (context) ->
+FLNumber.msgPatterns.jsArrayPush flParse "idict"
+FLNumber.methodBodies.jsArrayPush (context) ->
 
   if !@flClass.instanceVariables?
     @flClass.instanceVariables = FLList.emptyMessage()
@@ -194,34 +194,34 @@ FLNumber.methodBodies.push (context) ->
   console.dir @flClass
   return @flClass.instanceVariables
 
-FLNumber.msgPatterns.push flParse "cdict"
-FLNumber.methodBodies.push (context) ->
+FLNumber.msgPatterns.jsArrayPush flParse "cdict"
+FLNumber.methodBodies.jsArrayPush (context) ->
   if !@flClass.classVariables?
     @flClass.classVariables = FLList.emptyMessage()
   return @flClass.classVariables
 
 # Boolean -------------------------------------------------------------------------
 
-FLBoolean.msgPatterns.push flParse "negate"
-FLBoolean.methodBodies.push (context) ->
+FLBoolean.msgPatterns.jsArrayPush flParse "negate"
+FLBoolean.methodBodies.jsArrayPush (context) ->
   return FLBoolean.createNew !@value
 
-FLBoolean.msgPatterns.push flParse "print"
-FLBoolean.methodBodies.push printFunction
+FLBoolean.msgPatterns.jsArrayPush flParse "print"
+FLBoolean.methodBodies.jsArrayPush printFunction
 
-FLBoolean.msgPatterns.push flParse "and ( operandum )"
-FLBoolean.methodBodies.push (context) ->
+FLBoolean.msgPatterns.jsArrayPush flParse "and ( operandum )"
+FLBoolean.methodBodies.jsArrayPush (context) ->
   operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
   return FLBoolean.createNew @value and operandum.value
 
-FLBoolean.msgPatterns.push flParse "=> ( @ trueBranch )"
-FLBoolean.methodBodies.push (context) ->
+FLBoolean.msgPatterns.jsArrayPush flParse "=> ( @ trueBranch )"
+FLBoolean.methodBodies.jsArrayPush (context) ->
   trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
   console.log "FLBoolean => , predicate value is: " + @value
 
   if @value
     newContext = new FLContext context, context.self, FLList.emptyMessage()
-    flContexts.push newContext
+    flContexts.jsArrayPush newContext
     toBeReturned = (trueBranch.eval newContext).returned
     flContexts.pop()
 
@@ -242,8 +242,8 @@ FLBoolean.methodBodies.push (context) ->
   return null
 
 
-FLBoolean.msgPatterns.push flParse "or ( operandum )"
-FLBoolean.methodBodies.push (context) ->
+FLBoolean.msgPatterns.jsArrayPush flParse "or ( operandum )"
+FLBoolean.methodBodies.jsArrayPush (context) ->
   console.log "executing an or! "
   operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
   return FLBoolean.createNew @value or operandum.value
@@ -260,53 +260,57 @@ FLBoolean.methodBodies.push (context) ->
 #    message: falseBranch
 # at which point, because of this below, the falseBranch
 # is executed.
-FLBoolean.msgPatterns.push flParse "(resultOfAnyOtherCode)"
-FLBoolean.methodBodies.push (context) ->
+FLBoolean.msgPatterns.jsArrayPush flParse "(resultOfAnyOtherCode)"
+FLBoolean.methodBodies.jsArrayPush (context) ->
   resultOfAnyOtherCode = context.tempVariablesDict[ValidIDfromString "resultOfAnyOtherCode"]
   return resultOfAnyOtherCode
 
 # FLQuote --------------------------------------------------------------------------
 
-FLQuote.msgPatterns.push flParse "( @ operandum )"
-FLQuote.methodBodies.push (context) ->
+FLQuote.msgPatterns.jsArrayPush flParse "( @ operandum )"
+FLQuote.methodBodies.jsArrayPush (context) ->
   operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
   return operandum
 
 # Not --------------------------------------------------------------------------
-FLNot.msgPatterns.push flParse "( operandum )"
-FLNot.methodBodies.push flParse "operandum negate"
+FLNot.msgPatterns.jsArrayPush flParse "( operandum )"
+FLNot.methodBodies.jsArrayPush flParse "operandum negate"
 
 # List -------------------------------------------------------------------------
 
-FLList.msgPatterns.push flParse "print"
-FLList.methodBodies.push (context) ->
+FLList.msgPatterns.jsArrayPush flParse "print"
+FLList.methodBodies.jsArrayPush (context) ->
   console.log "///////// program printout: " + @print()
   environmentPrintout += @print()
   return context
 
-
-FLList.msgPatterns.push flParse "eval"
-FLList.methodBodies.push (context) ->
+FLList.msgPatterns.jsArrayPush flParse "eval"
+FLList.methodBodies.jsArrayPush (context) ->
 
   newContext = new FLContext context, context.self, FLList.emptyMessage()
-  flContexts.push newContext
+  flContexts.jsArrayPush newContext
   toBeReturned = (@eval newContext).returned
 
   flContexts.pop()
 
   return toBeReturned
 
+FLList.msgPatterns.jsArrayPush flParse "+ ( elementToBeAppended )"
+FLList.methodBodies.jsArrayPush (context) ->
+  elementToBeAppended = context.tempVariablesDict[ValidIDfromString "elementToBeAppended"]
+  return @flListImmutablePush elementToBeAppended
+
 # Done -------------------------------------------------------------------------
 
-FLDone.msgPatterns.push flParse "print"
-FLDone.methodBodies.push (context) ->
+FLDone.msgPatterns.jsArrayPush flParse "print"
+FLDone.methodBodies.jsArrayPush (context) ->
   console.log "///////// program printout: " + "Done_object"
   environmentPrintout += "Done_object"
   return @
 
 
-FLDone.msgPatterns.push flParse "with ( valueToReturn )"
-FLDone.methodBodies.push (context) ->
+FLDone.msgPatterns.jsArrayPush flParse "with ( valueToReturn )"
+FLDone.methodBodies.jsArrayPush (context) ->
   valueToReturn = context.tempVariablesDict[ValidIDfromString "valueToReturn"]
   @value = valueToReturn
   return @
@@ -314,17 +318,17 @@ FLDone.methodBodies.push (context) ->
 
 # Repeat -------------------------------------------------------------------------
 
-FLRepeat.msgPatterns.push flParse "print"
-FLRepeat.methodBodies.push printFunction
+FLRepeat.msgPatterns.jsArrayPush flParse "print"
+FLRepeat.methodBodies.jsArrayPush printFunction
 
-FLRepeat.msgPatterns.push flParse "( @ loopCode )"
-FLRepeat.methodBodies.push (context) ->
+FLRepeat.msgPatterns.jsArrayPush flParse "( @ loopCode )"
+FLRepeat.methodBodies.jsArrayPush (context) ->
   loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
   console.log "FLRepeat => , loop code is: " + loopCode.print()
 
   while true
     newContext = new FLContext context, context.self, FLList.emptyMessage()
-    flContexts.push newContext
+    flContexts.jsArrayPush newContext
     toBeReturned = (loopCode.eval newContext).returned
 
     flContexts.pop()
@@ -350,8 +354,8 @@ FLRepeat.methodBodies.push (context) ->
 
 # For -----------------------------------------------------------------------------
 
-FLFor.msgPatterns.push flParse "( @ loopVar ) <- ( startIndex ) to ( endIndex ) do ( @ loopCode )"
-FLFor.methodBodies.push (context) ->
+FLFor.msgPatterns.jsArrayPush flParse "( @ loopVar ) <- ( startIndex ) to ( endIndex ) do ( @ loopCode )"
+FLFor.methodBodies.jsArrayPush (context) ->
 
 
   loopVar = context.tempVariablesDict[ValidIDfromString "loopVar"]
@@ -362,8 +366,8 @@ FLFor.methodBodies.push (context) ->
   loopVarName = loopVar.value
 
   forContext = new FLContext context, context.self, FLList.emptyMessage()
-  forContext.self.flClass.tempVariables.push loopVar
-  flContexts.push forContext
+  forContext.self.flClass.tempVariables = forContext.self.flClass.tempVariables.flListImmutablePush loopVar
+  flContexts.jsArrayPush forContext
 
   console.log "FLFor => loop code is: " + loopCode.print()
 
@@ -373,7 +377,7 @@ FLFor.methodBodies.push (context) ->
     forContext.tempVariablesDict[ValidIDfromString loopVarName] = FLNumber.createNew i
 
     newContext = new FLContext forContext, forContext.self, FLList.emptyMessage()
-    flContexts.push newContext
+    flContexts.jsArrayPush newContext
     toBeReturned = (loopCode.eval newContext).returned
 
     flContexts.pop()

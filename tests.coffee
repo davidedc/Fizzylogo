@@ -251,6 +251,9 @@ tests = [
   '"hello world" print'
   'hello world'
 
+  "(@(1) + 2) print"
+  "(  1 2 )"
+
   #"@ a <- 5 someUndefinedMessage"
   #"7"
 
@@ -285,7 +288,7 @@ for i in [0...tests.length] by 2
     # outer-most context
     parsed.isFromMessage = true
     outerMostContext = new FLContext null, rWorkspace, parsed
-    flContexts.push outerMostContext
+    flContexts.jsArrayPush outerMostContext
 
     rWorkspace.flClass.instanceVariables = FLList.createNew()
     
@@ -305,7 +308,7 @@ for i in [0...tests.length] by 2
 
     for keywords in [0...keywordsAndTheirInit.length] by 2
       [keyword, itsInitialisation] = keywordsAndTheirInit[keywords .. keywords + 1]
-      rWorkspace.flClass.instanceVariables.push FLAtom.createNew keyword
+      rWorkspace.flClass.instanceVariables = rWorkspace.flClass.instanceVariables.flListImmutablePush FLAtom.createNew keyword
       outerMostContext.self.instanceVariablesDict[ValidIDfromString keyword] = itsInitialisation
 
 

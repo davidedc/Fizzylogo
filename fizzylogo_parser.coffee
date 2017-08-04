@@ -23,7 +23,7 @@ removeStrings = (code) ->
   stringsTable = []
   codeWithoutStrings = code.replace(/"((?:[^"\\\n]|\\.)*)"/g, (all, quoted) ->
     index = stringsTable.length
-    stringsTable.push quoted
+    stringsTable.jsArrayPush quoted
     return "$STRINGS_TABLE_" + index
   )
   return [codeWithoutStrings, stringsTable]
@@ -38,9 +38,7 @@ injectStrings = (code, stringsTable) ->
 
 flParse = (command) ->
   listsStack = []
-  outerList = FLList.createNew()
-  listsStack.push outerList
-  currentList = outerList
+  listsStack.jsArrayPush FLList.createNew()
 
   [command, stringsTable] = removeStrings command
   console.log "codeWithoutStrings: " + command
@@ -58,21 +56,20 @@ flParse = (command) ->
 
     if /^\.$/.test(eachToken)
       console.log eachToken + " is . symbol"
-      currentList.push RStatementSeparatorSymbol
+      listsStack[listsStack.length-1] = listsStack[listsStack.length-1].flListImmutablePush RStatementSeparatorSymbol
     else if /\$STRINGS_TABLE_(\d+)/g.test(eachToken)
       console.log eachToken + " is a string literal"
-      currentList.push FLString.createNew injectStrings eachToken, stringsTable
+      listsStack[listsStack.length-1] = listsStack[listsStack.length-1].flListImmutablePush FLString.createNew injectStrings eachToken, stringsTable
     else if /^\($/.test(eachToken)
       nestedList = FLList.createNew()
-      currentList.push nestedList
-      listsStack.push currentList
-      currentList = nestedList
+      listsStack.jsArrayPush nestedList
     else if /^\)$/.test(eachToken)
-      currentList = listsStack.pop()
+      nestedList = listsStack.pop()
+      listsStack[listsStack.length-1] = listsStack[listsStack.length-1].flListImmutablePush nestedList
     else
       console.log eachToken + " is something else"
-      currentList.push FLAtom.createNew eachToken
+      listsStack[listsStack.length-1] = listsStack[listsStack.length-1].flListImmutablePush FLAtom.createNew eachToken
 
-  return outerList
+  return listsStack[listsStack.length-1]
 
 

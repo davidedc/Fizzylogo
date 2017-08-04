@@ -53,11 +53,13 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
       @isFromMessage = true
       @
 
-    toBeReturned.push = (theItemToPush) ->
+    toBeReturned.flListImmutablePush = (theItemToPush) ->
       if @isFromMessage
         throw "FLList deriving from a message should never be modified"
-      @value.push theItemToPush
-      @cursorEnd++
+      copy = @shallowCopy()
+      copy.value.jsArrayPush theItemToPush
+      copy.cursorEnd++
+      copy
 
     toBeReturned.elementAt = (theElementNumber) ->
       @value[@cursorStart + theElementNumber]
@@ -211,6 +213,11 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
       copy.isFromMessage = @isFromMessage
       return copy
 
+    toBeReturned.shallowCopy = ->
+      copy = @copy()
+      copy.value = @value.slice()
+      return copy
+
     toBeReturned.isEvaluatingParam =  ->
       @length() == 1
 
@@ -232,7 +239,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
           statementToBeAdded.cursorEnd = i - 1
           if (i == @cursorEnd) then statementToBeAdded.cursorEnd++
           lastStatementEnd = i
-          arrayOfStatements.push statementToBeAdded
+          arrayOfStatements.jsArrayPush statementToBeAdded
           console.log "evaluation " + indentation() + "separating statements isolated new statement " + statementToBeAdded.print()
 
 
