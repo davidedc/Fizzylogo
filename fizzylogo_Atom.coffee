@@ -7,6 +7,8 @@ class FLAtomClass extends FLPrimitiveClasses
     toBeReturned.print = ->
       return @value
 
+    toBeReturned.printForList = toBeReturned.print
+
     toBeReturned.eval = (theContext) ->
       message = theContext.message
       console.log "evaluation " + indentation() + "messaging atom " + theAtomName + " with " + message.print()

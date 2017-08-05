@@ -7,6 +7,8 @@ class FLQuoteClass extends FLAnonymousClass
     toBeReturned.print = ->
       return "Quote_object"
 
+    toBeReturned.printForList = toBeReturned.print
+
     toBeReturned.isEvaluatingParam = ->
       return false
 

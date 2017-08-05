@@ -78,9 +78,11 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
       for i in [0...@length()]
         #console.log "@value element " + i + " : " + @value[i]
         #console.log "@value element " + i + " content: " + @value[i].value
-        toBePrinted += " " + @elementAt(i).print()
+        toBePrinted += " " + @elementAt(i).printForList()
       toBePrinted += " )"
       return toBePrinted
+
+    toBeReturned.printForList = toBeReturned.print
 
     # it's like eval but it does it in a new
     # context and keeps track of hum much the

@@ -2,6 +2,12 @@ class FLWorkspaceClass extends FLAnonymousClass
   createNew: ->
     toBeReturned = new FLPrimitiveObjects()
     toBeReturned.flClass = FLWorkspace
+    toBeReturned.value = "the workspace object"
+
+    toBeReturned.print = ->
+      return @value
+
+    toBeReturned.printForList = toBeReturned.print
 
     toBeReturned.eval = (theContext) ->
       message = theContext.message

@@ -11,6 +11,8 @@ class FLSymbolClass extends FLAnonymousClass
     toBeReturned.print = ->
       return @value
 
+    toBeReturned.printForList = toBeReturned.print
+
     toBeReturned.isEvaluatingParam = ->
       return false
 

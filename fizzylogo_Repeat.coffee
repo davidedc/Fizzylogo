@@ -7,6 +7,8 @@ class FLRepeatClass extends FLAnonymousClass
     toBeReturned.print = ->
       return "Repeat_object"
 
+    toBeReturned.printForList = toBeReturned.print
+
     toBeReturned.isEvaluatingParam = ->
       return false
 

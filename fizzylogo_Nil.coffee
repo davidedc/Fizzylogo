@@ -8,6 +8,8 @@ class FLNilPrimitiveClass extends FLPrimitiveClasses
     toBeReturned.print = ->
       return @value
 
+    toBeReturned.printForList = toBeReturned.print
+
     return toBeReturned
     
 

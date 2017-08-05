@@ -8,6 +8,9 @@ class FLStringPrimitiveClass extends FLPrimitiveClasses
     toBeReturned.print = ->
       return @value
 
+    toBeReturned.printForList = ->
+      return '"' + @value + '"'
+
     return toBeReturned
     
 

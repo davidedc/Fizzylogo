@@ -28,6 +28,29 @@ commonCdictFunction = (context) ->
   return @flClass.classVariables
 
 
+# WorkSpace ---------------------------------------------------------------------------
+
+FLWorkspace.msgPatterns.jsArrayPush flParse "cvarEvalParams ( variable ) <- ( value )"
+FLWorkspace.methodBodies.jsArrayPush (context) ->
+  variable = context.tempVariablesDict[ValidIDfromString "variable"]
+  value = context.tempVariablesDict[ValidIDfromString "value"]
+
+  console.log "cvarEvalParams adding and setting class variable"
+  if !@flClass.classVariables?
+    @flClass.classVariables = FLList.emptyList()
+
+  console.log "cval: class variables before: "
+  console.dir @flClass.classVariablesDict
+
+  @flClass.classVariables = @flClass.classVariables.flListImmutablePush variable
+  @flClass.classVariablesDict[ValidIDfromString variable.value] = value
+
+  console.log "cvarEvalParams: class variables after: "
+  console.dir @flClass.classVariablesDict
+
+  return @
+
+
 # Atom ---------------------------------------------------------------------------
 
 FLAtom.msgPatterns.jsArrayPush flParse "print"
@@ -59,6 +82,11 @@ FLAtom.methodBodies.jsArrayPush (context) ->
 
 FLNil.msgPatterns.jsArrayPush flParse "print"
 FLNil.methodBodies.jsArrayPush commonPrintFunction
+
+# To -------------------------------------------------------------------------
+
+FLTo.msgPatterns.jsArrayPush flParse "( @ functionObjectName ) ( @ signature ) ( @ functionBody )"
+FLTo.methodBodies.jsArrayPush flParse "@TempClass <- Class new. tempClass answerEvalParams (signature) by (functionBody). @functionObject <- TempClass new. WorkSpace cvarEvalParams (functionObjectName) <- functionObject"
 
 # Class -------------------------------------------------------------------------
 
@@ -104,13 +132,23 @@ FLClass.methodBodies.jsArrayPush (context) ->
 
     return @
 
+  newUserClass.msgPatterns.jsArrayPush flParse "answerEvalParams ( signature ) by ( methodBody )"
+  newUserClass.methodBodies.jsArrayPush (context) ->
+    signature = context.tempVariablesDict[ValidIDfromString "signature"]
+    methodBody = context.tempVariablesDict[ValidIDfromString "methodBody"]
+
+    @msgPatterns.jsArrayPush signature
+    @methodBodies.jsArrayPush methodBody
+
+    return @
+
   newUserClass.msgPatterns.jsArrayPush flParse "tdict"
   newUserClass.methodBodies.jsArrayPush commonTdictFunction
 
-  newUserClass.msgPatterns.jsArrayPush flParse "idict <- ( variable )"
+  newUserClass.msgPatterns.jsArrayPush flParse "idict <- ( @ variable )"
   newUserClass.methodBodies.jsArrayPush (context) ->
     variable = context.tempVariablesDict[ValidIDfromString "variable"]
-    console.log "idict adding varible: @flClass.value " + @flClass.value
+    console.log "idict adding variable: @flClass.value " + @flClass.value
     if !@flClass.instanceVariables?
       @flClass.instanceVariables = FLList.emptyList()
 
@@ -118,6 +156,23 @@ FLClass.methodBodies.jsArrayPush (context) ->
     console.dir @flClass
 
     @flClass.instanceVariables = @flClass.instanceVariables.flListImmutablePush variable
+
+    return @
+
+  newUserClass.msgPatterns.jsArrayPush flParse "cvar ( @ variable ) <- ( value )"
+  newUserClass.methodBodies.jsArrayPush (context) ->
+    variable = context.tempVariablesDict[ValidIDfromString "variable"]
+    value = context.tempVariablesDict[ValidIDfromString "value"]
+
+    console.log "cvar adding and setting class variable"
+    if !@flClass.classVariables?
+      @flClass.classVariables = FLList.emptyList()
+
+    console.log "idict: context.self.flClass: "
+    console.dir @flClass
+
+    @flClass.classVariables = @flClass.classVariables.flListImmutablePush variable
+    @flClass.classVariablesDict[ValidIDfromString variable.value] = value
 
     return @
 

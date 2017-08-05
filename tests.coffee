@@ -260,6 +260,9 @@ tests = [
   '(@(1)+(2plus 1))print'
   '( 1 3 )'
 
+  '(@() + "how to enclose something in a list")print'
+  '( "how to enclose something in a list" )'
+
   # note that the + evaluates
   # its argument, so the passed list
   # is evaluated. If you want to pass
@@ -286,12 +289,32 @@ tests = [
     myString print'
   'Hello world'
 
-  '@MyClass<-Class new.MyClass idict<-@counter.\
+  '@MyClass<-Class new.MyClass idict<-counter.\
     MyClass answer(setCounterToTwo)by(@counter<-2).\
     MyClass answer(printCounter)by(counter print).\
     @myObject<-MyClass new.myObject printCounter.\
-    myObject setCounterToTwo.myObject printCounter'
-  'nil2'
+    myObject setCounterToTwo.myObject printCounter.\
+    @myObject2<-MyClass new.myObject2 printCounter.\
+    myObject2 setCounterToTwo.myObject2 printCounter'
+  'nil2nil2'
+
+  '@MyClass<-Class new.MyClass cvar classCounter <- 0.\
+    MyClass answer(incrementClassCounterByTwo)by(@classCounter<-classCounter plus 2).\
+    MyClass answer(printClassCounter)by(classCounter print).\
+    @myObject<-MyClass new.myObject printClassCounter.\
+    myObject incrementClassCounterByTwo.\
+    myObject printClassCounter.\
+    @myObject2<-MyClass new.myObject2 printClassCounter.\
+    myObject2 incrementClassCounterByTwo.\
+    myObject2 printClassCounter'
+  '0224'
+
+
+  'to sayHello (withName (name)) ("Hello " print. name print). sayHello withName "Dave"'
+  'Hello Dave'
+
+  'to sayHello2 ((name)) ("HELLO " print. name print). sayHello2 "Dave"'
+  'HELLO Dave'
 
   #'@ a <- 5 someUndefinedMessage'
   #'7'
@@ -300,10 +323,6 @@ tests = [
 
 ###
 tests = [
-
-  '@MyClass<-Class new.MyClass answer(printtwo)by(self print).@myObject<-MyClass new.myObject printtwo'
-  'object_from_a_user_class'
-
 ]
 ###
 
@@ -334,6 +353,7 @@ for i in [0...tests.length] by 2
     rWorkspace.flClass.instanceVariables = FLList.emptyList()
     
     keywordsAndTheirInit = [
+      "WorkSpace", FLWorkspace
       "Class", FLClass.createNew()
       "List", FLList
       "String", FLString
@@ -345,6 +365,8 @@ for i in [0...tests.length] by 2
       "for", FLFor.createNew()
       "repeat", FLRepeat.createNew()
       "done", FLDone.createNew()
+
+      "to", FLTo.createNew()
 
       "@", FLQuote.createNew()
     ]

@@ -7,6 +7,8 @@ class FLForClass extends FLAnonymousClass
     toBeReturned.print = ->
       return "For_object"
 
+    toBeReturned.printForList = toBeReturned.print
+
     toBeReturned.isEvaluatingParam = ->
       return false
 
