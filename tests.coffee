@@ -316,6 +316,9 @@ tests = [
   'to sayHello2 ((name)) ("HELLO " print. name print). sayHello2 "Dave"'
   'HELLO Dave'
 
+  '@( "Hello " "Dave " "my " "dear " "friend") each word do (word print)'
+  'Hello Dave my dear friend'
+
   #'@ a <- 5 someUndefinedMessage'
   #'7'
 
@@ -323,6 +326,8 @@ tests = [
 
 ###
 tests = [
+  '@( "Hello " "Dave " "my " "dear " "friend") each word do (word print)'
+  'Hello Dave my dear friend'
 ]
 ###
 

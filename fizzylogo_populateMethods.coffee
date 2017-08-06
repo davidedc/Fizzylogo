@@ -409,6 +409,35 @@ FLList.methodBodies.jsArrayPush (context) ->
   elementToBeAppended = context.tempVariablesDict[ValidIDfromString "elementToBeAppended"]
   return @flListImmutablePush elementToBeAppended
 
+
+FLList.msgPatterns.jsArrayPush flParse "each ( @ variable ) do ( @ code )"
+FLList.methodBodies.jsArrayPush (context) ->
+
+  variable = context.tempVariablesDict[ValidIDfromString "variable"]
+  code = context.tempVariablesDict[ValidIDfromString "code"]
+
+  console.log "FLNumber each do "
+
+  newContext = new FLContext context, context.self, FLList.emptyMessage()
+
+
+  newContext.self.flClass.tempVariables = newContext.self.flClass.tempVariables.flListImmutablePush variable
+
+  for i in [0...@value.length]
+
+    newContext.tempVariablesDict[ValidIDfromString variable.value] = @elementAt i
+    toBeReturned = (code.eval newContext).returned
+
+    if toBeReturned?
+      if toBeReturned.flClass == FLDone
+        if toBeReturned.value?
+          toBeReturned = toBeReturned.value
+        console.log "each... do loop exited with Done "
+        break
+
+  return toBeReturned
+
+
 # Done -------------------------------------------------------------------------
 
 FLDone.msgPatterns.jsArrayPush flParse "print"
