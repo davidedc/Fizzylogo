@@ -12,6 +12,9 @@ tests = [
   '(1plus 1)print print'
   '22'
 
+  '@a <- "test string". @b <- a. @c <- @a. @a eval print.@b eval print.@c eval print'
+  'test stringtest stringa'
+
   '@a<-5.a increment.@a<-a plus 1.a print'
   '7'
 
@@ -298,6 +301,12 @@ tests = [
     myObject2 setCounterToTwo.myObject2 printCounter'
   'nil2nil2'
 
+  "@MyClass<-Class new.MyClass idict<-counter.\
+    MyClass answer(setCounterToTwo)by(@counter<-2).\
+    @myObject<-MyClass new.\
+    myObject setCounterToTwo.(myObject's counter)print"
+  '2'
+
   '@MyClass<-Class new.MyClass cvar classCounter <- 0.\
     MyClass answer(incrementClassCounterByTwo)by(@classCounter<-classCounter plus 2).\
     MyClass answer(printClassCounter)by(classCounter print).\
@@ -326,8 +335,7 @@ tests = [
 
 ###
 tests = [
-  '@( "Hello " "Dave " "my " "dear " "friend") each word do (word print)'
-  'Hello Dave my dear friend'
+
 ]
 ###
 

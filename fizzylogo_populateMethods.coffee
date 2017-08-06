@@ -78,6 +78,17 @@ FLAtom.methodBodies.jsArrayPush (context) ->
   console.log "evaluation " + indentation() + "stored value in dictionary"
   return valueToAssign
 
+FLAtom.msgPatterns.jsArrayPush flParse "eval"
+FLAtom.methodBodies.jsArrayPush (context) ->
+
+  newContext = new FLContext context, context.self, FLList.emptyMessage()
+  flContexts.jsArrayPush newContext
+  toBeReturned = (@eval newContext).returned
+
+  flContexts.pop()
+
+  return toBeReturned
+
 # Nil ---------------------------------------------------------------------------
 
 FLNil.msgPatterns.jsArrayPush flParse "print"
@@ -142,6 +153,9 @@ FLClass.methodBodies.jsArrayPush (context) ->
 
     return @
 
+  newUserClass.msgPatterns.jsArrayPush flParse "'s (@code)"
+  newUserClass.methodBodies.jsArrayPush flParse "code eval"
+
   newUserClass.msgPatterns.jsArrayPush flParse "tdict"
   newUserClass.methodBodies.jsArrayPush commonTdictFunction
 
@@ -199,6 +213,17 @@ FLString.methodBodies.jsArrayPush (context) ->
   stringToBeAppended = context.tempVariablesDict[ValidIDfromString "stringToBeAppended"]
   return FLString.createNew @value + stringToBeAppended.print()
 
+
+FLString.msgPatterns.jsArrayPush flParse "eval"
+FLString.methodBodies.jsArrayPush (context) ->
+
+  newContext = new FLContext context, context.self, FLList.emptyMessage()
+  flContexts.jsArrayPush newContext
+  toBeReturned = (@eval newContext).returned
+
+  flContexts.pop()
+
+  return toBeReturned
 
 # Number -------------------------------------------------------------------------
 
