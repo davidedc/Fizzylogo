@@ -99,7 +99,9 @@ FLNil.methodBodies.jsArrayPush commonFLPrintFunction
 FLTo.msgPatterns.jsArrayPush flParse "( @ functionObjectName ) ( @ signature ) ( @ functionBody )"
 FLTo.methodBodies.jsArrayPush flParse "@TempClass <- Class new. tempClass answerEvalParams (signature) by (functionBody). @functionObject <- TempClass new. WorkSpace cvarEvalParams (functionObjectName) <- functionObject"
 
-# Class -------------------------------------------------------------------------
+# Class. There is only one object in the system that belongs to this class
+# and it's also called "Class". We give this object the capacity to create
+# new classes, via the "new" message below.
 
 FLClass.msgPatterns.jsArrayPush flParse "print"
 FLClass.methodBodies.jsArrayPush (context) ->
@@ -111,7 +113,7 @@ FLClass.msgPatterns.jsArrayPush flParse "new"
 FLClass.methodBodies.jsArrayPush (context) ->
   console.log "///////// creating a new class for the user!"
 
-  newUserClass = FLUserClass.createNew()
+  newUserClass = new FLUserClass()
 
   newUserClass.msgPatterns.jsArrayPush flParse "print"
   newUserClass.methodBodies.jsArrayPush commonFLPrintFunction

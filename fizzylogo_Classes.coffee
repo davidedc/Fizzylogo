@@ -12,9 +12,15 @@ class FLClasses extends FLObjects
 
   constructor: ->
     super @
-    @classVariablesDict = {}
+
     @msgPatterns = []
     @methodBodies = []
+
+    # the temp variables contents
+    # are in the context, not here in the class
+    # similarly, the instance variables contents
+    # are in the object, not here in the class
+    @classVariablesDict = {}
 
 
 # implementation of these is not changeable
@@ -29,15 +35,16 @@ class FLNonPrimitiveClasses extends FLClasses
     return new FLNonPrimitiveObjects()
 
 
-# the root of everything. An object of class
-# "Class" (or, more in detail, of FLClassPrimitiveClass)
+# class "Class". We'll create exactyly one object for
+# this class, which is going to be also called "Class".
+# such object will allow users to create their classes.
 class FLClassPrimitiveClass extends FLPrimitiveClasses
 
   # this is invoked only once at start, to
-  # create the object Class, which allows you
-  # to create new classes. This is not
+  # create the object Class, which allows users
+  # to create new classes. This is *not*
   # invoked when the user creates a new class, for
-  # that FLUserClass.createNew() is used.
+  # that "new FLUserClass()" is used.
   createNew: ->
     toBeReturned = super FLClass
     toBeReturned.classVariablesDict = {}
