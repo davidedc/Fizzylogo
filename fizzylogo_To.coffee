@@ -1,7 +1,6 @@
 class FLToClass extends FLAnonymousClass
   createNew: ->
-    toBeReturned = new FLPrimitiveObjects()
-    toBeReturned.flClass = FLTo
+    toBeReturned = super FLTo
     toBeReturned.value = null
 
 
@@ -19,4 +18,3 @@ class FLToClass extends FLAnonymousClass
     return toBeReturned
 
 FLTo = new FLToClass() # this is a class, an anonymous class
-FLTo.flClass = FLTo

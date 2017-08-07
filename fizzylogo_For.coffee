@@ -1,8 +1,6 @@
 class FLForClass extends FLAnonymousClass
   createNew: ->
-    toBeReturned = new FLPrimitiveObjects()
-    toBeReturned.flClass = FLFor
-
+    toBeReturned = super FLFor
 
     toBeReturned.print = ->
       return "For_object"
@@ -18,4 +16,3 @@ class FLForClass extends FLAnonymousClass
     return toBeReturned
 
 FLFor = new FLForClass() # this is a class, an anonymous class
-FLFor.flClass = FLFor

@@ -1,10 +1,11 @@
-
 class FLNonPrimitiveClass extends FLClasses
+  
+  # this gets invoked when user does Class new
+  # that's going to create an object that represents a new
+  # user-defined Class.
   createNew: ->
-    toBeReturned = new FLClasses()
+    toBeReturned = new FLNonPrimitiveClasses()
     toBeReturned.value = "some_custom_class_of_user"
-
-    toBeReturned.flClass = toBeReturned
 
     toBeReturned.msgPatterns = []
     toBeReturned.methodBodies = []
@@ -19,10 +20,11 @@ class FLNonPrimitiveClass extends FLClasses
     # are in the object, not here in the class
     toBeReturned.classVariablesDict = {}
 
+    # this is going to give to the new user-defined class
+    # the capacity to create objects.
     toBeReturned.createNew = ->
-      objectTBR = new FLPrimitiveObjects()
+      objectTBR = new FLNonPrimitiveObjects toBeReturned
       objectTBR.value = "object_from_a_user_class"
-      objectTBR.flClass = toBeReturned
 
       return objectTBR
 
@@ -30,5 +32,4 @@ class FLNonPrimitiveClass extends FLClasses
     return toBeReturned
 
 FLUserClass = new FLNonPrimitiveClass()
-FLUserClass.flClass = FLUserClass
 

@@ -34,10 +34,8 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
     return newMessage
 
   createNew: ->
-    toBeReturned = new FLPrimitiveObjects()
+    toBeReturned = super FLList
     toBeReturned.value = []
-    toBeReturned.flClass = FLList
-
 
     # these are only used for messages, which
     # are special kinds of lists
@@ -258,5 +256,3 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
 
     
 FLList = new FLListPrimitiveClass()
-FLList.flClass = FLList
-

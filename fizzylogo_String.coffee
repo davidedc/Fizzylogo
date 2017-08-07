@@ -1,9 +1,8 @@
 class FLStringPrimitiveClass extends FLPrimitiveClasses
 
   createNew: (value) ->
-    toBeReturned = new FLPrimitiveObjects()
+    toBeReturned = super FLString
     toBeReturned.value = value + ""
-    toBeReturned.flClass = FLString
 
     toBeReturned.print = ->
       return @value
@@ -15,5 +14,3 @@ class FLStringPrimitiveClass extends FLPrimitiveClasses
     
 
 FLString = new FLStringPrimitiveClass()
-FLString.flClass = FLString
-

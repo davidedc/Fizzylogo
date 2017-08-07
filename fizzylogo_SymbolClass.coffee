@@ -4,8 +4,7 @@
 
 class FLSymbolClass extends FLAnonymousClass
   createNew: (value) ->
-    toBeReturned = new FLPrimitiveObjects()
-    toBeReturned.flClass = FLSymbol
+    toBeReturned = super FLSymbol
     toBeReturned.value = value
 
     toBeReturned.print = ->
@@ -22,8 +21,5 @@ class FLSymbolClass extends FLAnonymousClass
     return toBeReturned
 
 FLSymbol = new FLSymbolClass() # this is a class, an anonymous class
-FLSymbol.flClass = FLSymbol
 
 RStatementSeparatorSymbol = FLSymbol.createNew "."
-
-

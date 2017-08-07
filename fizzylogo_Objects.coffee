@@ -3,7 +3,7 @@ class FLObjects
   flClass: null # the class it belongs to
   instanceVariablesDict: null # a JS dictionary
 
-  constructor: ->
+  constructor: (@flClass) ->
     #console.log " instanceVariablesDict initiated "
     @instanceVariablesDict = {}
 
@@ -271,3 +271,4 @@ class FLObjects
 
 
 class FLPrimitiveObjects extends FLObjects
+class FLNonPrimitiveObjects extends FLObjects

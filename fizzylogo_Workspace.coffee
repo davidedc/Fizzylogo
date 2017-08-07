@@ -1,7 +1,6 @@
 class FLWorkspaceClass extends FLAnonymousClass
   createNew: ->
-    toBeReturned = new FLPrimitiveObjects()
-    toBeReturned.flClass = FLWorkspace
+    toBeReturned = super FLWorkspace
     toBeReturned.value = "the workspace object"
 
     toBeReturned.print = ->
@@ -34,4 +33,3 @@ class FLWorkspaceClass extends FLAnonymousClass
     return toBeReturned
 
 FLWorkspace = new FLWorkspaceClass() # this is a class
-FLWorkspace.flClass = FLWorkspace

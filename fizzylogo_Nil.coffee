@@ -1,9 +1,8 @@
 class FLNilPrimitiveClass extends FLPrimitiveClasses
 
   createNew: ->
-    toBeReturned = new FLPrimitiveObjects()
+    toBeReturned = super FLNil
     toBeReturned.value = "nil"
-    toBeReturned.flClass = FLNil
 
     toBeReturned.print = ->
       return @value
@@ -14,4 +13,3 @@ class FLNilPrimitiveClass extends FLPrimitiveClasses
     
 
 FLNil = new FLNilPrimitiveClass()
-FLNil.flClass = FLNil

@@ -1,8 +1,6 @@
 class FLNotClass extends FLAnonymousClass
   createNew: ->
-    toBeReturned = new FLPrimitiveObjects()
-    toBeReturned.flClass = FLNot
-
+    toBeReturned = super FLNot
 
     toBeReturned.print = ->
       return "Not_object"
@@ -18,4 +16,3 @@ class FLNotClass extends FLAnonymousClass
     return toBeReturned
 
 FLNot = new FLNotClass() # this is a class, an anonymous class
-FLNot.flClass = FLNot

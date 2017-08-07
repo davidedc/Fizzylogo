@@ -1,7 +1,6 @@
 class FLDoneClass extends FLAnonymousClass
   createNew: ->
-    toBeReturned = new FLPrimitiveObjects()
-    toBeReturned.flClass = FLDone
+    toBeReturned = FLDone
     toBeReturned.value = null
 
 
@@ -19,4 +18,3 @@ class FLDoneClass extends FLAnonymousClass
     return toBeReturned
 
 FLDone = new FLDoneClass() # this is a class, an anonymous class
-FLDone.flClass = FLDone
