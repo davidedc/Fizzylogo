@@ -27,6 +27,13 @@ commonFLCdictFunction = (context) ->
     @flClass.classVariables = FLList.emptyList()
   return @flClass.classVariables
 
+commonFLEvalFunction = (context) ->
+  newContext = new FLContext context
+  flContexts.jsArrayPush newContext
+  toBeReturned = (@eval newContext).returned
+  flContexts.pop()
+  return toBeReturned
+
 
 # WorkSpace ---------------------------------------------------------------------------
 
@@ -79,15 +86,7 @@ FLAtom.methodBodies.jsArrayPush (context) ->
   return valueToAssign
 
 FLAtom.msgPatterns.jsArrayPush flParse "eval"
-FLAtom.methodBodies.jsArrayPush (context) ->
-
-  newContext = new FLContext context, context.self
-  flContexts.jsArrayPush newContext
-  toBeReturned = (@eval newContext).returned
-
-  flContexts.pop()
-
-  return toBeReturned
+FLAtom.methodBodies.jsArrayPush commonFLEvalFunction
 
 # Nil ---------------------------------------------------------------------------
 
@@ -217,15 +216,7 @@ FLString.methodBodies.jsArrayPush (context) ->
 
 
 FLString.msgPatterns.jsArrayPush flParse "eval"
-FLString.methodBodies.jsArrayPush (context) ->
-
-  newContext = new FLContext context, context.self
-  flContexts.jsArrayPush newContext
-  toBeReturned = (@eval newContext).returned
-
-  flContexts.pop()
-
-  return toBeReturned
+FLString.methodBodies.jsArrayPush commonFLEvalFunction
 
 # Number -------------------------------------------------------------------------
 
@@ -292,10 +283,9 @@ FLNumber.methodBodies.jsArrayPush (context) ->
   loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
   console.log "FLNumber => DO loop code is: " + loopCode.print()
 
+
   for i in [0...@value]
-    newContext = new FLContext context, context.self
-    flContexts.jsArrayPush newContext
-    toBeReturned = (loopCode.eval newContext).returned
+    toBeReturned = (loopCode.eval context).returned
 
     flContexts.pop()
 
@@ -352,9 +342,7 @@ FLBoolean.methodBodies.jsArrayPush (context) ->
   console.log "FLBoolean => , predicate value is: " + @value
 
   if @value
-    newContext = new FLContext context, context.self
-    flContexts.jsArrayPush newContext
-    toBeReturned = (trueBranch.eval newContext).returned
+    toBeReturned = (trueBranch.eval context).returned
     flContexts.pop()
 
     console.log "FLBoolean => returning result of true branch: " + toBeReturned
@@ -421,15 +409,7 @@ FLList.methodBodies.jsArrayPush (context) ->
   return context
 
 FLList.msgPatterns.jsArrayPush flParse "eval"
-FLList.methodBodies.jsArrayPush (context) ->
-
-  newContext = new FLContext context, context.self
-  flContexts.jsArrayPush newContext
-  toBeReturned = (@eval newContext).returned
-
-  flContexts.pop()
-
-  return toBeReturned
+FLList.methodBodies.jsArrayPush commonFLEvalFunction
 
 FLList.msgPatterns.jsArrayPush flParse "+ ( elementToBeAppended )"
 FLList.methodBodies.jsArrayPush (context) ->
@@ -445,9 +425,7 @@ FLList.methodBodies.jsArrayPush (context) ->
 
   console.log "FLNumber each do "
 
-  newContext = new FLContext context, context.self
-
-
+  newContext = new FLContext context
   newContext.self.flClass.tempVariables = newContext.self.flClass.tempVariables.flListImmutablePush variable
 
   for i in [0...@value.length]
@@ -492,9 +470,7 @@ FLRepeat.methodBodies.jsArrayPush (context) ->
   console.log "FLRepeat => , loop code is: " + loopCode.print()
 
   while true
-    newContext = new FLContext context, context.self
-    flContexts.jsArrayPush newContext
-    toBeReturned = (loopCode.eval newContext).returned
+    toBeReturned = (loopCode.eval context).returned
 
     flContexts.pop()
 
@@ -520,8 +496,6 @@ FLRepeat.methodBodies.jsArrayPush (context) ->
 
 FLFor.msgPatterns.jsArrayPush flParse "( @ loopVar ) <- ( startIndex ) to ( endIndex ) do ( @ loopCode )"
 FLFor.methodBodies.jsArrayPush (context) ->
-
-
   loopVar = context.tempVariablesDict[ValidIDfromString "loopVar"]
   startIndex = context.tempVariablesDict[ValidIDfromString "startIndex"]
   endIndex = context.tempVariablesDict[ValidIDfromString "endIndex"]
@@ -529,7 +503,7 @@ FLFor.methodBodies.jsArrayPush (context) ->
 
   loopVarName = loopVar.value
 
-  forContext = new FLContext context, context.self
+  forContext = new FLContext context
   forContext.self.flClass.tempVariables = forContext.self.flClass.tempVariables.flListImmutablePush loopVar
   flContexts.jsArrayPush forContext
 
@@ -540,9 +514,7 @@ FLFor.methodBodies.jsArrayPush (context) ->
 
     forContext.tempVariablesDict[ValidIDfromString loopVarName] = FLNumber.createNew i
 
-    newContext = new FLContext forContext, forContext.self
-    flContexts.jsArrayPush newContext
-    toBeReturned = (loopCode.eval newContext).returned
+    toBeReturned = (loopCode.eval forContext).returned
 
     flContexts.pop()
 

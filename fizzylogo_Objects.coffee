@@ -125,6 +125,7 @@ class FLObjects
                 # like in "7 * self" we don't want to bind self to 7
 
                 if methodInvocation.firstElement().flClass == FLList
+                  console.log "evaluation " + indentation() + "  matching - what to evaluate is a list right away "
                   [valueToBeBound, methodInvocation] = methodInvocation.evalFirstListElementAndTurnRestIntoMessage theContext
                 else
                   [valueToBeBound, methodInvocation] = methodInvocation.evalAndConsume theContext
@@ -169,11 +170,11 @@ class FLObjects
 
             console.log "originalProgramCounter + methodInvocation.cursorStart - originalMethodInvocationStart: " + originalProgramCounter + " " + methodInvocation.cursorStart  + " " + originalMethodInvocationStart
             console.log "theContext.programCounter BEFORE: " + theContext.programCounter
-            console.log "theContext message BEFORE: "
             #theContext.programCounter += methodInvocation.cursorStart - originalMethodInvocationStart
             theContext.programCounter = originalProgramCounter + methodInvocation.cursorStart - originalMethodInvocationStart
+            theContext.unparsedMessage = null
             console.log "theContext.programCounter AFTER: " + theContext.programCounter
-            console.log "theContext message AFTER: "
+            console.log "theContext method invocation after: " + methodInvocation.print()
 
             #console.log "countSignaturePosition: " + countSignaturePosition
             #return countSignaturePosition
@@ -242,26 +243,23 @@ class FLObjects
   # is not a method call, this is progressing within
   # an existing call
   progressWithNonEmptyMessage: (message, theContext) ->
-    newContext = new FLContext theContext, theContext.self
-    flContexts.jsArrayPush newContext
 
-    returnedContext = @findSignatureBindParamsAndMakeCall newContext, message.copy()
-    console.log "evaluation " + indentation() + "after having sent message:  and PC: " + newContext.programCounter
+    originalPC = theContext.programCounter
+    toBeReturned = @findSignatureBindParamsAndMakeCall theContext, message
+    console.log "evaluation " + indentation() + "after having sent message:  and PC: "
 
-    if returnedContext? and returnedContext.returned?
-        # "findSignatureBindParamsAndMakeCall" has already done the job of
-        # making the call and fixing newContext's PC and
-        # updating the return value, we are done here
-        toBeReturned = returnedContext
-    else
-      newContext.returned = @
-      toBeReturned = newContext
+    # "findSignatureBindParamsAndMakeCall" has already done the job of
+    # making the call and fixing newContext's PC and
+    # updating the return value, we are done here
+
+    if !toBeReturned? or !toBeReturned.returned?
+      theContext.returned = @
+      toBeReturned = theContext
+
+    message = message.advanceMessageBy theContext.programCounter - originalPC
 
     console.log "evaluation " + indentation() + "  progressWithNonEmptyMessage - eval returned: " + toBeReturned
     #console.dir toBeReturned
-    flContexts.pop()
-    theContext.programCounter += newContext.programCounter
-    message = message.advanceMessageBy newContext.programCounter
     console.log "evaluation " + indentation() + "  progressWithNonEmptyMessage - returned: " + toBeReturned
     #console.dir toBeReturned
     return [toBeReturned, message]

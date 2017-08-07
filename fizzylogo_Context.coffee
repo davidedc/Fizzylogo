@@ -5,7 +5,16 @@ class FLContext
   previousContext: null
   returned: null
 
-  constructor: (@previousContext, @self) ->
+  # contexts should only be created when "self" changes
+  # (on method invocation), or when you want to
+  # "seal" some temporary variables that might
+  # be needed/created (e.g. the "for" case).
+  constructor: (@previousContext, newSelf) ->
+    if newSelf
+      @self = newSelf
+    else
+      @self = @previousContext.self
+
     @tempVariablesDict = {}
     #console.log "evaluation " + indentation() + "######### constructing new context at depth: " + @depth() + " with message: " + @message.print()
 
