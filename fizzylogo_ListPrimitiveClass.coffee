@@ -5,6 +5,8 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
   # ...a fizzylogo message is just an FLList which is meant to
   # be used as a message only, which means that:
   #    - its elements don't change
+  #    - because the underlying elements don't change, it can be
+  #      copied quickly (keeping reference to old values)  
   #    - it can be split ( "." splits statements)
   #    - we can "consume" one or more elements
   #    - we don't need messages to be fizzylogo objects,
@@ -12,25 +14,28 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
   #      the user.
   #    - a message is never sent a message, because
   #      a message is not a fizzylogo object
-  # so we try to make some of these operations more efficient
+  #
+  # So we try to make some of these operations more efficient
   # for messages, since all operations don't modify the elements
   # we can do splits and we can consume things just by moving
   # around a start index and an end index of an unchanging
   # array of elements.
+  #
+  # Basically we can navigate/consume the program without
+  # copying around the elements.
+  #
   # The alternative would be to use no indexes and just
-  # do shallow copies around. That would be fine for performance
+  # do shallow copies at any change. That would be fine for performance
   # but there is just something about the constant shallow copying
   # during interpretation that looks like it's a quadratic
   # operation, so we say no to that.
 
   emptyMessage: ->
-    newMessage = FLList.createNew()
-    newMessage.isFromMessage = true
+    newMessage = FLList.createNew().toMessage()
     return newMessage
 
   emptyList: ->
     newMessage = FLList.createNew()
-    newMessage.isFromMessage = false
     return newMessage
 
   createNew: ->
@@ -41,24 +46,22 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
     # are special kinds of lists
     toBeReturned.cursorStart = 0
     toBeReturned.cursorEnd = -1
-    toBeReturned.isFromMessage = false
 
     # nothing much to do, but it makes it more
     # clear in the code to show "how"
     # one is using the message/list
     toBeReturned.toList = ->
+      @isMessage = false
       @
 
     # nothing much to do, but it makes it more
     # clear in the code to show "how"
     # one is using the message/list
     toBeReturned.toMessage = ->
-      @isFromMessage = true
+      @isMessage = true
       @
 
     toBeReturned.flListImmutablePush = (theItemToPush) ->
-      if @isFromMessage
-        throw "FLList deriving from a message should never be modified"
       copy = @shallowCopy()
       copy.value.jsArrayPush theItemToPush
       copy.cursorEnd++
@@ -98,9 +101,6 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
       return [toBeReturned.returned, @advanceMessageBy theContext.programCounter - originalPC]
 
     toBeReturned.eval = (theContext) ->
-      message = theContext.message
-      console.log "evaluation " + indentation() + "messaging list with " + message.print()
-
       # a list without any messages just evaluates itself, which
       # consists of the following:
       #  a) separate all the statements (parts separated by ".")
@@ -110,18 +110,17 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
       console.log "evaluation " + indentation() + "list received empty message, evaluating content of list"
       console.log "evaluation " + indentation() + "  i.e. " + @print()
 
-      @isFromMessage = true
+      @toList()
 
       statements = @separateStatements()
 
       for eachStatement in statements
 
-        list = eachStatement.toList()
 
         console.log "evaluation " + indentation() + "evaluating single statement"
-        console.log "evaluation " + indentation() + "  i.e. " + list.print()
+        console.log "evaluation " + indentation() + "  i.e. " + eachStatement.print()
 
-        [receiver, restOfMessage] = list.evalAndConsumeFirstMessageElement theContext
+        [receiver, restOfMessage] = eachStatement.evalFirstListElementAndTurnRestIntoMessage theContext
 
         console.log "evaluation " + indentation() + "remaining part of list to be sent as message is: " + restOfMessage.print()
 
@@ -182,7 +181,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
         throw "no first element, array is empty"
       return @elementAt 0
 
-    toBeReturned.evalAndConsumeFirstMessageElement = (theContext) ->
+    toBeReturned.evalFirstListElementAndTurnRestIntoMessage = (theContext) ->
       firstElement = @firstElement()
       console.log "           " + indentation() + "evaling element " + firstElement.value
       evaledFirstElement = (firstElement.eval theContext).returned
@@ -215,7 +214,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
       copy.value = @value
       copy.cursorStart = @cursorStart
       copy.cursorEnd = @cursorEnd
-      copy.isFromMessage = @isFromMessage
+      copy.isMessage = @isMessage
       return copy
 
     toBeReturned.shallowCopy = ->
@@ -239,7 +238,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
       for i in [@cursorStart..@cursorEnd]
         console.log "evaluation " + indentation() + "separating statements   examining element " + @value[i].print()
         if (@value[i] == RStatementSeparatorSymbol) or (i == @cursorEnd)
-          statementToBeAdded = @copy()
+          statementToBeAdded = @copy().toList()
           statementToBeAdded.cursorStart = lastStatementEnd + 1
           statementToBeAdded.cursorEnd = i - 1
           if (i == @cursorEnd) then statementToBeAdded.cursorEnd++

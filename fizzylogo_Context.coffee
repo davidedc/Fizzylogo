@@ -1,15 +1,12 @@
 class FLContext
   self: null # a FLObject
   programCounter: 0 # an integer
-  message: null # a FLMessage, which is an FLList and a cursor
-  originalMessage: null # a FLMessage,for debugging
   tempVariablesDict: null # a JS dictionary
   previousContext: null
   returned: null
 
-  constructor: (@previousContext, @self, @message) ->
+  constructor: (@previousContext, @self) ->
     @tempVariablesDict = {}
-    @originalMessage = @message.copy()
     #console.log "evaluation " + indentation() + "######### constructing new context at depth: " + @depth() + " with message: " + @message.print()
 
   depth: ->
@@ -60,7 +57,7 @@ class FLContext
 
     while contextBeingSearched?
 
-      console.log "evaluation " + indentation() + "looking in context with original message: " + contextBeingSearched.originalMessage.print() + " and current message: " + contextBeingSearched.message.print() 
+      console.log "evaluation " + indentation() + " current message: "
       console.log "evaluation " + indentation() + "context temps: " 
       for keys of contextBeingSearched.tempVariablesDict
         console.log keys

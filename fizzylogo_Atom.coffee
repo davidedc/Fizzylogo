@@ -9,10 +9,6 @@ class FLAtomClass extends FLPrimitiveClasses
     toBeReturned.printForList = toBeReturned.print
 
     toBeReturned.eval = (theContext) ->
-      message = theContext.message
-      console.log "evaluation " + indentation() + "messaging atom " + theAtomName + " with " + message.print()
-
-
       # first always look up if there is a value for anything
       # if there is, that wins all the times, so you could
       # have an exotic value for "false", or "2" that is completely

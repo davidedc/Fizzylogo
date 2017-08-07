@@ -81,7 +81,7 @@ FLAtom.methodBodies.jsArrayPush (context) ->
 FLAtom.msgPatterns.jsArrayPush flParse "eval"
 FLAtom.methodBodies.jsArrayPush (context) ->
 
-  newContext = new FLContext context, context.self, FLList.emptyMessage()
+  newContext = new FLContext context, context.self
   flContexts.jsArrayPush newContext
   toBeReturned = (@eval newContext).returned
 
@@ -219,7 +219,7 @@ FLString.methodBodies.jsArrayPush (context) ->
 FLString.msgPatterns.jsArrayPush flParse "eval"
 FLString.methodBodies.jsArrayPush (context) ->
 
-  newContext = new FLContext context, context.self, FLList.emptyMessage()
+  newContext = new FLContext context, context.self
   flContexts.jsArrayPush newContext
   toBeReturned = (@eval newContext).returned
 
@@ -293,7 +293,7 @@ FLNumber.methodBodies.jsArrayPush (context) ->
   console.log "FLNumber => DO loop code is: " + loopCode.print()
 
   for i in [0...@value]
-    newContext = new FLContext context, context.self, FLList.emptyMessage()
+    newContext = new FLContext context, context.self
     flContexts.jsArrayPush newContext
     toBeReturned = (loopCode.eval newContext).returned
 
@@ -352,21 +352,21 @@ FLBoolean.methodBodies.jsArrayPush (context) ->
   console.log "FLBoolean => , predicate value is: " + @value
 
   if @value
-    newContext = new FLContext context, context.self, FLList.emptyMessage()
+    newContext = new FLContext context, context.self
     flContexts.jsArrayPush newContext
     toBeReturned = (trueBranch.eval newContext).returned
     flContexts.pop()
 
     console.log "FLBoolean => returning result of true branch: " + toBeReturned
-    console.log "FLBoolean => remaining message after true branch: " + context.message.print()
+    console.log "FLBoolean => remaining message after true branch: "
     console.log "FLBoolean => ...with PC:  " + context.programCounter
-    console.log "FLBoolean => message length:  " + context.message.length()
+    console.log "FLBoolean => message length:  "
 
     # in this context we only have visibility of the true branch
     # but we have to make sure that in the context above the false
     # branch is never executed. So we "exhaust" the message in the
     # context above.
-    context.previousContext.programCounter = context.previousContext.message.length()
+    context.previousContext.programCounter = Number.MAX_SAFE_INTEGER
 
 
     return toBeReturned
@@ -423,7 +423,7 @@ FLList.methodBodies.jsArrayPush (context) ->
 FLList.msgPatterns.jsArrayPush flParse "eval"
 FLList.methodBodies.jsArrayPush (context) ->
 
-  newContext = new FLContext context, context.self, FLList.emptyMessage()
+  newContext = new FLContext context, context.self
   flContexts.jsArrayPush newContext
   toBeReturned = (@eval newContext).returned
 
@@ -445,7 +445,7 @@ FLList.methodBodies.jsArrayPush (context) ->
 
   console.log "FLNumber each do "
 
-  newContext = new FLContext context, context.self, FLList.emptyMessage()
+  newContext = new FLContext context, context.self
 
 
   newContext.self.flClass.tempVariables = newContext.self.flClass.tempVariables.flListImmutablePush variable
@@ -492,7 +492,7 @@ FLRepeat.methodBodies.jsArrayPush (context) ->
   console.log "FLRepeat => , loop code is: " + loopCode.print()
 
   while true
-    newContext = new FLContext context, context.self, FLList.emptyMessage()
+    newContext = new FLContext context, context.self
     flContexts.jsArrayPush newContext
     toBeReturned = (loopCode.eval newContext).returned
 
@@ -502,9 +502,9 @@ FLRepeat.methodBodies.jsArrayPush (context) ->
     console.dir toBeReturned
     console.log "Repeat => returning result CLASS after loop cycle: "
     console.dir toBeReturned.flClass
-    console.log "Repeat => remaining message after loop cycle: " + context.message.print()
+    console.log "Repeat => remaining message after loop cycle: "
     console.log "Repeat => ...with PC:  " + context.programCounter
-    console.log "Repeat => message length:  " + context.message.length()
+    console.log "Repeat => message length:  "
     console.log "Repeat => did I receive a Done? " + (if toBeReturned?.flClass == FLDoneClass then "yes" else "no")
 
     if toBeReturned?
@@ -514,7 +514,6 @@ FLRepeat.methodBodies.jsArrayPush (context) ->
         console.log "Repeat => the loop exited with Done "
         break
 
-  #context.programCounter = context.message.length()
   return toBeReturned
 
 # For -----------------------------------------------------------------------------
@@ -530,7 +529,7 @@ FLFor.methodBodies.jsArrayPush (context) ->
 
   loopVarName = loopVar.value
 
-  forContext = new FLContext context, context.self, FLList.emptyMessage()
+  forContext = new FLContext context, context.self
   forContext.self.flClass.tempVariables = forContext.self.flClass.tempVariables.flListImmutablePush loopVar
   flContexts.jsArrayPush forContext
 
@@ -541,7 +540,7 @@ FLFor.methodBodies.jsArrayPush (context) ->
 
     forContext.tempVariablesDict[ValidIDfromString loopVarName] = FLNumber.createNew i
 
-    newContext = new FLContext forContext, forContext.self, FLList.emptyMessage()
+    newContext = new FLContext forContext, forContext.self
     flContexts.jsArrayPush newContext
     toBeReturned = (loopCode.eval newContext).returned
 

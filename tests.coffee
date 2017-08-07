@@ -359,8 +359,8 @@ for i in [0...tests.length] by 2
 
 
     # outer-most context
-    parsed.isFromMessage = true
-    outerMostContext = new FLContext null, rWorkspace, parsed
+    parsed.isMessage = true
+    outerMostContext = new FLContext null, rWorkspace
     flContexts.jsArrayPush outerMostContext
 
     rWorkspace.flClass.instanceVariables = FLList.emptyList()
@@ -390,8 +390,27 @@ for i in [0...tests.length] by 2
       outerMostContext.self.instanceVariablesDict[ValidIDfromString keyword] = itsInitialisation
 
 
-    rWorkspace.eval outerMostContext
-    console.log "final return: " + outerMostContext.returned.value
+    #rWorkspace.eval outerMostContext
+
+    messageLength = parsed.length()
+    console.log "evaluation " + indentation() + "messaging workspace with " + parsed.print()
+
+    # now we are using the message as a list because we have to evaluate it.
+    # to evaluate it, we treat it as a list and we send it the empty message
+    # note that "self" will remain the current one, since anything that
+    # is in here will still refer to "self" as the current self in the
+    # overall message.
+    
+    returnedContext = parsed.eval outerMostContext
+
+    console.log "evaluation " + indentation() + "end of workspace evaluation"
+
+    if returnedContext.unparsedMessage
+      console.log "evaluation " + indentation() + "something was not understood: " + returnedContext.unparsedMessage.print()
+      environmentErrors += "! something was not understood: " + returnedContext.unparsedMessage.print()
+
+
+    console.log "final return: " + returnedContext.returned.value
     if environmentPrintout + environmentErrors == testResult
       console.log "...test " + (i/2+1) + " OK, obtained: " + environmentPrintout + environmentErrors
     else

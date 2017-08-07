@@ -8,9 +8,6 @@ class FLObjects
     @instanceVariablesDict = {}
 
   eval: (theContext) ->
-    message = theContext.message
-    console.log "evaluation " + indentation() + "messaging object with " + message.print()
-    console.log "evaluation " + indentation() + "before matching game the message is: " + message.print() + " and PC: " + theContext.programCounter
     theContext.returned = @
     return theContext
 
@@ -53,7 +50,7 @@ class FLObjects
           console.log "evaluation " + indentation() + "  ////////////////////////////////////// CREATING NEW CONTEXT WITH NEW SELF " + @
 
           # this is the ONLY place where we change self!
-          newContext = new FLContext theContext, @, methodInvocation
+          newContext = new FLContext theContext, @
           flContexts.jsArrayPush newContext
           #theContext.programCounter = originalProgramCounter
           #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.print() + " PC: " + theContext.programCounter             #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.print() + " PC: " + newContext.programCounter
@@ -128,7 +125,7 @@ class FLObjects
                 # like in "7 * self" we don't want to bind self to 7
 
                 if methodInvocation.firstElement().flClass == FLList
-                  [valueToBeBound, methodInvocation] = methodInvocation.evalAndConsumeFirstMessageElement theContext
+                  [valueToBeBound, methodInvocation] = methodInvocation.evalFirstListElementAndTurnRestIntoMessage theContext
                 else
                   [valueToBeBound, methodInvocation] = methodInvocation.evalAndConsume theContext
                 
@@ -172,11 +169,11 @@ class FLObjects
 
             console.log "originalProgramCounter + methodInvocation.cursorStart - originalMethodInvocationStart: " + originalProgramCounter + " " + methodInvocation.cursorStart  + " " + originalMethodInvocationStart
             console.log "theContext.programCounter BEFORE: " + theContext.programCounter
-            console.log "theContext message BEFORE: " + theContext.message.print()
+            console.log "theContext message BEFORE: "
             #theContext.programCounter += methodInvocation.cursorStart - originalMethodInvocationStart
             theContext.programCounter = originalProgramCounter + methodInvocation.cursorStart - originalMethodInvocationStart
             console.log "theContext.programCounter AFTER: " + theContext.programCounter
-            console.log "theContext message AFTER: " + theContext.message.print()
+            console.log "theContext message AFTER: "
 
             #console.log "countSignaturePosition: " + countSignaturePosition
             #return countSignaturePosition
@@ -245,11 +242,11 @@ class FLObjects
   # is not a method call, this is progressing within
   # an existing call
   progressWithNonEmptyMessage: (message, theContext) ->
-    newContext = new FLContext theContext, theContext.self, message
+    newContext = new FLContext theContext, theContext.self
     flContexts.jsArrayPush newContext
 
-    returnedContext = @findSignatureBindParamsAndMakeCall newContext, newContext.message
-    console.log "evaluation " + indentation() + "after having sent message: " + newContext.message.print() + " and PC: " + newContext.programCounter
+    returnedContext = @findSignatureBindParamsAndMakeCall newContext, message.copy()
+    console.log "evaluation " + indentation() + "after having sent message:  and PC: " + newContext.programCounter
 
     if returnedContext? and returnedContext.returned?
         # "findSignatureBindParamsAndMakeCall" has already done the job of
