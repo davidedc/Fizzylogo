@@ -3,7 +3,6 @@ class FLBooleanPrimitiveClass extends FLPrimitiveClasses
     toBeReturned = super FLBoolean
     toBeReturned.value = value
 
-
     toBeReturned.print = ->
       return @value
 

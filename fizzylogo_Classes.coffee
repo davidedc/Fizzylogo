@@ -44,7 +44,7 @@ class FLClassPrimitiveClass extends FLPrimitiveClasses
   # create the object Class, which allows users
   # to create new classes. This is *not*
   # invoked when the user creates a new class, for
-  # that "new FLUserClass()" is used.
+  # that "new FLUserDefinedClass()" is used.
   createNew: ->
     toBeReturned = super FLClass
     toBeReturned.classVariablesDict = {}

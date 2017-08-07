@@ -113,7 +113,7 @@ FLClass.msgPatterns.jsArrayPush flParse "new"
 FLClass.methodBodies.jsArrayPush (context) ->
   console.log "///////// creating a new class for the user!"
 
-  newUserClass = new FLUserClass()
+  newUserClass = new FLUserDefinedClass()
 
   newUserClass.msgPatterns.jsArrayPush flParse "print"
   newUserClass.methodBodies.jsArrayPush commonFLPrintFunction
