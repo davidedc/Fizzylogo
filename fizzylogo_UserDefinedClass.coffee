@@ -9,7 +9,8 @@ class FLUserDefinedClass extends FLNonPrimitiveClasses
   #   FLBoolean = new FLBooleanPrimitiveClass()
   #
   # the .flClass of this object will point to the object
-  # itself, just like in all fizzylogo classes.
+  # itself, just like in all fizzylogo classes, since
+  # the class of each class is itself.
   constructor: ->
     super()
     @value = "some_custom_class_of_user"
