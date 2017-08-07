@@ -85,6 +85,13 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
 
     toBeReturned.printForList = toBeReturned.print
 
+    toBeReturned.evalFirstListElementAndTurnRestIntoMessage = (theContext) ->
+      firstElement = @firstElement()
+      console.log "           " + indentation() + "evaling element " + firstElement.value
+      evaledFirstElement = (firstElement.eval theContext).returned
+      restOfMessage = @skipNextMessageElement theContext
+      return [evaledFirstElement, restOfMessage]
+
     # it's like eval but it does it in a new
     # context and keeps track of hum much the
     # current message is consumed.
@@ -181,12 +188,6 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
         throw "no first element, array is empty"
       return @elementAt 0
 
-    toBeReturned.evalFirstListElementAndTurnRestIntoMessage = (theContext) ->
-      firstElement = @firstElement()
-      console.log "           " + indentation() + "evaling element " + firstElement.value
-      evaledFirstElement = (firstElement.eval theContext).returned
-      restOfMessage = @skipNextMessageElement theContext
-      return [evaledFirstElement, restOfMessage]
 
     toBeReturned.skipNextMessageElement = (theContext) ->
       theContext.programCounter++
