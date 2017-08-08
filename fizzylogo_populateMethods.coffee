@@ -34,7 +34,7 @@ commonFLEvalFunction = (context) ->
   flContexts.pop()
   return toBeReturned
 
-commonFLCatchFunction = (context) ->
+commonFLCatchAndCatchAllFunction = (context) ->
   return @
 
 
@@ -91,8 +91,11 @@ FLAtom.methodBodies.jsArrayPush (context) ->
 FLAtom.msgPatterns.jsArrayPush flParse "eval"
 FLAtom.methodBodies.jsArrayPush commonFLEvalFunction
 
+FLAtom.msgPatterns.jsArrayPush flParse "catch all handle ( @ errorHandle )"
+FLAtom.methodBodies.jsArrayPush commonFLCatchAndCatchAllFunction
+
 FLAtom.msgPatterns.jsArrayPush flParse "catch ( theError ) handle ( @ errorHandle )"
-FLAtom.methodBodies.jsArrayPush commonFLCatchFunction
+FLAtom.methodBodies.jsArrayPush commonFLCatchAndCatchAllFunction
 
 # Nil ---------------------------------------------------------------------------
 
@@ -220,6 +223,23 @@ FLException.methodBodies.jsArrayPush (context) ->
 FLException.msgPatterns.jsArrayPush flParse "print"
 FLException.methodBodies.jsArrayPush commonFLPrintFunction
 
+FLException.msgPatterns.jsArrayPush flParse "catch all handle ( @ errorHandle )"
+FLException.methodBodies.jsArrayPush (context) ->
+  errorHandle = context.tempVariablesDict[ValidIDfromString "errorHandle"]
+
+  console.log "catch: being thrown? " + @beingThrown
+
+  if @beingThrown
+    @beingThrown = false
+    console.log "catch:caught right exception"
+    toBeReturned = (errorHandle.eval context)[0].returned
+  else
+    console.log "catch: caught wrong exception, propagating it"
+    toBeReturned = @
+
+
+  return toBeReturned
+
 FLException.msgPatterns.jsArrayPush flParse "catch ( theError ) handle ( @ errorHandle )"
 FLException.methodBodies.jsArrayPush (context) ->
   theError = context.tempVariablesDict[ValidIDfromString "theError"]
@@ -256,8 +276,11 @@ FLString.methodBodies.jsArrayPush (context) ->
 FLString.msgPatterns.jsArrayPush flParse "eval"
 FLString.methodBodies.jsArrayPush commonFLEvalFunction
 
+FLString.msgPatterns.jsArrayPush flParse "catch all handle ( @ errorHandle )"
+FLString.methodBodies.jsArrayPush commonFLCatchAndCatchAllFunction
+
 FLString.msgPatterns.jsArrayPush flParse "catch ( theError ) handle ( @ errorHandle )"
-FLString.methodBodies.jsArrayPush commonFLCatchFunction
+FLString.methodBodies.jsArrayPush commonFLCatchAndCatchAllFunction
 
 # Number -------------------------------------------------------------------------
 
@@ -363,8 +386,11 @@ FLNumber.methodBodies.jsArrayPush commonFLIdictFunction
 FLNumber.msgPatterns.jsArrayPush flParse "cdict"
 FLNumber.methodBodies.jsArrayPush commonFLCdictFunction
 
+FLNumber.msgPatterns.jsArrayPush flParse "catch all handle ( @ errorHandle )"
+FLNumber.methodBodies.jsArrayPush commonFLCatchAndCatchAllFunction
+
 FLNumber.msgPatterns.jsArrayPush flParse "catch ( theError ) handle ( @ errorHandle )"
-FLNumber.methodBodies.jsArrayPush commonFLCatchFunction
+FLNumber.methodBodies.jsArrayPush commonFLCatchAndCatchAllFunction
 
 # Boolean -------------------------------------------------------------------------
 
@@ -428,8 +454,11 @@ FLBoolean.methodBodies.jsArrayPush (context) ->
   resultOfAnyOtherCode = context.tempVariablesDict[ValidIDfromString "resultOfAnyOtherCode"]
   return resultOfAnyOtherCode
 
+FLBoolean.msgPatterns.jsArrayPush flParse "catch all handle ( @ errorHandle )"
+FLBoolean.methodBodies.jsArrayPush commonFLCatchAndCatchAllFunction
+
 FLBoolean.msgPatterns.jsArrayPush flParse "catch ( theError ) handle ( @ errorHandle )"
-FLBoolean.methodBodies.jsArrayPush commonFLCatchFunction
+FLBoolean.methodBodies.jsArrayPush commonFLCatchAndCatchAllFunction
 
 # FLQuote --------------------------------------------------------------------------
 
@@ -488,8 +517,11 @@ FLList.methodBodies.jsArrayPush (context) ->
 
   return toBeReturned
 
+FLList.msgPatterns.jsArrayPush flParse "catch all handle ( @ errorHandle )"
+FLList.methodBodies.jsArrayPush commonFLCatchAndCatchAllFunction
+
 FLList.msgPatterns.jsArrayPush flParse "catch ( theError ) handle ( @ errorHandle )"
-FLList.methodBodies.jsArrayPush commonFLCatchFunction
+FLList.methodBodies.jsArrayPush commonFLCatchAndCatchAllFunction
 
 
 # Done -------------------------------------------------------------------------
