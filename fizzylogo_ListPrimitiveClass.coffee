@@ -128,7 +128,6 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
             theContext.unparsedMessage = restOfMessage
             return [theContext, restOfMessage]
 
-
           console.log "evaluation " + indentation() + "receiver: " + receiver?.value
           console.log "evaluation " + indentation() + "message: " + restOfMessage.print()
 
@@ -140,7 +139,6 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
           [returnedContext, returnedMessage] = receiver.progressWithNonEmptyMessage restOfMessage, theContext
           receiver = returnedContext.returned
 
-          flContexts.pop()
           console.log "evaluation " + indentation() + "list evaluation returned: " + receiver?.value
           # if there is no change in the program counter it means that there
           # was no progress, i.e. the receiver can't do anything with the message
@@ -160,6 +158,12 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
           # skipped.
           if returnedContext.exhaustPreviousContextMessage == true
             restOfMessage.exhaust()
+
+          # where we detect an exception
+          if receiver.flClass == FLException and receiver.beingThrown
+            theContext.returned = receiver
+            restOfMessage.exhaust()
+            return [theContext, restOfMessage]
 
         console.log "evaluation " + indentation() + "list: nothing more to evaluate"
         theContext.returned = receiver

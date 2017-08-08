@@ -343,6 +343,33 @@ tests = [
   '@( "Hello " "Dave " "my " "dear " "friend") each word do (word print)'
   'Hello Dave my dear friend'
 
+  '@someException <- Exception new initWith "my custom error". someException print'
+  'my custom error'
+
+  # wrong error to raise exceptions, they must be thrown
+  '@someException <- Exception new initWith "my custom error". try ( 1 print. someException ) whenError ( someException ) handleWith ( " caught the error I wanted" print )'
+  '1'
+
+  # wrong error to raise exceptions, they must be thrown
+  '@someException <- Exception new initWith "my custom error". @someOtherException <- Exception new initWith "my other custom error". try ( 1 print. someException ) whenError ( someException ) handleWith ( " caught the error I wanted" print )'
+  '1'
+
+  # wrong error to raise exceptions, they must be thrown
+  '@someException <- Exception new initWith "my custom error". @someOtherException <- Exception new initWith "my other custom error". try ( 1 print. someException ) whenError ( someOtherException ) handleWith ( " caught the error I wanted" print )'
+  '1'
+
+  # thrown exception, note how the statement after the throw is not executed.
+  '@someException <- Exception new initWith "my custom error". try ( 1 print. throw someException. 2 print ) whenError ( someException ) handleWith ( " caught the error I wanted" print )'
+  '1 caught the error I wanted'
+
+  # thrown exception, note how the statement after the throw is not executed.
+  '@someException <- Exception new initWith "my custom error". @someOtherException <- Exception new initWith "my other custom error". try ( 1 print. throw someException. 2 print ) whenError ( someException ) handleWith ( " caught the error I wanted" print )'
+  '1 caught the error I wanted'
+
+  # thrown exception, note how the statement after the throw is not executed.
+  '@someException <- Exception new initWith "my custom error". @someOtherException <- Exception new initWith "my other custom error". try ( 1 print. throw someException. 2 print ) whenError ( someOtherException ) handleWith ( " caught the error I wanted" print )'
+  '1'
+
   #'@ a <- 5 someUndefinedMessage'
   #'7'
 
@@ -385,6 +412,7 @@ for i in [0...tests.length] by 2
       "Class", FLClass.createNew()
       "List", FLList
       "String", FLString
+      "Exception", FLException
 
       "not", FLNot.createNew()
       "true", FLBoolean.createNew true
@@ -393,6 +421,9 @@ for i in [0...tests.length] by 2
       "for", FLFor.createNew()
       "repeat", FLRepeat.createNew()
       "done", FLDone.createNew()
+
+      "try", FLTry.createNew()
+      "throw", FLThrow.createNew()
 
       "to", FLTo.createNew()
 

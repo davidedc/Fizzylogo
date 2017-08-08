@@ -199,6 +199,20 @@ FLClass.methodBodies.jsArrayPush (context) ->
 
   return newUserClass
 
+# Exception -------------------------------------------------------------------------
+
+FLException.msgPatterns.jsArrayPush flParse "new"
+FLException.methodBodies.jsArrayPush (context) ->
+  return @flClass.createNew ""
+
+FLException.msgPatterns.jsArrayPush flParse "initWith ( @ errorMessage )"
+FLException.methodBodies.jsArrayPush (context) ->
+  errorMessage = context.tempVariablesDict[ValidIDfromString "errorMessage"]
+  @value = errorMessage.value
+  return @
+
+FLException.msgPatterns.jsArrayPush flParse "print"
+FLException.methodBodies.jsArrayPush commonFLPrintFunction
 
 # String -------------------------------------------------------------------------
 
@@ -487,6 +501,38 @@ FLRepeat.methodBodies.jsArrayPush (context) ->
           toBeReturned = toBeReturned.value
         console.log "Repeat => the loop exited with Done "
         break
+
+  return toBeReturned
+
+# Throw -----------------------------------------------------------------------------
+
+FLThrow.msgPatterns.jsArrayPush flParse "( theError )"
+FLThrow.methodBodies.jsArrayPush (context) ->
+  theError = context.tempVariablesDict[ValidIDfromString "theError"]
+  theError.beingThrown = true
+  return theError
+
+# Try -----------------------------------------------------------------------------
+
+FLTry.msgPatterns.jsArrayPush flParse "( @ code ) whenError ( theError ) handleWith ( @ errorHandle )"
+FLTry.methodBodies.jsArrayPush (context) ->
+  code = context.tempVariablesDict[ValidIDfromString "code"]
+  theError = context.tempVariablesDict[ValidIDfromString "theError"]
+  errorHandle = context.tempVariablesDict[ValidIDfromString "errorHandle"]
+
+  toBeReturned = (code.eval context)[0].returned
+
+  if toBeReturned?
+    if toBeReturned.flClass == FLException and toBeReturned.beingThrown
+      console.log "Try => code had exception "
+
+      if toBeReturned == theError
+        toBeReturned.beingThrown = false
+        console.log "Try => caught right exception"
+        toBeReturned = (errorHandle.eval context)[0].returned
+      else
+        console.log "Try => caught wrong exception, propagating it"
+
 
   return toBeReturned
 
