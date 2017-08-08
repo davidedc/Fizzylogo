@@ -175,7 +175,7 @@ class FLObjects
             console.log "theContext.programCounter AFTER: " + theContext.programCounter
             console.log "theContext method invocation after: " + methodInvocation.print()
 
-            return @lookupAndSendFoundMessage newContext, countSignaturePosition
+            return [(@lookupAndSendFoundMessage newContext, countSignaturePosition),methodInvocation]
 
 
         # we are still here trying to match but
@@ -184,7 +184,7 @@ class FLObjects
         # to what it was because we matched nothing from
         # the message we were sent.
         console.log "evaluation " + indentation() + "  matching - no match found" + " PC: " + theContext.programCounter
-        return null
+        return [null, methodInvocationToBeChecked]
 
   lookupAndSendFoundMessage: (theContext, countSignaturePosition) ->
     console.log "evaluation " + indentation() + "  matching - found a matching signature: " + @flClass.msgPatterns[countSignaturePosition].print() + " , PC: " + theContext.programCounter
@@ -238,8 +238,7 @@ class FLObjects
   # this is progressing within an existing call
   progressWithNonEmptyMessage: (message, theContext) ->
 
-    originalPC = theContext.programCounter
-    toBeReturned = @findSignatureBindParamsAndMakeCall theContext, message
+    [toBeReturned, returnedMessage] = @findSignatureBindParamsAndMakeCall theContext, message
     console.log "evaluation " + indentation() + "after having sent message:  and PC: "
 
     # "findSignatureBindParamsAndMakeCall" has already done the job of
@@ -250,13 +249,11 @@ class FLObjects
       theContext.returned = @
       toBeReturned = theContext
 
-    message = message.advanceMessageBy theContext.programCounter - originalPC
-
     console.log "evaluation " + indentation() + "  progressWithNonEmptyMessage - eval returned: " + toBeReturned
     #console.dir toBeReturned
     console.log "evaluation " + indentation() + "  progressWithNonEmptyMessage - returned: " + toBeReturned
     #console.dir toBeReturned
-    return [toBeReturned, message]
+    return [toBeReturned, returnedMessage]
 
 
 class FLPrimitiveObjects extends FLObjects

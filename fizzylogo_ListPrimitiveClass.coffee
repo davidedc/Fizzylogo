@@ -149,6 +149,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
           # message
           # you could also do the same check by veryfying whether the program counter
           # of theContext has changed.
+          #console.dir returnedMessage
           if returnedMessage.length() == restOfMessage.length()
             console.log "evaluation " + indentation() + " breaking because of programCounter check "
             theContext.returned = receiver
