@@ -347,46 +347,86 @@ tests = [
   'my custom error'
 
   # wrong error to raise exceptions, they must be thrown
-  '@someException <- Exception new initWith "my custom error". try ( 1 print. someException ) catch ( someException ) handle ( " caught the error I wanted" print )'
+  '@someException <- Exception new initWith "my custom error".\
+    try ( 1 print. someException )\
+    catch ( someException ) handle ( " caught the error I wanted" print )'
   '1'
 
   # wrong error to raise exceptions, they must be thrown
-  '@someException <- Exception new initWith "my custom error". @someOtherException <- Exception new initWith "my other custom error". try ( 1 print. someException ) catch ( someException ) handle ( " caught the error I wanted" print )'
+  '@someException <- Exception new initWith "my custom error".\
+    @someOtherException <- Exception new initWith "my other custom error".\
+    try ( 1 print. someException )\
+    catch ( someException ) handle ( " caught the error I wanted" print )'
   '1'
 
   # wrong error to raise exceptions, they must be thrown
-  '@someException <- Exception new initWith "my custom error". @someOtherException <- Exception new initWith "my other custom error". try ( 1 print. someException ) catch ( someOtherException ) handle ( " caught the error I wanted" print )'
+  '@someException <- Exception new initWith "my custom error".\
+    @someOtherException <- Exception new initWith "my other custom error".\
+    try ( 1 print. someException )\
+    catch ( someOtherException ) handle ( " caught the error I wanted" print )'
   '1'
 
   # thrown exception, note how the statement after the throw is not executed.
-  '@someException <- Exception new initWith "my custom error". try ( 1 print. throw someException. 2 print ) catch ( someException ) handle ( " caught the error I wanted" print )'
+  '@someException <- Exception new initWith "my custom error".\
+    try ( 1 print. throw someException. 2 print )\
+    catch ( someException ) handle ( " caught the error I wanted" print )'
   '1 caught the error I wanted'
 
   # thrown exception, note how the statement after the throw is not executed.
-  '@someException <- Exception new initWith "my custom error". @someOtherException <- Exception new initWith "my other custom error". try ( 1 print. throw someException. 2 print ) catch ( someException ) handle ( " caught the error I wanted" print )'
+  '@someException <- Exception new initWith "my custom error".\
+    @someOtherException <- Exception new initWith "my other custom error".\
+    try ( 1 print. throw someException. 2 print )\
+    catch ( someException ) handle ( " caught the error I wanted" print )'
   '1 caught the error I wanted'
 
   # thrown exception, note how the statement after the throw is not executed.
-  '@someException <- Exception new initWith "my custom error". @someOtherException <- Exception new initWith "my other custom error". try ( 1 print. throw someException. 2 print ) catch ( someOtherException ) handle ( " caught the error I wanted" print )'
+  '@someException <- Exception new initWith "my custom error".\
+    @someOtherException <- Exception new initWith "my other custom error".\
+    try ( 1 print. throw someException. 2 print )\
+    catch ( someOtherException ) handle ( " caught the error I wanted" print )'
   '1'
 
   # thrown exception, note how the statement after the throw is not executed.
-  '@someException <- Exception new initWith "my custom error". @someOtherException <- Exception new initWith "my other custom error". try ( 1 print. throw someOtherException. 2 print ) catch ( someOtherException ) handle ( " caught the error the first time around" ) catch ( someException ) handle ( " caught the error the second time around" ) print'
+  '@someException <- Exception new initWith "my custom error".\
+    @someOtherException <- Exception new initWith "my other custom error".\
+    try ( 1 print. throw someOtherException. 2 print )\
+    catch ( someOtherException ) handle ( " caught the error the first time around" )\
+    catch ( someException ) handle ( " caught the error the second time around" ) print'
   '1 caught the error the first time around'
 
-  '@someException <- Exception new initWith "my custom error". @someOtherException <- Exception new initWith "my other custom error". try ( 1 print. throw someException. 2 print ) catch ( someOtherException ) handle ( " caught the error the first time around" ) catch ( someException ) handle ( " caught the error the second time around" ) print'
+  '@someException <- Exception new initWith "my custom error".\
+    @someOtherException <- Exception new initWith "my other custom error".\
+    try ( 1 print. throw someException. 2 print )\
+    catch ( someOtherException ) handle ( " caught the error the first time around" )\
+    catch ( someException ) handle ( " caught the error the second time around" ) print'
   '1 caught the error the second time around'
 
   # catch-all case 1
-  '@someException <- Exception new initWith "my custom error". @someOtherException <- Exception new initWith "my other custom error". try ( 1 print. throw someOtherException. 2 print ) catch ( someOtherException ) handle ( " caught the error the first time around" ) catch ( someException ) handle ( " caught the error the second time around" ) catch all handle (" catch all branch") print'
+  '@someException <- Exception new initWith "my custom error".\
+    @someOtherException <- Exception new initWith "my other custom error".\
+    try ( 1 print. throw someOtherException. 2 print )\
+    catch ( someOtherException ) handle ( " caught the error the first time around" )\
+    catch ( someException ) handle ( " caught the error the second time around" )\
+    catch all handle (" catch all branch") print'
   '1 caught the error the first time around'
 
   # catch-all case 2
-  '@someException <- Exception new initWith "my custom error". @someOtherException <- Exception new initWith "my other custom error". try ( 1 print. throw someException. 2 print ) catch ( someOtherException ) handle ( " caught the error the first time around" ) catch ( someException ) handle ( " caught the error the second time around" ) catch all handle (" catch all branch") print'
+  '@someException <- Exception new initWith "my custom error".\
+    @someOtherException <- Exception new initWith "my other custom error".\
+    try ( 1 print. throw someException. 2 print )\
+    catch ( someOtherException ) handle ( " caught the error the first time around" )\
+    catch ( someException ) handle ( " caught the error the second time around" )\
+    catch all handle (" catch all branch") print'
   '1 caught the error the second time around'
 
   # catch-all case 3
-  '@someException <- Exception new initWith "my custom error". @someOtherException <- Exception new initWith "my other custom error". @yetAnotherException <- Exception new initWith "another custom error that is only caught by the catch all branch". try ( 1 print. throw yetAnotherException. 2 print ) catch ( someOtherException ) handle ( " caught the error the first time around" ) catch ( someException ) handle ( " caught the error the second time around" ) catch all handle (" catch all branch") print'
+  '@someException <- Exception new initWith "my custom error".\
+    @someOtherException <- Exception new initWith "my other custom error".\
+    @yetAnotherException <- Exception new initWith "another custom error that is only caught by the catch all branch".\
+    try ( 1 print. throw yetAnotherException. 2 print )\
+    catch ( someOtherException ) handle ( " caught the error the first time around" )\
+    catch ( someException ) handle ( " caught the error the second time around" )\
+    catch all handle (" catch all branch") print'
   '1 catch all branch'
 
   #'@ a <- 5 someUndefinedMessage'
