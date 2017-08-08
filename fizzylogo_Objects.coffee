@@ -52,7 +52,6 @@ class FLObjects
           # this is the ONLY place where we change self!
           newContext = new FLContext theContext, @
           flContexts.jsArrayPush newContext
-          #theContext.programCounter = originalProgramCounter
           #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.print() + " PC: " + theContext.programCounter             #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.print() + " PC: " + newContext.programCounter
 
           soFarEverythingMatched = true
@@ -170,14 +169,10 @@ class FLObjects
 
             console.log "originalProgramCounter + methodInvocation.cursorStart - originalMethodInvocationStart: " + originalProgramCounter + " " + methodInvocation.cursorStart  + " " + originalMethodInvocationStart
             console.log "theContext.programCounter BEFORE: " + theContext.programCounter
-            #theContext.programCounter += methodInvocation.cursorStart - originalMethodInvocationStart
             theContext.programCounter = originalProgramCounter + methodInvocation.cursorStart - originalMethodInvocationStart
             theContext.unparsedMessage = null
             console.log "theContext.programCounter AFTER: " + theContext.programCounter
             console.log "theContext method invocation after: " + methodInvocation.print()
-
-            #console.log "countSignaturePosition: " + countSignaturePosition
-            #return countSignaturePosition
 
             return @lookupAndSendFoundMessage newContext, countSignaturePosition
 
@@ -188,7 +183,6 @@ class FLObjects
         # to what it was because we matched nothing from
         # the message we were sent.
         console.log "evaluation " + indentation() + "  matching - no match found" + " PC: " + theContext.programCounter
-        #theContext.programCounter = originalProgramCounter
         return null
 
   lookupAndSendFoundMessage: (theContext, countSignaturePosition) ->
@@ -237,11 +231,10 @@ class FLObjects
 
 
   # Note that only part of the message might be consumed
-  # also note that we are creating a new context, but
   # "self" remains the same since we are still in the
   # same "method call" and the same "object". I.e. this
-  # is not a method call, this is progressing within
-  # an existing call
+  # is not a method call (although it might lead to one),
+  # this is progressing within an existing call
   progressWithNonEmptyMessage: (message, theContext) ->
 
     originalPC = theContext.programCounter

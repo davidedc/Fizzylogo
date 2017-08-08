@@ -92,8 +92,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
       restOfMessage = @skipNextMessageElement theContext
       return [evaledFirstElement, restOfMessage]
 
-    # it's like eval but it does it in a new
-    # context and keeps track of hum much the
+    # it's like eval but it keeps track of huw much of the
     # current message is consumed.
     toBeReturned.evalAndConsume = (theContext) ->
       originalPC = theContext.programCounter
@@ -146,8 +145,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
           # we'll have to find the result from what we can consume and then
           # sent the remaining part to such reult. This is why
           # we have to keep iterating until the whole message is consumed
-          origPC = theContext.programCounter
-          [newContext, restOfMessage] = receiver.progressWithNonEmptyMessage restOfMessage, theContext
+          [newContext, returnedMessage] = receiver.progressWithNonEmptyMessage restOfMessage, theContext
           receiver = newContext.returned
 
           flContexts.pop()
@@ -157,11 +155,15 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
           # was no progress, i.e. the receiver can't do anything with the message
           # so it's time to break even if there is something left in the
           # message
-          if origPC == theContext.programCounter
+          # you could also do the same check by veryfying whether the program counter
+          # of theContext has changed.
+          if returnedMessage.length() == restOfMessage.length()
             console.log "evaluation " + indentation() + " breaking because of programCounter check "
             theContext.returned = receiver
-            theContext.unparsedMessage = restOfMessage
+            theContext.unparsedMessage = returnedMessage
             return theContext
+
+          restOfMessage = returnedMessage
 
 
         console.log "evaluation " + indentation() + "list: nothing more to evaluate"
