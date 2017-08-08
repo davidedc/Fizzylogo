@@ -89,7 +89,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
       firstElement = @firstElement()
       console.log "           " + indentation() + "evaling element " + firstElement.value
       theContext.returned = (firstElement.eval theContext)[0].returned
-      restOfMessage = @skipNextMessageElement theContext
+      restOfMessage = @restOfMessage()
       return [theContext, restOfMessage]
 
     toBeReturned.eval = (theContext) ->
@@ -142,16 +142,12 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
 
           flContexts.pop()
           console.log "evaluation " + indentation() + "list evaluation returned: " + receiver?.value
-          console.log "evaluation " + indentation() + "comparison of program counters: " + theContext.programCounter + " " + returnedContext.programCounter
           # if there is no change in the program counter it means that there
           # was no progress, i.e. the receiver can't do anything with the message
           # so it's time to break even if there is something left in the
           # message
-          # you could also do the same check by veryfying whether the program counter
-          # of theContext has changed.
-          #console.dir returnedMessage
           if returnedMessage.length() == restOfMessage.length()
-            console.log "evaluation " + indentation() + " breaking because of programCounter check "
+            console.log "evaluation " + indentation() + " breaking because there was no progress"
             theContext.returned = receiver
             theContext.unparsedMessage = returnedMessage
             return [theContext, returnedMessage]
@@ -190,10 +186,6 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
       if @cursorStart > @cursorEnd
         throw "no first element, array is empty"
       return @elementAt 0
-
-    toBeReturned.skipNextMessageElement = (theContext) ->
-      theContext.programCounter++
-      return @restOfMessage()
 
     # returns the first element and returns
     # a copy of the rest of the message

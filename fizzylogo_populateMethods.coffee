@@ -347,7 +347,6 @@ FLBoolean.methodBodies.jsArrayPush (context) ->
 
     console.log "FLBoolean => returning result of true branch: " + toBeReturned
     console.log "FLBoolean => remaining message after true branch: "
-    console.log "FLBoolean => ...with PC:  " + context.programCounter
     console.log "FLBoolean => message length:  "
 
     # in this context we only have visibility of the true branch
@@ -479,7 +478,6 @@ FLRepeat.methodBodies.jsArrayPush (context) ->
     console.log "Repeat => returning result CLASS after loop cycle: "
     console.dir toBeReturned.flClass
     console.log "Repeat => remaining message after loop cycle: "
-    console.log "Repeat => ...with PC:  " + context.programCounter
     console.log "Repeat => message length:  "
     console.log "Repeat => did I receive a Done? " + (if toBeReturned?.flClass == FLDoneClass then "yes" else "no")
 

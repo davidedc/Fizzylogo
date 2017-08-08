@@ -12,15 +12,8 @@ class FLObjects
     return [theContext]
 
   findSignatureBindParamsAndMakeCall: (theContext, methodInvocationToBeChecked) ->
-        console.log "evaluation " + indentation() + "  !!! looking up method invocation " + methodInvocationToBeChecked.print() + " with signatures!" + " PC: " + theContext.programCounter
-        console.log "evaluation " + indentation() + "  !!! looking up method invocation, is method empty? " + methodInvocationToBeChecked.isEmpty() + " PC: " + theContext.programCounter
-
-        # as we check the matches of the invocation with the
-        # signature, we might need to roll back the program
-        # counter, which is what keeps tab of how much of the
-        # message (in the context) we consume.
-        # so let's remember the original value here
-        originalProgramCounter = theContext.programCounter
+        console.log "evaluation " + indentation() + "  !!! looking up method invocation " + methodInvocationToBeChecked.print() + " with signatures!"
+        console.log "evaluation " + indentation() + "  !!! looking up method invocation, is method empty? " + methodInvocationToBeChecked.isEmpty()
 
         countSignaturePosition = -1
         console.log "evaluation " + indentation() + "  I am: " + @value
@@ -36,14 +29,10 @@ class FLObjects
         flContexts.jsArrayPush null
 
         for eachSignature in @flClass.msgPatterns
-          #console.log "evaluation " + indentation() + "  matching - checking if this signature matches: " + eachSignature.print() + " PC: " + theContext.programCounter
+          #console.log "evaluation " + indentation() + "  matching - checking if this signature matches: " + eachSignature.print()
           methodInvocation = methodInvocationToBeChecked
           countSignaturePosition++
 
-          # as we might have failed a match of a signature, we need to restore
-          # the program counter so we keep the correct tab of how much
-          # of the message (in the context) we consume.
-          
           # remove the previous context because it was a
           # botched attempt to match a signature
           flContexts.pop()
@@ -52,13 +41,14 @@ class FLObjects
           # this is the ONLY place where we change self!
           newContext = new FLContext theContext, @
           flContexts.jsArrayPush newContext
-          #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.print() + " PC: " + theContext.programCounter             #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.print() + " PC: " + newContext.programCounter
+          #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.print()
+          #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.print()
 
           soFarEverythingMatched = true
           originalMethodInvocationStart = methodInvocation.cursorStart
           until eachSignature.isEmpty() or methodInvocation.isEmpty()
 
-            console.log "evaluation " + indentation() + "  matching: - next signature piece: " + eachSignature.print() + " is atom: " + " with: " + methodInvocation.print() + " PC: " + newContext.programCounter
+            console.log "evaluation " + indentation() + "  matching: - next signature piece: " + eachSignature.print() + " is atom: " + " with: " + methodInvocation.print()
 
             [eachElementOfSignature, eachSignature] = eachSignature.nextElement()
 
@@ -76,12 +66,12 @@ class FLObjects
 
               if eachElementOfInvocation.flClass == FLAtom or eachElementOfInvocation.flClass == FLSymbol
 
-                #console.log "evaluation " + indentation() + "  matching atoms: - next signature piece: " + eachElementOfSignature.print() + " is atom: " + (eachElementOfSignature.flClass == FLAtom) + " with: " + eachElementOfInvocation.print() + " PC: " + newContext.programCounter
+                #console.log "evaluation " + indentation() + "  matching atoms: - next signature piece: " + eachElementOfSignature.print() + " is atom: " + (eachElementOfSignature.flClass == FLAtom) + " with: " + eachElementOfInvocation.print()
 
                 # ok at least the message contains an atom, but
                 # now we have to check that they spell the same
                 if eachElementOfSignature.value == eachElementOfInvocation.value
-                  console.log "evaluation " + indentation() + "  matching - atom matched: " + eachElementOfSignature.print() + " PC: " + newContext.programCounter
+                  console.log "evaluation " + indentation() + "  matching - atom matched: " + eachElementOfSignature.print()
                   # OK good match of atomsr,
                   # check the next token in the signature
                   continue
@@ -93,19 +83,19 @@ class FLObjects
                 # the signature sais "atom" but the message contains
                 # something else: no match, check the next
                 # signature
-                #console.log "evaluation " + indentation() + "  matching - no match: " + eachElementOfSignature.print() + " vs. " + eachElementOfInvocation.print() + " PC: " + newContext.programCounter
+                #console.log "evaluation " + indentation() + "  matching - no match: " + eachElementOfSignature.print() + " vs. " + eachElementOfInvocation.print()
                 # this signature doesn't match check the next one
                 soFarEverythingMatched = false
                 break
             else
               # the signature has a param. we have to check if
               # it requires an evaluation or not
-              console.log "evaluation " + indentation() + "  matching - getting the atom inside the parameter: " + eachElementOfSignature.print() + " PC: " + newContext.programCounter
+              console.log "evaluation " + indentation() + "  matching - getting the atom inside the parameter: " + eachElementOfSignature.print()
               paramAtom = eachElementOfSignature.getParamAtom()
               #console.dir paramAtom
-              console.log "evaluation " + indentation() + "  matching - atom inside the parameter: " + paramAtom.print() + " PC: " + newContext.programCounter
+              console.log "evaluation " + indentation() + "  matching - atom inside the parameter: " + paramAtom.print()
               if eachElementOfSignature.isEvaluatingParam()
-                console.log "evaluation " + indentation() + "  matching - need to evaluate next msg element from invocation: " + methodInvocation.print() + " and bind to: " + paramAtom.print() + " PC: " + newContext.programCounter
+                console.log "evaluation " + indentation() + "  matching - need to evaluate next msg element from invocation: " + methodInvocation.print() + " and bind to: " + paramAtom.print()
                 # if the first element is a list,
                 # then the list is evaluated on
                 # its own, without considering what comes after it.
@@ -132,7 +122,7 @@ class FLObjects
                   valueToBeBound = returnedContext.returned                
 
               else
-                console.log "evaluation " + indentation() + "  matching - need to get next msg element from invocation: " + methodInvocation.print() + " and bind to: " + paramAtom.print() + " PC: " + newContext.programCounter
+                console.log "evaluation " + indentation() + "  matching - need to get next msg element from invocation: " + methodInvocation.print() + " and bind to: " + paramAtom.print()
                 [valueToBeBound, methodInvocation] = methodInvocation.nextElement()
 
               
@@ -168,11 +158,8 @@ class FLObjects
             console.log "evaluation " + indentation() + "  matching - consumed from matching this sig: " + (methodInvocation.cursorStart - originalMethodInvocationStart)
             console.log "evaluation " + indentation() + "             methodInvocation: " + methodInvocation.print() + " cursor start: " + methodInvocation.cursorStart  + " original methodInvocation start: " + originalMethodInvocationStart
 
-            console.log "originalProgramCounter + methodInvocation.cursorStart - originalMethodInvocationStart: " + originalProgramCounter + " " + methodInvocation.cursorStart  + " " + originalMethodInvocationStart
-            console.log "theContext.programCounter BEFORE: " + theContext.programCounter
-            theContext.programCounter = originalProgramCounter + methodInvocation.cursorStart - originalMethodInvocationStart
+            console.log "methodInvocation.cursorStart - originalMethodInvocationStart: " + " " + methodInvocation.cursorStart  + " " + originalMethodInvocationStart
             theContext.unparsedMessage = null
-            console.log "theContext.programCounter AFTER: " + theContext.programCounter
             console.log "theContext method invocation after: " + methodInvocation.print()
 
             return [(@lookupAndSendFoundMessage newContext, countSignaturePosition),methodInvocation]
@@ -180,14 +167,11 @@ class FLObjects
 
         # we are still here trying to match but
         # there are no signatures left, time to quit.
-        # fix the program counter first! Put it back
-        # to what it was because we matched nothing from
-        # the message we were sent.
-        console.log "evaluation " + indentation() + "  matching - no match found" + " PC: " + theContext.programCounter
+        console.log "evaluation " + indentation() + "  matching - no match found"
         return [null, methodInvocationToBeChecked]
 
   lookupAndSendFoundMessage: (theContext, countSignaturePosition) ->
-    console.log "evaluation " + indentation() + "  matching - found a matching signature: " + @flClass.msgPatterns[countSignaturePosition].print() + " , PC: " + theContext.programCounter
+    console.log "evaluation " + indentation() + "  matching - found a matching signature: " + @flClass.msgPatterns[countSignaturePosition].print()
     # we have a matching signature!
     methodBody = @flClass.methodBodies[countSignaturePosition]
     console.log "evaluation " + indentation() + "  matching - method body: " + methodBody
@@ -203,7 +187,7 @@ class FLObjects
   # or non-native, in which case it will result into
   # evaluation of the message that makes up the body.
   methodCall: (methodBody, theContext, newSelf = @) ->
-    # note that this doesn't change the program counter of the calling
+    # note that this doesn't consume from the calling
     # context, because from the caller perspective it only matters
     # what we consume from the invocation, which we accounted
     # for already in the process of finding the signature and

@@ -1,6 +1,5 @@
 class FLContext
   self: null # a FLObject
-  programCounter: 0 # an integer
   tempVariablesDict: null # a JS dictionary
   previousContext: null
   returned: null
