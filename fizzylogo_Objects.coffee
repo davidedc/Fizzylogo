@@ -149,7 +149,7 @@ class FLObjects
               # parts of the signature
               continue
 
-          # ok a the signature has matched completely
+          # ok a signature has matched completely
           if eachSignature.isEmpty() and soFarEverythingMatched
 
             # now, the correct PC that we need to report is
