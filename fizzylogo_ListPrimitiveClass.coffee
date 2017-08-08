@@ -137,6 +137,24 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
           # sent the remaining part to such reult. This is why
           # we have to keep iterating until the whole message is consumed
           [returnedContext, returnedMessage] = receiver.progressWithNonEmptyMessage restOfMessage, theContext
+
+          # where we detect an exception being thrown. there are two ways to detect it
+          # 1) the receiver we just sent a message to was a thrown exception and
+          #    and such exception didn't consume any messages
+          # 2) what we just obtained is a thrown exception and
+          #    there isn't any more message to send it
+          # This is because catching exceptions is done by sending them
+          # the catch message. the catch message does nothing
+          # for all the other classes, but for an exception it causes
+          # it to run the exception handling code and to "stop" itself
+          # from being thrown.
+          if (receiver.flClass == FLException and receiver.beingThrown and returnedMessage.length() == restOfMessage.length()) or
+            (returnedContext.returned.flClass == FLException and returnedContext.returned.beingThrown and returnedMessage.isEmpty())
+              theContext.returned = returnedContext.returned
+              restOfMessage.exhaust()
+              return [theContext, restOfMessage]
+
+
           receiver = returnedContext.returned
 
           console.log "evaluation " + indentation() + "list evaluation returned: " + receiver?.value
@@ -159,11 +177,6 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
           if returnedContext.exhaustPreviousContextMessage == true
             restOfMessage.exhaust()
 
-          # where we detect an exception
-          if receiver.flClass == FLException and receiver.beingThrown
-            theContext.returned = receiver
-            restOfMessage.exhaust()
-            return [theContext, restOfMessage]
 
         console.log "evaluation " + indentation() + "list: nothing more to evaluate"
         theContext.returned = receiver

@@ -347,28 +347,35 @@ tests = [
   'my custom error'
 
   # wrong error to raise exceptions, they must be thrown
-  '@someException <- Exception new initWith "my custom error". try ( 1 print. someException ) whenError ( someException ) handleWith ( " caught the error I wanted" print )'
+  '@someException <- Exception new initWith "my custom error". try ( 1 print. someException ) catch ( someException ) handle ( " caught the error I wanted" print )'
   '1'
 
   # wrong error to raise exceptions, they must be thrown
-  '@someException <- Exception new initWith "my custom error". @someOtherException <- Exception new initWith "my other custom error". try ( 1 print. someException ) whenError ( someException ) handleWith ( " caught the error I wanted" print )'
+  '@someException <- Exception new initWith "my custom error". @someOtherException <- Exception new initWith "my other custom error". try ( 1 print. someException ) catch ( someException ) handle ( " caught the error I wanted" print )'
   '1'
 
   # wrong error to raise exceptions, they must be thrown
-  '@someException <- Exception new initWith "my custom error". @someOtherException <- Exception new initWith "my other custom error". try ( 1 print. someException ) whenError ( someOtherException ) handleWith ( " caught the error I wanted" print )'
+  '@someException <- Exception new initWith "my custom error". @someOtherException <- Exception new initWith "my other custom error". try ( 1 print. someException ) catch ( someOtherException ) handle ( " caught the error I wanted" print )'
   '1'
 
   # thrown exception, note how the statement after the throw is not executed.
-  '@someException <- Exception new initWith "my custom error". try ( 1 print. throw someException. 2 print ) whenError ( someException ) handleWith ( " caught the error I wanted" print )'
+  '@someException <- Exception new initWith "my custom error". try ( 1 print. throw someException. 2 print ) catch ( someException ) handle ( " caught the error I wanted" print )'
   '1 caught the error I wanted'
 
   # thrown exception, note how the statement after the throw is not executed.
-  '@someException <- Exception new initWith "my custom error". @someOtherException <- Exception new initWith "my other custom error". try ( 1 print. throw someException. 2 print ) whenError ( someException ) handleWith ( " caught the error I wanted" print )'
+  '@someException <- Exception new initWith "my custom error". @someOtherException <- Exception new initWith "my other custom error". try ( 1 print. throw someException. 2 print ) catch ( someException ) handle ( " caught the error I wanted" print )'
   '1 caught the error I wanted'
 
   # thrown exception, note how the statement after the throw is not executed.
-  '@someException <- Exception new initWith "my custom error". @someOtherException <- Exception new initWith "my other custom error". try ( 1 print. throw someException. 2 print ) whenError ( someOtherException ) handleWith ( " caught the error I wanted" print )'
+  '@someException <- Exception new initWith "my custom error". @someOtherException <- Exception new initWith "my other custom error". try ( 1 print. throw someException. 2 print ) catch ( someOtherException ) handle ( " caught the error I wanted" print )'
   '1'
+
+  # thrown exception, note how the statement after the throw is not executed.
+  '@someException <- Exception new initWith "my custom error". @someOtherException <- Exception new initWith "my other custom error". try ( 1 print. throw someOtherException. 2 print ) catch ( someOtherException ) handle ( " caught the error the first time around" ) catch ( someException ) handle ( " caught the error the second time around" ) print'
+  '1 caught the error the first time around'
+
+  '@someException <- Exception new initWith "my custom error". @someOtherException <- Exception new initWith "my other custom error". try ( 1 print. throw someException. 2 print ) catch ( someOtherException ) handle ( " caught the error the first time around" ) catch ( someException ) handle ( " caught the error the second time around" ) print'
+  '1 caught the error the second time around'
 
   #'@ a <- 5 someUndefinedMessage'
   #'7'
@@ -377,7 +384,6 @@ tests = [
 
 ###
 tests = [
-
 ]
 ###
 

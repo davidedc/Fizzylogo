@@ -34,6 +34,9 @@ commonFLEvalFunction = (context) ->
   flContexts.pop()
   return toBeReturned
 
+commonFLCatchFunction = (context) ->
+  return @
+
 
 # WorkSpace ---------------------------------------------------------------------------
 
@@ -87,6 +90,9 @@ FLAtom.methodBodies.jsArrayPush (context) ->
 
 FLAtom.msgPatterns.jsArrayPush flParse "eval"
 FLAtom.methodBodies.jsArrayPush commonFLEvalFunction
+
+FLAtom.msgPatterns.jsArrayPush flParse "catch ( theError ) handle ( @ errorHandle )"
+FLAtom.methodBodies.jsArrayPush commonFLCatchFunction
 
 # Nil ---------------------------------------------------------------------------
 
@@ -214,6 +220,24 @@ FLException.methodBodies.jsArrayPush (context) ->
 FLException.msgPatterns.jsArrayPush flParse "print"
 FLException.methodBodies.jsArrayPush commonFLPrintFunction
 
+FLException.msgPatterns.jsArrayPush flParse "catch ( theError ) handle ( @ errorHandle )"
+FLException.methodBodies.jsArrayPush (context) ->
+  theError = context.tempVariablesDict[ValidIDfromString "theError"]
+  errorHandle = context.tempVariablesDict[ValidIDfromString "errorHandle"]
+
+  console.log "catch: same as one to catch?" + (@ == theError) + " being thrown? " + @beingThrown
+
+  if @beingThrown and @ == theError
+    @beingThrown = false
+    console.log "catch:caught right exception"
+    toBeReturned = (errorHandle.eval context)[0].returned
+  else
+    console.log "catch: caught wrong exception, propagating it"
+    toBeReturned = @
+
+
+  return toBeReturned
+
 # String -------------------------------------------------------------------------
 
 FLString.msgPatterns.jsArrayPush flParse "new"
@@ -231,6 +255,9 @@ FLString.methodBodies.jsArrayPush (context) ->
 
 FLString.msgPatterns.jsArrayPush flParse "eval"
 FLString.methodBodies.jsArrayPush commonFLEvalFunction
+
+FLString.msgPatterns.jsArrayPush flParse "catch ( theError ) handle ( @ errorHandle )"
+FLString.methodBodies.jsArrayPush commonFLCatchFunction
 
 # Number -------------------------------------------------------------------------
 
@@ -336,6 +363,9 @@ FLNumber.methodBodies.jsArrayPush commonFLIdictFunction
 FLNumber.msgPatterns.jsArrayPush flParse "cdict"
 FLNumber.methodBodies.jsArrayPush commonFLCdictFunction
 
+FLNumber.msgPatterns.jsArrayPush flParse "catch ( theError ) handle ( @ errorHandle )"
+FLNumber.methodBodies.jsArrayPush commonFLCatchFunction
+
 # Boolean -------------------------------------------------------------------------
 
 FLBoolean.msgPatterns.jsArrayPush flParse "negate"
@@ -398,6 +428,9 @@ FLBoolean.methodBodies.jsArrayPush (context) ->
   resultOfAnyOtherCode = context.tempVariablesDict[ValidIDfromString "resultOfAnyOtherCode"]
   return resultOfAnyOtherCode
 
+FLBoolean.msgPatterns.jsArrayPush flParse "catch ( theError ) handle ( @ errorHandle )"
+FLBoolean.methodBodies.jsArrayPush commonFLCatchFunction
+
 # FLQuote --------------------------------------------------------------------------
 
 FLQuote.msgPatterns.jsArrayPush flParse "( @ operandum )"
@@ -455,6 +488,9 @@ FLList.methodBodies.jsArrayPush (context) ->
 
   return toBeReturned
 
+FLList.msgPatterns.jsArrayPush flParse "catch ( theError ) handle ( @ errorHandle )"
+FLList.methodBodies.jsArrayPush commonFLCatchFunction
+
 
 # Done -------------------------------------------------------------------------
 
@@ -509,31 +545,16 @@ FLRepeat.methodBodies.jsArrayPush (context) ->
 FLThrow.msgPatterns.jsArrayPush flParse "( theError )"
 FLThrow.methodBodies.jsArrayPush (context) ->
   theError = context.tempVariablesDict[ValidIDfromString "theError"]
+  console.log "throwing " + theError.value
   theError.beingThrown = true
   return theError
 
 # Try -----------------------------------------------------------------------------
 
-FLTry.msgPatterns.jsArrayPush flParse "( @ code ) whenError ( theError ) handleWith ( @ errorHandle )"
+FLTry.msgPatterns.jsArrayPush flParse "( @ code )"
 FLTry.methodBodies.jsArrayPush (context) ->
   code = context.tempVariablesDict[ValidIDfromString "code"]
-  theError = context.tempVariablesDict[ValidIDfromString "theError"]
-  errorHandle = context.tempVariablesDict[ValidIDfromString "errorHandle"]
-
   toBeReturned = (code.eval context)[0].returned
-
-  if toBeReturned?
-    if toBeReturned.flClass == FLException and toBeReturned.beingThrown
-      console.log "Try => code had exception "
-
-      if toBeReturned == theError
-        toBeReturned.beingThrown = false
-        console.log "Try => caught right exception"
-        toBeReturned = (errorHandle.eval context)[0].returned
-      else
-        console.log "Try => caught wrong exception, propagating it"
-
-
   return toBeReturned
 
 # For -----------------------------------------------------------------------------
