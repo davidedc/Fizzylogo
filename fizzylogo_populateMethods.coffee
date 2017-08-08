@@ -352,9 +352,9 @@ FLBoolean.methodBodies.jsArrayPush (context) ->
 
     # in this context we only have visibility of the true branch
     # but we have to make sure that in the context above, the false
-    # branch is never executed. So we "exhaust" the message in the
-    # context above by maxing out the program counter.
-    context.previousContext.programCounter = Number.MAX_SAFE_INTEGER
+    # branch is never executed. So we seta flag to "exhaust" the message
+    # in the context above
+    context.exhaustPreviousContextMessage = true
 
 
     return toBeReturned

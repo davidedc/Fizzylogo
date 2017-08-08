@@ -122,7 +122,6 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
 
       for eachStatement in statements
 
-
         console.log "evaluation " + indentation() + "evaluating single statement"
         console.log "evaluation " + indentation() + "  i.e. " + eachStatement.print()
 
@@ -145,12 +144,12 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
           # we'll have to find the result from what we can consume and then
           # sent the remaining part to such reult. This is why
           # we have to keep iterating until the whole message is consumed
-          [newContext, returnedMessage] = receiver.progressWithNonEmptyMessage restOfMessage, theContext
-          receiver = newContext.returned
+          [returnedContext, returnedMessage] = receiver.progressWithNonEmptyMessage restOfMessage, theContext
+          receiver = returnedContext.returned
 
           flContexts.pop()
           console.log "evaluation " + indentation() + "list evaluation returned: " + receiver?.value
-          console.log "evaluation " + indentation() + "comparison of program counters: " + theContext.programCounter + " " + newContext.programCounter
+          console.log "evaluation " + indentation() + "comparison of program counters: " + theContext.programCounter + " " + returnedContext.programCounter
           # if there is no change in the program counter it means that there
           # was no progress, i.e. the receiver can't do anything with the message
           # so it's time to break even if there is something left in the
@@ -165,6 +164,12 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
 
           restOfMessage = returnedMessage
 
+          # this happens for example in the "if" statement
+          # (actually called => ). If the true branch is executed,
+          # then everything that comes afterwards must be
+          # skipped.
+          if returnedContext.exhaustPreviousContextMessage == true
+            restOfMessage.exhaust()
 
         console.log "evaluation " + indentation() + "list: nothing more to evaluate"
         theContext.returned = receiver
@@ -175,7 +180,9 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
       flContexts.pop()
       return theContext
 
-
+    toBeReturned.exhaust = ->
+      @cursorStart = @cursorEnd + 1
+      return @
 
     toBeReturned.length = ->
       return @cursorEnd - @cursorStart + 1
@@ -189,7 +196,6 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
       if @cursorStart > @cursorEnd
         throw "no first element, array is empty"
       return @elementAt 0
-
 
     toBeReturned.skipNextMessageElement = (theContext) ->
       theContext.programCounter++
