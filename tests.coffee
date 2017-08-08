@@ -95,6 +95,21 @@ tests = [
   'true negate print'
   'false'
 
+  # note how the first not understood
+  # prevents any further statement to be
+  # executed.
+  '1 negate. 2print'
+  '! message was not understood: ( negate )'
+
+  'negate print'
+  '! no meaning found for: negate was sent message: ( print )'
+
+  'nonExistingObject'
+  '! no meaning found for: nonExistingObject'
+
+  '1 == 1 negate. 2print'
+  '2'
+
   '(false and false)print'
   'false'
 
@@ -252,7 +267,7 @@ tests = [
   '12345678910'
 
   '8 unintelligibleMessage'
-  '! something was not understood: ( unintelligibleMessage )'
+  '! message was not understood: ( unintelligibleMessage )'
 
   '"hello world" print'
   'hello world'
@@ -405,12 +420,20 @@ for i in [0...tests.length] by 2
 
     console.log "evaluation " + indentation() + "end of workspace evaluation"
 
-    if returnedContext.unparsedMessage
-      console.log "evaluation " + indentation() + "something was not understood: " + returnedContext.unparsedMessage.print()
-      environmentErrors += "! something was not understood: " + returnedContext.unparsedMessage.print()
+    if !returnedContext.returned?
+      if returnedContext.unparsedMessage?
+        unparsedPartOfMessage = " was sent message: " + returnedContext.unparsedMessage.print()
+      else
+        unparsedPartOfMessage = ""
+      console.log "evaluation " + indentation() + "no meaning found for: " + rWorkspace.lastUndefinedArom.value + unparsedPartOfMessage
+      environmentErrors += "! no meaning found for: " + rWorkspace.lastUndefinedArom.value + unparsedPartOfMessage
+      rWorkspace.lastUndefinedArom
+    else if returnedContext.unparsedMessage
+      console.log "evaluation " + indentation() + "message was not understood: " + returnedContext.unparsedMessage.print()
+      environmentErrors += "! message was not understood: " + returnedContext.unparsedMessage.print()
 
 
-    console.log "final return: " + returnedContext.returned.value
+    console.log "final return: " + returnedContext.returned?.value
     if environmentPrintout + environmentErrors == testResult
       console.log "...test " + (i/2+1) + " OK, obtained: " + environmentPrintout + environmentErrors
     else

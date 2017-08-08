@@ -19,7 +19,14 @@ class FLAtomClass extends FLPrimitiveClasses
       else if /^\d+$/.test @value
         theContext.returned = FLNumber.createNew @value
 
-      console.log "evaluation " + indentation() + "atom " + theAtomName + " contents: " + theContext.returned.value
+      console.log "evaluation " + indentation() + "atom " + theAtomName + " contents: " + theContext.returned?.value
+
+      # if we are here it means that we can't find any
+      # meaning for this atom,
+      # which is something that we are going to report.
+      # We might even try to send a message to it, in which
+      # case we'll report that too.
+      rWorkspace.lastUndefinedArom = @
 
       return theContext
 

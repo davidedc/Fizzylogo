@@ -136,7 +136,13 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
         # are running the method body in.
         until restOfMessage.isEmpty()
 
-          console.log "evaluation " + indentation() + "receiver: " + receiver.value
+          if !receiver?
+            theContext.returned = null
+            theContext.unparsedMessage = restOfMessage
+            return theContext
+
+
+          console.log "evaluation " + indentation() + "receiver: " + receiver?.value
           console.log "evaluation " + indentation() + "message: " + restOfMessage.print()
 
           # now actually send the message to the receiver. Note that
