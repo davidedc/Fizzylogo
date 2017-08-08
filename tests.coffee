@@ -405,8 +405,6 @@ for i in [0...tests.length] by 2
       outerMostContext.self.instanceVariablesDict[ValidIDfromString keyword] = itsInitialisation
 
 
-    #rWorkspace.eval outerMostContext
-
     messageLength = parsed.length()
     console.log "evaluation " + indentation() + "messaging workspace with " + parsed.print()
 
@@ -416,7 +414,7 @@ for i in [0...tests.length] by 2
     # is in here will still refer to "self" as the current self in the
     # overall message.
     
-    returnedContext = parsed.eval outerMostContext
+    [returnedContext] = parsed.eval outerMostContext
 
     console.log "evaluation " + indentation() + "end of workspace evaluation"
 

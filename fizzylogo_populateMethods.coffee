@@ -30,7 +30,7 @@ commonFLCdictFunction = (context) ->
 commonFLEvalFunction = (context) ->
   newContext = new FLContext context
   flContexts.jsArrayPush newContext
-  toBeReturned = (@eval newContext).returned
+  toBeReturned = (@eval newContext)[0].returned
   flContexts.pop()
   return toBeReturned
 
@@ -285,7 +285,7 @@ FLNumber.methodBodies.jsArrayPush (context) ->
 
 
   for i in [0...@value]
-    toBeReturned = (loopCode.eval context).returned
+    toBeReturned = (loopCode.eval context)[0].returned
 
     flContexts.pop()
 
@@ -342,7 +342,7 @@ FLBoolean.methodBodies.jsArrayPush (context) ->
   console.log "FLBoolean => , predicate value is: " + @value
 
   if @value
-    toBeReturned = (trueBranch.eval context).returned
+    toBeReturned = (trueBranch.eval context)[0].returned
     flContexts.pop()
 
     console.log "FLBoolean => returning result of true branch: " + toBeReturned
@@ -431,7 +431,7 @@ FLList.methodBodies.jsArrayPush (context) ->
   for i in [0...@value.length]
 
     newContext.tempVariablesDict[ValidIDfromString variable.value] = @elementAt i
-    toBeReturned = (code.eval newContext).returned
+    toBeReturned = (code.eval newContext)[0].returned
 
     if toBeReturned?
       if toBeReturned.flClass == FLDone
@@ -470,7 +470,7 @@ FLRepeat.methodBodies.jsArrayPush (context) ->
   console.log "FLRepeat => , loop code is: " + loopCode.print()
 
   while true
-    toBeReturned = (loopCode.eval context).returned
+    toBeReturned = (loopCode.eval context)[0].returned
 
     flContexts.pop()
 
@@ -514,7 +514,7 @@ FLFor.methodBodies.jsArrayPush (context) ->
 
     forContext.tempVariablesDict[ValidIDfromString loopVarName] = FLNumber.createNew i
 
-    toBeReturned = (loopCode.eval forContext).returned
+    toBeReturned = (loopCode.eval forContext)[0].returned
 
     flContexts.pop()
 

@@ -88,23 +88,9 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
     toBeReturned.evalFirstListElementAndTurnRestIntoMessage = (theContext) ->
       firstElement = @firstElement()
       console.log "           " + indentation() + "evaling element " + firstElement.value
-      evaledFirstElement = (firstElement.eval theContext).returned
+      theContext.returned = (firstElement.eval theContext)[0].returned
       restOfMessage = @skipNextMessageElement theContext
-      return [evaledFirstElement, restOfMessage]
-
-    # it's like eval but it keeps track of huw much of the
-    # current message is consumed.
-    toBeReturned.evalAndConsume = (theContext) ->
-      originalPC = theContext.programCounter
-      toBeReturned = @eval theContext
-
-
-      console.log "evaluation " + indentation() + "  progressWithNonEmptyMessage - eval returned: " + toBeReturned
-      #console.dir toBeReturned
-      console.log "evaluation " + indentation() + "  progressWithNonEmptyMessage - returned: " + toBeReturned
-
-      #console.dir toBeReturned
-      return [toBeReturned.returned, @advanceMessageBy theContext.programCounter - originalPC]
+      return [theContext, restOfMessage]
 
     toBeReturned.eval = (theContext) ->
       # a list without any messages just evaluates itself, which
@@ -125,7 +111,8 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
         console.log "evaluation " + indentation() + "evaluating single statement"
         console.log "evaluation " + indentation() + "  i.e. " + eachStatement.print()
 
-        [receiver, restOfMessage] = eachStatement.evalFirstListElementAndTurnRestIntoMessage theContext
+        [returnedContext, restOfMessage] = eachStatement.evalFirstListElementAndTurnRestIntoMessage theContext
+        receiver = returnedContext.returned
 
         console.log "evaluation " + indentation() + "remaining part of list to be sent as message is: " + restOfMessage.print()
 
@@ -139,7 +126,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
           if !receiver?
             theContext.returned = null
             theContext.unparsedMessage = restOfMessage
-            return theContext
+            return [theContext, restOfMessage]
 
 
           console.log "evaluation " + indentation() + "receiver: " + receiver?.value
@@ -166,7 +153,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
             console.log "evaluation " + indentation() + " breaking because of programCounter check "
             theContext.returned = receiver
             theContext.unparsedMessage = returnedMessage
-            return theContext
+            return [theContext, returnedMessage]
 
           restOfMessage = returnedMessage
 
@@ -184,7 +171,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
       console.log "evaluation " + indentation() + "list: theContext.returned: " + theContext.returned
       #console.dir theContext.returned
       flContexts.pop()
-      return theContext
+      return [theContext, restOfMessage]
 
     toBeReturned.exhaust = ->
       @cursorStart = @cursorEnd + 1

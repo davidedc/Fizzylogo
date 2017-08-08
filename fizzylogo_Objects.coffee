@@ -9,7 +9,7 @@ class FLObjects
 
   eval: (theContext) ->
     theContext.returned = @
-    return theContext
+    return [theContext]
 
   findSignatureBindParamsAndMakeCall: (theContext, methodInvocationToBeChecked) ->
         console.log "evaluation " + indentation() + "  !!! looking up method invocation " + methodInvocationToBeChecked.print() + " with signatures!" + " PC: " + theContext.programCounter
@@ -125,10 +125,11 @@ class FLObjects
 
                 if methodInvocation.firstElement().flClass == FLList
                   console.log "evaluation " + indentation() + "  matching - what to evaluate is a list right away "
-                  [valueToBeBound, methodInvocation] = methodInvocation.evalFirstListElementAndTurnRestIntoMessage theContext
+                  [returnedContext, methodInvocation] = methodInvocation.evalFirstListElementAndTurnRestIntoMessage theContext
+                  valueToBeBound = returnedContext.returned                
                 else
-                  [valueToBeBound, methodInvocation] = methodInvocation.evalAndConsume theContext
-                
+                  [returnedContext, methodInvocation] = methodInvocation.eval theContext
+                  valueToBeBound = returnedContext.returned                
 
               else
                 console.log "evaluation " + indentation() + "  matching - need to get next msg element from invocation: " + methodInvocation.print() + " and bind to: " + paramAtom.print() + " PC: " + newContext.programCounter
@@ -220,7 +221,7 @@ class FLObjects
       # the rest of the message is not used because all of the list should
       # be run, no remains from the message body should overspill
       # into the calling context. 
-      contextToBeReturned = methodBody.eval theContext
+      [contextToBeReturned] = methodBody.eval theContext
     else
       console.log "evaluation " + indentation() + "  matching - NATIVE method body: " + methodBody
       # native method, i.e. coffeescript/javascript code

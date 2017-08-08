@@ -28,7 +28,7 @@ class FLAtomClass extends FLPrimitiveClasses
       # case we'll report that too.
       rWorkspace.lastUndefinedArom = @
 
-      return theContext
+      return [theContext]
 
 
     return toBeReturned
