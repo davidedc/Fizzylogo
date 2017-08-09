@@ -212,6 +212,27 @@ tests = [
   '@a<-5.repeat((a==0)=>(done)@a<-a minus 1).a print'
   '0'
 
+  """
+  @a<-5
+  repeat
+  ﹍(a==0)=>
+  ﹍﹍done
+  ﹍@a<-a minus 1
+  
+  a print
+  """
+  '0'
+
+  """
+  @a<-5
+  repeat
+  ﹍(a==0)=>
+  ﹍﹍done
+  ﹍@a<-a minus 1
+  .a print
+  """
+  '0'
+
   '@a<-5.repeat((a==0)=>(done)@a<-a minus 1)print'
   'Done_object'
 
