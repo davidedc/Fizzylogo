@@ -56,3 +56,5 @@ ValidIDfromString = (input) ->
         enc4 = 64
       output = output + keyStr.charAt(enc1) + keyStr.charAt(enc2) + keyStr.charAt(enc3) + keyStr.charAt(enc4)
     return "$" + output
+
+allClasses = []

@@ -1,4 +1,3 @@
-
 class FLClasses extends FLObjects
   name: null #a FLString
   msgPatterns: null # an array of FLLists
@@ -9,6 +8,18 @@ class FLClasses extends FLObjects
   tempVariables: null # a FLList
 
   classVariablesDict: null # a JS dictionary
+
+  addNativeMethod: (signature, methodBody) ->
+    for i in [0...@msgPatterns.length]
+      eachSignature = @msgPatterns[i]
+      console.dir eachSignature
+      if eachSignature.print() == signature.print()
+        @msgPatterns[i] = signature
+        @methodBodies[i] = methodBody
+        return
+
+    @msgPatterns.jsArrayPush signature
+    @methodBodies.jsArrayPush methodBody
 
   constructor: ->
     super @
@@ -21,6 +32,7 @@ class FLClasses extends FLObjects
     # similarly, the instance variables contents
     # are in the object, not here in the class
     @classVariablesDict = {}
+    allClasses.push @
 
 
 # implementation of these is not changeable
