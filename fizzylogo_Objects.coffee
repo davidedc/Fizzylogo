@@ -15,7 +15,6 @@ class FLObjects
         console.log "evaluation " + indentation() + "  !!! looking up method invocation " + methodInvocationToBeChecked.print() + " with signatures!"
         console.log "evaluation " + indentation() + "  !!! looking up method invocation, is method empty? " + methodInvocationToBeChecked.isEmpty()
 
-        countSignaturePosition = -1
         console.log "evaluation " + indentation() + "  I am: " + @value
         console.log "evaluation " + indentation() + "  matching - my class patterns: "
 
@@ -28,10 +27,10 @@ class FLObjects
         # TODO check that this is not left hanging
         flContexts.jsArrayPush null
 
-        for eachSignature in @flClass.msgPatterns
+        for eachSignatureIndex in [0...@flClass.msgPatterns.length]
+          eachSignature = @flClass.msgPatterns[eachSignatureIndex]
           #console.log "evaluation " + indentation() + "  matching - checking if this signature matches: " + eachSignature.print()
           methodInvocation = methodInvocationToBeChecked
-          countSignaturePosition++
 
           # remove the previous context because it was a
           # botched attempt to match a signature
@@ -162,7 +161,7 @@ class FLObjects
             theContext.unparsedMessage = null
             console.log "theContext method invocation after: " + methodInvocation.print()
 
-            return [(@lookupAndSendFoundMessage newContext, countSignaturePosition),methodInvocation]
+            return [(@lookupAndSendFoundMessage newContext, eachSignatureIndex),methodInvocation]
 
 
         # we are still here trying to match but
