@@ -15,7 +15,7 @@ addDefaultMethods = (classToAddThemTo) ->
     (context) ->
       newContext = new FLContext context
       flContexts.jsArrayPush newContext
-      toBeReturned = (@eval newContext)[0].returned
+      toBeReturned = (@eval newContext, @)[0].returned
       flContexts.pop()
       return toBeReturned
 
@@ -148,9 +148,7 @@ for eachClass in allClasses
 
 # Atom ---------------------------------------------------------------------------
 
-FLAtom.addNativeMethod \
-  (flParse "← ( valueToAssign )"),
-  (context) ->
+commonBackArrowAndEqualsFunction = (context) ->
     valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
 
     theAtomName = @value
@@ -170,6 +168,15 @@ FLAtom.addNativeMethod \
 
     console.log "evaluation " + indentation() + "stored value in dictionary"
     return valueToAssign
+
+
+FLAtom.addNativeMethod \
+  (flParse "← ( valueToAssign )"),
+  commonBackArrowAndEqualsFunction
+
+FLAtom.addNativeMethod \
+  (flParse "= ( valueToAssign )"),
+  commonBackArrowAndEqualsFunction
 
 
 # Nil ---------------------------------------------------------------------------
@@ -249,7 +256,7 @@ FLException.addNativeMethod \
     if @beingThrown
       @beingThrown = false
       console.log "catch:caught right exception"
-      toBeReturned = (errorHandle.eval context)[0].returned
+      toBeReturned = (errorHandle.eval context, errorHandle)[0].returned
     else
       console.log "catch: caught wrong exception, propagating it"
       toBeReturned = @
@@ -267,7 +274,7 @@ FLException.addNativeMethod \
     if @beingThrown and @ == theError
       @beingThrown = false
       console.log "catch:caught right exception"
-      toBeReturned = (errorHandle.eval context)[0].returned
+      toBeReturned = (errorHandle.eval context, errorHandle)[0].returned
     else
       console.log "catch: caught wrong exception, propagating it"
       toBeReturned = @
@@ -372,7 +379,7 @@ FLNumber.addNativeMethod \
 
 
     for i in [0...@value]
-      toBeReturned = (loopCode.eval context)[0].returned
+      toBeReturned = (loopCode.eval context, loopCode)[0].returned
 
       flContexts.pop()
 
@@ -427,7 +434,7 @@ FLBoolean.addNativeMethod \
     console.log "FLBoolean ⇒ , predicate value is: " + @value
 
     if @value
-      toBeReturned = (trueBranch.eval context)[0].returned
+      toBeReturned = (trueBranch.eval context, trueBranch)[0].returned
       flContexts.pop()
 
       console.log "FLBoolean ⇒ returning result of true branch: " + toBeReturned
@@ -504,7 +511,7 @@ FLList.addNativeMethod \
     for i in [0...@value.length]
 
       newContext.tempVariablesDict[ValidIDfromString variable.value] = @elementAt i
-      toBeReturned = (code.eval newContext)[0].returned
+      toBeReturned = (code.eval newContext, code)[0].returned
 
       # catch any thrown "done" object, used to
       # exit from a loop.
@@ -547,7 +554,7 @@ FLRepeat1.addNativeMethod \
     console.log "FLRepeat1 ⇒ loop code is: " + loopCode.print()
 
     while true
-      toBeReturned = (loopCode.eval context)[0].returned
+      toBeReturned = (loopCode.eval context, loopCode)[0].returned
 
       flContexts.pop()
 
@@ -578,7 +585,7 @@ FLRepeat2.addNativeMethod \
     console.log "FLRepeat1 ⇒ loop code is: " + loopCode.print()
 
     while true
-      toBeReturned = (loopCode.eval context)[0].returned
+      toBeReturned = (loopCode.eval context, loopCode)[0].returned
 
       flContexts.pop()
 
@@ -617,7 +624,7 @@ FLTry.addNativeMethod \
   (flParse "( @ code )"),
   (context) ->
     code = context.tempVariablesDict[ValidIDfromString "code"]
-    toBeReturned = (code.eval context)[0].returned
+    toBeReturned = (code.eval context, code)[0].returned
     return toBeReturned
 
 # For -----------------------------------------------------------------------------
@@ -643,7 +650,7 @@ FLFor.addNativeMethod \
 
       forContext.tempVariablesDict[ValidIDfromString loopVarName] = FLNumber.createNew i
 
-      toBeReturned = (loopCode.eval forContext)[0].returned
+      toBeReturned = (loopCode.eval forContext, loopCode)[0].returned
 
       flContexts.pop()
 

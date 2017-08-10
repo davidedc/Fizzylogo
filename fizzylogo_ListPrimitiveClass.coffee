@@ -88,7 +88,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
     toBeReturned.evalFirstListElementAndTurnRestIntoMessage = (theContext) ->
       firstElement = @firstElement()
       console.log "           " + indentation() + "evaling element " + firstElement.value
-      theContext.returned = (firstElement.eval theContext)[0].returned
+      theContext.returned = (firstElement.eval theContext, @)[0].returned
       restOfMessage = @restOfMessage()
       return [theContext, restOfMessage]
 
@@ -109,7 +109,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
       # do the further evaluation.
       if receiver? and restOfMessage.isEmpty() and receiver.flClass != FLAtom and receiver.flClass != FLList
         console.log "evaluation " + indentation() +  " contents can be evalued further"
-        receiver = (receiver.eval returnedContext)[0].returned
+        receiver = (receiver.eval returnedContext, receiver)[0].returned
 
       return [returnedContext, restOfMessage, receiver]
 
@@ -263,6 +263,13 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
       if @cursorStart > @cursorEnd
         throw "no first element, array is empty"
       return @elementAt 0
+
+    toBeReturned.secondElementIsEqual =  ->
+      if @length() >= 2
+        if (@elementAt 1).flClass == FLAtom
+          if (@elementAt 1).value == "="
+            return true
+      return false
 
     # returns the first element and returns
     # a copy of the rest of the message

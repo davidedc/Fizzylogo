@@ -118,7 +118,7 @@ class FLObjects
                   [returnedContext, methodInvocation] = methodInvocation.evalFirstListElementAndTurnRestIntoMessage theContext
                   valueToBeBound = returnedContext.returned                
                 else
-                  [returnedContext, methodInvocation] = methodInvocation.eval theContext
+                  [returnedContext, methodInvocation] = methodInvocation.eval theContext, methodInvocation
                   valueToBeBound = returnedContext.returned                
 
               else
@@ -205,7 +205,7 @@ class FLObjects
       # the rest of the message is not used because all of the list should
       # be run, no remains from the message body should overspill
       # into the calling context. 
-      [contextToBeReturned] = methodBody.eval theContext
+      [contextToBeReturned] = methodBody.eval theContext, methodBody
     else
       console.log "evaluation " + indentation() + "  matching - NATIVE method body: " + methodBody
       # native method, i.e. coffeescript/javascript code

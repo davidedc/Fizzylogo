@@ -8,7 +8,15 @@ class FLAtomClass extends FLPrimitiveClasses
 
     toBeReturned.printForList = toBeReturned.print
 
-    toBeReturned.eval = (theContext) ->
+    toBeReturned.eval = (theContext, remainingMessage) ->
+
+      if remainingMessage? and remainingMessage.flClass == FLList
+        console.log "obtained: remainingMessage: " + remainingMessage.print()
+        console.log "obtained: secondElementIsEqual: " + remainingMessage.secondElementIsEqual()
+        if remainingMessage.secondElementIsEqual()
+          theContext.returned = @
+          return [theContext]
+
       # first always look up if there is a value for anything
       # if there is, that wins all the times, so you could
       # have an exotic value for "false", or "2" that is completely

@@ -3,6 +3,7 @@
 
 
 tests = [
+
   "1plus 1 print"
   "1"
 
@@ -13,6 +14,9 @@ tests = [
   "22"
 
   "@a ← \"test string\". @b ← a. @c ← @a. @a eval print.@b eval print.@c eval print"
+  "test stringtest stringa"
+
+  "a = \"test string\". b = a. c = @a. @a eval print.@b eval print.@c eval print"
   "test stringtest stringa"
 
   "@a←5.a increment.@a←a plus 1.a print"
@@ -560,7 +564,7 @@ for i in [0...tests.length] by 2
     # is in here will still refer to "self" as the current self in the
     # overall message.
     
-    [returnedContext] = parsed.eval outerMostContext
+    [returnedContext] = parsed.eval outerMostContext, parsed
 
     console.log "evaluation " + indentation() + "end of workspace evaluation"
 
