@@ -13,15 +13,19 @@ tests = [
   "(1plus 1)print print"
   "22"
 
-  "@a ← \"test string\". @b ← a. @c ← @a. @a eval print.@b eval print.@c eval print"
+  "@a ← \"test string\". @b ← a. @c ← @a. @a eval1 print.@b eval1 print.@c eval1 print"
   "test stringtest stringa"
 
-  "a = \"test string\". b = a. c = @a. @a eval print.@b eval print.@c eval print"
+  "a=\"test string\".b=a.c=@a.a eval print.b eval print.c eval print"
   "test stringtest stringa"
 
   "@a←5.a increment.@a←a plus 1.a print"
   "7"
 
+  "a=5.a increment.a=a plus 1.a print"
+  "7"
+
+  # testing crazy statement separations -----------
   "@a←5..a increment. ...  .@a←a plus 1.a print"
   "7"
 
@@ -36,14 +40,24 @@ tests = [
 
   "...@a←5..a increment. ...  .@a←a plus 1.a print..."
   "7"
+  # -----------------------------------------------
 
   "@a←5.@a←a plus 1.a increment print"
+  "7"
+
+  "a=5.a=a plus 1.a increment print"
   "7"
 
   "@a←5plus 1.a increment print"
   "7"
 
+  "a=5plus 1.a increment print"
+  "7"
+
   "@a←(5plus 1).a increment print"
+  "7"
+
+  "a=(5plus 1).a increment print"
   "7"
 
   "(4plus 1plus 1)print"
@@ -52,10 +66,19 @@ tests = [
   "@a←(4plus 1plus 1).a increment print"
   "7"
 
+  "a=(4plus 1plus 1).a increment print"
+  "7"
+
   "@a←(4plus(1plus 1)).a increment print"
   "7"
 
+  "a=(4plus(1plus 1)).a increment print"
+  "7"
+
   "@a←((4plus 1)plus(0plus 1)).a increment print"
+  "7"
+
+  "a=((4plus 1)plus(0plus 1)).a increment print"
   "7"
 
   "7anotherPrint"
@@ -97,18 +120,21 @@ tests = [
   "(@(1plus 1))print"
   "( 1 plus 1 )"
 
-  "((@(1plus 1))eval)print"
+  "((@(1plus 1))eval1)print"
   "2"
 
-  "(@(1plus 1))eval print"
+  "(@(1plus 1))eval1 print"
   "2"
 
   # in this case still the @ ties to the first element
   # that comes after it i.e. ( 1 plus 1 )
-  "@(1 plus 1)eval print"
+  "@(1 plus 1)eval1 print"
   "2"
 
   "@a←5.@b←@a.b print.a print"
+  "a5"
+
+  "a=5.b=@a.b print.a print"
   "a5"
 
   "true negate print"
@@ -228,7 +254,13 @@ tests = [
   "@a←5.1printAFromDeeperCall"
   "5"
 
+  "a=5.1printAFromDeeperCall"
+  "5"
+
   "@a←5.repeat1((a==0)⇒(done)@a←a minus 1).a print"
+  "0"
+
+  "a=5.repeat1((a==0)⇒(done)a=a minus 1).a print"
   "0"
 
   """
@@ -243,11 +275,32 @@ tests = [
   "0"
 
   """
+  a=5
+  repeat1
+  ﹍(a==0)⇒
+  ﹍﹍done
+  ﹍a=a minus 1
+  
+  a print
+  """
+  "0"
+
+  """
   @a←5
   repeat1
   ﹍(a==0)⇒
   ﹍﹍done
   ﹍@a←a minus 1
+  .a print
+  """
+  "0"
+
+  """
+  a=5
+  repeat1
+  ﹍(a==0)⇒
+  ﹍﹍done
+  ﹍a=a minus 1
   .a print
   """
   "0"
@@ -265,8 +318,23 @@ tests = [
   """
   "0"
 
+  """
+  a=5
+
+  repeat
+  ﹍(a==0)⇒
+  ﹍﹍done
+  ﹍a=a minus 1
+
+  a print
+  """
+  "0"
+
 
   "@a←5.repeat1((a==0)⇒(done)@a←a minus 1)print"
+  "Done_object"
+
+  "a=5.repeat1((a==0)⇒(done)a=a minus 1)print"
   "Done_object"
 
   # "done" stop the execution from within a loop,
@@ -274,8 +342,15 @@ tests = [
   "@a←5.repeat1((a==0)⇒(done. 2 print)@a←a minus 1).a print"
   "0"
 
+  "a=5.repeat1((a==0)⇒(done. 2 print)a=a minus 1).a print"
+  "0"
+
   "@a←5.repeat1\
     ((a==0)⇒(done with a plus 1)@a←a minus 1)print"
+  "1"
+
+  "a=5.repeat1\
+    ((a==0)⇒(done with a plus 1)a=a minus 1)print"
   "1"
 
   "Class print"
@@ -284,7 +359,13 @@ tests = [
   "@something←3.something print"
   "3"
 
+  "something=3.something print"
+  "3"
+
   "@MyClass←Class new"
+  ""
+
+  "MyClass=Class new"
   ""
 
   "@MyClass←Class new.\
@@ -292,19 +373,39 @@ tests = [
     @myObject←MyClass new.myObject printtwo"
   "object_from_a_user_class"
 
+  "MyClass=Class new.\
+    MyClass answer(printtwo)by(self print).\
+    myObject=MyClass new.myObject printtwo"
+  "object_from_a_user_class"
+
   "@false←true.false⇒(1print)2print"
+  "1"
+
+  "false=true.false⇒(1print)2print"
   "1"
 
   "@temp←true.@true←false.@false←temp.false⇒(1print)2print"
   "1"
 
+  "temp=true.true=false.false=temp.false⇒(1print)2print"
+  "1"
+
   "@temp←true.@true←false.@false←temp.true⇒(1print)2print"
+  "2"
+
+  "temp=true.true=false.false=temp.true⇒(1print)2print"
   "2"
 
   "@2←10.2print"
   "10"
 
+  "2=10.2print"
+  "10"
+
   "@ ' ← @. 'a←8.a print"
+  "8"
+
+  "' = @. 'a←8.a print"
   "8"
 
   #'8 tdict print'

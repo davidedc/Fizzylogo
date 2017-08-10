@@ -264,10 +264,10 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
         throw "no first element, array is empty"
       return @elementAt 0
 
-    toBeReturned.secondElementIsEqual =  ->
+    toBeReturned.secondElementIsEqualOrEval =  ->
       if @length() >= 2
         if (@elementAt 1).flClass == FLAtom
-          if (@elementAt 1).value == "="
+          if (@elementAt 1).value == "=" or (@elementAt 1).value == "eval"
             return true
       return false
 

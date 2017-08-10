@@ -10,14 +10,20 @@ addDefaultMethods = (classToAddThemTo) ->
       environmentPrintout += @value
       return @
 
+  commonEvalFunction = (context) ->
+    newContext = new FLContext context
+    flContexts.jsArrayPush newContext
+    toBeReturned = (@eval newContext, @)[0].returned
+    flContexts.pop()
+    return toBeReturned
+
+  classToAddThemTo.addNativeMethod \
+    (flParse "eval1"),
+    commonEvalFunction
+
   classToAddThemTo.addNativeMethod \
     (flParse "eval"),
-    (context) ->
-      newContext = new FLContext context
-      flContexts.jsArrayPush newContext
-      toBeReturned = (@eval newContext, @)[0].returned
-      flContexts.pop()
-      return toBeReturned
+    commonEvalFunction
 
   classToAddThemTo.addNativeMethod \
     (flParse "catch all handle ( @ errorHandle )"),
@@ -29,7 +35,7 @@ addDefaultMethods = (classToAddThemTo) ->
 
   classToAddThemTo.addNativeMethod \
     (flParse "'s (@code)"),
-    flParse "code eval"
+    flParse "code eval1"
 
   classToAddThemTo.addNativeMethod \
     (flParse "idict ← ( @ variable )"),

@@ -11,9 +11,9 @@ class FLAtomClass extends FLPrimitiveClasses
     toBeReturned.eval = (theContext, remainingMessage) ->
 
       if remainingMessage? and remainingMessage.flClass == FLList
-        console.log "obtained: remainingMessage: " + remainingMessage.print()
-        console.log "obtained: secondElementIsEqual: " + remainingMessage.secondElementIsEqual()
-        if remainingMessage.secondElementIsEqual()
+        console.log "remainingMessage: " + remainingMessage.print()
+        console.log "secondElementIsEqualOrEval: " + remainingMessage.secondElementIsEqualOrEval()
+        if remainingMessage.secondElementIsEqualOrEval()
           theContext.returned = @
           return [theContext]
 
