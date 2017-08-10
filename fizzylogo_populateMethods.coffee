@@ -376,8 +376,11 @@ FLNumber.addNativeMethod \
 
       flContexts.pop()
 
+      # catch any thrown "done" object, used to
+      # exit from a loop.
       if toBeReturned?
         if toBeReturned.flClass == FLDone
+          toBeReturned.beingThrown = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
           console.log "Do => the loop exited with Done "
@@ -520,8 +523,11 @@ FLList.addNativeMethod \
       newContext.tempVariablesDict[ValidIDfromString variable.value] = @elementAt i
       toBeReturned = (code.eval newContext)[0].returned
 
+      # catch any thrown "done" object, used to
+      # exit from a loop.
       if toBeReturned?
         if toBeReturned.flClass == FLDone
+          toBeReturned.beingThrown = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
           console.log "each... do loop exited with Done "
@@ -544,6 +550,7 @@ FLDone.addNativeMethod \
   (flParse "with ( valueToReturn )"),
   (context) ->
     valueToReturn = context.tempVariablesDict[ValidIDfromString "valueToReturn"]
+
     @value = valueToReturn
     return @
 
@@ -562,15 +569,16 @@ FLRepeat.addNativeMethod \
       flContexts.pop()
 
       console.log "Repeat => returning result after loop cycle: " + toBeReturned
-      console.dir toBeReturned
       console.log "Repeat => returning result CLASS after loop cycle: "
-      console.dir toBeReturned.flClass
       console.log "Repeat => remaining message after loop cycle: "
       console.log "Repeat => message length:  "
       console.log "Repeat => did I receive a Done? " + (if toBeReturned?.flClass == FLDoneClass then "yes" else "no")
 
+      # catch any thrown "done" object, used to
+      # exit from a loop.
       if toBeReturned?
         if toBeReturned.flClass == FLDone
+          toBeReturned.beingThrown = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
           console.log "Repeat => the loop exited with Done "
@@ -624,8 +632,11 @@ FLFor.addNativeMethod \
 
       flContexts.pop()
 
+      # catch any thrown "done" object, used to
+      # exit from a loop.
       if toBeReturned?
         if toBeReturned.flClass == FLDone
+          toBeReturned.beingThrown = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
           console.log "For => the loop exited with Done "

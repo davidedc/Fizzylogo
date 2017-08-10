@@ -236,6 +236,11 @@ tests = [
   '@a<-5.repeat((a==0)=>(done)@a<-a minus 1)print'
   'Done_object'
 
+  # "done" stop the execution from within a loop,
+  # nothing is executed after them.
+  '@a<-5.repeat((a==0)=>(done. 2 print)@a<-a minus 1).a print'
+  '0'
+
   '@a<-5.repeat\
     ((a==0)=>(done with a plus 1)@a<-a minus 1)print'
   '1'

@@ -116,6 +116,26 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
 
         console.log "evaluation " + indentation() + "remaining part of list to be sent as message is: " + restOfMessage.print()
 
+        # here is the case of the "statement with one command" e.g.
+        #    1 print. singleCommand . 2 print
+        # in this case, "singleCommand" could be just an atom that
+        # points to an object. Typical case is the "done" atom
+        # ponting to a Done object.
+        # So, in these cases you want "done" atom to look up the
+        # done object AND THEN you want to eval the object (as if
+        # it got the empty message). So here we do that check and
+        # do the further evaluation.
+        if receiver? and restOfMessage.isEmpty() and receiver.flClass != FLAtom and receiver.flClass != FLList
+          console.log "evaluation " + indentation() +  " contents can be evalued further"
+          receiver = (receiver.eval returnedContext)[0].returned
+
+        console.log "1 receiver.beingThrown: " + receiver?.beingThrown
+        if receiver? and receiver.beingThrown and restOfMessage.isEmpty()
+          theContext.returned = receiver
+          restOfMessage.exhaust()
+          return [theContext, restOfMessage]
+
+
         # now that we have the receiver, we send it the rest of the original message
         # hence getting a new receiver, whom we send again the rest of the message
         # and so and and so forth. We keep using the same context, so we
@@ -148,8 +168,12 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
           # for all the other classes, but for an exception it causes
           # it to run the exception handling code and to "stop" itself
           # from being thrown.
-          if (receiver.flClass == FLException and receiver.beingThrown and returnedMessage.length() == restOfMessage.length()) or
-            (returnedContext.returned.flClass == FLException and returnedContext.returned.beingThrown and returnedMessage.isEmpty())
+
+          console.log "2 receiver.beingThrown: " + receiver.beingThrown
+          console.log "3 returnedContext.returned.beingThrown: " + returnedContext.returned.beingThrown
+
+          if (receiver.beingThrown and returnedMessage.length() == restOfMessage.length()) or
+            (returnedContext.returned.beingThrown and returnedMessage.isEmpty())
               theContext.returned = returnedContext.returned
               restOfMessage.exhaust()
               return [theContext, restOfMessage]
