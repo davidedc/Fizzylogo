@@ -3,6 +3,7 @@ tokenizeCommand = (command) ->
   # separate parens
   command = command.replace /\(/g, " ( "
   command = command.replace /\)/g, " ) "
+  command = command.replace /\./g, " . "
   
   # separate identifiers
   command = command.replace /([$A-Z_][0-9A-Z_$]*)/gi, " $1 "

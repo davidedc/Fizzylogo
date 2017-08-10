@@ -1,9 +1,9 @@
-class FLRepeatClass extends FLAnonymousClass
+class FLRepeat2Class extends FLAnonymousClass
   createNew: ->
-    toBeReturned = super FLRepeat
+    toBeReturned = super FLRepeat2
 
     toBeReturned.print = ->
-      return "Repeat_object"
+      return "Repeat2_object"
 
     toBeReturned.printForList = toBeReturned.print
 
@@ -15,4 +15,4 @@ class FLRepeatClass extends FLAnonymousClass
 
     return toBeReturned
 
-FLRepeat = new FLRepeatClass() # this is a class, an anonymous class
+FLRepeat2 = new FLRepeat2Class() # this is a class, an anonymous class

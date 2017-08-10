@@ -538,24 +538,24 @@ FLDone.addNativeMethod \
     return @
 
 
-# Repeat -------------------------------------------------------------------------
+# Repeat1 -------------------------------------------------------------------------
 
-FLRepeat.addNativeMethod \
+FLRepeat1.addNativeMethod \
   (flParse "( @ loopCode )"),
   (context) ->
     loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
-    console.log "FLRepeat => loop code is: " + loopCode.print()
+    console.log "FLRepeat1 => loop code is: " + loopCode.print()
 
     while true
       toBeReturned = (loopCode.eval context)[0].returned
 
       flContexts.pop()
 
-      console.log "Repeat => returning result after loop cycle: " + toBeReturned
-      console.log "Repeat => returning result CLASS after loop cycle: "
-      console.log "Repeat => remaining message after loop cycle: "
-      console.log "Repeat => message length:  "
-      console.log "Repeat => did I receive a Done? " + (if toBeReturned?.flClass == FLDoneClass then "yes" else "no")
+      console.log "Repeat1 => returning result after loop cycle: " + toBeReturned
+      console.log "Repeat1 => returning result CLASS after loop cycle: "
+      console.log "Repeat1 => remaining message after loop cycle: "
+      console.log "Repeat1 => message length:  "
+      console.log "Repeat1 => did I receive a Done? " + (if toBeReturned?.flClass == FLDoneClass then "yes" else "no")
 
       # catch any thrown "done" object, used to
       # exit from a loop.
@@ -564,9 +564,41 @@ FLRepeat.addNativeMethod \
           toBeReturned.beingThrown = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
-          console.log "Repeat => the loop exited with Done "
+          console.log "Repeat1 => the loop exited with Done "
           break
 
+    return toBeReturned
+
+# Repeat2 -------------------------------------------------------------------------
+
+FLRepeat2.addNativeMethod \
+  (flParse "( @ loopCode )"),
+  (context) ->
+    loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
+    console.log "FLRepeat1 => loop code is: " + loopCode.print()
+
+    while true
+      toBeReturned = (loopCode.eval context)[0].returned
+
+      flContexts.pop()
+
+      console.log "Repeat1 => returning result after loop cycle: " + toBeReturned
+      console.log "Repeat1 => returning result CLASS after loop cycle: "
+      console.log "Repeat1 => remaining message after loop cycle: "
+      console.log "Repeat1 => message length:  "
+      console.log "Repeat1 => did I receive a Done? " + (if toBeReturned?.flClass == FLDoneClass then "yes" else "no")
+
+      # catch any thrown "done" object, used to
+      # exit from a loop.
+      if toBeReturned?
+        if toBeReturned.flClass == FLDone
+          toBeReturned.beingThrown = false
+          if toBeReturned.value?
+            toBeReturned = toBeReturned.value
+          console.log "Repeat1 => the loop exited with Done "
+          break
+
+    context.findAnotherReceiver = true
     return toBeReturned
 
 # Throw -----------------------------------------------------------------------------

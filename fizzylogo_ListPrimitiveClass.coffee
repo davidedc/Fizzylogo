@@ -150,7 +150,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
         while true
 
           # -------------------------------------------------
-          if returnedContext.findAnotherReceiver
+          if returnedContext.findAnotherReceiver and !restOfMessage.isEmpty()
             returnedContext.findAnotherReceiver = false
             returnedContext = returnedContext.previousContext
             findAnotherReceiver = true
@@ -304,7 +304,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
         return @elementAt(1)
 
     toBeReturned.separateStatements = ->
-      console.log "evaluation " + indentation() + "separating statements   start "
+      console.log "evaluation " + indentation() + "separating statements   start: " + @print()
       arrayOfStatements = []
       lastStatementEnd = @cursorStart - 1
       for i in [@cursorStart..@cursorEnd]
@@ -313,9 +313,13 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
           statementToBeAdded = @copy().toList()
           statementToBeAdded.cursorStart = lastStatementEnd + 1
           statementToBeAdded.cursorEnd = i - 1
-          if (i == @cursorEnd) then statementToBeAdded.cursorEnd++
+          if i == @cursorEnd and @value[@cursorEnd] != RStatementSeparatorSymbol
+            console.log " last char: " + @value[@cursorEnd].print()
+            statementToBeAdded.cursorEnd++
           lastStatementEnd = i
-          arrayOfStatements.jsArrayPush statementToBeAdded
+          if !statementToBeAdded.isEmpty() and statementToBeAdded.firstElement() != RStatementSeparatorSymbol
+            console.log " adding: " + statementToBeAdded.print()
+            arrayOfStatements.jsArrayPush statementToBeAdded
           console.log "evaluation " + indentation() + "separating statements isolated new statement " + statementToBeAdded.print()
 
 

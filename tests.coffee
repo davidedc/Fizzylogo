@@ -18,6 +18,21 @@ tests = [
   '@a<-5.a increment.@a<-a plus 1.a print'
   '7'
 
+  '@a<-5..a increment. ...  .@a<-a plus 1.a print'
+  '7'
+
+  '.@a<-5..a increment. ...  .@a<-a plus 1.a print.'
+  '7'
+
+  '..@a<-5..a increment. ...  .@a<-a plus 1.a print..'
+  '7'
+
+  '. .@a<-5..a increment. ...  .@a<-a plus 1.a print. .'
+  '7'
+
+  '...@a<-5..a increment. ...  .@a<-a plus 1.a print...'
+  '7'
+
   '@a<-5.@a<-a plus 1.a increment print'
   '7'
 
@@ -209,12 +224,12 @@ tests = [
   '@a<-5.1printAFromDeeperCall'
   '5'
 
-  '@a<-5.repeat((a==0)=>(done)@a<-a minus 1).a print'
+  '@a<-5.repeat1((a==0)=>(done)@a<-a minus 1).a print'
   '0'
 
   """
   @a<-5
-  repeat
+  repeat1
   ﹍(a==0)=>
   ﹍﹍done
   ﹍@a<-a minus 1
@@ -225,7 +240,7 @@ tests = [
 
   """
   @a<-5
-  repeat
+  repeat1
   ﹍(a==0)=>
   ﹍﹍done
   ﹍@a<-a minus 1
@@ -233,15 +248,29 @@ tests = [
   """
   '0'
 
-  '@a<-5.repeat((a==0)=>(done)@a<-a minus 1)print'
+
+  """
+  @a<-5
+
+  repeat
+  ﹍(a==0)=>
+  ﹍﹍done
+  ﹍@a<-a minus 1
+
+  a print
+  """
+  '0'
+
+
+  '@a<-5.repeat1((a==0)=>(done)@a<-a minus 1)print'
   'Done_object'
 
   # "done" stop the execution from within a loop,
   # nothing is executed after them.
-  '@a<-5.repeat((a==0)=>(done. 2 print)@a<-a minus 1).a print'
+  '@a<-5.repeat1((a==0)=>(done. 2 print)@a<-a minus 1).a print'
   '0'
 
-  '@a<-5.repeat\
+  '@a<-5.repeat1\
     ((a==0)=>(done with a plus 1)@a<-a minus 1)print'
   '1'
 
@@ -462,8 +491,6 @@ tests = [
 
 ###
 tests = [
-  '1factorial print'
-  '1'
 ]
 ###
 
@@ -505,8 +532,10 @@ for i in [0...tests.length] by 2
       "false", FLBoolean.createNew false
 
       "for", FLFor.createNew()
-      "repeat", FLRepeat.createNew()
+      "repeat1", FLRepeat1.createNew()
       "done", FLDone.createNew()
+
+      "repeat", FLRepeat2.createNew()
 
       "try", FLTry.createNew()
       "throw", FLThrow.createNew()
@@ -552,5 +581,6 @@ for i in [0...tests.length] by 2
     if environmentPrintout + environmentErrors == testResult
       console.log "...test " + (i/2+1) + " OK, obtained: " + environmentPrintout + environmentErrors
     else
+      testBody = testBody.replace /\n/g, ' ⏎ '
       console.log "...test " + (i/2+1) + " FAIL, test: " + testBody + " obtained: " + environmentPrintout + environmentErrors + " expected: " + testResult
 
