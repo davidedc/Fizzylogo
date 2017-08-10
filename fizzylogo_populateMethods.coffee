@@ -433,7 +433,7 @@ FLBoolean.addNativeMethod \
 
       # in this context we only have visibility of the true branch
       # but we have to make sure that in the context above, the false
-      # branch is never executed. So we seta flag to "exhaust" the message
+      # branch is never executed. So we set a flag to "exhaust" the message
       # in the context above
       context.exhaustPreviousContextMessage = true
 
@@ -554,7 +554,7 @@ FLRepeat.addNativeMethod \
   (flParse "( @ loopCode )"),
   (context) ->
     loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
-    console.log "FLRepeat => , loop code is: " + loopCode.print()
+    console.log "FLRepeat => loop code is: " + loopCode.print()
 
     while true
       toBeReturned = (loopCode.eval context)[0].returned
