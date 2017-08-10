@@ -229,9 +229,6 @@ class FLObjects
     # making the call and fixing newContext's PC and
     # updating the return value, we are done here
 
-    if !toBeReturned? or !toBeReturned.returned?
-      theContext.returned = @
-      toBeReturned = theContext
 
     console.log "evaluation " + indentation() + "  progressWithNonEmptyMessage - eval returned: " + toBeReturned
     #console.dir toBeReturned

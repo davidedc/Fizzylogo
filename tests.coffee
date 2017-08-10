@@ -462,6 +462,8 @@ tests = [
 
 ###
 tests = [
+  '1factorial print'
+  '1'
 ]
 ###
 

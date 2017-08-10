@@ -442,8 +442,9 @@ FLBoolean.addNativeMethod \
 
 
       return toBeReturned
-    console.log "FLBoolean => returning null"
-    return null
+
+    context.findAnotherReceiver = true
+    return @
 
 
 FLBoolean.addNativeMethod \
@@ -452,24 +453,6 @@ FLBoolean.addNativeMethod \
     console.log "executing an or! "
     operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
     return FLBoolean.createNew @value or operandum.value
-
-# any boolean with any left piece of code will just
-# eval the code and return its result.
-# this is how the false branch of => is executed in
-#     predicate => (trueBranch) falseBranch
-# for example, the => (true branch) is first
-# consumed by the => call and the predicate result is
-# returned, and then the predicate result (a false)
-# receives the falseBranch, i.e. :
-#   receiver: predicate result
-#    message: falseBranch
-# at which point, because of this below, the falseBranch
-# is executed.
-FLBoolean.addNativeMethod \
-  (flParse "(resultOfAnyOtherCode)"),
-  (context) ->
-    resultOfAnyOtherCode = context.tempVariablesDict[ValidIDfromString "resultOfAnyOtherCode"]
-    return resultOfAnyOtherCode
 
 
 # FLQuote --------------------------------------------------------------------------

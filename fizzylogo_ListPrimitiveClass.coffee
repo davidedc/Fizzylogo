@@ -92,6 +92,27 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
       restOfMessage = @restOfMessage()
       return [theContext, restOfMessage]
 
+    toBeReturned.findReceiver = (theContext) ->
+      [returnedContext, restOfMessage] = @evalFirstListElementAndTurnRestIntoMessage theContext
+      receiver = returnedContext.returned
+
+      console.log "evaluation " + indentation() + "remaining part of list to be sent as message is: " + restOfMessage.print()
+
+      # here is the case of the "statement with one command" e.g.
+      #    1 print. singleCommand . 2 print
+      # in this case, "singleCommand" could be just an atom that
+      # points to an object. Typical case is the "done" atom
+      # ponting to a Done object.
+      # So, in these cases you want "done" atom to look up the
+      # done object AND THEN you want to eval the object (as if
+      # it got the empty message). So here we do that check and
+      # do the further evaluation.
+      if receiver? and restOfMessage.isEmpty() and receiver.flClass != FLAtom and receiver.flClass != FLList
+        console.log "evaluation " + indentation() +  " contents can be evalued further"
+        receiver = (receiver.eval returnedContext)[0].returned
+
+      return [returnedContext, restOfMessage, receiver]
+
     toBeReturned.eval = (theContext) ->
       # a list without any messages just evaluates itself, which
       # consists of the following:
@@ -111,37 +132,44 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
         console.log "evaluation " + indentation() + "evaluating single statement"
         console.log "evaluation " + indentation() + "  i.e. " + eachStatement.print()
 
-        [returnedContext, restOfMessage] = eachStatement.evalFirstListElementAndTurnRestIntoMessage theContext
-        receiver = returnedContext.returned
+        returnedContext = theContext
+        restOfMessage = eachStatement
+        findAnotherReceiver = true
 
-        console.log "evaluation " + indentation() + "remaining part of list to be sent as message is: " + restOfMessage.print()
-
-        # here is the case of the "statement with one command" e.g.
-        #    1 print. singleCommand . 2 print
-        # in this case, "singleCommand" could be just an atom that
-        # points to an object. Typical case is the "done" atom
-        # ponting to a Done object.
-        # So, in these cases you want "done" atom to look up the
-        # done object AND THEN you want to eval the object (as if
-        # it got the empty message). So here we do that check and
-        # do the further evaluation.
-        if receiver? and restOfMessage.isEmpty() and receiver.flClass != FLAtom and receiver.flClass != FLList
-          console.log "evaluation " + indentation() +  " contents can be evalued further"
-          receiver = (receiver.eval returnedContext)[0].returned
-
-        console.log "1 receiver.beingThrown: " + receiver?.beingThrown
-        if receiver? and receiver.beingThrown and restOfMessage.isEmpty()
-          theContext.returned = receiver
-          restOfMessage.exhaust()
-          return [theContext, restOfMessage]
-
-
-        # now that we have the receiver, we send it the rest of the original message
-        # hence getting a new receiver, whom we send again the rest of the message
+        # works as follows: we find a receiver, we send it the rest
+        # of the original message hence getting a new receiver,
+        # whom we send again the rest of the message
         # and so and and so forth. We keep using the same context, so we
         # accrete the state changes to the same context i.e. the one we
         # are running the method body in.
-        until restOfMessage.isEmpty()
+
+        # we'll exit this loop in a number of ways:
+        #  - no more message to consume
+        #  - exceptions being thrown or done object
+        #  - the message is not understood
+        while true
+
+          # -------------------------------------------------
+          if returnedContext.findAnotherReceiver
+            returnedContext.findAnotherReceiver = false
+            returnedContext = returnedContext.previousContext
+            findAnotherReceiver = true
+            console.log "finding next receiver from:  " + restOfMessage.print()
+
+          if findAnotherReceiver
+            findAnotherReceiver = false
+            [returnedContext, restOfMessage, receiver] = restOfMessage.findReceiver returnedContext
+            console.log "found next receiver and now message is: " + restOfMessage.print()
+            console.dir receiver
+            console.log "3 receiver.beingThrown: " + receiver?.beingThrown
+            if receiver? and receiver.beingThrown and restOfMessage.isEmpty()
+              theContext.returned = receiver
+              restOfMessage.exhaust()
+              return [theContext, restOfMessage]
+
+          if restOfMessage.isEmpty()
+            break
+          # -------------------------------------------------
 
           if !receiver?
             theContext.returned = null
@@ -156,7 +184,13 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
           # we'll have to find the result from what we can consume and then
           # sent the remaining part to such reult. This is why
           # we have to keep iterating until the whole message is consumed
+          
           [returnedContext, returnedMessage] = receiver.progressWithNonEmptyMessage restOfMessage, theContext
+
+          if !returnedContext?
+            returnedContext = theContext
+            returnedContext.returned = receiver
+
 
           # where we detect an exception being thrown. there are two ways to detect it
           # 1) the receiver we just sent a message to was a thrown exception and
@@ -181,6 +215,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
 
           receiver = returnedContext.returned
 
+
           console.log "evaluation " + indentation() + "list evaluation returned: " + receiver?.value
           # if there is no change in the program counter it means that there
           # was no progress, i.e. the receiver can't do anything with the message
@@ -200,6 +235,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
           # skipped.
           if returnedContext.exhaustPreviousContextMessage == true
             restOfMessage.exhaust()
+
 
 
         console.log "evaluation " + indentation() + "list: nothing more to evaluate"
