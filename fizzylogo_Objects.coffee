@@ -166,7 +166,9 @@ class FLObjects
             theContext.unparsedMessage = null
             console.log "theContext method invocation after: " + methodInvocation.print()
 
-            return [(@lookupAndSendFoundMessage newContext, eachSignatureIndex),methodInvocation]
+            contextToBeReturned = @methodCall (@flClass.methodBodies[eachSignatureIndex]), newContext
+
+            return [contextToBeReturned,methodInvocation]
 
 
         # we are still here trying to match but
@@ -174,18 +176,6 @@ class FLObjects
         console.log "evaluation " + indentation() + "  matching - no match found"
         return [null, methodInvocationToBeChecked]
 
-  lookupAndSendFoundMessage: (theContext, countSignaturePosition) ->
-    console.log "evaluation " + indentation() + "  matching - found a matching signature: " + @flClass.msgPatterns[countSignaturePosition].print()
-    # we have a matching signature!
-    methodBody = @flClass.methodBodies[countSignaturePosition]
-    console.log "evaluation " + indentation() + "  matching - method body: " + methodBody
-
-    returnedContext = @methodCall methodBody, theContext
-    console.log "evaluation " + indentation() + "  returned from message send: " + theContext
-    flContexts.pop() # pops the theContext
-    #console.dir theContext
-
-    return returnedContext
 
   # this could be native, in which case it's a JS call,
   # or non-native, in which case it will result into
