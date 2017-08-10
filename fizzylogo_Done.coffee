@@ -1,6 +1,6 @@
 class FLDoneClass extends FLAnonymousClass
   createNew: ->
-    toBeReturned = FLDone
+    toBeReturned = super FLDone
     toBeReturned.value = null
 
 
