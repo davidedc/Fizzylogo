@@ -632,6 +632,44 @@ FLThrow.addNativeMethod \
     theError.beingThrown = true
     return theError
 
+# IfThenElse -----------------------------------------------------------------------------
+
+FLIfThenElse.addNativeMethod \
+  (flParse "( predicate ) then (@trueBranch) else (@falseBranch)"),
+  (context) ->
+    predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
+    trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
+    falseBranch = context.tempVariablesDict[ValidIDfromString "falseBranch"]
+    console.log "IfThenElse ⇒ , predicate value is: " + predicate.value
+
+    if predicate.value
+      toBeReturned = (trueBranch.eval context, trueBranch)[0].returned
+      flContexts.pop()
+    else
+      toBeReturned = (falseBranch.eval context, falseBranch)[0].returned
+      flContexts.pop()
+
+
+    context.findAnotherReceiver = true
+    return toBeReturned
+
+FLIfThenElse.addNativeMethod \
+  (flParse "( predicate ) then (@trueBranch)"),
+  (context) ->
+    predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
+    trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
+    console.log "IfThenElse ⇒ , predicate value is: " + predicate.value
+
+    if predicate.value
+      toBeReturned = (trueBranch.eval context, trueBranch)[0].returned
+      flContexts.pop()
+    else
+      toBeReturned = context
+
+    context.findAnotherReceiver = true
+    return toBeReturned
+
+
 # Try -----------------------------------------------------------------------------
 
 FLTry.addNativeMethod \

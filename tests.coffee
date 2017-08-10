@@ -315,7 +315,6 @@ tests = [
   ﹍(a==0)⇒
   ﹍﹍done
   ﹍@a←a minus 1
-
   a print
   """
   "0"
@@ -329,7 +328,22 @@ tests = [
   ﹍(a==0)⇒
   ﹍﹍done
   ﹍a=a minus 1
+  a print
+  """
+  "0"
 
+  """
+  a=5
+
+  repeat
+  ﹍forever
+  do
+  ﹍if
+  ﹍﹍a==0
+  ﹍then
+  ﹍﹍done
+  ﹍else
+  ﹍﹍a=a minus 1
   a print
   """
   "0"
@@ -341,10 +355,12 @@ tests = [
   ﹍2
   do
   ﹍a=a minus 1
-
-  a print
+  if
+  ﹍a==3
+  then
+  ﹍"yes a is 3" print
   """
-  "3"
+  "yes a is 3"
 
 
   "@a←5.repeat1((a==0)⇒(done)@a←a minus 1)print"
@@ -670,6 +686,7 @@ for i in [0...tests.length] by 2
       "repeat1", FLRepeat1.createNew()
       "done", FLDone.createNew()
 
+      "if", FLIfThenElse.createNew()
       "forever", FLForever.createNew()
       "repeat", FLRepeat2.createNew()
 
