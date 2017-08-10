@@ -12,46 +12,46 @@ tests = [
   '(1plus 1)print print'
   '22'
 
-  '@a <- "test string". @b <- a. @c <- @a. @a eval print.@b eval print.@c eval print'
+  '@a ← "test string". @b ← a. @c ← @a. @a eval print.@b eval print.@c eval print'
   'test stringtest stringa'
 
-  '@a<-5.a increment.@a<-a plus 1.a print'
+  '@a←5.a increment.@a←a plus 1.a print'
   '7'
 
-  '@a<-5..a increment. ...  .@a<-a plus 1.a print'
+  '@a←5..a increment. ...  .@a←a plus 1.a print'
   '7'
 
-  '.@a<-5..a increment. ...  .@a<-a plus 1.a print.'
+  '.@a←5..a increment. ...  .@a←a plus 1.a print.'
   '7'
 
-  '..@a<-5..a increment. ...  .@a<-a plus 1.a print..'
+  '..@a←5..a increment. ...  .@a←a plus 1.a print..'
   '7'
 
-  '. .@a<-5..a increment. ...  .@a<-a plus 1.a print. .'
+  '. .@a←5..a increment. ...  .@a←a plus 1.a print. .'
   '7'
 
-  '...@a<-5..a increment. ...  .@a<-a plus 1.a print...'
+  '...@a←5..a increment. ...  .@a←a plus 1.a print...'
   '7'
 
-  '@a<-5.@a<-a plus 1.a increment print'
+  '@a←5.@a←a plus 1.a increment print'
   '7'
 
-  '@a<-5plus 1.a increment print'
+  '@a←5plus 1.a increment print'
   '7'
 
-  '@a<-(5plus 1).a increment print'
+  '@a←(5plus 1).a increment print'
   '7'
 
   '(4plus 1plus 1)print'
   '6'
 
-  '@a<-(4plus 1plus 1).a increment print'
+  '@a←(4plus 1plus 1).a increment print'
   '7'
 
-  '@a<-(4plus(1plus 1)).a increment print'
+  '@a←(4plus(1plus 1)).a increment print'
   '7'
 
-  '@a<-((4plus 1)plus(0plus 1)).a increment print'
+  '@a←((4plus 1)plus(0plus 1)).a increment print'
   '7'
 
   '7anotherPrint'
@@ -104,7 +104,7 @@ tests = [
   '@(1 plus 1)eval print'
   '2'
 
-  '@a<-5.@b<-@a.b print.a print'
+  '@a←5.@b←@a.b print.a print'
   'a5'
 
   'true negate print'
@@ -161,10 +161,10 @@ tests = [
   '(not not not not true)print'
   'true'
 
-  'true=>(1print)'
+  'true⇒(1print)'
   '1'
 
-  'false=>(1print)2print'
+  'false⇒(1print)2print'
   '2'
 
   '(0==0)print'
@@ -182,7 +182,7 @@ tests = [
   '(8minus 1)print'
   '7'
 
-  'true=>(1print)2print'
+  'true⇒(1print)2print'
   '1'
 
   '0factorial print'
@@ -221,86 +221,86 @@ tests = [
   '7selftimesminusone print'
   '42'
 
-  '@a<-5.1printAFromDeeperCall'
+  '@a←5.1printAFromDeeperCall'
   '5'
 
-  '@a<-5.repeat1((a==0)=>(done)@a<-a minus 1).a print'
+  '@a←5.repeat1((a==0)⇒(done)@a←a minus 1).a print'
   '0'
 
   """
-  @a<-5
+  @a←5
   repeat1
-  ﹍(a==0)=>
+  ﹍(a==0)⇒
   ﹍﹍done
-  ﹍@a<-a minus 1
+  ﹍@a←a minus 1
   
   a print
   """
   '0'
 
   """
-  @a<-5
+  @a←5
   repeat1
-  ﹍(a==0)=>
+  ﹍(a==0)⇒
   ﹍﹍done
-  ﹍@a<-a minus 1
+  ﹍@a←a minus 1
   .a print
   """
   '0'
 
 
   """
-  @a<-5
+  @a←5
 
   repeat
-  ﹍(a==0)=>
+  ﹍(a==0)⇒
   ﹍﹍done
-  ﹍@a<-a minus 1
+  ﹍@a←a minus 1
 
   a print
   """
   '0'
 
 
-  '@a<-5.repeat1((a==0)=>(done)@a<-a minus 1)print'
+  '@a←5.repeat1((a==0)⇒(done)@a←a minus 1)print'
   'Done_object'
 
   # "done" stop the execution from within a loop,
   # nothing is executed after them.
-  '@a<-5.repeat1((a==0)=>(done. 2 print)@a<-a minus 1).a print'
+  '@a←5.repeat1((a==0)⇒(done. 2 print)@a←a minus 1).a print'
   '0'
 
-  '@a<-5.repeat1\
-    ((a==0)=>(done with a plus 1)@a<-a minus 1)print'
+  '@a←5.repeat1\
+    ((a==0)⇒(done with a plus 1)@a←a minus 1)print'
   '1'
 
   'Class print'
   'Class_object'
 
-  '@something<-3.something print'
+  '@something←3.something print'
   '3'
 
-  '@MyClass<-Class new'
+  '@MyClass←Class new'
   ''
 
-  '@MyClass<-Class new.\
+  '@MyClass←Class new.\
     MyClass answer(printtwo)by(self print).\
-    @myObject<-MyClass new.myObject printtwo'
+    @myObject←MyClass new.myObject printtwo'
   'object_from_a_user_class'
 
-  '@false<-true.false=>(1print)2print'
+  '@false←true.false⇒(1print)2print'
   '1'
 
-  '@temp<-true.@true<-false.@false<-temp.false=>(1print)2print'
+  '@temp←true.@true←false.@false←temp.false⇒(1print)2print'
   '1'
 
-  '@temp<-true.@true<-false.@false<-temp.true=>(1print)2print'
+  '@temp←true.@true←false.@false←temp.true⇒(1print)2print'
   '2'
 
-  '@2<-10.2print'
+  '@2←10.2print'
   '10'
 
-  "@ ' <- @. 'a<-8.a print"
+  "@ ' ← @. 'a←8.a print"
   "8"
 
   #'8 tdict print'
@@ -315,10 +315,10 @@ tests = [
   '(4*2)times(1print)'
   '11111111'
 
-  'for k<-(1)to(10)do(k print)'
+  'for k←(1)to(10)do(k print)'
   '12345678910'
 
-  'for k<-1to 10do(k print)'
+  'for k←1to 10do(k print)'
   '12345678910'
 
   '8 unintelligibleMessage'
@@ -353,37 +353,37 @@ tests = [
   '(@((1))+@(2))print'
   '( ( 1 ) ( 2 ) )'
 
-  '@myList<-List new.myList print.@myList<-myList+2.myList print'
+  '@myList←List new.myList print.@myList←myList+2.myList print'
   'empty message( 2 )'
 
-  '@myString<-String new.myString print.\
-    @myString<-myString+"Hello ".\
-    @myString<-myString+"world".\
+  '@myString←String new.myString print.\
+    @myString←myString+"Hello ".\
+    @myString←myString+"world".\
     myString print'
   'Hello world'
 
-  '@MyClass<-Class new.MyClass idict<-counter.\
-    MyClass answer(setCounterToTwo)by(@counter<-2).\
+  '@MyClass←Class new.MyClass idict←counter.\
+    MyClass answer(setCounterToTwo)by(@counter←2).\
     MyClass answer(printCounter)by(counter print).\
-    @myObject<-MyClass new.myObject printCounter.\
+    @myObject←MyClass new.myObject printCounter.\
     myObject setCounterToTwo.myObject printCounter.\
-    @myObject2<-MyClass new.myObject2 printCounter.\
+    @myObject2←MyClass new.myObject2 printCounter.\
     myObject2 setCounterToTwo.myObject2 printCounter'
   'nil2nil2'
 
-  "@MyClass<-Class new.MyClass idict<-counter.\
-    MyClass answer(setCounterToTwo)by(@counter<-2).\
-    @myObject<-MyClass new.\
+  "@MyClass←Class new.MyClass idict←counter.\
+    MyClass answer(setCounterToTwo)by(@counter←2).\
+    @myObject←MyClass new.\
     myObject setCounterToTwo.(myObject's counter)print"
   '2'
 
-  '@MyClass<-Class new.MyClass cvar classCounter <- 0.\
-    MyClass answer(incrementClassCounterByTwo)by(@classCounter<-classCounter plus 2).\
+  '@MyClass←Class new.MyClass cvar classCounter ← 0.\
+    MyClass answer(incrementClassCounterByTwo)by(@classCounter←classCounter plus 2).\
     MyClass answer(printClassCounter)by(classCounter print).\
-    @myObject<-MyClass new.myObject printClassCounter.\
+    @myObject←MyClass new.myObject printClassCounter.\
     myObject incrementClassCounterByTwo.\
     myObject printClassCounter.\
-    @myObject2<-MyClass new.myObject2 printClassCounter.\
+    @myObject2←MyClass new.myObject2 printClassCounter.\
     myObject2 incrementClassCounterByTwo.\
     myObject2 printClassCounter'
   '0224'
@@ -398,67 +398,67 @@ tests = [
   '@( "Hello " "Dave " "my " "dear " "friend") each word do (word print)'
   'Hello Dave my dear friend'
 
-  '@someException <- Exception new initWith "my custom error". someException print'
+  '@someException ← Exception new initWith "my custom error". someException print'
   'my custom error'
 
   # wrong error to raise exceptions, they must be thrown
-  '@someException <- Exception new initWith "my custom error".\
+  '@someException ← Exception new initWith "my custom error".\
     try ( 1 print. someException )\
     catch ( someException ) handle ( " caught the error I wanted" print )'
   '1'
 
   # wrong error to raise exceptions, they must be thrown
-  '@someException <- Exception new initWith "my custom error".\
-    @someOtherException <- Exception new initWith "my other custom error".\
+  '@someException ← Exception new initWith "my custom error".\
+    @someOtherException ← Exception new initWith "my other custom error".\
     try ( 1 print. someException )\
     catch ( someException ) handle ( " caught the error I wanted" print )'
   '1'
 
   # wrong error to raise exceptions, they must be thrown
-  '@someException <- Exception new initWith "my custom error".\
-    @someOtherException <- Exception new initWith "my other custom error".\
+  '@someException ← Exception new initWith "my custom error".\
+    @someOtherException ← Exception new initWith "my other custom error".\
     try ( 1 print. someException )\
     catch ( someOtherException ) handle ( " caught the error I wanted" print )'
   '1'
 
   # thrown exception, note how the statement after the throw is not executed.
-  '@someException <- Exception new initWith "my custom error".\
+  '@someException ← Exception new initWith "my custom error".\
     try ( 1 print. throw someException. 2 print )\
     catch ( someException ) handle ( " caught the error I wanted" print )'
   '1 caught the error I wanted'
 
   # thrown exception, note how the statement after the throw is not executed.
-  '@someException <- Exception new initWith "my custom error".\
-    @someOtherException <- Exception new initWith "my other custom error".\
+  '@someException ← Exception new initWith "my custom error".\
+    @someOtherException ← Exception new initWith "my other custom error".\
     try ( 1 print. throw someException. 2 print )\
     catch ( someException ) handle ( " caught the error I wanted" print )'
   '1 caught the error I wanted'
 
   # thrown exception, note how the statement after the throw is not executed.
-  '@someException <- Exception new initWith "my custom error".\
-    @someOtherException <- Exception new initWith "my other custom error".\
+  '@someException ← Exception new initWith "my custom error".\
+    @someOtherException ← Exception new initWith "my other custom error".\
     try ( 1 print. throw someException. 2 print )\
     catch ( someOtherException ) handle ( " caught the error I wanted" print )'
   '1'
 
   # thrown exception, note how the statement after the throw is not executed.
-  '@someException <- Exception new initWith "my custom error".\
-    @someOtherException <- Exception new initWith "my other custom error".\
+  '@someException ← Exception new initWith "my custom error".\
+    @someOtherException ← Exception new initWith "my other custom error".\
     try ( 1 print. throw someOtherException. 2 print )\
     catch ( someOtherException ) handle ( " caught the error the first time around" )\
     catch ( someException ) handle ( " caught the error the second time around" ) print'
   '1 caught the error the first time around'
 
-  '@someException <- Exception new initWith "my custom error".\
-    @someOtherException <- Exception new initWith "my other custom error".\
+  '@someException ← Exception new initWith "my custom error".\
+    @someOtherException ← Exception new initWith "my other custom error".\
     try ( 1 print. throw someException. 2 print )\
     catch ( someOtherException ) handle ( " caught the error the first time around" )\
     catch ( someException ) handle ( " caught the error the second time around" ) print'
   '1 caught the error the second time around'
 
   # catch-all case 1
-  '@someException <- Exception new initWith "my custom error".\
-    @someOtherException <- Exception new initWith "my other custom error".\
+  '@someException ← Exception new initWith "my custom error".\
+    @someOtherException ← Exception new initWith "my other custom error".\
     try ( 1 print. throw someOtherException. 2 print )\
     catch ( someOtherException ) handle ( " caught the error the first time around" )\
     catch ( someException ) handle ( " caught the error the second time around" )\
@@ -466,8 +466,8 @@ tests = [
   '1 caught the error the first time around'
 
   # catch-all case 2
-  '@someException <- Exception new initWith "my custom error".\
-    @someOtherException <- Exception new initWith "my other custom error".\
+  '@someException ← Exception new initWith "my custom error".\
+    @someOtherException ← Exception new initWith "my other custom error".\
     try ( 1 print. throw someException. 2 print )\
     catch ( someOtherException ) handle ( " caught the error the first time around" )\
     catch ( someException ) handle ( " caught the error the second time around" )\
@@ -475,16 +475,16 @@ tests = [
   '1 caught the error the second time around'
 
   # catch-all case 3
-  '@someException <- Exception new initWith "my custom error".\
-    @someOtherException <- Exception new initWith "my other custom error".\
-    @yetAnotherException <- Exception new initWith "another custom error that is only caught by the catch all branch".\
+  '@someException ← Exception new initWith "my custom error".\
+    @someOtherException ← Exception new initWith "my other custom error".\
+    @yetAnotherException ← Exception new initWith "another custom error that is only caught by the catch all branch".\
     try ( 1 print. throw yetAnotherException. 2 print )\
     catch ( someOtherException ) handle ( " caught the error the first time around" )\
     catch ( someException ) handle ( " caught the error the second time around" )\
     catch all handle (" catch all branch") print'
   '1 catch all branch'
 
-  #'@ a <- 5 someUndefinedMessage'
+  #'@ a ← 5 someUndefinedMessage'
   #'7'
 
 ]

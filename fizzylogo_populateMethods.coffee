@@ -32,7 +32,7 @@ addDefaultMethods = (classToAddThemTo) ->
     flParse "code eval"
 
   classToAddThemTo.addNativeMethod \
-    (flParse "idict <- ( @ variable )"),
+    (flParse "idict ← ( @ variable )"),
     (context) ->
       variable = context.tempVariablesDict[ValidIDfromString "variable"]
       console.log "idict adding variable: @flClass.value " + @flClass.value
@@ -47,7 +47,7 @@ addDefaultMethods = (classToAddThemTo) ->
       return @
 
   classToAddThemTo.addNativeMethod \
-    (flParse "cvar ( @ variable ) <- ( value )"),
+    (flParse "cvar ( @ variable ) ← ( value )"),
     (context) ->
       variable = context.tempVariablesDict[ValidIDfromString "variable"]
       value = context.tempVariablesDict[ValidIDfromString "value"]
@@ -65,7 +65,7 @@ addDefaultMethods = (classToAddThemTo) ->
       return @
 
   classToAddThemTo.addNativeMethod \
-    (flParse "cvarEvalParams ( variable ) <- ( value )"),
+    (flParse "cvarEvalParams ( variable ) ← ( value )"),
     (context) ->
       variable = context.tempVariablesDict[ValidIDfromString "variable"]
       value = context.tempVariablesDict[ValidIDfromString "value"]
@@ -149,7 +149,7 @@ for eachClass in allClasses
 # Atom ---------------------------------------------------------------------------
 
 FLAtom.addNativeMethod \
-  (flParse "<- ( valueToAssign )"),
+  (flParse "← ( valueToAssign )"),
   (context) ->
     valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
 
@@ -179,10 +179,10 @@ FLAtom.addNativeMethod \
 FLTo.addNativeMethod \
   (flParse "( @ functionObjectName ) ( @ signature ) ( @ functionBody )"),
   flParse \
-    "@TempClass <- Class new.\
+    "@TempClass ← Class new.\
     tempClass answerEvalParams (signature) by (functionBody).\
-    @functionObject <- TempClass new.\
-    WorkSpace cvarEvalParams (functionObjectName) <- functionObject"
+    @functionObject ← TempClass new.\
+    WorkSpace cvarEvalParams (functionObjectName) ← functionObject"
 
 # Class -------------------------------------------------------------------------
 
@@ -307,30 +307,30 @@ FLNumber.addNativeMethod \
 
 FLNumber.addNativeMethod \
   (flParse "increment"),
-  flParse "self <- self plus 1"
+  flParse "self ← self plus 1"
 
 FLNumber.addNativeMethod \
   (flParse "factorial"),
-  flParse "( self == 0 ) => ( 1 ) ( self minus 1 ) factorial * self"
+  flParse "( self == 0 ) ⇒ ( 1 ) ( self minus 1 ) factorial * self"
 
 FLNumber.addNativeMethod \
   (flParse "factorialtwo"),
-  flParse "( self == 0 ) => ( 1 ) self * ( ( self minus 1 ) factorial )"
+  flParse "( self == 0 ) ⇒ ( 1 ) self * ( ( self minus 1 ) factorial )"
 
 FLNumber.addNativeMethod \
   (flParse "factorialthree"),
-  flParse "( self == 0 ) => ( 1 ) (@temp <- self. ( self minus 1 ) factorial * temp )"
+  flParse "( self == 0 ) ⇒ ( 1 ) (@temp ← self. ( self minus 1 ) factorial * temp )"
 
 FLNumber.addNativeMethod \
   (flParse "factorialfour"),
   flParse \
-    "( self == 0 ) => ( 1 ) (((((@temp <- self)))).\
+    "( self == 0 ) ⇒ ( 1 ) (((((@temp ← self)))).\
     ( self minus 1 ) factorial * temp )"
 
 FLNumber.addNativeMethod \
   (flParse "factorialfive"),
   flParse \
-    "( self == 0 ) => ( 1 ) (1 plus 1.((((@temp <- self)))).\
+    "( self == 0 ) ⇒ ( 1 ) (1 plus 1.((((@temp ← self)))).\
     ( self minus 1 ) factorial * temp )"
 
 FLNumber.addNativeMethod \
@@ -368,7 +368,7 @@ FLNumber.addNativeMethod \
   (flParse "times ( @ loopCode )"),
   (context) ->
     loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
-    console.log "FLNumber => DO loop code is: " + loopCode.print()
+    console.log "FLNumber ⇒ DO loop code is: " + loopCode.print()
 
 
     for i in [0...@value]
@@ -383,7 +383,7 @@ FLNumber.addNativeMethod \
           toBeReturned.beingThrown = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
-          console.log "Do => the loop exited with Done "
+          console.log "Do ⇒ the loop exited with Done "
           break
 
     return toBeReturned
@@ -399,7 +399,7 @@ FLNumber.addNativeMethod \
       return FLBoolean.createNew false
 
 FLNumber.addNativeMethod \
-  (flParse "<- ( valueToAssign )"),
+  (flParse "← ( valueToAssign )"),
   (context) ->
     valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
     @value = valueToAssign.value
@@ -421,18 +421,18 @@ FLBoolean.addNativeMethod \
     return FLBoolean.createNew @value and operandum.value
 
 FLBoolean.addNativeMethod \
-  (flParse "=> ( @ trueBranch )"),
+  (flParse "⇒ ( @ trueBranch )"),
   (context) ->
     trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
-    console.log "FLBoolean => , predicate value is: " + @value
+    console.log "FLBoolean ⇒ , predicate value is: " + @value
 
     if @value
       toBeReturned = (trueBranch.eval context)[0].returned
       flContexts.pop()
 
-      console.log "FLBoolean => returning result of true branch: " + toBeReturned
-      console.log "FLBoolean => remaining message after true branch: "
-      console.log "FLBoolean => message length:  "
+      console.log "FLBoolean ⇒ returning result of true branch: " + toBeReturned
+      console.log "FLBoolean ⇒ remaining message after true branch: "
+      console.log "FLBoolean ⇒ message length:  "
 
       # in this context we only have visibility of the true branch
       # but we have to make sure that in the context above, the false
@@ -544,18 +544,18 @@ FLRepeat1.addNativeMethod \
   (flParse "( @ loopCode )"),
   (context) ->
     loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
-    console.log "FLRepeat1 => loop code is: " + loopCode.print()
+    console.log "FLRepeat1 ⇒ loop code is: " + loopCode.print()
 
     while true
       toBeReturned = (loopCode.eval context)[0].returned
 
       flContexts.pop()
 
-      console.log "Repeat1 => returning result after loop cycle: " + toBeReturned
-      console.log "Repeat1 => returning result CLASS after loop cycle: "
-      console.log "Repeat1 => remaining message after loop cycle: "
-      console.log "Repeat1 => message length:  "
-      console.log "Repeat1 => did I receive a Done? " + (if toBeReturned?.flClass == FLDoneClass then "yes" else "no")
+      console.log "Repeat1 ⇒ returning result after loop cycle: " + toBeReturned
+      console.log "Repeat1 ⇒ returning result CLASS after loop cycle: "
+      console.log "Repeat1 ⇒ remaining message after loop cycle: "
+      console.log "Repeat1 ⇒ message length:  "
+      console.log "Repeat1 ⇒ did I receive a Done? " + (if toBeReturned?.flClass == FLDoneClass then "yes" else "no")
 
       # catch any thrown "done" object, used to
       # exit from a loop.
@@ -564,7 +564,7 @@ FLRepeat1.addNativeMethod \
           toBeReturned.beingThrown = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
-          console.log "Repeat1 => the loop exited with Done "
+          console.log "Repeat1 ⇒ the loop exited with Done "
           break
 
     return toBeReturned
@@ -575,18 +575,18 @@ FLRepeat2.addNativeMethod \
   (flParse "( @ loopCode )"),
   (context) ->
     loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
-    console.log "FLRepeat1 => loop code is: " + loopCode.print()
+    console.log "FLRepeat1 ⇒ loop code is: " + loopCode.print()
 
     while true
       toBeReturned = (loopCode.eval context)[0].returned
 
       flContexts.pop()
 
-      console.log "Repeat1 => returning result after loop cycle: " + toBeReturned
-      console.log "Repeat1 => returning result CLASS after loop cycle: "
-      console.log "Repeat1 => remaining message after loop cycle: "
-      console.log "Repeat1 => message length:  "
-      console.log "Repeat1 => did I receive a Done? " + (if toBeReturned?.flClass == FLDoneClass then "yes" else "no")
+      console.log "Repeat1 ⇒ returning result after loop cycle: " + toBeReturned
+      console.log "Repeat1 ⇒ returning result CLASS after loop cycle: "
+      console.log "Repeat1 ⇒ remaining message after loop cycle: "
+      console.log "Repeat1 ⇒ message length:  "
+      console.log "Repeat1 ⇒ did I receive a Done? " + (if toBeReturned?.flClass == FLDoneClass then "yes" else "no")
 
       # catch any thrown "done" object, used to
       # exit from a loop.
@@ -595,7 +595,7 @@ FLRepeat2.addNativeMethod \
           toBeReturned.beingThrown = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
-          console.log "Repeat1 => the loop exited with Done "
+          console.log "Repeat1 ⇒ the loop exited with Done "
           break
 
     context.findAnotherReceiver = true
@@ -623,7 +623,7 @@ FLTry.addNativeMethod \
 # For -----------------------------------------------------------------------------
 
 FLFor.addNativeMethod \
-  (flParse "( @ loopVar ) <- ( startIndex ) to ( endIndex ) do ( @ loopCode )"),
+  (flParse "( @ loopVar ) ← ( startIndex ) to ( endIndex ) do ( @ loopCode )"),
   (context) ->
     loopVar = context.tempVariablesDict[ValidIDfromString "loopVar"]
     startIndex = context.tempVariablesDict[ValidIDfromString "startIndex"]
@@ -636,10 +636,10 @@ FLFor.addNativeMethod \
     forContext.self.flClass.tempVariables = forContext.self.flClass.tempVariables.flListImmutablePush loopVar
     flContexts.jsArrayPush forContext
 
-    console.log "FLFor => loop code is: " + loopCode.print()
+    console.log "FLFor ⇒ loop code is: " + loopCode.print()
 
     for i in [startIndex.value..endIndex.value]
-      console.log "FLFor => loop iterating variable to " + i
+      console.log "FLFor ⇒ loop iterating variable to " + i
 
       forContext.tempVariablesDict[ValidIDfromString loopVarName] = FLNumber.createNew i
 
@@ -654,7 +654,7 @@ FLFor.addNativeMethod \
           toBeReturned.beingThrown = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
-          console.log "For => the loop exited with Done "
+          console.log "For ⇒ the loop exited with Done "
           break
 
     flContexts.pop()

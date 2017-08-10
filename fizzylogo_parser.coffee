@@ -3,6 +3,8 @@ tokenizeCommand = (command) ->
   # separate parens
   command = command.replace /\(/g, " ( "
   command = command.replace /\)/g, " ) "
+
+  # this is the statement separator
   command = command.replace /\./g, " . "
   
   # separate identifiers
@@ -58,6 +60,7 @@ linearize = (code) ->
     difference = startOfThisLine.length - startOfPreviousLine.length
     console.log "linearize startOfThisLine: " + startOfThisLine + " " + startOfThisLine.length + " difference: " + difference
     if difference == 0
+      # this is the statement separator
       outputSource += " . " + line
     else if difference > 0
       console.log "linearize adding " + (difference+1) + " ( "

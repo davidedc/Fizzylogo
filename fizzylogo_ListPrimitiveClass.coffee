@@ -230,7 +230,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
           restOfMessage = returnedMessage
 
           # this happens for example in the "if" statement
-          # (actually called => ). If the true branch is executed,
+          # (actually called ⇒ ). If the true branch is executed,
           # then everything that comes afterwards must be
           # skipped.
           if returnedContext.exhaustPreviousContextMessage == true
