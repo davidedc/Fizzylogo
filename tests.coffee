@@ -310,6 +310,8 @@ tests = [
   @a←5
 
   repeat
+  ﹍forever
+  do
   ﹍(a==0)⇒
   ﹍﹍done
   ﹍@a←a minus 1
@@ -322,6 +324,8 @@ tests = [
   a=5
 
   repeat
+  ﹍forever
+  do
   ﹍(a==0)⇒
   ﹍﹍done
   ﹍a=a minus 1
@@ -329,6 +333,18 @@ tests = [
   a print
   """
   "0"
+
+  """
+  a=5
+
+  repeat
+  ﹍2
+  do
+  ﹍a=a minus 1
+
+  a print
+  """
+  "3"
 
 
   "@a←5.repeat1((a==0)⇒(done)@a←a minus 1)print"
@@ -420,11 +436,23 @@ tests = [
   "(4*2)times(1print)"
   "11111111"
 
-  "for k←(1)to(10)do(k print)"
+  "for k from(1)to(10)do(k print)"
   "12345678910"
 
-  "for k←1to 10do(k print)"
+  "for k from 1to 10do(k print)"
   "12345678910"
+
+  """
+  for k from
+  ﹍1
+  to
+  ﹍10
+  do
+  ﹍k print
+  "done" print
+  """
+  "12345678910done"
+
 
   "8 unintelligibleMessage"
   "! message was not understood: ( unintelligibleMessage )"
@@ -607,7 +635,9 @@ for i in [0...tests.length] by 2
     [testBody, testResult] = tests[i .. i + 1]
     environmentPrintout = ""
     environmentErrors = ""
-    console.log "starting test: " + (i/2+1) + ": " + testBody
+
+    testBodyMultiline = testBody.replace /\n/g, ' ⏎ '
+    console.log "starting test: " + (i/2+1) + ": " + testBodyMultiline
     
     parsed = flParse testBody
 
@@ -640,6 +670,7 @@ for i in [0...tests.length] by 2
       "repeat1", FLRepeat1.createNew()
       "done", FLDone.createNew()
 
+      "forever", FLForever.createNew()
       "repeat", FLRepeat2.createNew()
 
       "try", FLTry.createNew()
@@ -686,6 +717,5 @@ for i in [0...tests.length] by 2
     if environmentPrintout + environmentErrors == testResult
       console.log "...test " + (i/2+1) + " OK, obtained: " + environmentPrintout + environmentErrors
     else
-      testBody = testBody.replace /\n/g, ' ⏎ '
-      console.log "...test " + (i/2+1) + " FAIL, test: " + testBody + " obtained: " + environmentPrintout + environmentErrors + " expected: " + testResult
+      console.log "...test " + (i/2+1) + " FAIL, test: " + testBodyMultiline + " obtained: " + environmentPrintout + environmentErrors + " expected: " + testResult
 

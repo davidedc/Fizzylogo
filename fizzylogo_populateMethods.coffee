@@ -399,6 +399,7 @@ FLNumber.addNativeMethod \
           console.log "Do ⇒ the loop exited with Done "
           break
 
+    context.findAnotherReceiver = true
     return toBeReturned
 
 
@@ -585,12 +586,19 @@ FLRepeat1.addNativeMethod \
 # Repeat2 -------------------------------------------------------------------------
 
 FLRepeat2.addNativeMethod \
-  (flParse "( @ loopCode )"),
+  (flParse "(howManyTimes) do ( @ loopCode )"),
   (context) ->
+    howManyTimes = context.tempVariablesDict[ValidIDfromString "howManyTimes"]
     loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
     console.log "FLRepeat1 ⇒ loop code is: " + loopCode.print()
 
-    while true
+    if howManyTimes.flClass == FLForever
+      limit = Number.MAX_SAFE_INTEGER
+    else
+      limit = howManyTimes.value
+
+
+    for i in [0...limit]
       toBeReturned = (loopCode.eval context, loopCode)[0].returned
 
       flContexts.pop()
@@ -636,7 +644,7 @@ FLTry.addNativeMethod \
 # For -----------------------------------------------------------------------------
 
 FLFor.addNativeMethod \
-  (flParse "( @ loopVar ) ← ( startIndex ) to ( endIndex ) do ( @ loopCode )"),
+  (flParse "( @ loopVar ) from ( startIndex ) to ( endIndex ) do ( @ loopCode )"),
   (context) ->
     loopVar = context.tempVariablesDict[ValidIDfromString "loopVar"]
     startIndex = context.tempVariablesDict[ValidIDfromString "startIndex"]
@@ -672,5 +680,6 @@ FLFor.addNativeMethod \
 
     flContexts.pop()
 
+    context.findAnotherReceiver = true
     return toBeReturned
 
