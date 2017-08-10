@@ -185,7 +185,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
           # sent the remaining part to such reult. This is why
           # we have to keep iterating until the whole message is consumed
           
-          [returnedContext, returnedMessage] = receiver.progressWithNonEmptyMessage restOfMessage, theContext
+          [returnedContext, returnedMessage] = receiver.findSignatureBindParamsAndMakeCall restOfMessage, theContext
 
           if !returnedContext?
             returnedContext = theContext

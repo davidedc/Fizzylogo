@@ -11,7 +11,12 @@ class FLObjects
     theContext.returned = @
     return [theContext]
 
-  findSignatureBindParamsAndMakeCall: (theContext, methodInvocationToBeChecked) ->
+  # Note that only part of the message might be consumed
+  # "self" remains the same since we are still in the
+  # same "method call" and the same "object". I.e. this
+  # is not a method call (although it might lead to one),
+  # this is progressing within an existing call
+  findSignatureBindParamsAndMakeCall: (methodInvocationToBeChecked, theContext) ->
         console.log "evaluation " + indentation() + "  !!! looking up method invocation " + methodInvocationToBeChecked.print() + " with signatures!"
         console.log "evaluation " + indentation() + "  !!! looking up method invocation, is method empty? " + methodInvocationToBeChecked.isEmpty()
 
@@ -212,28 +217,6 @@ class FLObjects
       contextToBeReturned = theContext
 
     return contextToBeReturned
-
-
-  # Note that only part of the message might be consumed
-  # "self" remains the same since we are still in the
-  # same "method call" and the same "object". I.e. this
-  # is not a method call (although it might lead to one),
-  # this is progressing within an existing call
-  progressWithNonEmptyMessage: (message, theContext) ->
-
-    [toBeReturned, returnedMessage] = @findSignatureBindParamsAndMakeCall theContext, message
-    console.log "evaluation " + indentation() + "after having sent message:  and PC: "
-
-    # "findSignatureBindParamsAndMakeCall" has already done the job of
-    # making the call and fixing newContext's PC and
-    # updating the return value, we are done here
-
-
-    console.log "evaluation " + indentation() + "  progressWithNonEmptyMessage - eval returned: " + toBeReturned
-    #console.dir toBeReturned
-    console.log "evaluation " + indentation() + "  progressWithNonEmptyMessage - returned: " + toBeReturned
-    #console.dir toBeReturned
-    return [toBeReturned, returnedMessage]
 
 
 class FLPrimitiveObjects extends FLObjects
