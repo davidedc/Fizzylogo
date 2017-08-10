@@ -7,12 +7,6 @@ class FLTryClass extends FLAnonymousClass
 
     toBeReturned.printForList = toBeReturned.print
 
-    toBeReturned.isEvaluatingParam = ->
-      return false
-
-    toBeReturned.getParamAtom = ->
-      return @
-
     return toBeReturned
 
 FLTry = new FLTryClass() # this is a class, an anonymous class

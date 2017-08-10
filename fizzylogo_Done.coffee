@@ -9,12 +9,6 @@ class FLDoneClass extends FLAnonymousClass
 
     toBeReturned.printForList = toBeReturned.print
 
-    toBeReturned.isEvaluatingParam = ->
-      return false
-
-    toBeReturned.getParamAtom = ->
-      return @
-
     toBeReturned.eval = (theContext) ->
       console.log "evaling Done object"
       @beingThrown = true

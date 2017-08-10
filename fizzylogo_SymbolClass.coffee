@@ -12,12 +12,6 @@ class FLSymbolClass extends FLAnonymousClass
 
     toBeReturned.printForList = toBeReturned.print
 
-    toBeReturned.isEvaluatingParam = ->
-      return false
-
-    toBeReturned.getParamAtom = ->
-      return @
-
     return toBeReturned
 
 FLSymbol = new FLSymbolClass() # this is a class, an anonymous class

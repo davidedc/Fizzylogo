@@ -7,12 +7,6 @@ class FLThrowClass extends FLAnonymousClass
 
     toBeReturned.printForList = toBeReturned.print
 
-    toBeReturned.isEvaluatingParam = ->
-      return false
-
-    toBeReturned.getParamAtom = ->
-      return @
-
     return toBeReturned
 
 FLThrow = new FLThrowClass() # this is a class, an anonymous class

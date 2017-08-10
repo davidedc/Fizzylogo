@@ -7,12 +7,6 @@ class FLForClass extends FLAnonymousClass
 
     toBeReturned.printForList = toBeReturned.print
 
-    toBeReturned.isEvaluatingParam = ->
-      return false
-
-    toBeReturned.getParamAtom = ->
-      return @
-
     return toBeReturned
 
 FLFor = new FLForClass() # this is a class, an anonymous class

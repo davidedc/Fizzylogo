@@ -9,12 +9,6 @@ class FLToClass extends FLAnonymousClass
 
     toBeReturned.printForList = toBeReturned.print
 
-    toBeReturned.isEvaluatingParam = ->
-      return false
-
-    toBeReturned.getParamAtom = ->
-      return @
-
     return toBeReturned
 
 FLTo = new FLToClass() # this is a class, an anonymous class

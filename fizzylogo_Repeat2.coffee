@@ -7,12 +7,6 @@ class FLRepeat2Class extends FLAnonymousClass
 
     toBeReturned.printForList = toBeReturned.print
 
-    toBeReturned.isEvaluatingParam = ->
-      return false
-
-    toBeReturned.getParamAtom = ->
-      return @
-
     return toBeReturned
 
 FLRepeat2 = new FLRepeat2Class() # this is a class, an anonymous class
