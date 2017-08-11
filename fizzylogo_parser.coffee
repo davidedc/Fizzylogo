@@ -84,7 +84,7 @@ flParse = (command) ->
   console.log "stringsTable: " + stringsTable
 
   command = linearize command
-  console.log "linearize command: " + command
+  console.log "linearized command: " + command
 
   # let's normalise the input string so we can
   # tokenise it just by looking at the spaces.

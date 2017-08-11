@@ -261,10 +261,11 @@ FLException.addNativeMethod \
 
     if @beingThrown
       @beingThrown = false
-      console.log "catch:caught right exception"
+      console.log "catch: got right exception, catching it"
       toBeReturned = (errorHandle.eval context, errorHandle)[0].returned
+      context.findAnotherReceiver = true
     else
-      console.log "catch: caught wrong exception, propagating it"
+      console.log "catch: got wrong exception, propagating it"
       toBeReturned = @
 
     return toBeReturned
@@ -279,10 +280,11 @@ FLException.addNativeMethod \
 
     if @beingThrown and @ == theError
       @beingThrown = false
-      console.log "catch:caught right exception"
+      console.log "catch: got right exception, catching it"
       toBeReturned = (errorHandle.eval context, errorHandle)[0].returned
+      context.findAnotherReceiver = true
     else
-      console.log "catch: caught wrong exception, propagating it"
+      console.log "catch: got wrong exception, propagating it"
       toBeReturned = @
 
     return toBeReturned
@@ -678,6 +680,25 @@ FLTry.addNativeMethod \
     code = context.tempVariablesDict[ValidIDfromString "code"]
     toBeReturned = (code.eval context, code)[0].returned
     return toBeReturned
+
+# Fake Catch -----------------------------------------------------------------------------
+# the catch object doesn't do the real catch, that's done
+# by the catch "as message". This one just consumes all the
+# catches after a real catch has happened. See the class
+# definition for explained example.
+
+FLFakeCatch.addNativeMethod \
+  (flParse "all handle ( @ errorHandle )"),
+  (context) ->
+    context.findAnotherReceiver = true
+    return @
+
+FLFakeCatch.addNativeMethod \
+  (flParse "( theError ) handle ( @ errorHandle )"),
+  (context) ->
+    context.findAnotherReceiver = true
+    return @
+
 
 # For -----------------------------------------------------------------------------
 

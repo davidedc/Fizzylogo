@@ -473,6 +473,10 @@ tests = [
   "8 unintelligibleMessage"
   "! message was not understood: ( unintelligibleMessage )"
 
+  "@ a ← 5 someUndefinedMessage"
+  "! message was not understood: ( someUndefinedMessage )"
+
+
   "\"hello world\" print"
   "hello world"
 
@@ -576,12 +580,42 @@ tests = [
     catch ( someException ) handle ( \" caught the error I wanted\" print )"
   "1 caught the error I wanted"
 
+  """
+  someException = Exception new initWith "my custom error"
+  try
+  ﹍1 print
+  ﹍throw someException
+  ﹍2 print
+  catch
+  ﹍someException
+  handle
+  ﹍" caught the error I wanted" print
+  ". the end." print
+  """
+  "1 caught the error I wanted. the end."
+
   # thrown exception, note how the statement after the throw is not executed.
   "@someException ← Exception new initWith \"my custom error\".\
     @someOtherException ← Exception new initWith \"my other custom error\".\
     try ( 1 print. throw someException. 2 print )\
     catch ( someException ) handle ( \" caught the error I wanted\" print )"
   "1 caught the error I wanted"
+
+  # thrown exception, note how the statement after the throw is not executed.
+  """
+  someException = Exception new initWith "my custom error"
+  someOtherException = Exception new initWith "my other custom error"
+  try
+  ﹍1 print
+  ﹍throw someException
+  ﹍2 print
+  catch
+  ﹍someException
+  handle
+  ﹍" caught the error I wanted" print
+  ". the end." print
+  """
+  "1 caught the error I wanted. the end."
 
   # thrown exception, note how the statement after the throw is not executed.
   "@someException ← Exception new initWith \"my custom error\".\
@@ -591,47 +625,167 @@ tests = [
   "1"
 
   # thrown exception, note how the statement after the throw is not executed.
+  # also note that the thrown exceptions is thrown right up to
+  # the workspace, the ". the end." is not printed
+  """
+  someException = Exception new initWith "my custom error"
+  someOtherException = Exception new initWith "my other custom error"
+  try
+  ﹍1 print
+  ﹍throw someException
+  ﹍2 print
+  catch
+  ﹍someOtherException
+  handle
+  ﹍" caught the error I wanted" print
+  ". the end." print  
+  """
+  "1"
+
+  # thrown exception, note how the statement after the throw is not executed.
   "@someException ← Exception new initWith \"my custom error\".\
     @someOtherException ← Exception new initWith \"my other custom error\".\
     try ( 1 print. throw someOtherException. 2 print )\
-    catch ( someOtherException ) handle ( \" caught the error the first time around\" )\
-    catch ( someException ) handle ( \" caught the error the second time around\" ) print"
+    catch ( someOtherException ) handle ( \" caught the error the first time around\" print)\
+    catch ( someException ) handle ( \" caught the error the second time around\" print)"
   "1 caught the error the first time around"
+
+  """
+  someException = Exception new initWith "my custom error"
+  someOtherException = Exception new initWith "my other custom error"
+  try
+  ﹍1 print
+  ﹍throw someOtherException
+  ﹍2 print
+  catch
+  ﹍someOtherException
+  handle
+  ﹍" caught the error the first time around" print
+  catch
+  ﹍someException
+  handle
+  ﹍" caught the error the second time around" print
+  ". the end." print
+  """
+  "1 caught the error the first time around. the end."
 
   "@someException ← Exception new initWith \"my custom error\".\
     @someOtherException ← Exception new initWith \"my other custom error\".\
     try ( 1 print. throw someException. 2 print )\
-    catch ( someOtherException ) handle ( \" caught the error the first time around\" )\
-    catch ( someException ) handle ( \" caught the error the second time around\" ) print"
+    catch ( someOtherException ) handle ( \" caught the error the first time around\" print)\
+    catch ( someException ) handle ( \" caught the error the second time around\" print)"
   "1 caught the error the second time around"
+
+  """
+  someException = Exception new initWith "my custom error"
+  someOtherException = Exception new initWith "my other custom error"
+  try
+  ﹍1 print
+  ﹍throw someException
+  ﹍2 print
+  catch
+  ﹍someOtherException
+  handle
+  ﹍" caught the error the first time around" print
+  catch
+  ﹍someException
+  handle
+  ﹍" caught the error the second time around" print
+  ". the end." print
+  """
+  "1 caught the error the second time around. the end."
 
   # catch-all case 1
   "@someException ← Exception new initWith \"my custom error\".\
     @someOtherException ← Exception new initWith \"my other custom error\".\
     try ( 1 print. throw someOtherException. 2 print )\
-    catch ( someOtherException ) handle ( \" caught the error the first time around\" )\
-    catch ( someException ) handle ( \" caught the error the second time around\" )\
-    catch all handle (\" catch all branch\") print"
+    catch ( someOtherException ) handle ( \" caught the error the first time around\" print)\
+    catch ( someException ) handle ( \" caught the error the second time around\" print)\
+    catch all handle (\" catch all branch\" print)"
   "1 caught the error the first time around"
+
+  """
+  someException = Exception new initWith "my custom error"
+  someOtherException = Exception new initWith "my other custom error"
+  try
+  ﹍1 print
+  ﹍throw someOtherException
+  ﹍2 print
+  catch
+  ﹍someOtherException
+  handle
+  ﹍" caught the error the first time around" print
+  catch
+  ﹍someException
+  handle
+  ﹍" caught the error the second time around" print
+  catch all handle
+  ﹍" catch all branch" print
+  ". the end." print
+  """
+  "1 caught the error the first time around. the end."
 
   # catch-all case 2
   "@someException ← Exception new initWith \"my custom error\".\
     @someOtherException ← Exception new initWith \"my other custom error\".\
     try ( 1 print. throw someException. 2 print )\
-    catch ( someOtherException ) handle ( \" caught the error the first time around\" )\
-    catch ( someException ) handle ( \" caught the error the second time around\" )\
-    catch all handle (\" catch all branch\") print"
+    catch ( someOtherException ) handle ( \" caught the error the first time around\" print)\
+    catch ( someException ) handle ( \" caught the error the second time around\" print)\
+    catch all handle (\" catch all branch\" print)"
   "1 caught the error the second time around"
+
+  """
+  someException = Exception new initWith "my custom error"
+  someOtherException = Exception new initWith "my other custom error"
+  try
+  ﹍1 print
+  ﹍throw someException
+  ﹍2 print
+  catch
+  ﹍someOtherException
+  handle
+  ﹍" caught the error the first time around" print
+  catch
+  ﹍someException
+  handle
+  ﹍" caught the error the second time around" print
+  catch all handle
+  ﹍" catch all branch" print
+  ". the end." print
+  """
+  "1 caught the error the second time around. the end."
 
   # catch-all case 3
   "@someException ← Exception new initWith \"my custom error\".\
     @someOtherException ← Exception new initWith \"my other custom error\".\
     @yetAnotherException ← Exception new initWith \"another custom error that is only caught by the catch all branch\".\
     try ( 1 print. throw yetAnotherException. 2 print )\
-    catch ( someOtherException ) handle ( \" caught the error the first time around\" )\
-    catch ( someException ) handle ( \" caught the error the second time around\" )\
-    catch all handle (\" catch all branch\") print"
+    catch ( someOtherException ) handle ( \" caught the error the first time around\" print)\
+    catch ( someException ) handle ( \" caught the error the second time around\" print)\
+    catch all handle (\" catch all branch\" print)"
   "1 catch all branch"
+
+  """
+  someException = Exception new initWith "my custom error"
+  someOtherException = Exception new initWith "my other custom error"
+  yetAnotherException = Exception new initWith "another custom error that is only caught by the catch all branch"
+  try
+  ﹍1 print
+  ﹍throw yetAnotherException
+  ﹍2 print
+  catch
+  ﹍someOtherException
+  handle
+  ﹍" caught the error the first time around" print
+  catch
+  ﹍someException
+  handle
+  ﹍" caught the error the second time around" print
+  catch all handle
+  ﹍" catch all branch" print
+  ". the end." print
+  """
+  "1 catch all branch. the end."
 
   #@ a ← 5 someUndefinedMessage'
   #'7"
@@ -640,6 +794,8 @@ tests = [
 
 ###
 tests = [
+  #@ a ← 5 someUndefinedMessage'
+  #'7"
 ]
 ###
 
@@ -692,6 +848,7 @@ for i in [0...tests.length] by 2
 
       "try", FLTry.createNew()
       "throw", FLThrow.createNew()
+      "catch", FLFakeCatch.createNew()
 
       "to", FLTo.createNew()
 
