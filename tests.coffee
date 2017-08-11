@@ -1,21 +1,31 @@
-
-
-
-
 tests = [
 
+  # surprise! this language "chains" to the right
+  # so "streams" of things are run right to left. 
   "1plus 1 print"
   "1"
 
+  # parens can help
   "(1plus 1)print"
   "2"
 
+  # here "print" takes "print" and does
+  # nothing with it, so first (1 plus 1) is
+  # printed, and then the result of that is
+  # printed again.
   "(1plus 1)print print"
   "22"
 
+  # there are two ways to assign things, this is
+  # the most technically thorough but it's
+  # more difficult to decypher.
+  #
+  # The dot separates stataments.
   "@a ← \"test string\". @b ← a. @c ← @a. @a eval1 print.@b eval1 print.@c eval1 print"
   "test stringtest stringa"
 
+  # the equal sign is less technically thorough but
+  # it's obvious to the eye.
   "a=\"test string\".b=a.c=@a.a eval print.b eval print.c eval print"
   "test stringtest stringa"
 
