@@ -787,21 +787,17 @@ tests = [
   """
   "1 catch all branch. the end."
 
-  #@ a ← 5 someUndefinedMessage'
-  #'7"
-
 ]
 
 ###
 tests = [
-  #@ a ← 5 someUndefinedMessage'
-  #'7"
 ]
 ###
 
 flContexts = []
 rWorkspace = null
-
+OKs = 0
+FAILs = 0
 
 for i in [0...tests.length] by 2
     [testBody, testResult] = tests[i .. i + 1]
@@ -889,7 +885,10 @@ for i in [0...tests.length] by 2
 
     console.log "final return: " + returnedContext.returned?.value
     if environmentPrintout + environmentErrors == testResult
+      OKs++
       console.log "...test " + (i/2+1) + " OK, obtained: " + environmentPrintout + environmentErrors
     else
+      FAILs++
       console.log "...test " + (i/2+1) + " FAIL, test: " + testBodyMultiline + " obtained: " + environmentPrintout + environmentErrors + " expected: " + testResult
 
+console.log "all tests done. obtained " + OKs + " OKs and " + FAILs + " FAILs"
