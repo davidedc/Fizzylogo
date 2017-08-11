@@ -5,15 +5,9 @@ class FLForeverClass extends FLAnonymousClass
 
 
     toBeReturned.print = ->
-      return "Done_object"
+      return "Forever_object"
 
     toBeReturned.printForList = toBeReturned.print
-
-    toBeReturned.eval = (theContext) ->
-      console.log "evaling Done object"
-      @beingThrown = true
-      theContext.returned = @
-      return [theContext]
 
     return toBeReturned
 

@@ -11,7 +11,7 @@ class FLDoneClass extends FLAnonymousClass
 
     toBeReturned.eval = (theContext) ->
       console.log "evaling Done object"
-      @beingThrown = true
+      theContext.throwing = true
       theContext.returned = @
       return [theContext]
 

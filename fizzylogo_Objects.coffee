@@ -34,6 +34,7 @@ class FLObjects
 
         for eachSignatureIndex in [0...@flClass.msgPatterns.length]
           eachSignature = @flClass.msgPatterns[eachSignatureIndex]
+
           #console.log "evaluation " + indentation() + "  matching - checking if this signature matches: " + eachSignature.print()
           methodInvocation = methodInvocationToBeChecked
 
@@ -50,6 +51,13 @@ class FLObjects
 
           soFarEverythingMatched = true
           originalMethodInvocationStart = methodInvocation.cursorStart
+
+          # simple way to get "match all" signature
+          # to work.
+          if eachSignature.isMatchAllSignature()
+            eachSignature = FLList.emptyMessage()            
+            newContext.usingFallBackMatcher = true
+
           until eachSignature.isEmpty() or methodInvocation.isEmpty()
 
             console.log "evaluation " + indentation() + "  matching: - next signature piece: " + eachSignature.print() + " is atom: " + " with: " + methodInvocation.print()

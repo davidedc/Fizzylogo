@@ -26,14 +26,6 @@ addDefaultMethods = (classToAddThemTo) ->
     commonEvalFunction
 
   classToAddThemTo.addNativeMethod \
-    (flParse "catch all handle ( @ errorHandle )"),
-    (context) -> return @
-
-  classToAddThemTo.addNativeMethod \
-    (flParse "catch ( theError ) handle ( @ errorHandle )"),
-    (context) -> return @
-
-  classToAddThemTo.addNativeMethod \
     (flParse "'s (@code)"),
     flParse "code eval1"
 
@@ -257,16 +249,11 @@ FLException.addNativeMethod \
   (context) ->
     errorHandle = context.tempVariablesDict[ValidIDfromString "errorHandle"]
 
-    console.log "catch: being thrown? " + @beingThrown
+    console.log "catch: being thrown? " + context.throwing
 
-    if @beingThrown
-      @beingThrown = false
-      console.log "catch: got right exception, catching it"
-      toBeReturned = (errorHandle.eval context, errorHandle)[0].returned
-      context.findAnotherReceiver = true
-    else
-      console.log "catch: got wrong exception, propagating it"
-      toBeReturned = @
+    console.log "catch: got right exception, catching it"
+    toBeReturned = (errorHandle.eval context, errorHandle)[0].returned
+    context.findAnotherReceiver = true
 
     return toBeReturned
 
@@ -276,18 +263,26 @@ FLException.addNativeMethod \
     theError = context.tempVariablesDict[ValidIDfromString "theError"]
     errorHandle = context.tempVariablesDict[ValidIDfromString "errorHandle"]
 
-    console.log "catch: same as one to catch?" + (@ == theError) + " being thrown? " + @beingThrown
+    console.log "catch: same as one to catch?" + (@ == theError) + " being thrown? " + context.throwing
 
-    if @beingThrown and @ == theError
-      @beingThrown = false
+    if @ == theError
       console.log "catch: got right exception, catching it"
       toBeReturned = (errorHandle.eval context, errorHandle)[0].returned
       context.findAnotherReceiver = true
     else
       console.log "catch: got wrong exception, propagating it"
       toBeReturned = @
+      context.findAnotherReceiver = false
 
     return toBeReturned
+
+FLException.addNativeMethod \
+  (flParse "$$MATCHALL$$"),
+  (context) ->
+    console.log "exception - no more cacthes, has to be re-thrown"
+    context.throwing = true
+    return @
+
 
 # String -------------------------------------------------------------------------
 
@@ -395,7 +390,7 @@ FLNumber.addNativeMethod \
       # exit from a loop.
       if toBeReturned?
         if toBeReturned.flClass == FLDone
-          toBeReturned.beingThrown = false
+          context.throwing = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
           console.log "Do ⇒ the loop exited with Done "
@@ -526,7 +521,7 @@ FLList.addNativeMethod \
       # exit from a loop.
       if toBeReturned?
         if toBeReturned.flClass == FLDone
-          toBeReturned.beingThrown = false
+          context.throwing = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
           console.log "each... do loop exited with Done "
@@ -571,13 +566,13 @@ FLRepeat1.addNativeMethod \
       console.log "Repeat1 ⇒ returning result CLASS after loop cycle: "
       console.log "Repeat1 ⇒ remaining message after loop cycle: "
       console.log "Repeat1 ⇒ message length:  "
-      console.log "Repeat1 ⇒ did I receive a Done? " + (if toBeReturned?.flClass == FLDoneClass then "yes" else "no")
+      console.log "Repeat1 ⇒ did I receive a Done? " + (if toBeReturned?.flClass == FLDone then "yes" else "no")
 
       # catch any thrown "done" object, used to
       # exit from a loop.
       if toBeReturned?
         if toBeReturned.flClass == FLDone
-          toBeReturned.beingThrown = false
+          context.throwing = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
           console.log "Repeat1 ⇒ the loop exited with Done "
@@ -609,13 +604,14 @@ FLRepeat2.addNativeMethod \
       console.log "Repeat1 ⇒ returning result CLASS after loop cycle: "
       console.log "Repeat1 ⇒ remaining message after loop cycle: "
       console.log "Repeat1 ⇒ message length:  "
-      console.log "Repeat1 ⇒ did I receive a Done? " + (if toBeReturned?.flClass == FLDoneClass then "yes" else "no")
+      console.log "Repeat1 ⇒ did I receive a Done? " + (if toBeReturned?.flClass == FLDone then "yes" else "no")
+      console.log "Repeat1 ⇒ did I receive a thrown object? " + (if context.throwing then "yes" else "no")
 
       # catch any thrown "done" object, used to
       # exit from a loop.
       if toBeReturned?
         if toBeReturned.flClass == FLDone
-          toBeReturned.beingThrown = false
+          context.throwing = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
           console.log "Repeat1 ⇒ the loop exited with Done "
@@ -630,46 +626,78 @@ FLThrow.addNativeMethod \
   (flParse "( theError )"),
   (context) ->
     theError = context.tempVariablesDict[ValidIDfromString "theError"]
-    console.log "throwing " + theError.value
-    theError.beingThrown = true
+    console.log "throwing an error: " + theError.value
+    context.throwing = true
     return theError
 
-# IfThenElse -----------------------------------------------------------------------------
+# IfThen -----------------------------------------------------------------------------
 
-FLIfThenElse.addNativeMethod \
-  (flParse "( predicate ) then (@trueBranch) else (@falseBranch)"),
-  (context) ->
-    predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
-    trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
-    falseBranch = context.tempVariablesDict[ValidIDfromString "falseBranch"]
-    console.log "IfThenElse ⇒ , predicate value is: " + predicate.value
-
-    if predicate.value
-      toBeReturned = (trueBranch.eval context, trueBranch)[0].returned
-      flContexts.pop()
-    else
-      toBeReturned = (falseBranch.eval context, falseBranch)[0].returned
-      flContexts.pop()
-
-
-    context.findAnotherReceiver = true
-    return toBeReturned
-
-FLIfThenElse.addNativeMethod \
+FLIfThen.addNativeMethod \
   (flParse "( predicate ) then (@trueBranch)"),
   (context) ->
     predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
     trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
-    console.log "IfThenElse ⇒ , predicate value is: " + predicate.value
+    console.log "IfThen ⇒ , predicate value is: " + predicate.value
 
     if predicate.value
       toBeReturned = (trueBranch.eval context, trueBranch)[0].returned
       flContexts.pop()
+      context.findAnotherReceiver = true
     else
-      toBeReturned = context
+      toBeReturned = FLIfFallThrough.createNew()
 
+    return toBeReturned
+
+# FLIfFallThrough -----------------------------------------------------------------------------
+
+FLIfFallThrough.addNativeMethod \
+  (flParse "else if ( predicate ) then (@trueBranch)"),
+  (context) ->
+    predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
+    trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
+    console.log "IfThen ⇒ , predicate value is: " + predicate.value
+
+    if predicate.value
+      toBeReturned = (trueBranch.eval context, trueBranch)[0].returned
+      flContexts.pop()
+      context.findAnotherReceiver = true
+    else
+      toBeReturned = FLIfFallThrough.createNew()
+
+    return toBeReturned
+
+FLIfFallThrough.addNativeMethod \
+  (flParse "else (@trueBranch)"),
+  (context) ->
+    trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
+
+    toBeReturned = (trueBranch.eval context, trueBranch)[0].returned
+    flContexts.pop()
     context.findAnotherReceiver = true
     return toBeReturned
+
+FLIfFallThrough.addNativeMethod \
+  (flParse "$$MATCHALL$$"),
+  (context) ->
+    console.log "no more cases for the if"
+    context.findAnotherReceiver = true
+    return @
+
+
+# FakeElse -----------------------------------------------------------------------------
+
+FLFakeElse.addNativeMethod \
+  (flParse "else if ( predicate ) then (@trueBranch)"),
+  (context) ->
+    context.findAnotherReceiver = true
+    return @
+
+FLFakeElse.addNativeMethod \
+  (flParse "else (@trueBranch)"),
+  (context) ->
+    context.findAnotherReceiver = true
+    return @
+
 
 
 # Try -----------------------------------------------------------------------------
@@ -679,6 +707,15 @@ FLTry.addNativeMethod \
   (context) ->
     code = context.tempVariablesDict[ValidIDfromString "code"]
     toBeReturned = (code.eval context, code)[0].returned
+
+    # if there _is_ somethig being thrown, then
+    # we do not want another receiver, the thrown
+    # exception has to go through some catches
+    # hopefully.
+    if !context.throwing
+      context.findAnotherReceiver = true
+
+    context.throwing = false
     return toBeReturned
 
 # Fake Catch -----------------------------------------------------------------------------
@@ -731,7 +768,7 @@ FLFor.addNativeMethod \
       # exit from a loop.
       if toBeReturned?
         if toBeReturned.flClass == FLDone
-          toBeReturned.beingThrown = false
+          context.throwing = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
           console.log "For ⇒ the loop exited with Done "

@@ -150,7 +150,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
         while true
 
           # -------------------------------------------------
-          if returnedContext.findAnotherReceiver and !restOfMessage.isEmpty()
+          if returnedContext.findAnotherReceiver and !returnedContext.throwing and !restOfMessage.isEmpty()
             returnedContext.findAnotherReceiver = false
             returnedContext = returnedContext.previousContext
             findAnotherReceiver = true
@@ -161,10 +161,12 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
             [returnedContext, restOfMessage, receiver] = restOfMessage.findReceiver returnedContext
             console.log "found next receiver and now message is: " + restOfMessage.print()
             console.dir receiver
-            console.log "3 receiver.beingThrown: " + receiver?.beingThrown
-            if receiver? and receiver.beingThrown and restOfMessage.isEmpty()
+            console.log "3 returnedContext.throwing: " + returnedContext.throwing
+            if receiver? and returnedContext.throwing and restOfMessage.isEmpty()
+              console.log "throw escape 1"
               theContext.returned = receiver
               restOfMessage.exhaust()
+              theContext.throwing = true
               return [theContext, restOfMessage]
 
           if restOfMessage.isEmpty()
@@ -193,7 +195,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
 
 
           # where we detect an exception being thrown. there are two ways to detect it
-          # 1) the receiver we just sent a message to was a thrown exception and
+          # 1) the receiver we just sent a message to was a thrown exception
           #    and such exception didn't consume any messages
           # 2) what we just obtained is a thrown exception and
           #    there isn't any more message to send it
@@ -203,13 +205,14 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
           # it to run the exception handling code and to "stop" itself
           # from being thrown.
 
-          console.log "2 receiver.beingThrown: " + receiver.beingThrown
-          console.log "3 returnedContext.returned.beingThrown: " + returnedContext.returned.beingThrown
+          console.log "2 theContext.throwing: " + theContext.throwing
+          console.log "4 returnedContext.throwing: " + returnedContext.throwing
 
-          if (receiver.beingThrown and returnedMessage.length() == restOfMessage.length()) or
-            (returnedContext.returned.beingThrown and returnedMessage.isEmpty())
+          if returnedContext.throwing
+              console.log "throw escape 2"
               theContext.returned = returnedContext.returned
               restOfMessage.exhaust()
+              theContext.throwing = true
               return [theContext, restOfMessage]
 
 
@@ -221,7 +224,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
           # was no progress, i.e. the receiver can't do anything with the message
           # so it's time to break even if there is something left in the
           # message
-          if returnedMessage.length() == restOfMessage.length()
+          if returnedMessage.length() == restOfMessage.length() and !returnedContext.usingFallBackMatcher
             console.log "evaluation " + indentation() + " breaking because there was no progress"
             theContext.returned = receiver
             theContext.unparsedMessage = returnedMessage
@@ -268,6 +271,13 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
       if @length() >= 2
         if (@elementAt 1).flClass == FLAtom
           if (@elementAt 1).value == "=" or (@elementAt 1).value == "eval"
+            return true
+      return false
+
+    toBeReturned.isMatchAllSignature =  ->
+      if @length() == 1
+        if (@elementAt 0).flClass == FLAtom
+          if (@elementAt 0).value == "$$MATCHALL$$"
             return true
       return false
 

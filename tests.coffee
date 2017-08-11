@@ -215,6 +215,39 @@ tests = [
   "true⇒(1print)2print"
   "1"
 
+  """
+  a=5
+
+  if
+  ﹍a==5
+  then
+  ﹍"yes a is 5" print
+  """
+  "yes a is 5"
+
+  """
+  a=5
+
+  if
+  ﹍a==5
+  then
+  ﹍"yes a is 5" print
+  ". the end." print
+  """
+  "yes a is 5. the end."
+
+  """
+  a=0
+
+  if
+  ﹍a==5
+  then
+  ﹍"yes a is 5" print
+  "the end." print
+  """
+  "the end."
+
+
   "0factorial print"
   "1"
 
@@ -554,20 +587,20 @@ tests = [
   "@someException ← Exception new initWith \"my custom error\". someException print"
   "my custom error"
 
-  # wrong error to raise exceptions, they must be thrown
+  # wrong way to raise exceptions, they must be thrown
   "@someException ← Exception new initWith \"my custom error\".\
     try ( 1 print. someException )\
     catch ( someException ) handle ( \" caught the error I wanted\" print )"
   "1"
 
-  # wrong error to raise exceptions, they must be thrown
+  # wrong way to raise exceptions, they must be thrown
   "@someException ← Exception new initWith \"my custom error\".\
     @someOtherException ← Exception new initWith \"my other custom error\".\
     try ( 1 print. someException )\
     catch ( someException ) handle ( \" caught the error I wanted\" print )"
   "1"
 
-  # wrong error to raise exceptions, they must be thrown
+  # wrong way to raise exceptions, they must be thrown
   "@someException ← Exception new initWith \"my custom error\".\
     @someOtherException ← Exception new initWith \"my other custom error\".\
     try ( 1 print. someException )\
@@ -838,7 +871,8 @@ for i in [0...tests.length] by 2
       "repeat1", FLRepeat1.createNew()
       "done", FLDone.createNew()
 
-      "if", FLIfThenElse.createNew()
+      "if", FLIfThen.createNew()
+      "else", FLFakeElse.createNew()
       "forever", FLForever.createNew()
       "repeat", FLRepeat2.createNew()
 
