@@ -14,8 +14,8 @@ class FLAtomClass extends FLPrimitiveClasses
       # one can now just use "a=5" and "a eval"
       if remainingMessage? and remainingMessage.flClass == FLList
         console.log "remainingMessage: " + remainingMessage.print()
-        console.log "secondElementIsEqualOrEval: " + remainingMessage.secondElementIsEqualOrEval()
-        if remainingMessage.secondElementIsEqualOrEval()
+        console.log "secondElementIsEqual: " + remainingMessage.secondElementIsEqual()
+        if remainingMessage.secondElementIsEqual()
           theContext.returned = @
           return [theContext]
 

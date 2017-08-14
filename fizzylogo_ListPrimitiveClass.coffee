@@ -125,6 +125,15 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
 
       @toList()
 
+      # quick case: ((list)) just evals to (list)
+      # so: the amount of parentheses _is_ relevant.
+      # this is needed in the indented syntax for when you pass a list
+      # see for...each definition and examples.
+      if @isWrappedList()
+        theContext.returned = @unwrapList()
+        return [theContext, FLList.emptyMessage()]
+
+
       statements = @separateStatements()
 
       for eachStatement in statements
@@ -267,10 +276,10 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
         throw "no first element, array is empty"
       return @elementAt 0
 
-    toBeReturned.secondElementIsEqualOrEval =  ->
+    toBeReturned.secondElementIsEqual =  ->
       if @length() >= 2
         if (@elementAt 1).flClass == FLAtom
-          if (@elementAt 1).value == "=" or (@elementAt 1).value == "eval"
+          if (@elementAt 1).value == "="
             return true
       return false
 
@@ -281,8 +290,13 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
             return true
       return false
 
-    toBeReturned.unwrapList =  ->
+    toBeReturned.isWrappedList =  ->
       if @length() == 1 and @elementAt(0).flClass == FLList
+        return true
+      return false
+
+    toBeReturned.unwrapList =  ->
+      if @isWrappedList()
         return @elementAt 0
       return @
 

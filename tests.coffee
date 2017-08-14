@@ -30,8 +30,12 @@ tests = [
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
 
   # the equal sign is less technically thorough but
-  # it's obvious to the eye.
-  "a=\"test string\".b=a.c=@a.a eval print.b eval print.c eval print"
+  # it's move obvious from anybody coming from a mainstream language.
+  "a=\"test string\".b=a.c=@a.@a eval print.@b eval print.@c eval print"
+  "test stringtest stringa"
+
+  # the three "@x eval print" above are equivalent to "x print".
+  "a=\"test string\".b=a.c=@a.a print.b print.c print"
   "test stringtest stringa"
 
   # ---------------------------------------------------------------------------
@@ -114,14 +118,6 @@ tests = [
 
   # ---------------------------------------------------------------------------
   "7anotherPrint"
-  "7"
-
-  # ---------------------------------------------------------------------------
-  "7anotherPrinttwo"
-  "7"
-
-  # ---------------------------------------------------------------------------
-  "7anotherPrintthree"
   "7"
 
   # ---------------------------------------------------------------------------
@@ -757,6 +753,10 @@ tests = [
   "Hello Dave my dear friend"
 
   # ---------------------------------------------------------------------------
+  # note here how the list is evaluated. Because it's a "wrapped" list,
+  # its evaluation is the unwrapped content, so it's the list
+  # as you expect it.
+
   """
   for each word in
   ﹍("Hello " "Dave " "my " "dear " "friend")
@@ -764,6 +764,75 @@ tests = [
   ﹍word print
   """
   "Hello Dave my dear friend"
+
+  # ---------------------------------------------------------------------------
+  """
+  codeToBeRun =@
+  ﹍word print
+
+  for each word in
+  ﹍("Hello " "Dave " "my " "dear " "friend")
+  do
+  ﹍codeToBeRun eval
+  """
+  "Hello Dave my dear friend"
+
+  # ---------------------------------------------------------------------------
+  """
+  codeToBeRun =@
+  ﹍word print
+  myList =@ ("Hello " "Dave " "my " "dear " "friend")
+
+  for each word in
+  ﹍myList
+  do
+  ﹍codeToBeRun eval
+  """
+  "Hello Dave my dear friend"
+
+  # ---------------------------------------------------------------------------
+  """
+  codeToBeRun =@
+  ﹍word print
+  myList =@
+  ﹍"Hello " "Dave " "my " "dear " "friend"
+
+  for each word in
+  ﹍myList
+  do
+  ﹍codeToBeRun eval
+  """
+  "Hello Dave my dear friend"
+
+  # ---------------------------------------------------------------------------
+  # in this case "myList" ends up being a wrapped list i.e. ((wrapped))
+  # so, when the right-side is evaluated, it ends up being the normal
+  # un-wrapped contents, so it all works out without the @ after the =
+  """
+  codeToBeRun =@
+  ﹍word print
+  myList =
+  ﹍("Hello " "Dave " "my " "dear " "friend")
+
+  for each word in
+  ﹍myList
+  do
+  ﹍codeToBeRun eval
+  """
+  "Hello Dave my dear friend"
+
+  # ---------------------------------------------------------------------------
+  """
+  codeToBeRun =@
+  ﹍word print
+  myList = 9
+
+  for each word in
+  ﹍myList
+  do
+  ﹍codeToBeRun eval
+  """
+  "! exception: for...each expects a list"
 
   # ---------------------------------------------------------------------------
   "@someException ← Exception new initWith \"my custom error\". someException print"
@@ -864,7 +933,7 @@ tests = [
   ﹍" caught the error I wanted" print
   ". the end." print  
   """
-  "1"
+  "1! exception: my custom error"
 
   # ---------------------------------------------------------------------------
   # thrown exception, note how the statement after the throw is not executed.
@@ -1113,9 +1182,14 @@ for i in [0...tests.length] by 2
       console.log "evaluation " + indentation() + "no meaning found for: " + rWorkspace.lastUndefinedArom.value + unparsedPartOfMessage
       environmentErrors += "! no meaning found for: " + rWorkspace.lastUndefinedArom.value + unparsedPartOfMessage
       rWorkspace.lastUndefinedArom
-    else if returnedContext.unparsedMessage
-      console.log "evaluation " + indentation() + "message was not understood: " + returnedContext.unparsedMessage.print()
-      environmentErrors += "! message was not understood: " + returnedContext.unparsedMessage.print()
+    else
+      if returnedContext.throwing and returnedContext.returned.flClass == FLException
+        console.log "evaluation " + indentation() + "exception: " + returnedContext.returned.value
+        environmentErrors += "! exception: " + returnedContext.returned.value
+
+      if returnedContext.unparsedMessage
+        console.log "evaluation " + indentation() + "message was not understood: " + returnedContext.unparsedMessage.print()
+        environmentErrors += "! message was not understood: " + returnedContext.unparsedMessage.print()
 
 
     console.log "final return: " + returnedContext.returned?.value

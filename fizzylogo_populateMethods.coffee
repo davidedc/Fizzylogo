@@ -146,7 +146,11 @@ for eachClass in allClasses
 
 # Atom ---------------------------------------------------------------------------
 
-commonBackArrowAndEqualsFunction = (context) ->
+
+
+FLAtom.addNativeMethod \
+  (flParse "← ( valueToAssign )"),
+  (context) ->
     valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
 
     theAtomName = @value
@@ -167,14 +171,29 @@ commonBackArrowAndEqualsFunction = (context) ->
     console.log "evaluation " + indentation() + "stored value in dictionary"
     return valueToAssign
 
-
-FLAtom.addNativeMethod \
-  (flParse "← ( valueToAssign )"),
-  commonBackArrowAndEqualsFunction
-
 FLAtom.addNativeMethod \
   (flParse "= ( valueToAssign )"),
-  commonBackArrowAndEqualsFunction
+  (context) ->
+    valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
+
+    theAtomName = @value
+
+    console.log "evaluation " + indentation() + "assignment to atom " + theAtomName
+    console.log "evaluation " + indentation() + "value to assign to atom: " + theAtomName + " : " + valueToAssign.value
+
+    # this is the place where we come to create new temp variables
+    # and we can't create them in this very call context, that would
+    # be useless, we place it in the context of the _previous_ method call
+    topMostContextWithThisSelf = context.previousContext.topMostContextWithThisSelf()
+    dictToPutAtomIn = topMostContextWithThisSelf.lookUpAtomValuePlace @
+    if !dictToPutAtomIn?
+      dictToPutAtomIn = topMostContextWithThisSelf.createNonExistentValueLookup @
+
+    dictToPutAtomIn[ValidIDfromString theAtomName] = valueToAssign
+
+    console.log "evaluation " + indentation() + "stored value in dictionary"
+    context.findAnotherReceiver = true
+    return valueToAssign
 
 
 # Nil ---------------------------------------------------------------------------
@@ -304,14 +323,6 @@ FLNumber.addNativeMethod \
   flParse "self print"
 
 FLNumber.addNativeMethod \
-  (flParse "anotherPrinttwo"),
-  flParse "(self print)"
-
-FLNumber.addNativeMethod \
-  (flParse "anotherPrintthree"),
-  flParse "(((((((((self))) print))))))"
-
-FLNumber.addNativeMethod \
   (flParse "doublePrint"),
   flParse "self print print"
 
@@ -334,13 +345,13 @@ FLNumber.addNativeMethod \
 FLNumber.addNativeMethod \
   (flParse "factorialfour"),
   flParse \
-    "( self == 0 ) ⇒ ( 1 ) (((((@temp ← self)))).\
+    "( self == 0 ) ⇒ ( 1 ) (@temp ← self.\
     ( self minus 1 ) factorial * temp )"
 
 FLNumber.addNativeMethod \
   (flParse "factorialfive"),
   flParse \
-    "( self == 0 ) ⇒ ( 1 ) (1 plus 1.((((@temp ← self)))).\
+    "( self == 0 ) ⇒ ( 1 ) (1 plus 1.@temp ← self.\
     ( self minus 1 ) factorial * temp )"
 
 FLNumber.addNativeMethod \
@@ -778,17 +789,22 @@ FLFor.addNativeMethod \
     context.findAnotherReceiver = true
     return toBeReturned
 
+# bacause a ((wrappedList)) evaluates to (wrappedList)
+# you can pass a ((list)) as second param, so you can
+# pass (list) when you are in indented form, which makes
+# more sense to the user.
 FLFor.addNativeMethod \
-  (flParse "each ( @ variable ) in ( @ theList ) do ( @ code )"),
+  (flParse "each ( @ variable ) in ( theList ) do ( @ code )"),
   (context) ->
 
     variable = context.tempVariablesDict[ValidIDfromString "variable"]
     theList = context.tempVariablesDict[ValidIDfromString "theList"]
-
-    if theList.unwrapList?
-      theList = theList.unwrapList()
-
     code = context.tempVariablesDict[ValidIDfromString "code"]
+
+    if theList.flClass != FLList
+      context.throwing = true
+      return FLException.createNew "for...each expects a list"
+
 
     console.log "FLEach do on the list: " + theList.print()
 
@@ -798,6 +814,7 @@ FLFor.addNativeMethod \
     for i in [0...theList.value.length]
 
       newContext.tempVariablesDict[ValidIDfromString variable.value] = theList.elementAt i
+      console.log "FLEach do evaling...: " + code.print()
       toBeReturned = (code.eval newContext, code)[0].returned
 
       # catch any thrown "done" object, used to
