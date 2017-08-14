@@ -5,7 +5,7 @@ tokenizeCommand = (command) ->
   command = command.replace /\)/g, " ) "
 
   # this is the statement separator
-  command = command.replace /\./g, " . "
+  command = command.replace /;/g, " ; "
   
   # separate identifiers
   command = command.replace /([$A-Z_][0-9A-Z_$]*)/gi, " $1 "
@@ -67,7 +67,7 @@ linearize = (code) ->
     console.log "linearize startOfThisLine: " + startOfThisLine + " " + startOfThisLine.length + " difference: " + difference
     if difference == 0
       # this is the statement separator
-      outputSource += " . " + line
+      outputSource += " ; " + line
     else if difference > 0
       console.log "linearize adding " + (difference+1) + " ( "
       outputSource += (Array(difference+1).join "(") + line
@@ -107,8 +107,8 @@ flParse = (command) ->
   for eachToken in simpleTokenization
     console.log "eachToken: " + eachToken
 
-    if /^\.$/.test(eachToken)
-      console.log eachToken + " is . symbol"
+    if /^;$/.test(eachToken)
+      console.log eachToken + " is separator symbol"
       listsStack[listsStack.length-1] = listsStack[listsStack.length-1].flListImmutablePush RStatementSeparatorSymbol
     else if /\$STRINGS_TABLE_(\d+)/g.test(eachToken)
       console.log eachToken + " is a string literal"

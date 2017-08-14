@@ -24,68 +24,68 @@ tests = [
   # more difficult to decypher.
   #
   # The dot separates stataments.
-  "'a ← \"test string\". 'b ← a. 'c ← 'a. 'a eval1 print.'b eval1 print.'c eval1 print"
+  "'a ← \"test string\"; 'b ← a; 'c ← 'a; 'a eval1 print;'b eval1 print;'c eval1 print"
   "test stringtest stringa"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
 
   # the equal sign is less technically thorough but
   # it's move obvious from anybody coming from a mainstream language.
-  "a=\"test string\".b=a.c='a.'a eval print.'b eval print.'c eval print"
+  "a=\"test string\";b=a;c='a;'a eval print;'b eval print;'c eval print"
   "test stringtest stringa"
 
-  # the three "'x eval print" above are equivalent to "x print".
-  "a=\"test string\".b=a.c='a.a print.b print.c print"
+  # the three "'x eval print" above are equivalent to "x print"
+  "a=\"test string\";b=a;c='a;a print;b print;c print"
   "test stringtest stringa"
 
   # ---------------------------------------------------------------------------
-  "'a←5.a increment.'a←a plus 1.a print"
+  "'a←5;a increment;'a←a plus 1;a print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5.a increment.a=a plus 1.a print"
+  "a=5;a increment;a=a plus 1;a print"
   "7"
 
   # ---------------------------------------------------------------------------
   # testing crazy statement separations
 
-  "'a←5..a increment. ...  .'a←a plus 1.a print"
+  "'a←5;;a increment; ;;;  ;'a←a plus 1;a print"
   "7"
 
-  ".'a←5..a increment. ...  .'a←a plus 1.a print."
+  ";'a←5;;a increment; ;;;  ;'a←a plus 1;a print;"
   "7"
 
-  "..'a←5..a increment. ...  .'a←a plus 1.a print.."
+  ";;'a←5;;a increment; ;;;  ;'a←a plus 1;a print;;"
   "7"
 
-  ". .'a←5..a increment. ...  .'a←a plus 1.a print. ."
+  "; ;'a←5;;a increment; ;;;  ;'a←a plus 1;a print; ;"
   "7"
 
-  "...'a←5..a increment. ...  .'a←a plus 1.a print..."
-  "7"
-
-  # ---------------------------------------------------------------------------
-  "'a←5.'a←a plus 1.a increment print"
-  "7"
-
-  # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5.a=a plus 1.a increment print"
+  ";;;'a←5;;a increment; ;;;  ;'a←a plus 1;a print;;;"
   "7"
 
   # ---------------------------------------------------------------------------
-  "'a←5plus 1.a increment print"
+  "'a←5;'a←a plus 1;a increment print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5plus 1.a increment print"
+  "a=5;a=a plus 1;a increment print"
   "7"
 
   # ---------------------------------------------------------------------------
-  "'a←(5plus 1).a increment print"
+  "'a←5plus 1;a increment print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=(5plus 1).a increment print"
+  "a=5plus 1;a increment print"
+  "7"
+
+  # ---------------------------------------------------------------------------
+  "'a←(5plus 1);a increment print"
+  "7"
+
+  # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
+  "a=(5plus 1);a increment print"
   "7"
 
   # ---------------------------------------------------------------------------
@@ -93,27 +93,27 @@ tests = [
   "6"
 
   # ---------------------------------------------------------------------------
-  "'a←(4plus 1plus 1).a increment print"
+  "'a←(4plus 1plus 1);a increment print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=(4plus 1plus 1).a increment print"
+  "a=(4plus 1plus 1);a increment print"
   "7"
 
   # ---------------------------------------------------------------------------
-  "'a←(4plus(1plus 1)).a increment print"
+  "'a←(4plus(1plus 1));a increment print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=(4plus(1plus 1)).a increment print"
+  "a=(4plus(1plus 1));a increment print"
   "7"
 
   # ---------------------------------------------------------------------------
-  "'a←((4plus 1)plus(0plus 1)).a increment print"
+  "'a←((4plus 1)plus(0plus 1));a increment print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=((4plus 1)plus(0plus 1)).a increment print"
+  "a=((4plus 1)plus(0plus 1));a increment print"
   "7"
 
   # ---------------------------------------------------------------------------
@@ -175,11 +175,11 @@ tests = [
   "2"
 
   # ---------------------------------------------------------------------------
-  "'a←5.'b←'a.b print.a print"
+  "'a←5;'b←'a;b print;a print"
   "a5"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5.b='a.b print.a print"
+  "a=5;b='a;b print;a print"
   "a5"
 
   # ---------------------------------------------------------------------------
@@ -189,8 +189,8 @@ tests = [
   # ---------------------------------------------------------------------------
   # note how the first not understood
   # prevents any further statement to be
-  # executed.
-  "1 negate. 2print"
+  # executed
+  "1 negate; 2print"
   "! message was not understood: ( negate )"
 
   # ---------------------------------------------------------------------------
@@ -219,7 +219,7 @@ tests = [
   "! no meaning found for: nonExistingObject was sent message: empty message"
 
   # ---------------------------------------------------------------------------
-  "1 == 1 negate. 2print"
+  "1 == 1 negate; 2print"
   "2"
 
   # ---------------------------------------------------------------------------
@@ -386,19 +386,19 @@ tests = [
   "42"
 
   # ---------------------------------------------------------------------------
-  "'a←5.1printAFromDeeperCall"
+  "'a←5;1printAFromDeeperCall"
   "5"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5.1printAFromDeeperCall"
+  "a=5;1printAFromDeeperCall"
   "5"
 
   # ---------------------------------------------------------------------------
-  "'a←5.repeat1((a==0)⇒(done)'a←a minus 1).a print"
+  "'a←5;repeat1((a==0)⇒(done)'a←a minus 1);a print"
   "0"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5.repeat1((a==0)⇒(done)a=a minus 1).a print"
+  "a=5;repeat1((a==0)⇒(done)a=a minus 1);a print"
   "0"
 
   # ---------------------------------------------------------------------------
@@ -432,7 +432,7 @@ tests = [
   ﹍(a==0)⇒
   ﹍﹍done
   ﹍'a←a minus 1
-  .a print
+  ;a print
   """
   "0"
 
@@ -443,7 +443,7 @@ tests = [
   ﹍(a==0)⇒
   ﹍﹍done
   ﹍a=a minus 1
-  .a print
+  ;a print
   """
   "0"
 
@@ -510,30 +510,30 @@ tests = [
 
 
   # ---------------------------------------------------------------------------
-  "'a←5.repeat1((a==0)⇒(done)'a←a minus 1)print"
+  "'a←5;repeat1((a==0)⇒(done)'a←a minus 1)print"
   "Done_object"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5.repeat1((a==0)⇒(done)a=a minus 1)print"
+  "a=5;repeat1((a==0)⇒(done)a=a minus 1)print"
   "Done_object"
 
   # ---------------------------------------------------------------------------
   # "done" stop the execution from within a loop,
-  # nothing is executed after them.
-  "'a←5.repeat1((a==0)⇒(done. 2 print)'a←a minus 1).a print"
+  # nothing is executed after them
+  "'a←5;repeat1((a==0)⇒(done; 2 print)'a←a minus 1);a print"
   "0"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5.repeat1((a==0)⇒(done. 2 print)a=a minus 1).a print"
+  "a=5;repeat1((a==0)⇒(done; 2 print)a=a minus 1);a print"
   "0"
 
   # ---------------------------------------------------------------------------
-  "'a←5.repeat1\
+  "'a←5;repeat1\
     ((a==0)⇒(done with a plus 1)'a←a minus 1)print"
   "1"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5.repeat1\
+  "a=5;repeat1\
     ((a==0)⇒(done with a plus 1)a=a minus 1)print"
   "1"
 
@@ -542,11 +542,11 @@ tests = [
   "Class_object"
 
   # ---------------------------------------------------------------------------
-  "'something←3.something print"
+  "'something←3;something print"
   "3"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "something=3.something print"
+  "something=3;something print"
   "3"
 
   # ---------------------------------------------------------------------------
@@ -558,55 +558,55 @@ tests = [
   ""
 
   # ---------------------------------------------------------------------------
-  "'MyClass←Class new.\
-    MyClass answer(printtwo)by(self print).\
-    'myObject←MyClass new.myObject printtwo"
+  "'MyClass←Class new;\
+    MyClass answer(printtwo)by(self print);\
+    'myObject←MyClass new;myObject printtwo"
   "object_from_a_user_class"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "MyClass=Class new.\
-    MyClass answer(printtwo)by(self print).\
-    myObject=MyClass new.myObject printtwo"
+  "MyClass=Class new;\
+    MyClass answer(printtwo)by(self print);\
+    myObject=MyClass new;myObject printtwo"
   "object_from_a_user_class"
 
   # ---------------------------------------------------------------------------
-  "'false←true.false⇒(1print)2print"
+  "'false←true;false⇒(1print)2print"
   "1"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "false=true.false⇒(1print)2print"
+  "false=true;false⇒(1print)2print"
   "1"
 
   # ---------------------------------------------------------------------------
-  "'temp←true.'true←false.'false←temp.false⇒(1print)2print"
+  "'temp←true;'true←false;'false←temp;false⇒(1print)2print"
   "1"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "temp=true.true=false.false=temp.false⇒(1print)2print"
+  "temp=true;true=false;false=temp;false⇒(1print)2print"
   "1"
 
   # ---------------------------------------------------------------------------
-  "'temp←true.'true←false.'false←temp.true⇒(1print)2print"
+  "'temp←true;'true←false;'false←temp;true⇒(1print)2print"
   "2"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "temp=true.true=false.false=temp.true⇒(1print)2print"
+  "temp=true;true=false;false=temp;true⇒(1print)2print"
   "2"
 
   # ---------------------------------------------------------------------------
-  "'2←10.2print"
+  "'2←10;2print"
   "10"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "2=10.2print"
+  "2=10;2print"
   "10"
 
   # ---------------------------------------------------------------------------
-  "' @ ← '. @a←8.a print"
+  "' @ ← '; @a←8;a print"
   "8"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "@ = '. @a←8.a print"
+  "@ = '; @a←8;a print"
   "8"
 
   # ---------------------------------------------------------------------------
@@ -692,47 +692,47 @@ tests = [
   "( ( 1 ) ( 2 ) )"
 
   # ---------------------------------------------------------------------------
-  "'myList←List new.myList print.'myList←myList+2.myList print"
+  "'myList←List new;myList print;'myList←myList+2;myList print"
   "empty message( 2 )"
 
   # ---------------------------------------------------------------------------
-  "'myString←String new.myString print.\
-    'myString←myString+\"Hello \".\
-    'myString←myString+\"world\".\
+  "'myString←String new;myString print;\
+    'myString←myString+\"Hello \";\
+    'myString←myString+\"world\";\
     myString print"
   "Hello world"
 
   # ---------------------------------------------------------------------------
-  "'MyClass←Class new.MyClass idict←counter.\
-    MyClass answer(setCounterToTwo)by('counter←2).\
-    MyClass answer(printCounter)by(counter print).\
-    'myObject←MyClass new.myObject printCounter.\
-    myObject setCounterToTwo.myObject printCounter.\
-    'myObject2←MyClass new.myObject2 printCounter.\
-    myObject2 setCounterToTwo.myObject2 printCounter"
+  "'MyClass←Class new;MyClass idict←counter;\
+    MyClass answer(setCounterToTwo)by('counter←2);\
+    MyClass answer(printCounter)by(counter print);\
+    'myObject←MyClass new;myObject printCounter;\
+    myObject setCounterToTwo;myObject printCounter;\
+    'myObject2←MyClass new;myObject2 printCounter;\
+    myObject2 setCounterToTwo;myObject2 printCounter"
   "nil2nil2"
 
   # ---------------------------------------------------------------------------
-  "'MyClass←Class new.MyClass idict←counter.\
-    MyClass answer(setCounterToTwo)by('counter←2).\
-    'myObject←MyClass new.\
-    myObject setCounterToTwo.(myObject's counter)print"
+  "'MyClass←Class new;MyClass idict←counter;\
+    MyClass answer(setCounterToTwo)by('counter←2);\
+    'myObject←MyClass new;\
+    myObject setCounterToTwo;(myObject's counter)print"
   "2"
 
   # ---------------------------------------------------------------------------
-  "'MyClass←Class new.MyClass cvar classCounter ← 0.\
-    MyClass answer(incrementClassCounterByTwo)by('classCounter←classCounter plus 2).\
-    MyClass answer(printClassCounter)by(classCounter print).\
-    'myObject←MyClass new.myObject printClassCounter.\
-    myObject incrementClassCounterByTwo.\
-    myObject printClassCounter.\
-    'myObject2←MyClass new.myObject2 printClassCounter.\
-    myObject2 incrementClassCounterByTwo.\
+  "'MyClass←Class new;MyClass cvar classCounter ← 0;\
+    MyClass answer(incrementClassCounterByTwo)by('classCounter←classCounter plus 2);\
+    MyClass answer(printClassCounter)by(classCounter print);\
+    'myObject←MyClass new;myObject printClassCounter;\
+    myObject incrementClassCounterByTwo;\
+    myObject printClassCounter;\
+    'myObject2←MyClass new;myObject2 printClassCounter;\
+    myObject2 incrementClassCounterByTwo;\
     myObject2 printClassCounter"
   "0224"
 
   # ---------------------------------------------------------------------------
-  "to sayHello (withName (name)) do (\"Hello \" print. name print). sayHello withName \"Dave\""
+  "to sayHello (withName (name)) do (\"Hello \" print; name print); sayHello withName \"Dave\""
   "Hello Dave"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
@@ -740,7 +740,7 @@ tests = [
   to sayHello
   ﹍withName (name)
   do
-  ﹍"Hello " print. name print
+  ﹍"Hello " print; name print
   
   sayHello withName "Dave"
   """
@@ -748,7 +748,7 @@ tests = [
 
 
   # ---------------------------------------------------------------------------
-  "to sayHello2 ((name)) do (\"HELLO \" print. name print). sayHello2 \"Dave\""
+  "to sayHello2 ((name)) do (\"HELLO \" print; name print); sayHello2 \"Dave\""
   "HELLO Dave"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
@@ -759,7 +759,7 @@ tests = [
   to sayHello2
   ﹍(name)
   do
-  ﹍"HELLO " print. name print
+  ﹍"HELLO " print; name print
   
   sayHello2 "Dave"
   """
@@ -852,36 +852,36 @@ tests = [
   "! exception: for...each expects a list"
 
   # ---------------------------------------------------------------------------
-  "'someException ← Exception new initWith \"my custom error\". someException print"
+  "'someException ← Exception new initWith \"my custom error\"; someException print"
   "my custom error"
 
   # ---------------------------------------------------------------------------
   # wrong way to raise exceptions, they must be thrown
-  "'someException ← Exception new initWith \"my custom error\".\
-    try ( 1 print. someException )\
+  "'someException ← Exception new initWith \"my custom error\";\
+    try ( 1 print; someException )\
     catch ( someException ) handle ( \" caught the error I wanted\" print )"
   "1"
 
   # ---------------------------------------------------------------------------
   # wrong way to raise exceptions, they must be thrown
-  "'someException ← Exception new initWith \"my custom error\".\
-    'someOtherException ← Exception new initWith \"my other custom error\".\
-    try ( 1 print. someException )\
+  "'someException ← Exception new initWith \"my custom error\";\
+    'someOtherException ← Exception new initWith \"my other custom error\";\
+    try ( 1 print; someException )\
     catch ( someException ) handle ( \" caught the error I wanted\" print )"
   "1"
 
   # ---------------------------------------------------------------------------
   # wrong way to raise exceptions, they must be thrown
-  "'someException ← Exception new initWith \"my custom error\".\
-    'someOtherException ← Exception new initWith \"my other custom error\".\
-    try ( 1 print. someException )\
+  "'someException ← Exception new initWith \"my custom error\";\
+    'someOtherException ← Exception new initWith \"my other custom error\";\
+    try ( 1 print; someException )\
     catch ( someOtherException ) handle ( \" caught the error I wanted\" print )"
   "1"
 
   # ---------------------------------------------------------------------------
-  # thrown exception, note how the statement after the throw is not executed.
-  "'someException ← Exception new initWith \"my custom error\".\
-    try ( 1 print. throw someException. 2 print )\
+  # thrown exception, note how the statement after the throw is not executed
+  "'someException ← Exception new initWith \"my custom error\";\
+    try ( 1 print; throw someException; 2 print )\
     catch ( someException ) handle ( \" caught the error I wanted\" print )"
   "1 caught the error I wanted"
 
@@ -901,15 +901,15 @@ tests = [
   "1 caught the error I wanted. the end."
 
   # ---------------------------------------------------------------------------
-  # thrown exception, note how the statement after the throw is not executed.
-  "'someException ← Exception new initWith \"my custom error\".\
-    'someOtherException ← Exception new initWith \"my other custom error\".\
-    try ( 1 print. throw someException. 2 print )\
+  # thrown exception, note how the statement after the throw is not executed
+  "'someException ← Exception new initWith \"my custom error\";\
+    'someOtherException ← Exception new initWith \"my other custom error\";\
+    try ( 1 print; throw someException; 2 print )\
     catch ( someException ) handle ( \" caught the error I wanted\" print )"
   "1 caught the error I wanted"
 
   # ---------------------------------------------------------------------------
-  # thrown exception, note how the statement after the throw is not executed.
+  # thrown exception, note how the statement after the throw is not executed
   """
   someException = Exception new initWith "my custom error"
   someOtherException = Exception new initWith "my other custom error"
@@ -926,15 +926,15 @@ tests = [
   "1 caught the error I wanted. the end."
 
   # ---------------------------------------------------------------------------
-  # thrown exception, note how the statement after the throw is not executed.
-  "'someException ← Exception new initWith \"my custom error\".\
-    'someOtherException ← Exception new initWith \"my other custom error\".\
-    try ( 1 print. throw someException. 2 print )\
+  # thrown exception, note how the statement after the throw is not executed
+  "'someException ← Exception new initWith \"my custom error\";\
+    'someOtherException ← Exception new initWith \"my other custom error\";\
+    try ( 1 print; throw someException; 2 print )\
     catch ( someOtherException ) handle ( \" caught the error I wanted\" print )"
   "1"
 
   # ---------------------------------------------------------------------------
-  # thrown exception, note how the statement after the throw is not executed.
+  # thrown exception, note how the statement after the throw is not executed
   # also note that the thrown exceptions is thrown right up to
   # the workspace, the ". the end." is not printed
   """
@@ -953,10 +953,10 @@ tests = [
   "1! exception: my custom error"
 
   # ---------------------------------------------------------------------------
-  # thrown exception, note how the statement after the throw is not executed.
-  "'someException ← Exception new initWith \"my custom error\".\
-    'someOtherException ← Exception new initWith \"my other custom error\".\
-    try ( 1 print. throw someOtherException. 2 print )\
+  # thrown exception, note how the statement after the throw is not executed
+  "'someException ← Exception new initWith \"my custom error\";\
+    'someOtherException ← Exception new initWith \"my other custom error\";\
+    try ( 1 print; throw someOtherException; 2 print )\
     catch ( someOtherException ) handle ( \" caught the error the first time around\" print)\
     catch ( someException ) handle ( \" caught the error the second time around\" print)"
   "1 caught the error the first time around"
@@ -982,9 +982,9 @@ tests = [
   "1 caught the error the first time around. the end."
 
   # ---------------------------------------------------------------------------
-  "'someException ← Exception new initWith \"my custom error\".\
-    'someOtherException ← Exception new initWith \"my other custom error\".\
-    try ( 1 print. throw someException. 2 print )\
+  "'someException ← Exception new initWith \"my custom error\";\
+    'someOtherException ← Exception new initWith \"my other custom error\";\
+    try ( 1 print; throw someException; 2 print )\
     catch ( someOtherException ) handle ( \" caught the error the first time around\" print)\
     catch ( someException ) handle ( \" caught the error the second time around\" print)"
   "1 caught the error the second time around"
@@ -1011,9 +1011,9 @@ tests = [
 
   # ---------------------------------------------------------------------------
   # catch-all case 1
-  "'someException ← Exception new initWith \"my custom error\".\
-    'someOtherException ← Exception new initWith \"my other custom error\".\
-    try ( 1 print. throw someOtherException. 2 print )\
+  "'someException ← Exception new initWith \"my custom error\";\
+    'someOtherException ← Exception new initWith \"my other custom error\";\
+    try ( 1 print; throw someOtherException; 2 print )\
     catch ( someOtherException ) handle ( \" caught the error the first time around\" print)\
     catch ( someException ) handle ( \" caught the error the second time around\" print)\
     catch all handle (\" catch all branch\" print)"
@@ -1043,9 +1043,9 @@ tests = [
 
   # ---------------------------------------------------------------------------
   # catch-all case 2
-  "'someException ← Exception new initWith \"my custom error\".\
-    'someOtherException ← Exception new initWith \"my other custom error\".\
-    try ( 1 print. throw someException. 2 print )\
+  "'someException ← Exception new initWith \"my custom error\";\
+    'someOtherException ← Exception new initWith \"my other custom error\";\
+    try ( 1 print; throw someException; 2 print )\
     catch ( someOtherException ) handle ( \" caught the error the first time around\" print)\
     catch ( someException ) handle ( \" caught the error the second time around\" print)\
     catch all handle (\" catch all branch\" print)"
@@ -1075,10 +1075,10 @@ tests = [
 
   # ---------------------------------------------------------------------------
   # catch-all case 3
-  "'someException ← Exception new initWith \"my custom error\".\
-    'someOtherException ← Exception new initWith \"my other custom error\".\
-    'yetAnotherException ← Exception new initWith \"another custom error that is only caught by the catch all branch\".\
-    try ( 1 print. throw yetAnotherException. 2 print )\
+  "'someException ← Exception new initWith \"my custom error\";\
+    'someOtherException ← Exception new initWith \"my other custom error\";\
+    'yetAnotherException ← Exception new initWith \"another custom error that is only caught by the catch all branch\";\
+    try ( 1 print; throw yetAnotherException; 2 print )\
     catch ( someOtherException ) handle ( \" caught the error the first time around\" print)\
     catch ( someException ) handle ( \" caught the error the second time around\" print)\
     catch all handle (\" catch all branch\" print)"

@@ -203,9 +203,9 @@ FLAtom.addNativeMethod \
 FLTo.addNativeMethod \
   (flParse "( ' functionObjectName ) ( ' signature ) do ( ' functionBody )"),
   flParse \
-    "'TempClass ← Class new.\
-    tempClass answerEvalParams (signature) by (functionBody).\
-    'functionObject ← TempClass new.\
+    "'TempClass ← Class new;\
+    tempClass answerEvalParams (signature) by (functionBody);\
+    'functionObject ← TempClass new;\
     WorkSpace cvarEvalParams (functionObjectName) ← functionObject"
 
 # Class -------------------------------------------------------------------------
@@ -340,18 +340,18 @@ FLNumber.addNativeMethod \
 
 FLNumber.addNativeMethod \
   (flParse "factorialthree"),
-  flParse "( self == 0 ) ⇒ ( 1 ) ('temp ← self. ( self minus 1 ) factorial * temp )"
+  flParse "( self == 0 ) ⇒ ( 1 ) ('temp ← self; ( self minus 1 ) factorial * temp )"
 
 FLNumber.addNativeMethod \
   (flParse "factorialfour"),
   flParse \
-    "( self == 0 ) ⇒ ( 1 ) ('temp ← self.\
+    "( self == 0 ) ⇒ ( 1 ) ('temp ← self;\
     ( self minus 1 ) factorial * temp )"
 
 FLNumber.addNativeMethod \
   (flParse "factorialfive"),
   flParse \
-    "( self == 0 ) ⇒ ( 1 ) (1 plus 1.'temp ← self.\
+    "( self == 0 ) ⇒ ( 1 ) (1 plus 1;'temp ← self;\
     ( self minus 1 ) factorial * temp )"
 
 FLNumber.addNativeMethod \

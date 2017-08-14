@@ -116,7 +116,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
     toBeReturned.eval = (theContext) ->
       # a list without any messages just evaluates itself, which
       # consists of the following:
-      #  a) separate all the statements (parts separated by ".")
+      #  a) separate all the statements (parts separated by ";")
       #  b) for each statement, evaluate its first element as the receiver
       #  c) send to the receiver the remaining part of the statement, as the message
 

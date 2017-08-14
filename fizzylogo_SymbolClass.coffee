@@ -16,4 +16,4 @@ class FLSymbolClass extends FLAnonymousClass
 
 FLSymbol = new FLSymbolClass() # this is a class, an anonymous class
 
-RStatementSeparatorSymbol = FLSymbol.createNew "."
+RStatementSeparatorSymbol = FLSymbol.createNew ";"
