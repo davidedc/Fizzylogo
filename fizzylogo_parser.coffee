@@ -14,7 +14,12 @@ tokenizeCommand = (command) ->
   # an identifier
   command = command.replace /([^$A-Z_])([0-9]+)/gi, "$1 $2 "
 
-  command = command.replace /@/g, " @ "
+  command = command.replace /'/g, " ' "
+
+  # quote symbol used by Rosetta Smalltalk
+  # while we use the standard ' i.e. "quote"
+  #command = command.replace /@/g, " @ "
+
   # collapse all multiple spaces to one
   command = command.replace /[ ]+/g, " "
   command = command.trim()
