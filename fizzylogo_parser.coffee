@@ -44,6 +44,7 @@ linearize = (code) ->
   sourceByLine = code.split("\n")
   startOfPreviousLine = ""
   linesWithBlockStart = []
+  unclosedParens = 0
   outputSource = ""
   
   for eachLine in [0...sourceByLine.length]
@@ -65,10 +66,14 @@ linearize = (code) ->
     else if difference > 0
       console.log "linearize adding " + (difference+1) + " ( "
       outputSource += (Array(difference+1).join "(") + line
+      unclosedParens += difference
     else
       console.log "linearize adding " + (-difference+1) + " ) "
       outputSource += (Array(-difference+1).join ")") + line
+      unclosedParens += difference
     startOfPreviousLine = startOfThisLine
+
+  outputSource += (Array(unclosedParens+1).join ")")
 
   #console.log "code lenght at identifyBlockStarts: " + code.split("\n").length
   return outputSource.replace /﹍/g, ""
