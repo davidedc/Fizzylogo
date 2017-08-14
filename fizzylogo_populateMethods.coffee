@@ -26,41 +26,58 @@ addDefaultMethods = (classToAddThemTo) ->
     commonEvalFunction
 
   classToAddThemTo.addNativeMethod \
+    (flParse "'s ('variable) = (value)"),
+    flParse "in (self) do (variable ← value)"
+
+  classToAddThemTo.addNativeMethod \
     (flParse "'s ('code)"),
     flParse "code eval1"
 
+
+  commonIdictAssignmentFunction = (context) ->
+    variable = context.tempVariablesDict[ValidIDfromString "variable"]
+    console.log "idict adding variable: @flClass.value " + @flClass.value
+    if !@flClass.instanceVariables?
+      @flClass.instanceVariables = FLList.emptyList()
+
+    console.log "idict: context.self.flClass: "
+    console.dir @flClass
+
+    @flClass.instanceVariables = @flClass.instanceVariables.flListImmutablePush variable
+
+    return @
+
   classToAddThemTo.addNativeMethod \
     (flParse "idict ← ( ' variable )"),
-    (context) ->
-      variable = context.tempVariablesDict[ValidIDfromString "variable"]
-      console.log "idict adding variable: @flClass.value " + @flClass.value
-      if !@flClass.instanceVariables?
-        @flClass.instanceVariables = FLList.emptyList()
+    commonIdictAssignmentFunction
 
-      console.log "idict: context.self.flClass: "
-      console.dir @flClass
+  classToAddThemTo.addNativeMethod \
+    (flParse "idict = ( ' variable )"),
+    commonIdictAssignmentFunction
 
-      @flClass.instanceVariables = @flClass.instanceVariables.flListImmutablePush variable
+  commonCVarAssignmentFunction = (context) ->
+    variable = context.tempVariablesDict[ValidIDfromString "variable"]
+    value = context.tempVariablesDict[ValidIDfromString "value"]
 
-      return @
+    console.log "cvar adding and setting class variable"
+    if !@flClass.classVariables?
+      @flClass.classVariables = FLList.emptyList()
+
+    console.log "idict: context.self.flClass: "
+    console.dir @flClass
+
+    @flClass.classVariables = @flClass.classVariables.flListImmutablePush variable
+    @flClass.classVariablesDict[ValidIDfromString variable.value] = value
+
+    return @
 
   classToAddThemTo.addNativeMethod \
     (flParse "cvar ( ' variable ) ← ( value )"),
-    (context) ->
-      variable = context.tempVariablesDict[ValidIDfromString "variable"]
-      value = context.tempVariablesDict[ValidIDfromString "value"]
+    commonCVarAssignmentFunction
 
-      console.log "cvar adding and setting class variable"
-      if !@flClass.classVariables?
-        @flClass.classVariables = FLList.emptyList()
-
-      console.log "idict: context.self.flClass: "
-      console.dir @flClass
-
-      @flClass.classVariables = @flClass.classVariables.flListImmutablePush variable
-      @flClass.classVariablesDict[ValidIDfromString variable.value] = value
-
-      return @
+  classToAddThemTo.addNativeMethod \
+    (flParse "cvar ( ' variable ) = ( value )"),
+    commonCVarAssignmentFunction
 
   classToAddThemTo.addNativeMethod \
     (flParse "cvarEvalParams ( variable ) ← ( value )"),
@@ -117,6 +134,7 @@ addDefaultMethods = (classToAddThemTo) ->
       @msgPatterns.jsArrayPush signature
       @methodBodies.jsArrayPush methodBody
 
+      context.findAnotherReceiver = true
       return @
 
   classToAddThemTo.addNativeMethod \
@@ -128,6 +146,7 @@ addDefaultMethods = (classToAddThemTo) ->
       @msgPatterns.jsArrayPush signature
       @methodBodies.jsArrayPush methodBody
 
+      context.findAnotherReceiver = true
       return @
 
 
@@ -197,6 +216,21 @@ FLAtom.addNativeMethod \
 
 
 # Nil ---------------------------------------------------------------------------
+
+# In ---------------------------------------------------------------------------
+
+FLIn.addNativeMethod \
+  (flParse "(object) do ('code)"),
+  (context) ->
+    object = context.tempVariablesDict[ValidIDfromString "object"]
+    code = context.tempVariablesDict[ValidIDfromString "code"]
+
+    newContext = new FLContext context, object
+
+    toBeReturned = (code.eval newContext, code)[0].returned
+    context.findAnotherReceiver = true
+
+    return toBeReturned
 
 # To -------------------------------------------------------------------------
 

@@ -716,8 +716,52 @@ tests = [
   "'MyClass←Class new;MyClass idict←counter;\
     MyClass answer(setCounterToTwo)by('counter←2);\
     'myObject←MyClass new;\
-    myObject setCounterToTwo;(myObject's counter)print"
+    myObject setCounterToTwo;myObject's counter print"
   "2"
+
+  # ---------------------------------------------------------------------------
+  """
+  codeToBeRun ='
+  ﹍counter=2
+
+  MyClass=Class new
+  MyClass idict = counter
+  MyClass answer
+  ﹍setCounterToTwo
+  by
+  ﹍codeToBeRun eval
+  myObject=MyClass new
+  myObject setCounterToTwo
+  myObject's counter print
+  myObject's counter = 3
+  myObject's counter print
+  """
+
+  "23"
+
+  # ---------------------------------------------------------------------------
+  """
+  codeToBeRun ='
+  ﹍counter=2
+
+  MyClass=Class new
+  MyClass idict = counter
+  MyClass answer
+  ﹍setCounterToTwo
+  by
+  ﹍codeToBeRun eval
+  myObject=MyClass new
+  myObject setCounterToTwo
+  myObject's counter print
+  in
+  ﹍myObject
+  do
+  ﹍counter = 3
+  myObject's counter print
+  (myObject's counter plus myObject's counter) print
+  """
+
+  "236"
 
   # ---------------------------------------------------------------------------
   "'MyClass←Class new;MyClass cvar classCounter ← 0;\
@@ -1168,6 +1212,8 @@ for i in [0...tests.length] by 2
       "catch", FLFakeCatch.createNew()
 
       "to", FLTo.createNew()
+
+      "in", FLIn.createNew()
 
       "'", FLQuote.createNew()
     ]
