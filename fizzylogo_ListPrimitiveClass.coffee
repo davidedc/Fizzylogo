@@ -158,7 +158,13 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
         #  - the message is not understood
         while true
 
-          # -------------------------------------------------
+          # this happens for example in the "if" statement
+          # (actually called ⇒ ). If the true branch is executed,
+          # then everything that comes afterwards must be
+          # skipped.
+          if returnedContext.exhaustPreviousContextMessage == true
+            restOfMessage.exhaust()
+
           if returnedContext.findAnotherReceiver and !returnedContext.throwing and !restOfMessage.isEmpty()
             returnedContext.findAnotherReceiver = false
             returnedContext = returnedContext.previousContext
@@ -171,21 +177,22 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
             console.log "found next receiver and now message is: " + restOfMessage.print()
             console.dir receiver
             console.log "3 returnedContext.throwing: " + returnedContext.throwing
-            if receiver? and returnedContext.throwing and restOfMessage.isEmpty()
-              console.log "throw escape 1"
-              theContext.returned = receiver
-              restOfMessage.exhaust()
-              theContext.throwing = true
-              return [theContext, restOfMessage]
 
-          if restOfMessage.isEmpty()
-            break
-          # -------------------------------------------------
+          # where we detect an exception being thrown
+          if returnedContext.throwing
+            console.log "throw escape"
+            theContext.returned = receiver
+            restOfMessage.exhaust()
+            theContext.throwing = true
+            return [theContext, restOfMessage]
 
           if !receiver?
             theContext.returned = null
             theContext.unparsedMessage = restOfMessage
             return [theContext, restOfMessage]
+
+          if restOfMessage.isEmpty()
+            break
 
           console.log "evaluation " + indentation() + "receiver: " + receiver?.value
           console.log "evaluation " + indentation() + "message: " + restOfMessage.print()
@@ -201,52 +208,19 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
           if !returnedContext?
             returnedContext = theContext
             returnedContext.returned = receiver
+            returnedContext.unparsedMessage = returnedMessage
+            return [returnedContext, returnedMessage]
 
-
-          # where we detect an exception being thrown. there are two ways to detect it
-          # 1) the receiver we just sent a message to was a thrown exception
-          #    and such exception didn't consume any messages
-          # 2) what we just obtained is a thrown exception and
-          #    there isn't any more message to send it
-          # This is because catching exceptions is done by sending them
-          # the catch message. the catch message does nothing
-          # for all the other classes, but for an exception it causes
-          # it to run the exception handling code and to "stop" itself
-          # from being thrown.
 
           console.log "2 theContext.throwing: " + theContext.throwing
           console.log "4 returnedContext.throwing: " + returnedContext.throwing
 
-          if returnedContext.throwing
-              console.log "throw escape 2"
-              theContext.returned = returnedContext.returned
-              restOfMessage.exhaust()
-              theContext.throwing = true
-              return [theContext, restOfMessage]
-
 
           receiver = returnedContext.returned
-
-
-          console.log "evaluation " + indentation() + "list evaluation returned: " + receiver?.value
-          # if there is no change in the program counter it means that there
-          # was no progress, i.e. the receiver can't do anything with the message
-          # so it's time to break even if there is something left in the
-          # message
-          if returnedMessage.length() == restOfMessage.length() and !returnedContext.usingFallBackMatcher
-            console.log "evaluation " + indentation() + " breaking because there was no progress"
-            theContext.returned = receiver
-            theContext.unparsedMessage = returnedMessage
-            return [theContext, returnedMessage]
-
           restOfMessage = returnedMessage
 
-          # this happens for example in the "if" statement
-          # (actually called ⇒ ). If the true branch is executed,
-          # then everything that comes afterwards must be
-          # skipped.
-          if returnedContext.exhaustPreviousContextMessage == true
-            restOfMessage.exhaust()
+          console.log "evaluation " + indentation() + "list evaluation returned: " + receiver?.value
+
 
 
 

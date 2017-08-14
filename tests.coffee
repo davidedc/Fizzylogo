@@ -198,8 +198,25 @@ tests = [
   "! no meaning found for: negate was sent message: ( print )"
 
   # ---------------------------------------------------------------------------
+  # this is what happens here: "a" is sent the message "b".
+  # "a" doesn't know what to do with it, so it returns itself
+  # and "b" remains unconsumed.
+  # So the assignment will assign "a" to a, then it will mandate
+  # a new receiver. The new receiver will be "b. a print" (the dot
+  # comes from the linearisation), which was still
+  # there to be consumed. "b." will just return itself and do nothing,
+  # so then "a print" will be run, which results in "a"
+  """
+  a = "a" "b"
+  a print
+  """
+  """
+  a
+  """
+
+  # ---------------------------------------------------------------------------
   "nonExistingObject"
-  "! no meaning found for: nonExistingObject"
+  "! no meaning found for: nonExistingObject was sent message: empty message"
 
   # ---------------------------------------------------------------------------
   "1 == 1 negate. 2print"
