@@ -134,6 +134,7 @@ class FLObjects
                   valueToBeBound = returnedContext.returned                
 
               else
+                # don't need to evaluate the parameter
                 console.log "evaluation " + indentation() + "  matching - need to get next msg element from invocation: " + methodInvocation.print() + " and bind to: " + paramAtom.print()
                 [valueToBeBound, methodInvocation] = methodInvocation.nextElement()
 

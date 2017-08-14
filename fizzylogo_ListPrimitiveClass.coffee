@@ -281,6 +281,11 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
             return true
       return false
 
+    toBeReturned.unwrapList =  ->
+      if @length() == 1 and @elementAt(0).flClass == FLList
+        return @elementAt 0
+      return @
+
     # returns the first element and returns
     # a copy of the rest of the message
     toBeReturned.nextElement = ->

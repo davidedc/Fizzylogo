@@ -719,15 +719,50 @@ tests = [
   "0224"
 
   # ---------------------------------------------------------------------------
-  "to sayHello (withName (name)) (\"Hello \" print. name print). sayHello withName \"Dave\""
+  "to sayHello (withName (name)) do (\"Hello \" print. name print). sayHello withName \"Dave\""
   "Hello Dave"
 
+  # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
+  """
+  to sayHello
+  ﹍withName (name)
+  do
+  ﹍"Hello " print. name print
+  
+  sayHello withName "Dave"
+  """
+  "Hello Dave"
+
+
   # ---------------------------------------------------------------------------
-  "to sayHello2 ((name)) (\"HELLO \" print. name print). sayHello2 \"Dave\""
+  "to sayHello2 ((name)) do (\"HELLO \" print. name print). sayHello2 \"Dave\""
+  "HELLO Dave"
+
+  # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
+
+  # todo needs a way to remove that empty line
+  # before the sayHello2 "Dave"
+  """
+  to sayHello2
+  ﹍(name)
+  do
+  ﹍"HELLO " print. name print
+  
+  sayHello2 "Dave"
+  """
   "HELLO Dave"
 
   # ---------------------------------------------------------------------------
   "@( \"Hello \" \"Dave \" \"my \" \"dear \" \"friend\") each word do (word print)"
+  "Hello Dave my dear friend"
+
+  # ---------------------------------------------------------------------------
+  """
+  for each word in
+  ﹍("Hello " "Dave " "my " "dear " "friend")
+  do
+  ﹍word print
+  """
   "Hello Dave my dear friend"
 
   # ---------------------------------------------------------------------------

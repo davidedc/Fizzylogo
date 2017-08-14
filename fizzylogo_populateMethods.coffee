@@ -182,7 +182,7 @@ FLAtom.addNativeMethod \
 # To -------------------------------------------------------------------------
 
 FLTo.addNativeMethod \
-  (flParse "( @ functionObjectName ) ( @ signature ) ( @ functionBody )"),
+  (flParse "( @ functionObjectName ) ( @ signature ) do ( @ functionBody )"),
   flParse \
     "@TempClass ← Class new.\
     tempClass answerEvalParams (signature) by (functionBody).\
@@ -507,7 +507,7 @@ FLList.addNativeMethod \
     variable = context.tempVariablesDict[ValidIDfromString "variable"]
     code = context.tempVariablesDict[ValidIDfromString "code"]
 
-    console.log "FLNumber each do "
+    console.log "FLList each do "
 
     newContext = new FLContext context
     newContext.self.flClass.tempVariables = newContext.self.flClass.tempVariables.flListImmutablePush variable
@@ -736,7 +736,6 @@ FLFakeCatch.addNativeMethod \
     context.findAnotherReceiver = true
     return @
 
-
 # For -----------------------------------------------------------------------------
 
 FLFor.addNativeMethod \
@@ -779,3 +778,37 @@ FLFor.addNativeMethod \
     context.findAnotherReceiver = true
     return toBeReturned
 
+FLFor.addNativeMethod \
+  (flParse "each ( @ variable ) in ( @ theList ) do ( @ code )"),
+  (context) ->
+
+    variable = context.tempVariablesDict[ValidIDfromString "variable"]
+    theList = context.tempVariablesDict[ValidIDfromString "theList"]
+
+    if theList.unwrapList?
+      theList = theList.unwrapList()
+
+    code = context.tempVariablesDict[ValidIDfromString "code"]
+
+    console.log "FLEach do on the list: " + theList.print()
+
+    newContext = new FLContext context
+    newContext.self.flClass.tempVariables = newContext.self.flClass.tempVariables.flListImmutablePush variable
+
+    for i in [0...theList.value.length]
+
+      newContext.tempVariablesDict[ValidIDfromString variable.value] = theList.elementAt i
+      toBeReturned = (code.eval newContext, code)[0].returned
+
+      # catch any thrown "done" object, used to
+      # exit from a loop.
+      if toBeReturned?
+        if toBeReturned.flClass == FLDone
+          context.throwing = false
+          if toBeReturned.value?
+            toBeReturned = toBeReturned.value
+          console.log "each... do loop exited with Done "
+          break
+
+    context.findAnotherReceiver = true
+    return toBeReturned
