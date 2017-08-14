@@ -27,6 +27,8 @@ addDefaultMethods = (classToAddThemTo) ->
 
   classToAddThemTo.addNativeMethod \
     (flParse "'s ('variable) = (value)"),
+    # in this case the arrow notation, which
+    # evaluates both sides, is pretty handy!
     flParse "in (self) do (variable ← value)"
 
   classToAddThemTo.addNativeMethod \
