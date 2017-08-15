@@ -203,12 +203,15 @@ class FLObjects
     
     if methodBody.flClass == FLList
       console.log "evaluation " + indentation() + "  matching - method body: " + methodBody.print()
+      console.log "evaluation " + indentation() + "  method body mandates receiver? " + methodBody.mandatesNewReceiver()
       # non-native method, i.e. further fizzylogo code
       # creates a context and evals the message in it
       # the rest of the message is not used because all of the list should
       # be run, no remains from the message body should overspill
       # into the calling context. 
       [contextToBeReturned] = methodBody.eval theContext, methodBody
+      contextToBeReturned.findAnotherReceiver = methodBody.mandatesNewReceiver()
+      console.log "evaluation " + indentation() + "  method body mandates receiver2 ? " + methodBody.mandatesNewReceiver()
     else
       console.log "evaluation " + indentation() + "  matching - NATIVE method body: " + methodBody
       # native method, i.e. coffeescript/javascript code

@@ -275,7 +275,7 @@ FLTo.addNativeMethod \
     "'TempClass ← Class new;\
     tempClass answerEvalParams (signature) by (functionBody);\
     'functionObject ← TempClass new;\
-    WorkSpace cvarEvalParams (functionObjectName) ← functionObject"
+    WorkSpace cvarEvalParams (functionObjectName) ← functionObject;"
 
 # Class -------------------------------------------------------------------------
 

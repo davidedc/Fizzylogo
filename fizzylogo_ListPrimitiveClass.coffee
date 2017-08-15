@@ -70,6 +70,15 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
     toBeReturned.elementAt = (theElementNumber) ->
       @value[@cursorStart + theElementNumber]
 
+    toBeReturned.mandatesNewReceiver = ->
+      if @isEmpty()
+        return false
+
+      if @elementAt(@length()-1) == RStatementSeparatorSymbol
+        return true
+
+      return false
+
     toBeReturned.elementAtSetMutable = (theElementNumber, theValue) ->
       if @isMessage or @cursorStart != 0
         throw "elementAtSetMutable: you can't set an element of a message"

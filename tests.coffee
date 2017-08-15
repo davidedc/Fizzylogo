@@ -875,7 +875,6 @@ tests = [
   ﹍withName (name)
   do
   ﹍"Hello " print; name print
-  
   sayHello withName "Dave"
   """
   "Hello Dave"
@@ -894,7 +893,6 @@ tests = [
   ﹍(name)
   do
   ﹍"HELLO " print; name print
-  
   sayHello2 "Dave"
   """
   "HELLO Dave"
@@ -920,7 +918,6 @@ tests = [
   """
   codeToBeRun ='
   ﹍word print
-
   for each word in
   ﹍("Hello " "Dave " "my " "dear " "friend")
   do
@@ -933,7 +930,6 @@ tests = [
   codeToBeRun ='
   ﹍word print
   myList =' ("Hello " "Dave " "my " "dear " "friend")
-
   for each word in
   ﹍myList
   do
@@ -947,7 +943,6 @@ tests = [
   ﹍word print
   myList ='
   ﹍"Hello " "Dave " "my " "dear " "friend"
-
   for each word in
   ﹍myList
   do
@@ -964,7 +959,6 @@ tests = [
   ﹍word print
   myList =
   ﹍("Hello " "Dave " "my " "dear " "friend")
-
   for each word in
   ﹍myList
   do
@@ -977,7 +971,6 @@ tests = [
   codeToBeRun ='
   ﹍word print
   myList = 9
-
   for each word in
   ﹍myList
   do
@@ -1332,6 +1325,67 @@ tests = [
   things2 print
   """
   "( my little list )( my little list )( your big list )( your big list ) no more a list ( your big list )"
+
+  # ---------------------------------------------------------------------------
+  # ... an extra line (extra ;) at the end of user-defined methods
+  # means that a new receiver is mandated. Affects whether a particular
+  # method "returns" something or not. Not returning anything is useful
+  # (for example for user made control structures), because this way
+  # they can be immediately followed by any other statement without
+  # the obligation of having to chain with them.
+  """
+  MyClass = Class new
+  MyClass answer
+  ﹍getYourself (param)
+  by
+  ﹍param
+  myObject = MyClass new
+  myObject getYourself
+  ﹍2
+  print
+  """
+  "2"
+
+  """
+  MyClass = Class new
+  MyClass answer
+  ﹍getYourself (param)
+  by
+  ﹍param
+  myObject = MyClass new
+  myObject getYourself
+  ﹍2
+  1 print
+  """
+  "! message was not understood: ( 1 print )"
+
+  """
+  MyClass = Class new
+  MyClass answer
+  ﹍getYourself (param)
+  by
+  ﹍param
+  ﹍
+  myObject = MyClass new
+  myObject getYourself
+  ﹍3
+  print
+  """
+  ""
+
+  """
+  MyClass = Class new
+  MyClass answer
+  ﹍getYourself (param)
+  by
+  ﹍param
+  ﹍
+  myObject = MyClass new
+  myObject getYourself
+  ﹍3
+  1 print
+  """
+  "1"
 
 ]
 
