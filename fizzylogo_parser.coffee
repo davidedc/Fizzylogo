@@ -95,6 +95,9 @@ flParse = (command) ->
   console.log "codeWithoutStrings: " + command
   console.log "stringsTable: " + stringsTable
 
+  command = command.replace /\/\*[\s\S]*?\*\/\n?|([^\\:\n])\/\/.*$|(^)\/\/.*$\n/gm, "$1"
+
+
   command = linearize command
   console.log "linearized command: " + command
 

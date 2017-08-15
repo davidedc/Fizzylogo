@@ -1457,6 +1457,20 @@ tests = [
   """
   "hey I'm new! hello again! I am... object_from_a_user_class"
 
+  # ---------------------------------------------------------------------------
+  """
+  // a comment here
+  MyClass = Class new
+  MyClass answer
+  ﹍whenNew
+  // another comment here
+  by
+  ﹍2
+  myObject = MyClass new
+  myObject print
+  """
+  "2"
+
 ]
 
 ###
