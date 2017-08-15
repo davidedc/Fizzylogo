@@ -1256,6 +1256,22 @@ tests = [
   """
   "3bar2( 3 bar 2 )"
 
+  # ---------------------------------------------------------------------------
+  """
+  things1 =' (my little list)
+  things2 = things1
+  things1 print
+  things2 print
+  things1[0] = 'your
+  things2[1] = 'big
+  things1 print
+  things2 print
+  things1 = " no more a list "
+  things1 print
+  things2 print
+  """
+  "( my little list )( my little list )( your big list )( your big list ) no more a list ( your big list )"
+
 ]
 
 ###
