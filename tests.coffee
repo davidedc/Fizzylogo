@@ -723,6 +723,35 @@ tests = [
   """
   codeToBeRun ='
   ﹍counter=2
+  codeToBeRun print
+  """
+  "( counter = 2 )"
+
+  # ---------------------------------------------------------------------------
+  # the equivalent of closures, the
+  # code is just a list, and with the quote assignment
+  # its elements are all evaluated, hence the bound
+  # elements are copied in terms of their values, so
+  # those can't be changed anymore.
+  # The unassigned elements are kept as is and hence
+  # they are free to be bound later
+  """
+  op1 = 2
+  codeToBeRun ='
+  ﹍(op1 plus op2) print
+  op2 = 3
+  codeToBeRun eval
+  op2 = 6
+  codeToBeRun eval
+  op1 = 1000
+  codeToBeRun eval
+  """
+  "588"
+
+  # ---------------------------------------------------------------------------
+  """
+  codeToBeRun ='
+  ﹍counter=2
 
   MyClass=Class new
   MyClass idict = counter
@@ -1151,7 +1180,124 @@ tests = [
   """
   "1 catch all branch. the end."
 
+  # ---------------------------------------------------------------------------
+  """
+  foo = 3
+  things =' ()
+  things = things + 3
+  things = things + "hello"
+  things print
+  """
+  "( 3 \"hello\" )"
+
+  # ---------------------------------------------------------------------------
+  """
+  myList =' ("Hello " "Dave " "my " "dear " "friend")
+  myList[0] print
+  myList[1 plus 1] print
+  """
+  "Hello my "
+
+  # ---------------------------------------------------------------------------
+  """
+  myList =' ("Hello " "Dave " "my " "dear " "friend")
+  myList[1 plus 1] = "oh "
+  myList print
+  """
+  "( \"Hello \" \"Dave \" \"oh \" \"dear \" \"friend\" )"
+
+  # ---------------------------------------------------------------------------
+  """
+  numbers =' (9 3 2 5 7)
+  myList =' ("Hello " "Dave " "my " "dear " "friend")
+  myList[numbers[1plus 1]] = "oh "
+  myList print
+  """
+  "( \"Hello \" \"Dave \" \"oh \" \"dear \" \"friend\" )"
+
+  # ---------------------------------------------------------------------------
+  """
+  numbers =' (9 3 2 5 7)
+  (numbers[0] plus numbers[1]) print
+  """
+  "12"
+
+  # ---------------------------------------------------------------------------
+  """
+  numbers =' (9 3 2 5 7)
+  myList =' ("Hello " "Dave " ("oh " "so ") "dear " "friend")
+  myList[numbers[2]] print
+  """
+  "( \"oh \" \"so \" )"
+
+  # ---------------------------------------------------------------------------
+  """
+  numbers =' (9 3 2 5 7)
+  myList =' ("Hello " "Dave " ("oh " "so ") "dear " "friend")
+  myList[numbers[1plus 1]][0 plus 1] print
+  """
+  "so "
+
+  # ---------------------------------------------------------------------------
+  """
+  things =' (false true)
+  (things[0] or things[1]) print
+  """
+  "true"
+
+  # ---------------------------------------------------------------------------
+  """
+  foo = 3
+  things =' (foo bar 2)
+  things[0] print
+  things[1] print
+  things[2] print
+  things print
+  """
+  "3bar2( 3 bar 2 )"
+
 ]
+
+###
+# ---------------------------------------------------------------------------
+"""
+foo = 3
+things =' (foo ('foo) 2)
+things[0] print
+things[1] print
+(things[1] eval) print
+((things[1] eval) eval) print
+(things[1] eval) ← " bar"
+foo print
+((things[1] eval) eval) print
+things[2] print
+2 = 10
+things[1 plus 1] print
+things =' (foo ('foo) 2)
+things[1 plus 1] print
+"""
+"3( ' foo )foo3 bar bar2210"
+
+# ---------------------------------------------------------------------------
+"""
+foo = 3
+things =' ()
+things = things + foo
+things print
+things[0] print
+" // " print
+things =' ()
+things = things + 'foo
+things print
+things[0] print
+" // " print
+things =' ()
+things = things + '('foo)
+things print
+things[0] print
+"""
+"( 3 )3 // ( foo )3 // ( ( ' foo ) )( ' foo )"
+###
 
 ###
 tests = [

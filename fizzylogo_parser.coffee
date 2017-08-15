@@ -3,6 +3,8 @@ tokenizeCommand = (command) ->
   # separate parens
   command = command.replace /\(/g, " ( "
   command = command.replace /\)/g, " ) "
+  command = command.replace /\[/g, " [ "
+  command = command.replace /\]/g, " ] "
 
   # this is the statement separator
   command = command.replace /;/g, " ; "

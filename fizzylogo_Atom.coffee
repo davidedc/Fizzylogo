@@ -8,7 +8,7 @@ class FLAtomClass extends FLPrimitiveClasses
 
     toBeReturned.printForList = toBeReturned.print
 
-    toBeReturned.eval = (theContext, remainingMessage) ->
+    toBeReturned.eval = (theContext, remainingMessage, ignoreUnassigned) ->
 
       # shortcut: instead of using "@a←5" or "@a eval1"
       # one can now just use "a=5" and "a eval"
@@ -26,8 +26,14 @@ class FLAtomClass extends FLPrimitiveClasses
       existingLookedUpValue = theContext.lookUpAtomValuePlace @
       if existingLookedUpValue?
         theContext.returned = theContext.lookUpAtomValue @, existingLookedUpValue
+        return [theContext]
       else if /^\d+$/.test @value
         theContext.returned = FLNumber.createNew @value
+        return [theContext]
+
+      if ignoreUnassigned
+        theContext.returned = @
+        return [theContext]
 
       console.log "evaluation " + indentation() + "atom " + theAtomName + " contents: " + theContext.returned?.value
 

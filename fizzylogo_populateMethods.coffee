@@ -193,6 +193,33 @@ FLAtom.addNativeMethod \
     return valueToAssign
 
 FLAtom.addNativeMethod \
+  (flParse "=' ( 'valueToAssign )"),
+  (context) ->
+    valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
+
+    if valueToAssign.flClass == FLList
+      valueToAssign = valueToAssign.evaluatedElementsList context
+
+    theAtomName = @value
+
+    console.log "evaluation " + indentation() + "assignment to atom " + theAtomName
+    console.log "evaluation " + indentation() + "value to assign to atom: " + theAtomName + " : " + valueToAssign.value
+
+    # this is the place where we come to create new temp variables
+    # and we can't create them in this very call context, that would
+    # be useless, we place it in the context of the _previous_ method call
+    topMostContextWithThisSelf = context.previousContext.topMostContextWithThisSelf()
+    dictToPutAtomIn = topMostContextWithThisSelf.lookUpAtomValuePlace @
+    if !dictToPutAtomIn?
+      dictToPutAtomIn = topMostContextWithThisSelf.createNonExistentValueLookup @
+
+    dictToPutAtomIn[ValidIDfromString theAtomName] = valueToAssign
+
+    console.log "evaluation " + indentation() + "stored value in dictionary"
+    context.findAnotherReceiver = true
+    return valueToAssign
+
+FLAtom.addNativeMethod \
   (flParse "= ( valueToAssign )"),
   (context) ->
     valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
@@ -545,6 +572,25 @@ FLList.addNativeMethod \
   (context) ->
     elementToBeAppended = context.tempVariablesDict[ValidIDfromString "elementToBeAppended"]
     return @flListImmutablePush elementToBeAppended
+
+FLList.addNativeMethod \
+  (flParse "length"),
+  (context) ->
+    return FLNumber.createNew @length()
+
+FLList.addNativeMethod \
+  (flParse "[ (indexValue) ] = (value)"),
+  (context) ->
+    indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
+    value = context.tempVariablesDict[ValidIDfromString "value"]
+    context.findAnotherReceiver = true
+    return @elementAtSetMutable indexValue.value, value
+
+FLList.addNativeMethod \
+  (flParse "[ (indexValue) ]"),
+  (context) ->
+    indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
+    return @elementAt indexValue.value
 
 
 FLList.addNativeMethod \

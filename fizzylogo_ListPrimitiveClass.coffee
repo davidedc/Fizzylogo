@@ -70,6 +70,27 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
     toBeReturned.elementAt = (theElementNumber) ->
       @value[@cursorStart + theElementNumber]
 
+    toBeReturned.elementAtSetMutable = (theElementNumber, theValue) ->
+      if @isMessage or @cursorStart != 0
+        throw "elementAtSetMutable: you can't set an element of a message"
+      @value[theElementNumber] = theValue
+      return @
+
+    # TODO this can be done much cheaper
+    toBeReturned.evaluatedElementsList = (context) ->
+      newList = FLList.createNew()
+      for i in [0...@length()]
+        console.log "toBeReturned.evaluatedElementsList evaluating " + (@elementAt i).print()
+        
+        if (@elementAt i).flClass == FLList
+          evalled = (@elementAt i).evaluatedElementsList context
+        else
+          evalled = ((@elementAt i).eval context, @, true)[0].returned
+
+        newList = newList.flListImmutablePush evalled
+
+      return newList
+
     toBeReturned.print = ->
       #console.log "@value:" + @value
       #console.log "list print: length: " + @length()
