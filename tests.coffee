@@ -719,6 +719,21 @@ tests = [
     myObject setCounterToTwo;myObject's counter print"
   "2"
 
+  # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
+
+  """
+  MyClass = Class new
+  MyClass idict = counter
+  MyClass answer
+  ﹍setCounterToTwo
+  by
+  ﹍counter = 2
+  myObject = MyClass new
+  myObject setCounterToTwo
+  myObject.counter print
+  """
+  "2"
+
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
@@ -768,6 +783,27 @@ tests = [
 
   "23"
 
+  # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
+
+  """
+  codeToBeRun ='
+  ﹍counter=2
+
+  MyClass=Class new
+  MyClass idict = counter
+  MyClass answer
+  ﹍setCounterToTwo
+  by
+  ﹍codeToBeRun eval
+  myObject=MyClass new
+  myObject setCounterToTwo
+  myObject.counter print
+  myObject.counter = 3
+  myObject.counter print
+  """
+
+  "23"
+
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
@@ -788,6 +824,31 @@ tests = [
   ﹍counter = 3
   myObject's counter print
   (myObject's counter plus myObject's counter) print
+  """
+
+  "236"
+
+  # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
+
+  """
+  codeToBeRun ='
+  ﹍counter=2
+
+  MyClass=Class new
+  MyClass idict = counter
+  MyClass answer
+  ﹍setCounterToTwo
+  by
+  ﹍codeToBeRun eval
+  myObject=MyClass new
+  myObject setCounterToTwo
+  myObject.counter print
+  in
+  ﹍myObject
+  do
+  ﹍counter = 3
+  myObject.counter print
+  (myObject.counter plus myObject.counter) print
   """
 
   "236"

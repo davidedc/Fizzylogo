@@ -35,6 +35,16 @@ addDefaultMethods = (classToAddThemTo) ->
     (flParse "'s ('code)"),
     flParse "code eval1"
 
+  classToAddThemTo.addNativeMethod \
+    (flParse ". ('variable) = (value)"),
+    # in this case the arrow notation, which
+    # evaluates both sides, is pretty handy!
+    flParse "in (self) do (variable ← value)"
+
+  classToAddThemTo.addNativeMethod \
+    (flParse ". ('code)"),
+    flParse "code eval1"
+
 
   commonIdictAssignmentFunction = (context) ->
     variable = context.tempVariablesDict[ValidIDfromString "variable"]
