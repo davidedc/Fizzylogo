@@ -531,7 +531,7 @@ FLNot.addNativeMethod \
 FLList.addNativeMethod \
   (flParse "new"),
   (context) ->
-    @flClass.createNew ""
+    @flClass.createNew()
 
 FLList.addNativeMethod \
   (flParse "print"),

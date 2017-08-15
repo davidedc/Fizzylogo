@@ -80,7 +80,7 @@ linearize = (code) ->
 
   outputSource += (Array(unclosedParens+1).join ")")
 
-  #console.log "code lenght at identifyBlockStarts: " + code.split("\n").length
+  #console.log "code length at identifyBlockStarts: " + code.split("\n").length
   return outputSource.replace /﹍/g, ""
 
 
