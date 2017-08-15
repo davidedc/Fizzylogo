@@ -10,6 +10,11 @@ addDefaultMethods = (classToAddThemTo) ->
       environmentPrintout += @value
       return @
 
+  classToAddThemTo.addNativeMethod \
+    (flParse "whenNew"),
+    (context) ->
+      return @
+
   commonEvalFunction = (context) ->
     newContext = new FLContext context
     flContexts.jsArrayPush newContext
@@ -139,8 +144,19 @@ addDefaultMethods = (classToAddThemTo) ->
       signature = context.tempVariablesDict[ValidIDfromString "signature"]
       methodBody = context.tempVariablesDict[ValidIDfromString "methodBody"]
 
-      @msgPatterns.jsArrayPush signature
-      @methodBodies.jsArrayPush methodBody
+      # TODO addNativeMethod has same code
+      found = false
+      for i in [0...@msgPatterns.length]
+        eachSignature = @msgPatterns[i]
+        if eachSignature.print() == signature.print()
+          @msgPatterns[i] = signature
+          @methodBodies[i] = methodBody
+          found = true
+
+      if !found
+        @msgPatterns.jsArrayPush signature
+        @methodBodies.jsArrayPush methodBody
+
 
       context.findAnotherReceiver = true
       return @
@@ -312,7 +328,20 @@ FLClass.addNativeMethod \
           console.log "///////// creating a new object from a user class - adding this to dict: " + ValidIDfromString eachInstanceVariable.value
           objectTBR.instanceVariablesDict[ValidIDfromString eachInstanceVariable.value] = FLNil.createNew()
 
-        return objectTBR
+        # we give the chance to automatically execute some initialisation code,
+        # but without any parameters. For example drawing a box, giving a message,
+        # initing some default values.
+        # However for initialisations that _requires_ parameters, the user
+        # will have to use a method call such as the "initWith" in FLException.
+        # The reasoning is that if the user is bothering with initing with
+        # parameters, then it might as well bother with sticking an
+        # "initWith" method call in front of them.
+        # Passing parameters to whenNew (and consuming them) from in here
+        # defies the whole architecture of the mechanism.
+        console.log "invoking whenNew"
+        returnedContext = (objectTBR.findSignatureBindParamsAndMakeCall (flParse "whenNew"), context)[0]
+        toBeReturned = returnedContext.returned
+        return toBeReturned
 
     addDefaultMethods newUserClass
 

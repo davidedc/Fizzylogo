@@ -194,6 +194,12 @@ tests = [
   "! message was not understood: ( negate )"
 
   # ---------------------------------------------------------------------------
+  """
+  2 1 print
+  """
+  "! message was not understood: ( 1 print )"
+
+  # ---------------------------------------------------------------------------
   "negate print"
   "! no meaning found for: negate was sent message: ( print )"
 
@@ -1386,6 +1392,52 @@ tests = [
   1 print
   """
   "1"
+
+  # ---------------------------------------------------------------------------
+  """
+  MyClass = Class new
+  MyClass answer
+  ﹍whenNew
+  by
+  ﹍"hey I'm new!" print
+  ﹍self
+  myObject = MyClass new
+  " ...done!" print
+  """
+  "hey I'm new! ...done!"
+
+  # ---------------------------------------------------------------------------
+  # in this case the assignment
+  # consumes up to
+  #    myObject = MyClass new
+  # and then it breaks the chain
+  # and lets "1 print" loose
+  """
+  MyClass = Class new
+  MyClass answer
+  ﹍whenNew
+  by
+  ﹍2
+  ﹍self
+  myObject = MyClass new 1 print
+  """
+  "1"
+
+  # ---------------------------------------------------------------------------
+  # ooops in this case the "whenNew" returned an
+  # integer and we assign that to the new object!
+  # in this case it's an error, but it can be used
+  # for the factory pattern to construct other things
+  """
+  MyClass = Class new
+  MyClass answer
+  ﹍whenNew
+  by
+  ﹍2
+  myObject = MyClass new
+  myObject print
+  """
+  "2"
 
 ]
 
