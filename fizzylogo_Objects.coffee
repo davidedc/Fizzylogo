@@ -17,173 +17,173 @@ class FLObjects
   # is not a method call (although it might lead to one),
   # this is progressing within an existing call
   findSignatureBindParamsAndMakeCall: (methodInvocationToBeChecked, theContext) ->
-        console.log "evaluation " + indentation() + "  !!! looking up method invocation " + methodInvocationToBeChecked.print() + " with signatures!"
-        console.log "evaluation " + indentation() + "  !!! looking up method invocation, is method empty? " + methodInvocationToBeChecked.isEmpty()
+    console.log "evaluation " + indentation() + "  !!! looking up method invocation " + methodInvocationToBeChecked.print() + " with signatures!"
+    console.log "evaluation " + indentation() + "  !!! looking up method invocation, is method empty? " + methodInvocationToBeChecked.isEmpty()
 
-        console.log "evaluation " + indentation() + "  I am: " + @value
-        console.log "evaluation " + indentation() + "  matching - my class patterns: "
+    console.log "evaluation " + indentation() + "  I am: " + @value
+    console.log "evaluation " + indentation() + "  matching - my class patterns: "
 
-        for eachClassPattern in @flClass.msgPatterns
-          console.log "evaluation " + indentation() + eachClassPattern.print()
+    for eachClassPattern in @flClass.msgPatterns
+      console.log "evaluation " + indentation() + eachClassPattern.print()
 
-        # fake context push so that we can make
-        # the context stack handling easier
-        # the for loop
-        # TODO check that this is not left hanging
-        flContexts.jsArrayPush null
+    # fake context push so that we can make
+    # the context stack handling easier
+    # the for loop
+    # TODO check that this is not left hanging
+    flContexts.jsArrayPush null
 
-        for eachSignatureIndex in [0...@flClass.msgPatterns.length]
-          eachSignature = @flClass.msgPatterns[eachSignatureIndex]
+    for eachSignatureIndex in [0...@flClass.msgPatterns.length]
+      eachSignature = @flClass.msgPatterns[eachSignatureIndex]
 
-          #console.log "evaluation " + indentation() + "  matching - checking if this signature matches: " + eachSignature.print()
-          methodInvocation = methodInvocationToBeChecked
+      #console.log "evaluation " + indentation() + "  matching - checking if this signature matches: " + eachSignature.print()
+      methodInvocation = methodInvocationToBeChecked
 
-          # remove the previous context because it was a
-          # botched attempt to match a signature
-          flContexts.pop()
-          console.log "evaluation " + indentation() + "  ////////////////////////////////////// CREATING NEW CONTEXT WITH NEW SELF " + @
+      # remove the previous context because it was a
+      # botched attempt to match a signature
+      flContexts.pop()
+      console.log "evaluation " + indentation() + "  ////////////////////////////////////// CREATING NEW CONTEXT WITH NEW SELF " + @
 
-          # this is the ONLY place where we change self!
-          newContext = new FLContext theContext, @
-          flContexts.jsArrayPush newContext
-          #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.print()
-          #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.print()
+      # this is the ONLY place where we change self!
+      newContext = new FLContext theContext, @
+      flContexts.jsArrayPush newContext
+      #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.print()
+      #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.print()
 
-          soFarEverythingMatched = true
-          originalMethodInvocationStart = methodInvocation.cursorStart
+      soFarEverythingMatched = true
+      originalMethodInvocationStart = methodInvocation.cursorStart
 
-          # simple way to get "match all" signature
-          # to work.
-          if eachSignature.isMatchAllSignature()
-            eachSignature = FLList.emptyMessage()            
-            newContext.usingFallBackMatcher = true
+      # simple way to get "match all" signature
+      # to work.
+      if eachSignature.isMatchAllSignature()
+        eachSignature = FLList.emptyMessage()            
+        newContext.usingFallBackMatcher = true
 
-          until eachSignature.isEmpty() or methodInvocation.isEmpty()
+      until eachSignature.isEmpty() or methodInvocation.isEmpty()
 
-            console.log "evaluation " + indentation() + "  matching: - next signature piece: " + eachSignature.print() + " is atom: " + " with: " + methodInvocation.print()
+        console.log "evaluation " + indentation() + "  matching: - next signature piece: " + eachSignature.print() + " is atom: " + " with: " + methodInvocation.print()
 
-            [eachElementOfSignature, eachSignature] = eachSignature.nextElement()
+        [eachElementOfSignature, eachSignature] = eachSignature.nextElement()
 
-            
-            # the element of a signature can only be of two kinds:
-            # an atom or an FLList containing one parameter (with
-            # prepended "@" in case the parameter doesn't require
-            # evaluation)
-            if eachElementOfSignature.flClass == FLAtom or eachElementOfSignature.flClass == FLSymbol
-              # if the signature contains an atom, the message
-              # must contain the same atom, otherwise we don't
-              # have a match.
+        
+        # the element of a signature can only be of two kinds:
+        # an atom or an FLList containing one parameter (with
+        # prepended "@" in case the parameter doesn't require
+        # evaluation)
+        if eachElementOfSignature.flClass == FLAtom or eachElementOfSignature.flClass == FLSymbol
+          # if the signature contains an atom, the message
+          # must contain the same atom, otherwise we don't
+          # have a match.
 
-              [eachElementOfInvocation, methodInvocation] = methodInvocation.nextElement()
+          [eachElementOfInvocation, methodInvocation] = methodInvocation.nextElement()
 
-              if eachElementOfInvocation.flClass == FLAtom or eachElementOfInvocation.flClass == FLSymbol
+          if eachElementOfInvocation.flClass == FLAtom or eachElementOfInvocation.flClass == FLSymbol
 
-                #console.log "evaluation " + indentation() + "  matching atoms: - next signature piece: " + eachElementOfSignature.print() + " is atom: " + (eachElementOfSignature.flClass == FLAtom) + " with: " + eachElementOfInvocation.print()
+            #console.log "evaluation " + indentation() + "  matching atoms: - next signature piece: " + eachElementOfSignature.print() + " is atom: " + (eachElementOfSignature.flClass == FLAtom) + " with: " + eachElementOfInvocation.print()
 
-                # ok at least the message contains an atom, but
-                # now we have to check that they spell the same
-                if eachElementOfSignature.value == eachElementOfInvocation.value
-                  console.log "evaluation " + indentation() + "  matching - atom matched: " + eachElementOfSignature.print()
-                  # OK good match of atomsr,
-                  # check the next token in the signature
-                  continue
-                else
-                  # no match between the atoms, check next signature
-                  soFarEverythingMatched = false
-                  break
-              else
-                # the signature sais "atom" but the message contains
-                # something else: no match, check the next
-                # signature
-                #console.log "evaluation " + indentation() + "  matching - no match: " + eachElementOfSignature.print() + " vs. " + eachElementOfInvocation.print()
-                # this signature doesn't match check the next one
-                soFarEverythingMatched = false
-                break
-            else
-              # the signature has a param. we have to check if
-              # it requires an evaluation or not
-              console.log "evaluation " + indentation() + "  matching - getting the atom inside the parameter: " + eachElementOfSignature.print()
-              paramAtom = eachElementOfSignature.getParamAtom()
-              #console.dir paramAtom
-              console.log "evaluation " + indentation() + "  matching - atom inside the parameter: " + paramAtom.print()
-              if eachElementOfSignature.isEvaluatingParam()
-                console.log "evaluation " + indentation() + "  matching - need to evaluate next msg element from invocation: " + methodInvocation.print() + " and bind to: " + paramAtom.print()
-                # if the first element is a list,
-                # then the list is evaluated on
-                # its own, without considering what comes after it.
-                # I.e. a list doesn't chain with further tokens, it's
-                # used as a parameter as is
-                # If the first element is not a list, then we
-                # run the evaluation as long as it takes us,
-                # as far as things "chain" with messages they
-                # understand.
-  
-                # note how we need to evaluate the params in a context that has the
-                # same SELF as the calling one, not the new one that
-                # we are creating with the new SELF of the callee, otherwise, say,
-                # passing self, self would always bind
-                # to the receiver, which we don't want
-                # like in "7 * self" we don't want to bind self to 7
-
-                if methodInvocation.firstElement().flClass == FLList
-                  console.log "evaluation " + indentation() + "  matching - what to evaluate is a list right away "
-                  [returnedContext, methodInvocation] = methodInvocation.evalFirstListElementAndTurnRestIntoMessage theContext
-                  valueToBeBound = returnedContext.returned                
-                else
-                  [returnedContext, methodInvocation] = methodInvocation.eval theContext, methodInvocation
-                  valueToBeBound = returnedContext.returned                
-
-              else
-                # don't need to evaluate the parameter
-                console.log "evaluation " + indentation() + "  matching - need to get next msg element from invocation: " + methodInvocation.print() + " and bind to: " + paramAtom.print()
-                [valueToBeBound, methodInvocation] = methodInvocation.nextElement()
-
-              
-              console.log "evaluation " + indentation() + "  matching - adding paramater " + paramAtom.print() + " to tempVariables into this class: "
-              #console.dir theContext.self.flClass
-              # TODO we should insert without repetition
-              if !newContext.self.flClass.tempVariables?
-                newContext.self.flClass.tempVariables = FLList.emptyList()
-              newContext.self.flClass.tempVariables = newContext.self.flClass.tempVariables.flListImmutablePush paramAtom
-              newContext.tempVariablesDict[ValidIDfromString paramAtom.value] = valueToBeBound
-
-              # there should be no temps in the mother context
-              # they should all be in the new context we are
-              # creating explicitly for the function call.
-              #console.log "evaluation " + indentation() + "# theContext temps: " 
-              #for keys of theContext.tempVariablesDict
-              #  console.log "evaluation " + indentation() + "#       #: " + keys
-              #
-              #console.log "evaluation " + indentation() + "# newContext temps: " 
-              #for keys of newContext.tempVariablesDict
-              #  console.log "evaluation " + indentation() + "#       #: " + keys
-
-              # ok we matched a paramenter, now let's keep matching further
-              # parts of the signature
+            # ok at least the message contains an atom, but
+            # now we have to check that they spell the same
+            if eachElementOfSignature.value == eachElementOfInvocation.value
+              console.log "evaluation " + indentation() + "  matching - atom matched: " + eachElementOfSignature.print()
+              # OK good match of atomsr,
+              # check the next token in the signature
               continue
+            else
+              # no match between the atoms, check next signature
+              soFarEverythingMatched = false
+              break
+          else
+            # the signature sais "atom" but the message contains
+            # something else: no match, check the next
+            # signature
+            #console.log "evaluation " + indentation() + "  matching - no match: " + eachElementOfSignature.print() + " vs. " + eachElementOfInvocation.print()
+            # this signature doesn't match check the next one
+            soFarEverythingMatched = false
+            break
+        else
+          # the signature has a param. we have to check if
+          # it requires an evaluation or not
+          console.log "evaluation " + indentation() + "  matching - getting the atom inside the parameter: " + eachElementOfSignature.print()
+          paramAtom = eachElementOfSignature.getParamAtom()
+          #console.dir paramAtom
+          console.log "evaluation " + indentation() + "  matching - atom inside the parameter: " + paramAtom.print()
+          if eachElementOfSignature.isEvaluatingParam()
+            console.log "evaluation " + indentation() + "  matching - need to evaluate next msg element from invocation: " + methodInvocation.print() + " and bind to: " + paramAtom.print()
+            # if the first element is a list,
+            # then the list is evaluated on
+            # its own, without considering what comes after it.
+            # I.e. a list doesn't chain with further tokens, it's
+            # used as a parameter as is
+            # If the first element is not a list, then we
+            # run the evaluation as long as it takes us,
+            # as far as things "chain" with messages they
+            # understand.
 
-          # ok a signature has matched completely
-          if eachSignature.isEmpty() and soFarEverythingMatched
+            # note how we need to evaluate the params in a context that has the
+            # same SELF as the calling one, not the new one that
+            # we are creating with the new SELF of the callee, otherwise, say,
+            # passing self, self would always bind
+            # to the receiver, which we don't want
+            # like in "7 * self" we don't want to bind self to 7
 
-            # now, the correct PC that we need to report is
-            # the original plus what we consumed from matching the
-            # signature.
-            console.log "evaluation " + indentation() + "  matching - consumed from matching this sig: " + (methodInvocation.cursorStart - originalMethodInvocationStart)
-            console.log "evaluation " + indentation() + "             methodInvocation: " + methodInvocation.print() + " cursor start: " + methodInvocation.cursorStart  + " original methodInvocation start: " + originalMethodInvocationStart
+            if methodInvocation.firstElement().flClass == FLList
+              console.log "evaluation " + indentation() + "  matching - what to evaluate is a list right away "
+              [returnedContext, methodInvocation] = methodInvocation.evalFirstListElementAndTurnRestIntoMessage theContext
+              valueToBeBound = returnedContext.returned                
+            else
+              [returnedContext, methodInvocation] = methodInvocation.eval theContext, methodInvocation
+              valueToBeBound = returnedContext.returned                
 
-            console.log "methodInvocation.cursorStart - originalMethodInvocationStart: " + " " + methodInvocation.cursorStart  + " " + originalMethodInvocationStart
-            theContext.unparsedMessage = null
-            console.log "theContext method invocation after: " + methodInvocation.print()
+          else
+            # don't need to evaluate the parameter
+            console.log "evaluation " + indentation() + "  matching - need to get next msg element from invocation: " + methodInvocation.print() + " and bind to: " + paramAtom.print()
+            [valueToBeBound, methodInvocation] = methodInvocation.nextElement()
 
-            contextToBeReturned = @methodCall (@flClass.methodBodies[eachSignatureIndex]), newContext
+          
+          console.log "evaluation " + indentation() + "  matching - adding paramater " + paramAtom.print() + " to tempVariables into this class: "
+          #console.dir theContext.self.flClass
+          # TODO we should insert without repetition
+          if !newContext.self.flClass.tempVariables?
+            newContext.self.flClass.tempVariables = FLList.emptyList()
+          newContext.self.flClass.tempVariables = newContext.self.flClass.tempVariables.flListImmutablePush paramAtom
+          newContext.tempVariablesDict[ValidIDfromString paramAtom.value] = valueToBeBound
 
-            return [contextToBeReturned,methodInvocation]
+          # there should be no temps in the mother context
+          # they should all be in the new context we are
+          # creating explicitly for the function call.
+          #console.log "evaluation " + indentation() + "# theContext temps: " 
+          #for keys of theContext.tempVariablesDict
+          #  console.log "evaluation " + indentation() + "#       #: " + keys
+          #
+          #console.log "evaluation " + indentation() + "# newContext temps: " 
+          #for keys of newContext.tempVariablesDict
+          #  console.log "evaluation " + indentation() + "#       #: " + keys
+
+          # ok we matched a paramenter, now let's keep matching further
+          # parts of the signature
+          continue
+
+      # ok a signature has matched completely
+      if eachSignature.isEmpty() and soFarEverythingMatched
+
+        # now, the correct PC that we need to report is
+        # the original plus what we consumed from matching the
+        # signature.
+        console.log "evaluation " + indentation() + "  matching - consumed from matching this sig: " + (methodInvocation.cursorStart - originalMethodInvocationStart)
+        console.log "evaluation " + indentation() + "             methodInvocation: " + methodInvocation.print() + " cursor start: " + methodInvocation.cursorStart  + " original methodInvocation start: " + originalMethodInvocationStart
+
+        console.log "methodInvocation.cursorStart - originalMethodInvocationStart: " + " " + methodInvocation.cursorStart  + " " + originalMethodInvocationStart
+        theContext.unparsedMessage = null
+        console.log "theContext method invocation after: " + methodInvocation.print()
+
+        contextToBeReturned = @methodCall (@flClass.methodBodies[eachSignatureIndex]), newContext
+
+        return [contextToBeReturned,methodInvocation]
 
 
-        # we are still here trying to match but
-        # there are no signatures left, time to quit.
-        console.log "evaluation " + indentation() + "  matching - no match found"
-        return [null, methodInvocationToBeChecked]
+    # we are still here trying to match but
+    # there are no signatures left, time to quit.
+    console.log "evaluation " + indentation() + "  matching - no match found"
+    return [null, methodInvocationToBeChecked]
 
 
   # this could be native, in which case it's a JS call,
