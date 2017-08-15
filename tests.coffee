@@ -1439,6 +1439,24 @@ tests = [
   """
   "2"
 
+  # ---------------------------------------------------------------------------
+  """
+  MyClass = Class new
+  MyClass answer
+  ﹍whenNew
+  by
+  ﹍"hey I'm new!" print
+  ﹍self
+  MyClass answer
+  ﹍initWith (param)
+  by
+  ﹍param print
+  ﹍self
+  myObject = MyClass new initWith " hello again! I am... "
+  myObject print
+  """
+  "hey I'm new! hello again! I am... object_from_a_user_class"
+
 ]
 
 ###
