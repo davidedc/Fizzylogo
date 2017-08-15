@@ -10,8 +10,8 @@ class FLAtomClass extends FLPrimitiveClasses
 
     toBeReturned.eval = (theContext, remainingMessage, ignoreUnassigned) ->
 
-      # shortcut: instead of using "@a←5" or "@a eval1"
-      # one can now just use "a=5" and "a eval"
+      # shortcut: instead of using "@a←5"
+      # one can now just use "a=5"
       if remainingMessage? and remainingMessage.flClass == FLList
         console.log "remainingMessage: " + remainingMessage.print()
         console.log "secondElementIsEqual: " + remainingMessage.secondElementIsEqual()

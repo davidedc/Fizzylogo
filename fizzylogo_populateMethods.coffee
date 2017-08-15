@@ -18,10 +18,6 @@ addDefaultMethods = (classToAddThemTo) ->
     return toBeReturned
 
   classToAddThemTo.addNativeMethod \
-    (flParse "eval1"),
-    commonEvalFunction
-
-  classToAddThemTo.addNativeMethod \
     (flParse "eval"),
     commonEvalFunction
 
@@ -33,7 +29,7 @@ addDefaultMethods = (classToAddThemTo) ->
 
   classToAddThemTo.addNativeMethod \
     (flParse "'s ('code)"),
-    flParse "code eval1"
+    flParse "code eval"
 
   classToAddThemTo.addNativeMethod \
     (flParse ". ('variable) = (value)"),
@@ -43,7 +39,7 @@ addDefaultMethods = (classToAddThemTo) ->
 
   classToAddThemTo.addNativeMethod \
     (flParse ". ('code)"),
-    flParse "code eval1"
+    flParse "code eval"
 
 
   commonIdictAssignmentFunction = (context) ->

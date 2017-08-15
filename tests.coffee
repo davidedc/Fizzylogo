@@ -24,7 +24,7 @@ tests = [
   # more difficult to decypher.
   #
   # The dot separates stataments.
-  "'a ← \"test string\"; 'b ← a; 'c ← 'a; 'a eval1 print;'b eval1 print;'c eval1 print"
+  "'a ← \"test string\"; 'b ← a; 'c ← 'a; 'a eval print;'b eval print;'c eval print"
   "test stringtest stringa"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
@@ -161,17 +161,17 @@ tests = [
   "( 1 plus 1 )"
 
   # ---------------------------------------------------------------------------
-  "(('(1plus 1))eval1)print"
+  "(('(1plus 1))eval)print"
   "2"
 
   # ---------------------------------------------------------------------------
-  "('(1plus 1))eval1 print"
+  "('(1plus 1))eval print"
   "2"
 
   # ---------------------------------------------------------------------------
   # in this case still the ' ties to the first element
   # that comes after it i.e. ( 1 plus 1 )
-  "'(1 plus 1)eval1 print"
+  "'(1 plus 1)eval print"
   "2"
 
   # ---------------------------------------------------------------------------
