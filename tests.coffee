@@ -23,7 +23,7 @@ tests = [
   # the most technically thorough but it's
   # more difficult to decypher.
   #
-  # The dot separates stataments.
+  # The semicolon separates stataments.
   "'a ← \"test string\"; 'b ← a; 'c ← 'a; 'a eval print;'b eval print;'c eval print"
   "test stringtest stringa"
 
@@ -208,7 +208,8 @@ tests = [
   # "a" doesn't know what to do with it, so it returns itself
   # and "b" remains unconsumed.
   # So the assignment will assign "a" to a, then it will mandate
-  # a new receiver. The new receiver will be "b. a print" (the dot
+  # a new receiver. The new receiver will be "b. a print" (the
+  # semicolon separating the statements
   # comes from the linearisation), which was still
   # there to be consumed. "b." will just return itself and do nothing,
   # so then "a print" will be run, which results in "a"
@@ -570,9 +571,15 @@ tests = [
   "object_from_a_user_class"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "MyClass=Class new;\
-    MyClass answer(printtwo)by(self print);\
-    myObject=MyClass new;myObject printtwo"
+  """
+  MyClass = Class new
+  MyClass answer
+  ﹍printtwo
+  by
+  ﹍self print
+  myObject = MyClass new
+  myObject printtwo
+  """
   "object_from_a_user_class"
 
   # ---------------------------------------------------------------------------
@@ -681,7 +688,7 @@ tests = [
   # its argument, so the passed list
   # is evaluated. If you want to pass
   # a list you need to quote it, see
-  # afterwards.
+  # afterwards
   "('(1)+(2))print"
   "( 1 2 )"
 
@@ -727,6 +734,7 @@ tests = [
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
 
+  # dot notation here
   """
   MyClass = Class new
   MyClass idict = counter
@@ -791,6 +799,7 @@ tests = [
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
 
+  # more dot notation
   """
   codeToBeRun ='
   ﹍counter=2
@@ -860,6 +869,36 @@ tests = [
   "236"
 
   # ---------------------------------------------------------------------------
+  # note that while the dot notation can be used to access variables,
+  # and in theory it could be used to invoke methods without
+  # parameters, it can't be used to invoke methods with parameters
+  # (you can just omit the dot and it works though)
+
+  """
+  MyClass = Class new
+  MyClass answer
+  ﹍printtwo (argument)
+  by
+  ﹍argument print
+  myObject = MyClass new
+  myObject printtwo "hello"
+  """
+  "hello"
+
+  # -.-.-.-.-.-.-.-.--.-             vs.             .--.-.-.--.-.-.-.-.-.-.-.-
+
+  """
+  MyClass = Class new
+  MyClass answer
+  ﹍printtwo (argument)
+  by
+  ﹍argument print
+  myObject = MyClass new
+  myObject.printtwo "hello"
+  """
+  "! no meaning found for: printtwo was sent message: ( \"hello\" )"
+
+  # ---------------------------------------------------------------------------
   "'MyClass←Class new;MyClass cvar classCounter ← 0;\
     MyClass answer(incrementClassCounterByTwo)by('classCounter←classCounter plus 2);\
     MyClass answer(printClassCounter)by(classCounter print);\
@@ -910,7 +949,7 @@ tests = [
   # ---------------------------------------------------------------------------
   # note here how the list is evaluated. Because it's a "wrapped" list,
   # its evaluation is the unwrapped content, so it's the list
-  # as you expect it.
+  # as you expect it
 
   """
   for each word in
