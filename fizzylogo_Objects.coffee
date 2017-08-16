@@ -145,7 +145,7 @@ class FLObjects
           if !newContext.self.flClass.tempVariables?
             newContext.self.flClass.tempVariables = FLList.emptyList()
 
-          # TODO addNativeMethod has similar
+          # TODO addMethod has similar
           found = false
           #console.log "obtained temps size: " + newContext.self.flClass.tempVariables.value.length
           for eachTempVar in newContext.self.flClass.tempVariables.value

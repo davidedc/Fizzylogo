@@ -3,14 +3,14 @@
 
 addDefaultMethods = (classToAddThemTo) ->
 
-  classToAddThemTo.addNativeMethod \
+  classToAddThemTo.addMethod \
     (flParse "print"),
     (context) ->
       console.log "///////// program printout: " + @value
       environmentPrintout += @value
       return @
 
-  classToAddThemTo.addNativeMethod \
+  classToAddThemTo.addMethod \
     (flParse "whenNew"),
     (context) ->
       return @
@@ -22,27 +22,27 @@ addDefaultMethods = (classToAddThemTo) ->
     flContexts.pop()
     return toBeReturned
 
-  classToAddThemTo.addNativeMethod \
+  classToAddThemTo.addMethod \
     (flParse "eval"),
     commonEvalFunction
 
-  classToAddThemTo.addNativeMethod \
+  classToAddThemTo.addMethod \
     (flParse "'s ('variable) = (value)"),
     # in this case the arrow notation, which
     # evaluates both sides, is pretty handy!
     flParse "in (self) do (variable ← value)"
 
-  classToAddThemTo.addNativeMethod \
+  classToAddThemTo.addMethod \
     (flParse "'s ('code)"),
     flParse "code eval"
 
-  classToAddThemTo.addNativeMethod \
+  classToAddThemTo.addMethod \
     (flParse ". ('variable) = (value)"),
     # in this case the arrow notation, which
     # evaluates both sides, is pretty handy!
     flParse "in (self) do (variable ← value)"
 
-  classToAddThemTo.addNativeMethod \
+  classToAddThemTo.addMethod \
     (flParse ". ('code)"),
     flParse "code eval"
 
@@ -60,11 +60,11 @@ addDefaultMethods = (classToAddThemTo) ->
 
     return @
 
-  classToAddThemTo.addNativeMethod \
+  classToAddThemTo.addMethod \
     (flParse "idict ← ( ' variable )"),
     commonIdictAssignmentFunction
 
-  classToAddThemTo.addNativeMethod \
+  classToAddThemTo.addMethod \
     (flParse "idict = ( ' variable )"),
     commonIdictAssignmentFunction
 
@@ -84,15 +84,15 @@ addDefaultMethods = (classToAddThemTo) ->
 
     return @
 
-  classToAddThemTo.addNativeMethod \
+  classToAddThemTo.addMethod \
     (flParse "cvar ( ' variable ) ← ( value )"),
     commonCVarAssignmentFunction
 
-  classToAddThemTo.addNativeMethod \
+  classToAddThemTo.addMethod \
     (flParse "cvar ( ' variable ) = ( value )"),
     commonCVarAssignmentFunction
 
-  classToAddThemTo.addNativeMethod \
+  classToAddThemTo.addMethod \
     (flParse "cvarEvalParams ( variable ) ← ( value )"),
     (context) ->
       variable = context.tempVariablesDict[ValidIDfromString "variable"]
@@ -114,14 +114,14 @@ addDefaultMethods = (classToAddThemTo) ->
       return @
 
 
-  classToAddThemTo.addNativeMethod \
+  classToAddThemTo.addMethod \
     (flParse "tdict"),
     (context) ->
       if !@flClass.tempVariables?
         @flClass.tempVariables = FLList.emptyList()
       return @flClass.tempVariables
 
-  classToAddThemTo.addNativeMethod \
+  classToAddThemTo.addMethod \
     (flParse "idict"),
     (context) ->
       if !@flClass.instanceVariables?
@@ -131,25 +131,25 @@ addDefaultMethods = (classToAddThemTo) ->
       console.dir @flClass
       return @flClass.instanceVariables
 
-  classToAddThemTo.addNativeMethod \
+  classToAddThemTo.addMethod \
     (flParse "cdict"),
     (context) ->
       if !@flClass.classVariables?
         @flClass.classVariables = FLList.emptyList()
       return @flClass.classVariables
 
-  classToAddThemTo.addNativeMethod \
+  classToAddThemTo.addMethod \
     (flParse "answer ( ' signature ) by ( ' methodBody )"),
     (context) ->
       signature = context.tempVariablesDict[ValidIDfromString "signature"]
       methodBody = context.tempVariablesDict[ValidIDfromString "methodBody"]
 
-      @flClass.addNativeMethod signature, methodBody
+      @flClass.addMethod signature, methodBody
 
       context.findAnotherReceiver = true
       return @
 
-  classToAddThemTo.addNativeMethod \
+  classToAddThemTo.addMethod \
     (flParse "answerEvalParams ( signature ) by ( methodBody )"),
     (context) ->
       signature = context.tempVariablesDict[ValidIDfromString "signature"]
@@ -179,7 +179,7 @@ for eachClass in allClasses
 
 
 
-FLAtom.addNativeMethod \
+FLAtom.addMethod \
   (flParse "← ( valueToAssign )"),
   (context) ->
     valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
@@ -202,7 +202,7 @@ FLAtom.addNativeMethod \
     console.log "evaluation " + indentation() + "stored value in dictionary"
     return valueToAssign
 
-FLAtom.addNativeMethod \
+FLAtom.addMethod \
   (flParse "=' ( 'valueToAssign )"),
   (context) ->
     valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
@@ -229,7 +229,7 @@ FLAtom.addNativeMethod \
     context.findAnotherReceiver = true
     return valueToAssign
 
-FLAtom.addNativeMethod \
+FLAtom.addMethod \
   (flParse "= ( valueToAssign )"),
   (context) ->
     valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
@@ -258,7 +258,7 @@ FLAtom.addNativeMethod \
 
 # In ---------------------------------------------------------------------------
 
-FLIn.addNativeMethod \
+FLIn.addMethod \
   (flParse "(object) do ('code)"),
   (context) ->
     object = context.tempVariablesDict[ValidIDfromString "object"]
@@ -273,7 +273,7 @@ FLIn.addNativeMethod \
 
 # To -------------------------------------------------------------------------
 
-FLTo.addNativeMethod \
+FLTo.addMethod \
   (flParse "( ' functionObjectName ) ( ' signature ) do ( ' functionBody )"),
   flParse \
     "'TempClass ← Class new;\
@@ -287,14 +287,14 @@ FLTo.addNativeMethod \
 # and it's also called "Class". We give this object the capacity to create
 # new classes, via the "new" message below.
 
-FLClass.addNativeMethod \
+FLClass.addMethod \
   (flParse "print"),
   (context) ->
     console.log "///////// program printout: " + "Class object!"
     environmentPrintout += "Class_object"
     return @
 
-FLClass.addNativeMethod \
+FLClass.addMethod \
   (flParse "new"),
   (context) ->
     console.log "///////// creating a new class for the user!"
@@ -303,7 +303,7 @@ FLClass.addNativeMethod \
 
     # the class we are creating has a "new"
     # so user can create objects for it
-    newUserClass.addNativeMethod \
+    newUserClass.addMethod \
       (flParse "new"),
       (context) ->
         console.log "///////// creating a new object from a user class!"
@@ -337,19 +337,19 @@ FLClass.addNativeMethod \
 
 # Exception -------------------------------------------------------------------------
 
-FLException.addNativeMethod \
+FLException.addMethod \
   (flParse "new"),
   (context) ->
     @flClass.createNew ""
 
-FLException.addNativeMethod \
+FLException.addMethod \
   (flParse "initWith ( ' errorMessage )"),
   (context) ->
     errorMessage = context.tempVariablesDict[ValidIDfromString "errorMessage"]
     @value = errorMessage.value
     return @
 
-FLException.addNativeMethod \
+FLException.addMethod \
   (flParse "catch all handle ( ' errorHandle )"),
   (context) ->
     errorHandle = context.tempVariablesDict[ValidIDfromString "errorHandle"]
@@ -362,7 +362,7 @@ FLException.addNativeMethod \
 
     return toBeReturned
 
-FLException.addNativeMethod \
+FLException.addMethod \
   (flParse "catch ( theError ) handle ( ' errorHandle )"),
   (context) ->
     theError = context.tempVariablesDict[ValidIDfromString "theError"]
@@ -381,7 +381,7 @@ FLException.addNativeMethod \
 
     return toBeReturned
 
-FLException.addNativeMethod \
+FLException.addMethod \
   (flParse "$$MATCHALL$$"),
   (context) ->
     console.log "exception - no more cacthes, has to be re-thrown"
@@ -391,12 +391,12 @@ FLException.addNativeMethod \
 
 # String -------------------------------------------------------------------------
 
-FLString.addNativeMethod \
+FLString.addMethod \
   (flParse "new"),
   (context) ->
     @flClass.createNew ""
 
-FLString.addNativeMethod \
+FLString.addMethod \
   (flParse "+ ( stringToBeAppended )"),
   (context) ->
     stringToBeAppended = context.tempVariablesDict[ValidIDfromString "stringToBeAppended"]
@@ -404,74 +404,74 @@ FLString.addNativeMethod \
 
 # Number -------------------------------------------------------------------------
 
-FLNumber.addNativeMethod \
+FLNumber.addMethod \
   (flParse "anotherPrint"),
   flParse "self print"
 
-FLNumber.addNativeMethod \
+FLNumber.addMethod \
   (flParse "doublePrint"),
   flParse "self print print"
 
-FLNumber.addNativeMethod \
+FLNumber.addMethod \
   (flParse "increment"),
   flParse "self ← self plus 1"
 
-FLNumber.addNativeMethod \
+FLNumber.addMethod \
   (flParse "factorial"),
   flParse "( self == 0 ) ⇒ ( 1 ) ( self minus 1 ) factorial * self"
 
-FLNumber.addNativeMethod \
+FLNumber.addMethod \
   (flParse "factorialtwo"),
   flParse "( self == 0 ) ⇒ ( 1 ) self * ( ( self minus 1 ) factorial )"
 
-FLNumber.addNativeMethod \
+FLNumber.addMethod \
   (flParse "factorialthree"),
   flParse "( self == 0 ) ⇒ ( 1 ) ('temp ← self; ( self minus 1 ) factorial * temp )"
 
-FLNumber.addNativeMethod \
+FLNumber.addMethod \
   (flParse "factorialfour"),
   flParse \
     "( self == 0 ) ⇒ ( 1 ) ('temp ← self;\
     ( self minus 1 ) factorial * temp )"
 
-FLNumber.addNativeMethod \
+FLNumber.addMethod \
   (flParse "factorialfive"),
   flParse \
     "( self == 0 ) ⇒ ( 1 ) (1 plus 1;'temp ← self;\
     ( self minus 1 ) factorial * temp )"
 
-FLNumber.addNativeMethod \
+FLNumber.addMethod \
   (flParse "amIZero"),
   flParse "self == 0"
 
-FLNumber.addNativeMethod \
+FLNumber.addMethod \
   (flParse "printAFromDeeperCall"),
   flParse "a print"
 
-FLNumber.addNativeMethod \
+FLNumber.addMethod \
   (flParse "plus ( operandum )"),
   (context) ->
     operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
     return FLNumber.createNew @value + operandum.value
 
-FLNumber.addNativeMethod \
+FLNumber.addMethod \
   (flParse "minus ( operandum )"),
   (context) ->
     operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
     return FLNumber.createNew @value - operandum.value
 
-FLNumber.addNativeMethod \
+FLNumber.addMethod \
   (flParse "selftimesminusone"),
   flParse "self * self minus 1"
 
-FLNumber.addNativeMethod \
+FLNumber.addMethod \
   (flParse "* ( operandum )"),
   (context) ->
     operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
     console.log "evaluation " + indentation() + "multiplying " + @value + " to " + operandum.value  
     return FLNumber.createNew @value * operandum.value
 
-FLNumber.addNativeMethod \
+FLNumber.addMethod \
   (flParse "times ( ' loopCode )"),
   (context) ->
     loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
@@ -497,7 +497,7 @@ FLNumber.addNativeMethod \
     return toBeReturned
 
 
-FLNumber.addNativeMethod \
+FLNumber.addMethod \
   (flParse "== ( toCompare )"),
   (context) ->
     toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
@@ -506,7 +506,7 @@ FLNumber.addNativeMethod \
     else
       return FLBoolean.createNew false
 
-FLNumber.addNativeMethod \
+FLNumber.addMethod \
   (flParse "← ( valueToAssign )"),
   (context) ->
     valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
@@ -517,18 +517,18 @@ FLNumber.addNativeMethod \
 
 # Boolean -------------------------------------------------------------------------
 
-FLBoolean.addNativeMethod \
+FLBoolean.addMethod \
   (flParse "negate"),
   (context) ->
     return FLBoolean.createNew !@value
 
-FLBoolean.addNativeMethod \
+FLBoolean.addMethod \
   (flParse "and ( operandum )"),
   (context) ->
     operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
     return FLBoolean.createNew @value and operandum.value
 
-FLBoolean.addNativeMethod \
+FLBoolean.addMethod \
   (flParse "⇒ ( ' trueBranch )"),
   (context) ->
     trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
@@ -555,7 +555,7 @@ FLBoolean.addNativeMethod \
     return @
 
 
-FLBoolean.addNativeMethod \
+FLBoolean.addMethod \
   (flParse "or ( operandum )"),
   (context) ->
     console.log "executing an or! "
@@ -565,43 +565,43 @@ FLBoolean.addNativeMethod \
 
 # FLQuote --------------------------------------------------------------------------
 
-FLQuote.addNativeMethod \
+FLQuote.addMethod \
   (flParse "( ' operandum )"),
   (context) ->
     operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
     return operandum
 
 # Not --------------------------------------------------------------------------
-FLNot.addNativeMethod \
+FLNot.addMethod \
   (flParse "( operandum )"),
   flParse "operandum negate"
 
 # List -------------------------------------------------------------------------
 
-FLList.addNativeMethod \
+FLList.addMethod \
   (flParse "new"),
   (context) ->
     @flClass.createNew()
 
-FLList.addNativeMethod \
+FLList.addMethod \
   (flParse "print"),
   (context) ->
     console.log "///////// program printout: " + @print()
     environmentPrintout += @print()
     return context
 
-FLList.addNativeMethod \
+FLList.addMethod \
   (flParse "+ ( elementToBeAppended )"),
   (context) ->
     elementToBeAppended = context.tempVariablesDict[ValidIDfromString "elementToBeAppended"]
     return @flListImmutablePush elementToBeAppended
 
-FLList.addNativeMethod \
+FLList.addMethod \
   (flParse "length"),
   (context) ->
     return FLNumber.createNew @length()
 
-FLList.addNativeMethod \
+FLList.addMethod \
   (flParse "[ (indexValue) ] = (value)"),
   (context) ->
     indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
@@ -609,14 +609,14 @@ FLList.addNativeMethod \
     context.findAnotherReceiver = true
     return @elementAtSetMutable indexValue.value, value
 
-FLList.addNativeMethod \
+FLList.addMethod \
   (flParse "[ (indexValue) ]"),
   (context) ->
     indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
     return @elementAt indexValue.value
 
 
-FLList.addNativeMethod \
+FLList.addMethod \
   (flParse "each ( ' variable ) do ( ' code )"),
   (context) ->
 
@@ -648,7 +648,7 @@ FLList.addNativeMethod \
 
 # Done -------------------------------------------------------------------------
 
-FLDone.addNativeMethod \
+FLDone.addMethod \
   (flParse "print"),
   (context) ->
     console.log "///////// program printout: " + "Done_object"
@@ -656,7 +656,7 @@ FLDone.addNativeMethod \
     return @
 
 
-FLDone.addNativeMethod \
+FLDone.addMethod \
   (flParse "with ( valueToReturn )"),
   (context) ->
     valueToReturn = context.tempVariablesDict[ValidIDfromString "valueToReturn"]
@@ -667,7 +667,7 @@ FLDone.addNativeMethod \
 
 # Repeat1 -------------------------------------------------------------------------
 
-FLRepeat1.addNativeMethod \
+FLRepeat1.addMethod \
   (flParse "( ' loopCode )"),
   (context) ->
     loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
@@ -698,7 +698,7 @@ FLRepeat1.addNativeMethod \
 
 # Repeat2 -------------------------------------------------------------------------
 
-FLRepeat2.addNativeMethod \
+FLRepeat2.addMethod \
   (flParse "(howManyTimes) do ( ' loopCode )"),
   (context) ->
     howManyTimes = context.tempVariablesDict[ValidIDfromString "howManyTimes"]
@@ -738,7 +738,7 @@ FLRepeat2.addNativeMethod \
 
 # Throw -----------------------------------------------------------------------------
 
-FLThrow.addNativeMethod \
+FLThrow.addMethod \
   (flParse "( theError )"),
   (context) ->
     theError = context.tempVariablesDict[ValidIDfromString "theError"]
@@ -748,7 +748,7 @@ FLThrow.addNativeMethod \
 
 # IfThen -----------------------------------------------------------------------------
 
-FLIfThen.addNativeMethod \
+FLIfThen.addMethod \
   (flParse "( predicate ) then ('trueBranch)"),
   (context) ->
     predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
@@ -766,7 +766,7 @@ FLIfThen.addNativeMethod \
 
 # FLIfFallThrough -----------------------------------------------------------------------------
 
-FLIfFallThrough.addNativeMethod \
+FLIfFallThrough.addMethod \
   (flParse "else if ( predicate ) then ('trueBranch)"),
   (context) ->
     predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
@@ -782,7 +782,7 @@ FLIfFallThrough.addNativeMethod \
 
     return toBeReturned
 
-FLIfFallThrough.addNativeMethod \
+FLIfFallThrough.addMethod \
   (flParse "else ('trueBranch)"),
   (context) ->
     trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
@@ -792,7 +792,7 @@ FLIfFallThrough.addNativeMethod \
     context.findAnotherReceiver = true
     return toBeReturned
 
-FLIfFallThrough.addNativeMethod \
+FLIfFallThrough.addMethod \
   (flParse "$$MATCHALL$$"),
   (context) ->
     console.log "no more cases for the if"
@@ -802,13 +802,13 @@ FLIfFallThrough.addNativeMethod \
 
 # FakeElse -----------------------------------------------------------------------------
 
-FLFakeElse.addNativeMethod \
+FLFakeElse.addMethod \
   (flParse "else if ( predicate ) then ('trueBranch)"),
   (context) ->
     context.findAnotherReceiver = true
     return @
 
-FLFakeElse.addNativeMethod \
+FLFakeElse.addMethod \
   (flParse "else ('trueBranch)"),
   (context) ->
     context.findAnotherReceiver = true
@@ -818,7 +818,7 @@ FLFakeElse.addNativeMethod \
 
 # Try -----------------------------------------------------------------------------
 
-FLTry.addNativeMethod \
+FLTry.addMethod \
   (flParse "( ' code )"),
   (context) ->
     code = context.tempVariablesDict[ValidIDfromString "code"]
@@ -840,13 +840,13 @@ FLTry.addNativeMethod \
 # catches after a real catch has happened. See the class
 # definition for explained example.
 
-FLFakeCatch.addNativeMethod \
+FLFakeCatch.addMethod \
   (flParse "all handle ( ' errorHandle )"),
   (context) ->
     context.findAnotherReceiver = true
     return @
 
-FLFakeCatch.addNativeMethod \
+FLFakeCatch.addMethod \
   (flParse "( theError ) handle ( ' errorHandle )"),
   (context) ->
     context.findAnotherReceiver = true
@@ -854,7 +854,7 @@ FLFakeCatch.addNativeMethod \
 
 # For -----------------------------------------------------------------------------
 
-FLFor.addNativeMethod \
+FLFor.addMethod \
   (flParse "( ' loopVar ) from ( startIndex ) to ( endIndex ) do ( ' loopCode )"),
   (context) ->
     loopVar = context.tempVariablesDict[ValidIDfromString "loopVar"]
@@ -898,7 +898,7 @@ FLFor.addNativeMethod \
 # you can pass a ((list)) as second param, so you can
 # pass (list) when you are in indented form, which makes
 # more sense to the user.
-FLFor.addNativeMethod \
+FLFor.addMethod \
   (flParse "each ( ' variable ) in ( theList ) do ( ' code )"),
   (context) ->
 

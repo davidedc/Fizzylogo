@@ -9,7 +9,7 @@ class FLClasses extends FLObjects
 
   classVariablesDict: null # a JS dictionary
 
-  addNativeMethod: (signature, methodBody) ->
+  addMethod: (signature, methodBody) ->
     for i in [0...@msgPatterns.length]
       eachSignature = @msgPatterns[i]
       console.dir eachSignature
