@@ -144,19 +144,7 @@ addDefaultMethods = (classToAddThemTo) ->
       signature = context.tempVariablesDict[ValidIDfromString "signature"]
       methodBody = context.tempVariablesDict[ValidIDfromString "methodBody"]
 
-      # TODO addNativeMethod has same code
-      found = false
-      for i in [0...@msgPatterns.length]
-        eachSignature = @msgPatterns[i]
-        if eachSignature.print() == signature.print()
-          @msgPatterns[i] = signature
-          @methodBodies[i] = methodBody
-          found = true
-
-      if !found
-        @msgPatterns.jsArrayPush signature
-        @methodBodies.jsArrayPush methodBody
-
+      @flClass.addNativeMethod signature, methodBody
 
       context.findAnotherReceiver = true
       return @

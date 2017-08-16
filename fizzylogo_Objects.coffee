@@ -144,7 +144,18 @@ class FLObjects
           # TODO we should insert without repetition
           if !newContext.self.flClass.tempVariables?
             newContext.self.flClass.tempVariables = FLList.emptyList()
-          newContext.self.flClass.tempVariables = newContext.self.flClass.tempVariables.flListImmutablePush paramAtom
+
+          # TODO addNativeMethod has similar
+          found = false
+          #console.log "obtained temps size: " + newContext.self.flClass.tempVariables.value.length
+          for eachTempVar in newContext.self.flClass.tempVariables.value
+            if eachTempVar.value == paramAtom.value
+              found = true
+              break
+
+          if !found
+            newContext.self.flClass.tempVariables = newContext.self.flClass.tempVariables.flListImmutablePush paramAtom
+
           newContext.tempVariablesDict[ValidIDfromString paramAtom.value] = valueToBeBound
 
           # there should be no temps in the mother context
