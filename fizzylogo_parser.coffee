@@ -26,6 +26,30 @@ tokenizeCommand = (command) ->
   command = command.replace /[ ]+/g, " "
   command = command.trim()
 
+removeComments = (code) ->
+  # this fizzylogo is empty-line sensitive, this regex is custom
+  # and also properly removes the lines where there are comments
+  # (i.e. it doesn't just strip the comment leaving empty the line
+  # where it was)
+  #
+  # 1st part: multi-line comments starting with new line
+  # 2nd part: multi-line comments NOT starting with new line
+  # 3rd part: single-line comments starting with new line
+  # 4th part: single-line comments NOT starting with new line
+  # 5th part: multi-line comment at the end of the text
+  # 6th part: single-line comment at the end of the text
+  #
+  # see: https://regex101.com/r/U5pYX4/1
+  
+  return code.replace ///
+    (^)\/\*[\s\S]*?\*\/\n?|
+    ([^\\\n])\/\*[\s\S]*?\*\/|
+    (^)\/\/.*$\n|
+    ([^\\\n])\/\/.*$|
+    \n\/\/.*$|
+    \n\/\*[\s\S]*?\*\
+    ///gm, "$1$2$3$4"
+
 # replace all the strings with
 # references to a table, which we'll replace back
 # later with string objects.
@@ -95,8 +119,7 @@ flParse = (command) ->
   console.log "codeWithoutStrings: " + command
   console.log "stringsTable: " + stringsTable
 
-  command = command.replace /\/\*[\s\S]*?\*\/\n?|([^\\:\n])\/\/.*$|(^)\/\/.*$\n/gm, "$1"
-
+  command = removeComments command
 
   command = linearize command
   console.log "linearized command: " + command
