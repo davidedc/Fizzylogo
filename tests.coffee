@@ -501,6 +501,22 @@ tests = [
   "0"
 
   # ---------------------------------------------------------------------------
+  # alternate formatting of the above, more C-like
+  """
+  a=5
+
+  repeat (forever) do
+  ﹍if
+  ﹍﹍a==0
+  ﹍then
+  ﹍﹍done
+  ﹍else
+  ﹍﹍a=a minus 1
+  a print
+  """
+  "0"
+
+  # ---------------------------------------------------------------------------
   """
   a=5
 
@@ -1510,6 +1526,151 @@ tests = [
   """
   "2"
 
+  # ---------------------------------------------------------------------------
+  # handling extra indentation
+  # ---------------------------------------------------------------------------
+  """
+  MyClass = Class new
+  MyClass answer
+  ﹍﹍printtwo (argument)
+  ﹍by
+  ﹍﹍argument print
+  myObject = MyClass new
+  myObject printtwo "hello"
+  """
+  "hello"
+
+  # ---------------------------------------------------------------------------
+  """
+  MyClass = Class new
+  MyClass answer
+  ﹍﹍﹍﹍printthree (argument)
+  ﹍by
+  ﹍﹍﹍﹍argument print
+  myObject = MyClass new
+  myObject printthree "hello"
+  """
+  "hello"
+
+  # ---------------------------------------------------------------------------
+  # unclear why you'd do this but it works
+  """
+  MyClass = Class new
+  MyClass answer
+  ﹍﹍﹍﹍﹍﹍﹍﹍﹍printthree (argument)
+  ﹍by
+  ﹍﹍﹍﹍argument print
+  myObject = MyClass new
+  myObject printthree "hello"
+  """
+  "hello"
+
+  # ---------------------------------------------------------------------------
+  # unclear why you'd do this but it works
+  """
+  MyClass = Class new
+  MyClass answer
+  ﹍﹍﹍﹍printthree (argument)
+  ﹍by
+  ﹍﹍﹍﹍﹍﹍﹍﹍﹍argument print
+  myObject = MyClass new
+  myObject printthree "hello"
+  """
+  "hello"
+
+  # ---------------------------------------------------------------------------
+  """
+  MyClass = Class new
+  MyClass answer
+  ﹍﹍﹍﹍printthree (argument)
+  ﹍﹍by
+  ﹍﹍﹍﹍argument print
+  myObject = MyClass new
+  myObject printthree "hello"
+  """
+  "hello"
+
+  # ---------------------------------------------------------------------------
+  """
+  MyClass = Class new
+  MyClass answer
+  ﹍﹍﹍﹍printthree (argument)
+  ﹍﹍﹍by
+  ﹍﹍﹍﹍argument print
+  myObject = MyClass new
+  myObject printthree "hello"
+  """
+  "hello"
+
+  # ---------------------------------------------------------------------------
+  # particularly useful extra indentation for repeat
+  """
+  a=5
+
+  repeat
+  ﹍﹍forever
+  ﹍do
+  ﹍﹍if
+  ﹍﹍﹍a==0
+  ﹍﹍then
+  ﹍﹍﹍done
+  ﹍﹍else
+  ﹍﹍﹍a=a minus 1
+  a print
+  """
+  "0"
+
+  # ---------------------------------------------------------------------------
+  # you would NOT want to indent the if but you could
+  """
+  a=5
+
+  repeat
+  ﹍﹍forever
+  ﹍do
+  ﹍﹍if
+  ﹍﹍﹍﹍a==0
+  ﹍﹍﹍then
+  ﹍﹍﹍﹍done
+  ﹍﹍﹍else
+  ﹍﹍﹍﹍a=a minus 1
+  a print
+  """
+  "0"
+
+  # ---------------------------------------------------------------------------
+  # particularly good for try/catch
+  """
+  someException = Exception new initWith "my custom error"
+  someOtherException = Exception new initWith "my other custom error"
+  try
+  ﹍1 print
+  ﹍throw someException
+  ﹍2 print
+  catch
+  ﹍﹍someOtherException
+  ﹍handle
+  ﹍﹍" caught the error the first time around" print
+  catch
+  ﹍﹍someException
+  ﹍handle
+  ﹍﹍" caught the error the second time around" print
+  ". the end." print
+  """
+  "1 caught the error the second time around. the end."
+
+  # ---------------------------------------------------------------------------
+  """
+  codeToBeRun ='
+  ﹍word print
+  myList = 9
+  for each word in
+  ﹍﹍myList
+  ﹍do
+  ﹍﹍codeToBeRun eval
+  """
+  "! exception: for...each expects a list"
+
 ]
 
 ###
@@ -1557,6 +1718,7 @@ things[0] print
 tests = [
 ]
 ###
+
 
 flContexts = []
 rWorkspace = null

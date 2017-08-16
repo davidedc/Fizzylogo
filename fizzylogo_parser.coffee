@@ -40,7 +40,7 @@ removeComments = (code) ->
   # 6th part: single-line comment at the end of the text
   #
   # see: https://regex101.com/r/U5pYX4/1
-  
+
   return code.replace ///
     (^)\/\*[\s\S]*?\*\/\n?|
     ([^\\\n])\/\*[\s\S]*?\*\/|
@@ -71,12 +71,56 @@ injectStrings = (code, stringsTable) ->
   return code
 
 # transform indentations into brackets
+# it tries to be smart, so you can add "innocuous" extra
+# indentation.
+# Typical innocuous indentations that is useful to add
+# is the kind that transforms things like this:
+#
+#    for each word in
+#    ﹍myList
+#    do
+#    ﹍codeToBeRun eval
+#    something else
+#
+# into this:
+#
+#    for each word in
+#    ﹍﹍myList            // still "under the umbrella" of for
+#    ﹍do                  // still "under the umbrella" of for
+#    ﹍﹍codeToBeRun eval  // still "under the umbrella" of do
+#    something else       // NOT "under the umbrella" of do anymore
+#                         // BUT it's still "under the umbrella" of
+#                            for so it's OK
+#
+# basically you can add tabs within reason if you preserve
+# the logical alignment of things, i.e. if a line is still
+# "under the umbrella of" or "aligned" to the same line
+# then it's OK.
+#
+# It works this way:
+#   1) for any jump "inside" of more
+#      than one tab is corrected to a jump of one tab.
+#   2) for any jump outside:
+#      the current line is checked for the fist line above
+#      that is either aligned with it or to the left of it.
+#      Since we keep the correct identation for all
+#      lines above, we pick the "correct" tab
+#      of the current line to be the tab of the found
+#      one above.
+#   3) once the "correct" tab of this line is found
+#      as per 1) and 2), we just add and remove
+#      () based on the difference in the "correct"
+#      tab numbers.
+
 linearize = (code) ->
   sourceByLine = code.split("\n")
   startOfPreviousLine = ""
   linesWithBlockStart = []
   unclosedParens = 0
   outputSource = ""
+
+  actualLineTabs = []
+  correctedLineTabs = []
   
   for eachLine in [0...sourceByLine.length]
     line = sourceByLine[eachLine]
@@ -85,25 +129,42 @@ linearize = (code) ->
     match = rx.exec line
     if eachLine == 0
       outputSource += " " + line
-      startOfPreviousLine = ""
+      actualLineTabs.push 0
+      correctedLineTabs.push 0
       continue
     startOfThisLine = match[1]
     #console.log "start of line: >" + startOfThisLine + "<"
-    difference = startOfThisLine.length - startOfPreviousLine.length
-    console.log "linearize startOfThisLine: " + startOfThisLine + " " + startOfThisLine.length + " difference: " + difference
-    if difference == 0
+
+    # leftOrRightOrAligned is only used to understand if the current
+    # line if to the left, to the right or aligned. The actual
+    # correct difference in indentation is calculated later.
+    leftOrRightOrAligned = startOfThisLine.length - actualLineTabs[actualLineTabs.length - 1]
+    actualLineTabs.push startOfThisLine.length
+
+    console.log "linearize startOfThisLine: " + startOfThisLine + " " + startOfThisLine.length + " difference in alignment: " + leftOrRightOrAligned + " content: " + line
+    if leftOrRightOrAligned == 0
+      correctedIndentationDifference = 0
       # this is the statement separator
       outputSource += " ; " + line
-    else if difference > 0
-      console.log "linearize adding " + (difference+1) + " ( "
-      outputSource += (Array(difference+1).join "(") + line
-      unclosedParens += difference
-    else
-      console.log "linearize adding " + (-difference+1) + " ) "
-      outputSource += (Array(-difference+1).join ")") + line
-      unclosedParens += difference
-    startOfPreviousLine = startOfThisLine
+    else if leftOrRightOrAligned > 0
+      correctedIndentationDifference = 1
+      console.log "linearize adding a ( "
+      outputSource += (Array(correctedIndentationDifference+1).join "(") + line
+    else # leftOrRightOrAligned < 0
+      for k in [(actualLineTabs.length - 2)..0]
+        console.log " k: " + k + " checking line " + sourceByLine[k] + " for alignment "
+        if actualLineTabs[k] <= startOfThisLine.length
+          console.log "line " + sourceByLine[k] + " is aligned with me and the corrected tabs for that were: " + correctedLineTabs[k]
+          correctedIndentationDifference = correctedLineTabs[k] - correctedLineTabs[correctedLineTabs.length - 1]
+          break
 
+      console.log "linearize adding " + (-correctedIndentationDifference) + " ) "
+      outputSource += (Array(-correctedIndentationDifference+1).join ")") + line
+
+    unclosedParens += correctedIndentationDifference
+    correctedLineTabs.push unclosedParens
+
+  # final close-off of pending parens
   outputSource += (Array(unclosedParens+1).join ")")
 
   #console.log "code length at identifyBlockStarts: " + code.split("\n").length
