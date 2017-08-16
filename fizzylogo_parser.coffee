@@ -94,7 +94,7 @@ injectStrings = (code, stringsTable) ->
 #
 # basically you can add tabs within reason if you preserve
 # the logical alignment of things, i.e. if a line is still
-# "under the umbrella of" or "aligned" to the same line
+# "under the umbrella of" or "aligned to" the same line
 # then it's OK.
 #
 # It works this way:
