@@ -17,7 +17,6 @@ class FLUserDefinedClass extends FLNonPrimitiveClasses
 
     @instanceVariables = FLList.emptyList()
     @classVariables = FLList.emptyList()
-    @tempVariables = FLList.emptyList()
 
 
   # this is going to give to the new user-defined class

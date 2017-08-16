@@ -73,16 +73,9 @@ class FLContext
       console.log "evaluation " + indentation() + "looking in class: " + contextBeingSearched.self.flClass
       #console.dir contextBeingSearched.self.flClass
 
-      temps = contextBeingSearched.self.flClass.tempVariables
-      if temps?
-        console.log "evaluation " + indentation() + "lookup: checking in " + temps.print()
-        if (temps.value.find (element) -> element.value == atomValue)
-          console.log "evaluation " + indentation() + "lookup: found " + atomValue + " in tempVariables"
-          # even though the tempVariables contains the temp, it doesn't
-          # mean it's in this context, it could be higher up, so
-          # check for existence.
-          if contextBeingSearched.tempVariablesDict[ValidIDfromString atomValue]?
-            return contextBeingSearched.tempVariablesDict
+      # check if temp variable is in current context.
+      if contextBeingSearched.tempVariablesDict[ValidIDfromString atomValue]?
+        return contextBeingSearched.tempVariablesDict
 
       instances = contextBeingSearched.self.flClass.instanceVariables
       if instances?
@@ -119,10 +112,6 @@ class FLContext
     # otherwise, in any other context create it as a temp
     else
       console.log "evaluation " + indentation() + "lookup: creating " + atomValue + " as temp variable in current context at depth: " + @depth()
-      if !@self.flClass.tempVariables?
-        @self.flClass.tempVariables = FLList.emptyList()
-
-      @self.flClass.tempVariables = @self.flClass.tempVariables.flListImmutablePush FLAtom.createNew atomValue
       return @tempVariablesDict
 
 

@@ -115,13 +115,6 @@ addDefaultMethods = (classToAddThemTo) ->
 
 
   classToAddThemTo.addMethod \
-    (flParse "tdict"),
-    (context) ->
-      if !@flClass.tempVariables?
-        @flClass.tempVariables = FLList.emptyList()
-      return @flClass.tempVariables
-
-  classToAddThemTo.addMethod \
     (flParse "idict"),
     (context) ->
       if !@flClass.instanceVariables?
@@ -626,7 +619,6 @@ FLList.addMethod \
     console.log "FLList each do "
 
     newContext = new FLContext context
-    newContext.self.flClass.tempVariables = newContext.self.flClass.tempVariables.flListImmutablePush variable
 
     for i in [0...@value.length]
 
@@ -865,7 +857,6 @@ FLFor.addMethod \
     loopVarName = loopVar.value
 
     forContext = new FLContext context
-    forContext.self.flClass.tempVariables = forContext.self.flClass.tempVariables.flListImmutablePush loopVar
     flContexts.jsArrayPush forContext
 
     console.log "FLFor ⇒ loop code is: " + loopCode.print()
@@ -914,7 +905,6 @@ FLFor.addMethod \
     console.log "FLEach do on the list: " + theList.print()
 
     newContext = new FLContext context
-    newContext.self.flClass.tempVariables = newContext.self.flClass.tempVariables.flListImmutablePush variable
 
     for i in [0...theList.value.length]
 

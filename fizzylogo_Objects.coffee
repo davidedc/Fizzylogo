@@ -139,35 +139,8 @@ class FLObjects
             [valueToBeBound, methodInvocation] = methodInvocation.nextElement()
 
           
-          console.log "evaluation " + indentation() + "  matching - adding paramater " + paramAtom.print() + " to tempVariables into this class: "
-          #console.dir theContext.self.flClass
-          # TODO we should insert without repetition
-          if !newContext.self.flClass.tempVariables?
-            newContext.self.flClass.tempVariables = FLList.emptyList()
-
-          # TODO addMethod has similar
-          found = false
-          #console.log "obtained temps size: " + newContext.self.flClass.tempVariables.value.length
-          for eachTempVar in newContext.self.flClass.tempVariables.value
-            if eachTempVar.value == paramAtom.value
-              found = true
-              break
-
-          if !found
-            newContext.self.flClass.tempVariables = newContext.self.flClass.tempVariables.flListImmutablePush paramAtom
-
+          console.log "evaluation " + indentation() + "  matching - adding paramater " + paramAtom.print() + " to tempVariables dictionary in current frame"
           newContext.tempVariablesDict[ValidIDfromString paramAtom.value] = valueToBeBound
-
-          # there should be no temps in the mother context
-          # they should all be in the new context we are
-          # creating explicitly for the function call.
-          #console.log "evaluation " + indentation() + "# theContext temps: " 
-          #for keys of theContext.tempVariablesDict
-          #  console.log "evaluation " + indentation() + "#       #: " + keys
-          #
-          #console.log "evaluation " + indentation() + "# newContext temps: " 
-          #for keys of newContext.tempVariablesDict
-          #  console.log "evaluation " + indentation() + "#       #: " + keys
 
           # ok we matched a paramenter, now let's keep matching further
           # parts of the signature

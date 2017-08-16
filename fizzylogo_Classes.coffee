@@ -5,7 +5,6 @@ class FLClasses extends FLObjects
 
   classVariables: null # a FLList
   instanceVariables: null # a FLList
-  tempVariables: null # a FLList
 
   classVariablesDict: null # a JS dictionary
 
