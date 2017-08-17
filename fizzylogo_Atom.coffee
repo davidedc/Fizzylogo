@@ -24,10 +24,10 @@ class FLAtomClass extends FLPrimitiveClasses
       # have an exotic value for "false", or "2" that is completely
       # different from what it would naturally be.
       console.log "evaluation " + indentation() + "looking up temp atom: " + @value
-      existingLookedUpValue = theContext.lookUpAtomValuePlace @
-      if existingLookedUpValue?
+      existingLookedUpValuePlace = theContext.lookUpAtomValuePlace @
+      if existingLookedUpValuePlace?
         console.log "evaluation " + indentation() + "found temp atom: " + @value
-        theContext.returned = theContext.lookUpAtomValue @, existingLookedUpValue
+        theContext.returned = theContext.lookUpAtomValue @, existingLookedUpValuePlace
         return [theContext]
       else if /^\d+$/.test @value
         theContext.returned = FLNumber.createNew @value

@@ -54,6 +54,8 @@ class FLContext
     while ascendingTheContext.isTransparent
       ascendingTheContext = ascendingTheContext.previousContext
 
+    console.log "first non-transparent context is the one at depth: " + ascendingTheContext.depth()
+
     ascendingTheContext
 
   lookUpAtomValuePlace: (theAtom) ->

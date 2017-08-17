@@ -547,6 +547,23 @@ tests = [
   """
   "yes a is 3"
 
+  # ---------------------------------------------------------------------------
+  """
+  a=5
+  a print
+  b print
+  repeat
+  ﹍2
+  do
+  ﹍a=a minus 1
+  ﹍b = 0
+  ﹍c = 0
+  a print
+  b print
+  c print
+  """
+  "5nil300"
+
 
   # ---------------------------------------------------------------------------
   "'a←5;repeat1((a==0)⇒(done)'a←a minus 1)print"
@@ -688,16 +705,17 @@ tests = [
 
   # ---------------------------------------------------------------------------
   """
+  localTemp print
   for k from
   ﹍1
   to
   ﹍1
   do
-  ﹍localTemp = "local temp - "
+  ﹍localTemp = " - local temp"
   ﹍localTemp print
   localTemp print
   """
-  "local temp - nil"
+  "nil - local temp - local temp"
 
   # ---------------------------------------------------------------------------
   """
@@ -706,16 +724,15 @@ tests = [
   to
   ﹍1
   do
-  ﹍localTemp = "local temp - "
+  ﹍localTemp = "local temp "
   ﹍localTemp print
   localTemp print
-  localTemp = " - ok now defined."
-  localTemp print
   """
-  "local temp - nil - ok now defined."
+  "local temp local temp "
 
   # ---------------------------------------------------------------------------
-  # the for construct creates an open context but
+  # the for construct creates an open context, so it can read and
+  # write variables from/into the 
   # the loop variable is created inside it so it's
   # keep sealed.
 
@@ -731,11 +748,13 @@ tests = [
   ﹍j = k
   ﹍j print
   ﹍k print
+  ﹍l = k
   ﹍
   j print
   k print
+  l print
   """
-  "1nil11222nil"
+  "1nil11222nil2"
 
   # ---------------------------------------------------------------------------
   "8 unintelligibleMessage"

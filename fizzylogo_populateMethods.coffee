@@ -741,6 +741,7 @@ FLDone.addMethod \
 FLRepeat1.addMethod \
   (flParse "( ' loopCode )"),
   (context) ->
+    context.isTransparent = true
     loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
     console.log "FLRepeat1 ⇒ loop code is: " + loopCode.print()
 
@@ -772,6 +773,7 @@ FLRepeat1.addMethod \
 FLRepeat2.addMethod \
   (flParse "(howManyTimes) do ( ' loopCode )"),
   (context) ->
+    context.isTransparent = true
     howManyTimes = context.tempVariablesDict[ValidIDfromString "howManyTimes"]
     loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
     console.log "FLRepeat1 ⇒ loop code is: " + loopCode.print()
@@ -928,6 +930,7 @@ FLFakeCatch.addMethod \
 FLFor.addMethod \
   (flParse "( ' loopVar ) from ( startIndex ) to ( endIndex ) do ( ' loopCode )"),
   (context) ->
+    context.isTransparent = true
     loopVar = context.tempVariablesDict[ValidIDfromString "loopVar"]
     startIndex = context.tempVariablesDict[ValidIDfromString "startIndex"]
     endIndex = context.tempVariablesDict[ValidIDfromString "endIndex"]
@@ -936,6 +939,7 @@ FLFor.addMethod \
     loopVarName = loopVar.value
 
     forContext = new FLContext context
+    forContext.isTransparent = true
     flContexts.jsArrayPush forContext
 
     console.log "FLFor ⇒ loop code is: " + loopCode.print()
@@ -974,7 +978,7 @@ FLFor.addMethod \
 FLFor.addMethod \
   (flParse "each ( ' variable ) in ( theList ) do ( ' code )"),
   (context) ->
-
+    context.isTransparent = true
     variable = context.tempVariablesDict[ValidIDfromString "variable"]
     theList = context.tempVariablesDict[ValidIDfromString "theList"]
     code = context.tempVariablesDict[ValidIDfromString "code"]
@@ -988,13 +992,14 @@ FLFor.addMethod \
 
     console.log "FLEach do on the list: " + theList.print()
 
-    newContext = new FLContext context
+    forContext = new FLContext context
+    forContext.isTransparent = true
 
     for i in [0...theList.value.length]
 
-      newContext.tempVariablesDict[ValidIDfromString variable.value] = theList.elementAt i
+      forContext.tempVariablesDict[ValidIDfromString variable.value] = theList.elementAt i
       console.log "FLEach do evaling...: " + code.print()
-      toBeReturned = (code.eval newContext, code)[0].returned
+      toBeReturned = (code.eval forContext, code)[0].returned
 
       # catch any thrown "done" object, used to
       # exit from a loop.
