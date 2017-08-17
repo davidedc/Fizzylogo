@@ -15,36 +15,61 @@ addDefaultMethods = (classToAddThemTo) ->
     (context) ->
       return @
 
-  commonEvalFunction = (context) ->
-    newContext = new FLContext context
-    flContexts.jsArrayPush newContext
-    toBeReturned = (@eval newContext, @)[0].returned
-    flContexts.pop()
-    return toBeReturned
-
   classToAddThemTo.addMethod \
     (flParse "eval"),
-    commonEvalFunction
+    (context) ->
+      context.isTransparent = true
+      newContext = new FLContext context
+      newContext.isTransparent = true
+      flContexts.jsArrayPush newContext
+      toBeReturned = (@eval newContext, @)[0].returned
+      flContexts.pop()
+      return toBeReturned
 
-  classToAddThemTo.addMethod \
-    (flParse "'s ('variable) = (value)"),
-    # in this case the arrow notation, which
-    # evaluates both sides, is pretty handy!
-    flParse "in (self) do (variable ← value)"
 
-  classToAddThemTo.addMethod \
-    (flParse "'s ('code)"),
-    flParse "code eval"
+  commonPropertyAssignmentFunction = (context) ->
+    context.isTransparent = true
+    variable = context.tempVariablesDict[ValidIDfromString "variable"]
+    value = context.tempVariablesDict[ValidIDfromString "value"]
 
+    if @flClass.classVariablesDict[ValidIDfromString variable.value]?
+      @flClass.classVariablesDict[ValidIDfromString variable.value] = value
+    else
+      @instanceVariablesDict[ValidIDfromString variable.value] = value
+    context.findAnotherReceiver = true
+
+    return @
+
+  commonPropertyAccessFunction = (context) ->
+    context.isTransparent = true
+    variable = context.tempVariablesDict[ValidIDfromString "variable"]
+
+    console.log ". ('variable) : checking class variables"
+
+    if @flClass.classVariablesDict[ValidIDfromString variable.value]?
+      return @flClass.classVariablesDict[ValidIDfromString variable.value]
+
+    console.log ". ('variable) : checking instance variables"
+
+    if @instanceVariablesDict[ValidIDfromString variable.value]?
+      console.log "yes it's an instance variable"
+      return @instanceVariablesDict[ValidIDfromString variable.value]
+
+    return FLNil.createNew()
+
+  # TODO this should be different for classes
   classToAddThemTo.addMethod \
     (flParse ". ('variable) = (value)"),
-    # in this case the arrow notation, which
-    # evaluates both sides, is pretty handy!
-    flParse "in (self) do (variable ← value)"
+    commonPropertyAssignmentFunction
+
+  # TODO this should be different for classes
+  classToAddThemTo.addMethod \
+    (flParse ". ('variable) ← (value)"),
+    commonPropertyAssignmentFunction
 
   classToAddThemTo.addMethod \
-    (flParse ". ('code)"),
-    flParse "code eval"
+    (flParse ". ('variable)"),
+    commonPropertyAccessFunction
 
 
   commonIdictAssignmentFunction = (context) ->
@@ -131,6 +156,7 @@ addDefaultMethods = (classToAddThemTo) ->
         @flClass.classVariables = FLList.emptyList()
       return @flClass.classVariables
 
+  # TODO I think method body should NOT be quoted
   classToAddThemTo.addMethod \
     (flParse "answer ( ' signature ) by ( ' methodBody )"),
     (context) ->
@@ -148,8 +174,7 @@ addDefaultMethods = (classToAddThemTo) ->
       signature = context.tempVariablesDict[ValidIDfromString "signature"]
       methodBody = context.tempVariablesDict[ValidIDfromString "methodBody"]
 
-      @msgPatterns.jsArrayPush signature
-      @methodBodies.jsArrayPush methodBody
+      @flClass.addMethod signature, methodBody
 
       context.findAnotherReceiver = true
       return @
@@ -182,13 +207,25 @@ FLAtom.addMethod \
     console.log "evaluation " + indentation() + "assignment to atom " + theAtomName
     console.log "evaluation " + indentation() + "value to assign to atom: " + theAtomName + " : " + valueToAssign.value
 
-    # this is the place where we come to create new temp variables
-    # and we can't create them in this very call context, that would
-    # be useless, we place it in the context of the _previous_ method call
-    topMostContextWithThisSelf = context.previousContext.topMostContextWithThisSelf()
-    dictToPutAtomIn = topMostContextWithThisSelf.lookUpAtomValuePlace @
+    context.isTransparent = true
+
+    # check if temp variable is visible from here.
+    # if not, create it.
+    dictToPutAtomIn = context.lookUpAtomValuePlace @
     if !dictToPutAtomIn?
-      dictToPutAtomIn = topMostContextWithThisSelf.createNonExistentValueLookup @
+      # no such variable, hence we create it as temp, but
+      # we can't create them in this very call context, that would
+      # be useless, we place it in the context of the _previous_ context
+      # note that this means that any construct that creates a new context
+      # will seal the temp variables in it. For example "for" loops. This
+      # is like the block scoping of C or Java. If you want function scoping, it
+      # could be achieved for example by marking in a special way contexts
+      # that have been created because of method calls and climbing back
+      # to the last one of those...
+      console.log "evaluation " + indentation() + "creating temp atom: " + theAtomName + " at depth: " + context.firstNonTransparentContext().depth() + " with self: " + context.firstNonTransparentContext().self.print()
+      dictToPutAtomIn = context.firstNonTransparentContext().tempVariablesDict
+    else
+      console.log "evaluation " + indentation() + "found temp atom: " + theAtomName
 
     dictToPutAtomIn[ValidIDfromString theAtomName] = valueToAssign
 
@@ -208,13 +245,25 @@ FLAtom.addMethod \
     console.log "evaluation " + indentation() + "assignment to atom " + theAtomName
     console.log "evaluation " + indentation() + "value to assign to atom: " + theAtomName + " : " + valueToAssign.value
 
-    # this is the place where we come to create new temp variables
-    # and we can't create them in this very call context, that would
-    # be useless, we place it in the context of the _previous_ method call
-    topMostContextWithThisSelf = context.previousContext.topMostContextWithThisSelf()
-    dictToPutAtomIn = topMostContextWithThisSelf.lookUpAtomValuePlace @
+    context.isTransparent = true
+
+    # check if temp variable is visible from here.
+    # if not, create it.
+    dictToPutAtomIn = context.lookUpAtomValuePlace @
     if !dictToPutAtomIn?
-      dictToPutAtomIn = topMostContextWithThisSelf.createNonExistentValueLookup @
+      # no such variable, hence we create it as temp, but
+      # we can't create them in this very call context, that would
+      # be useless, we place it in the context of the _previous_ context
+      # note that this means that any construct that creates a new context
+      # will seal the temp variables in it. For example "for" loops. This
+      # is like the block scoping of C or Java. If you want function scoping, it
+      # could be achieved for example by marking in a special way contexts
+      # that have been created because of method calls and climbing back
+      # to the last one of those...
+      console.log "evaluation " + indentation() + "creating temp atom: " + theAtomName
+      dictToPutAtomIn = context.firstNonTransparentContext().tempVariablesDict
+    else
+      console.log "evaluation " + indentation() + "found temp atom: " + theAtomName
 
     dictToPutAtomIn[ValidIDfromString theAtomName] = valueToAssign
 
@@ -232,13 +281,25 @@ FLAtom.addMethod \
     console.log "evaluation " + indentation() + "assignment to atom " + theAtomName
     console.log "evaluation " + indentation() + "value to assign to atom: " + theAtomName + " : " + valueToAssign.value
 
-    # this is the place where we come to create new temp variables
-    # and we can't create them in this very call context, that would
-    # be useless, we place it in the context of the _previous_ method call
-    topMostContextWithThisSelf = context.previousContext.topMostContextWithThisSelf()
-    dictToPutAtomIn = topMostContextWithThisSelf.lookUpAtomValuePlace @
+    context.isTransparent = true
+
+    # check if temp variable is visible from here.
+    # if not, create it.
+    dictToPutAtomIn = context.lookUpAtomValuePlace @
     if !dictToPutAtomIn?
-      dictToPutAtomIn = topMostContextWithThisSelf.createNonExistentValueLookup @
+      # no such variable, hence we create it as temp, but
+      # we can't create them in this very call context, that would
+      # be useless, we place it in the context of the _previous_ context
+      # note that this means that any construct that creates a new context
+      # will seal the temp variables in it. For example "for" loops. This
+      # is like the block scoping of C or Java. If you want function scoping, it
+      # could be achieved for example by marking in a special way contexts
+      # that have been created because of method calls and climbing back
+      # to the last one of those...
+      console.log "evaluation " + indentation() + "creating temp atom: " + theAtomName
+      dictToPutAtomIn = context.firstNonTransparentContext().tempVariablesDict
+    else
+      console.log "evaluation " + indentation() + "found temp atom: " + theAtomName
 
     dictToPutAtomIn[ValidIDfromString theAtomName] = valueToAssign
 
@@ -248,6 +309,17 @@ FLAtom.addMethod \
 
 
 # Nil ---------------------------------------------------------------------------
+
+FLNil.addMethod \
+  (flParse "('anything)"),
+  (context) ->
+    anything = context.tempVariablesDict[ValidIDfromString "anything"]
+
+    context.throwing = true
+    # TODO this error should really be a stock error referanceable
+    # from the workspace because someone might want to catch it.
+    return FLException.createNew "message to nil: " + anything.print()
+
 
 # In ---------------------------------------------------------------------------
 
@@ -266,13 +338,13 @@ FLIn.addMethod \
 
 # To -------------------------------------------------------------------------
 
+# TODO it's be nice if there was a way not to leak the TempClass
 FLTo.addMethod \
   (flParse "( ' functionObjectName ) ( ' signature ) do ( ' functionBody )"),
   flParse \
-    "'TempClass ← Class new;\
-    tempClass answerEvalParams (signature) by (functionBody);\
-    'functionObject ← TempClass new;\
-    WorkSpace cvarEvalParams (functionObjectName) ← functionObject;"
+    "accessUpperContext; 'TempClass ← Class new;\
+    TempClass answerEvalParams (signature) by (functionBody);\
+    functionObjectName ← TempClass new;"
 
 # Class -------------------------------------------------------------------------
 
@@ -415,23 +487,23 @@ FLNumber.addMethod \
 
 FLNumber.addMethod \
   (flParse "factorialtwo"),
-  flParse "( self == 0 ) ⇒ ( 1 ) self * ( ( self minus 1 ) factorial )"
+  flParse "( self == 0 ) ⇒ ( 1 ) self * ( ( self minus 1 ) factorialtwo )"
 
 FLNumber.addMethod \
   (flParse "factorialthree"),
-  flParse "( self == 0 ) ⇒ ( 1 ) ('temp ← self; ( self minus 1 ) factorial * temp )"
+  flParse "( self == 0 ) ⇒ ( 1 ) ('temp ← self; temp print; ( self minus 1 ) factorialthree * temp )"
 
 FLNumber.addMethod \
   (flParse "factorialfour"),
   flParse \
     "( self == 0 ) ⇒ ( 1 ) ('temp ← self;\
-    ( self minus 1 ) factorial * temp )"
+    ( self minus 1 ) factorialfour * temp )"
 
 FLNumber.addMethod \
   (flParse "factorialfive"),
   flParse \
     "( self == 0 ) ⇒ ( 1 ) (1 plus 1;'temp ← self;\
-    ( self minus 1 ) factorial * temp )"
+    ( self minus 1 ) factorialfive * temp )"
 
 FLNumber.addMethod \
   (flParse "amIZero"),
@@ -502,6 +574,7 @@ FLNumber.addMethod \
 FLNumber.addMethod \
   (flParse "← ( valueToAssign )"),
   (context) ->
+    console.log "evaluation " + indentation() + "assigning to number! "
     valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
     @value = valueToAssign.value
     return @
@@ -524,6 +597,7 @@ FLBoolean.addMethod \
 FLBoolean.addMethod \
   (flParse "⇒ ( ' trueBranch )"),
   (context) ->
+    context.isTransparent = true
     trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
     console.log "FLBoolean ⇒ , predicate value is: " + @value
 
@@ -562,7 +636,12 @@ FLQuote.addMethod \
   (flParse "( ' operandum )"),
   (context) ->
     operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+
+    if operandum.flClass == FLList
+      operandum = operandum.evaluatedElementsList context
+
     return operandum
+
 
 # Not --------------------------------------------------------------------------
 FLNot.addMethod \
@@ -864,6 +943,9 @@ FLFor.addMethod \
     for i in [startIndex.value..endIndex.value]
       console.log "FLFor ⇒ loop iterating variable to " + i
 
+      # the looping var is always in the new local for context
+      # so it keeps any previous instance safe, and goes
+      # away when this for is done.
       forContext.tempVariablesDict[ValidIDfromString loopVarName] = FLNumber.createNew i
 
       toBeReturned = (loopCode.eval forContext, loopCode)[0].returned
@@ -899,6 +981,8 @@ FLFor.addMethod \
 
     if theList.flClass != FLList
       context.throwing = true
+      # TODO this error should really be a stock error referanceable
+      # from the workspace because someone might want to catch it.
       return FLException.createNew "for...each expects a list"
 
 

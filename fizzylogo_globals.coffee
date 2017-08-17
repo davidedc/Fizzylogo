@@ -1,3 +1,5 @@
+outerMostContext = null
+
 indentation = ->
   return " ".repeat(flContexts.length * 2)
 

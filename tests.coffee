@@ -213,7 +213,11 @@ tests = [
 
   # ---------------------------------------------------------------------------
   "negate print"
-  "! no meaning found for: negate was sent message: ( print )"
+  "nil"
+
+  # ---------------------------------------------------------------------------
+  "negate print; negate = 2; negate print; negate = nil; negate print; negate plus"
+  "nil2nil! exception: message to nil: plus"
 
   # ---------------------------------------------------------------------------
   # this is what happens here: "a" is sent the message "b".
@@ -235,7 +239,7 @@ tests = [
 
   # ---------------------------------------------------------------------------
   "nonExistingObject"
-  "! no meaning found for: nonExistingObject was sent message: empty message"
+  ""
 
   # ---------------------------------------------------------------------------
   "1 == 1 negate; 2print"
@@ -390,7 +394,7 @@ tests = [
 
   # ---------------------------------------------------------------------------
   "7factorialthree print"
-  "5040"
+  "76543215040"
 
   # ---------------------------------------------------------------------------
   "7factorialfour print"
@@ -683,6 +687,57 @@ tests = [
   "12345678910done"
 
   # ---------------------------------------------------------------------------
+  """
+  for k from
+  ﹍1
+  to
+  ﹍1
+  do
+  ﹍localTemp = "local temp - "
+  ﹍localTemp print
+  localTemp print
+  """
+  "local temp - nil"
+
+  # ---------------------------------------------------------------------------
+  """
+  for k from
+  ﹍1
+  to
+  ﹍1
+  do
+  ﹍localTemp = "local temp - "
+  ﹍localTemp print
+  localTemp print
+  localTemp = " - ok now defined."
+  localTemp print
+  """
+  "local temp - nil - ok now defined."
+
+  # ---------------------------------------------------------------------------
+  # the for construct creates an open context but
+  # the loop variable is created inside it so it's
+  # keep sealed.
+
+  """
+  j = 1
+  j print
+  k print
+  for k from
+  ﹍1
+  to
+  ﹍2
+  do
+  ﹍j = k
+  ﹍j print
+  ﹍k print
+  ﹍
+  j print
+  k print
+  """
+  "1nil11222nil"
+
+  # ---------------------------------------------------------------------------
   "8 unintelligibleMessage"
   "! message was not understood: ( unintelligibleMessage )"
 
@@ -741,19 +796,54 @@ tests = [
 
   # ---------------------------------------------------------------------------
   "'MyClass←Class new;MyClass idict←counter;\
-    MyClass answer(setCounterToTwo)by('counter←2);\
-    MyClass answer(printCounter)by(counter print);\
+    MyClass answer(setCounterToTwo)by(self.counter←2);\
+    MyClass answer(printCounter)by(self.counter print);\
     'myObject←MyClass new;myObject printCounter;\
     myObject setCounterToTwo;myObject printCounter;\
     'myObject2←MyClass new;myObject2 printCounter;\
     myObject2 setCounterToTwo;myObject2 printCounter"
   "nil2nil2"
 
+  # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
+
+  """
+  MyClass = Class new
+  MyClass idict←counter
+
+  MyClass answer
+  ﹍﹍setCounterToTwo
+  ﹍by
+  ﹍﹍self.counter←2
+
+  MyClass answer
+  ﹍﹍printCounter
+  ﹍by
+  ﹍﹍self.counter print
+
+  myObject = MyClass new
+  myObject printCounter
+  myObject setCounterToTwo
+  myObject printCounter
+
+  myObject2 = MyClass new
+  myObject2 printCounter
+  myObject2 setCounterToTwo
+  myObject2 printCounter
+  """
+  "nil2nil2"
+
   # ---------------------------------------------------------------------------
   "'MyClass←Class new;MyClass idict←counter;\
-    MyClass answer(setCounterToTwo)by('counter←2);\
+    MyClass answer(setCounterToTwo)by(self.counter←2);\
     'myObject←MyClass new;\
     myObject setCounterToTwo;myObject's counter print"
+  "2"
+
+  # ---------------------------------------------------------------------------
+  "'MyClass←Class new;MyClass idict←counter;\
+    MyClass answer(setCounterToTwo)by(self.counter←2);\
+    'myObject←MyClass new;\
+    myObject setCounterToTwo;myObject.counter print"
   "2"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
@@ -765,7 +855,7 @@ tests = [
   MyClass answer
   ﹍setCounterToTwo
   by
-  ﹍counter = 2
+  ﹍self.counter = 2
   myObject = MyClass new
   myObject setCounterToTwo
   myObject.counter print
@@ -781,10 +871,11 @@ tests = [
   "( counter = 2 )"
 
   # ---------------------------------------------------------------------------
-  # the equivalent of closures, the
-  # code is just a list, and with the quote assignment
-  # its elements are all evaluated, hence the bound
-  # elements are copied in terms of their values, so
+  # something similar to closures, the
+  # code is just a list of atoms, and with the quote
+  # assignment (or any quote for that matter)
+  # its elements (excluding "self") are all evaluated,
+  # hence the bound elements are copied in terms of their values, so
   # those can't be changed anymore.
   # The unassigned elements are kept as is and hence
   # they are free to be bound later
@@ -804,7 +895,7 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
-  ﹍counter=2
+  ﹍self's counter=2
 
   MyClass=Class new
   MyClass idict = counter
@@ -821,12 +912,10 @@ tests = [
 
   "23"
 
-  # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-
-  # more dot notation
+  # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
-  ﹍counter=2
+  ﹍self.counter=2
 
   MyClass=Class new
   MyClass idict = counter
@@ -846,7 +935,7 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
-  ﹍counter=2
+  ﹍self's counter=2
 
   MyClass=Class new
   MyClass idict = counter
@@ -860,18 +949,17 @@ tests = [
   in
   ﹍myObject
   do
-  ﹍counter = 3
+  ﹍self's counter = 3
   myObject's counter print
   (myObject's counter plus myObject's counter) print
   """
 
   "236"
 
-  # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-
+  # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
-  ﹍counter=2
+  ﹍self.counter=2
 
   MyClass=Class new
   MyClass idict = counter
@@ -885,7 +973,7 @@ tests = [
   in
   ﹍myObject
   do
-  ﹍counter = 3
+  ﹍self.counter = 3
   myObject.counter print
   (myObject.counter plus myObject.counter) print
   """
@@ -920,12 +1008,12 @@ tests = [
   myObject = MyClass new
   myObject.printtwo "hello"
   """
-  "! no meaning found for: printtwo was sent message: ( \"hello\" )"
+  "! exception: message to nil: hello"
 
   # ---------------------------------------------------------------------------
   "'MyClass←Class new;MyClass cvar classCounter ← 0;\
-    MyClass answer(incrementClassCounterByTwo)by('classCounter←classCounter plus 2);\
-    MyClass answer(printClassCounter)by(classCounter print);\
+    MyClass answer(incrementClassCounterByTwo)by(self.classCounter = self.classCounter plus 2);\
+    MyClass answer(printClassCounter)by(self.classCounter print);\
     'myObject←MyClass new;myObject printClassCounter;\
     myObject incrementClassCounterByTwo;\
     myObject printClassCounter;\
@@ -1727,9 +1815,9 @@ tests = [
 ]
 ###
 
-
 flContexts = []
 rWorkspace = null
+
 OKs = 0
 FAILs = 0
 
@@ -1758,7 +1846,7 @@ for i in [0...tests.length] by 2
     rWorkspace.flClass.instanceVariables = FLList.emptyList()
     
     keywordsAndTheirInit = [
-      "WorkSpace", FLWorkspace
+      "WorkSpace", FLWorkspace # todo probably not needed?
       "Class", FLClass.createNew()
       "List", FLList
       "String", FLString
@@ -1784,15 +1872,16 @@ for i in [0...tests.length] by 2
       "to", FLTo.createNew()
 
       "in", FLIn.createNew()
+      "accessUpperContext", FLAccessUpperContext.createNew()
+
+      "nil", FLNil.createNew()
 
       "'", FLQuote.createNew()
     ]
 
     for keywords in [0...keywordsAndTheirInit.length] by 2
       [keyword, itsInitialisation] = keywordsAndTheirInit[keywords .. keywords + 1]
-      rWorkspace.flClass.instanceVariables = rWorkspace.flClass.instanceVariables.flListImmutablePush FLAtom.createNew keyword
-      outerMostContext.self.instanceVariablesDict[ValidIDfromString keyword] = itsInitialisation
-
+      outerMostContext.tempVariablesDict[ValidIDfromString keyword] = itsInitialisation
 
     messageLength = parsed.length()
     console.log "evaluation " + indentation() + "messaging workspace with " + parsed.print()

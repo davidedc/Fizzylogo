@@ -1,8 +1,28 @@
+# Notes on the scope mechanics:
+# atoms are always looked-up in the temp variables.
+# temp variables are local to the context, _however_
+# if you open a context (with the accessUpperContext) command
+# then you can see and influence the context(s) above.
+# So, in a normal method invocation the new context is sealed,
+# but other constructs such as the _for_ construct
+# create an "open" context
+# i.e. the atoms can also be looked up in the context(s) above
+# as well and
+# the newly created variables are visible from above.
+# (however note that the for construct creates the loop
+# variable in its context so not to clobber existing
+# ones and not to leak the loop variable).
+# to access fields of an object, the "."... methods are used
+# , which explicitely use the following atems to look up
+# the dictionaries of the receiver, no reference to temp
+# variables in the context is made in those cases.
+
 class FLContext
   self: null # a FLObject
   tempVariablesDict: null # a JS dictionary
   previousContext: null
   returned: null
+  isTransparent: false
 
   # contexts should only be created when "self" changes
   # (on method invocation), or when you want to
@@ -25,18 +45,16 @@ class FLContext
       ascendingTheContext = ascendingTheContext.previousContext
     depthCount
 
-  # effectively climbs up the context chain
-  # up to the last method invocation
-  # TODO this can be done cleaner, looking at where
-  # the self changes seems a little risky...
-  topMostContextWithThisSelf: ->
-    currentSelf = @self
-    ascendingTheContext = @previousContext
-    chosenContext = @
-    while ascendingTheContext? and (currentSelf == ascendingTheContext.self)
-      chosenContext = ascendingTheContext
+  # climbs up the context chain
+  firstNonTransparentContext: ->
+    ascendingTheContext = @
+
+    # the top-most context is NOT transparent,
+    # so we know this loop will never go "beyond" the top
+    while ascendingTheContext.isTransparent
       ascendingTheContext = ascendingTheContext.previousContext
-    chosenContext
+
+    ascendingTheContext
 
   lookUpAtomValuePlace: (theAtom) ->
     # we first look in this context, and then we go up
@@ -61,58 +79,44 @@ class FLContext
     atomValue = theAtom.value
 
     if atomValue == "self"
-      return @
+      return @firstNonTransparentContext()
 
-    while contextBeingSearched?
+    while true
 
-      console.log "evaluation " + indentation() + " current message: "
       console.log "evaluation " + indentation() + "context temps: " 
       for keys of contextBeingSearched.tempVariablesDict
         console.log keys
 
-      console.log "evaluation " + indentation() + "looking in class: " + contextBeingSearched.self.flClass
-      #console.dir contextBeingSearched.self.flClass
-
       # check if temp variable is in current context.
       if contextBeingSearched.tempVariablesDict[ValidIDfromString atomValue]?
+        console.log "evaluation " + indentation() + "lookup: found in context at depth " + contextBeingSearched.depth() + " with self: " + contextBeingSearched.self.print()
         return contextBeingSearched.tempVariablesDict
-
-      instances = contextBeingSearched.self.flClass.instanceVariables
-      if instances?
-        console.log "evaluation " + indentation() + "lookup: checking in " + instances.print()
-        if instances.value? and (instances.value.find (element) -> element.value == atomValue)
-          console.log "evaluation " + indentation() + "lookup: found " + atomValue + " in instanceVariables"
-          return contextBeingSearched.self.instanceVariablesDict
-
-      statics = contextBeingSearched.self.flClass.classVariables
-      if statics?
-        console.log "evaluation " + indentation() + "lookup: checking in " + statics.print()
-        if statics.value? and (statics.value.find (element) -> element.value == atomValue)
-          console.log "evaluation " + indentation() + "lookup: found " + atomValue + " in classVariables"
-          return contextBeingSearched.self.flClass.classVariablesDict
 
       # nothing found from this context, move up
       # to the sender (i.e. the callee)
-      console.log "evaluation " + indentation() + "lookup: not found in this context, going up "
-      contextBeingSearched = contextBeingSearched.previousContext
+      console.log "evaluation " + indentation() + "lookup: not found in context at depth " + contextBeingSearched.depth() + " with self: " + contextBeingSearched.self.print()
+
+
+      if contextBeingSearched.isTransparent
+        console.log "evaluation " + indentation() + "lookup: ... this context is transparent so I can go up"
+        contextBeingSearched = contextBeingSearched.previousContext
+      else
+        break
+
+    # check if temp variable is in the outer-most context
+    if outerMostContext.tempVariablesDict[ValidIDfromString atomValue]?
+      return outerMostContext.tempVariablesDict
+
 
     console.log "evaluation " + indentation() + "lookup: " + atomValue + " not found!"
     return null
 
 
-  createNonExistentValueLookup: (theAtom) ->
+  createNonExistentValueLookup: ->
     # if the variable doesn't exist anywhere and
     # we are currently in context linked to the
     # workspace...
-    atomValue = theAtom.value
-    if @self == rWorkspace
-      console.log "evaluation " + indentation() + "lookup: creating " + atomValue + " as instance variable in top-most context"
-      @self.flClass.instanceVariables = @self.flClass.instanceVariables.flListImmutablePush FLAtom.createNew atomValue
-      return @self.instanceVariablesDict
-    # otherwise, in any other context create it as a temp
-    else
-      console.log "evaluation " + indentation() + "lookup: creating " + atomValue + " as temp variable in current context at depth: " + @depth()
-      return @tempVariablesDict
+    return @firstNonTransparentContext().tempVariablesDict
 
 
   lookUpAtomValue: (theAtom, alreadyKnowWhichDict) ->
@@ -125,7 +129,7 @@ class FLContext
       dictWhereValueIs = @lookUpAtomValuePlace theAtom
 
     if !dictWhereValueIs?
-      dictWhereValueIs = @createNonExistentValueLookup theAtom
+      dictWhereValueIs = @createNonExistentValueLookup()
 
     #console.log "evaluation " + indentation() + "lookup: " + theAtom.value + " found dictionary and it contains:"
     #console.dir dictWhereValueIs

@@ -1,5 +1,11 @@
 
 tokenizeCommand = (command) ->
+
+  # we can just use the dot instead of 's.
+  # Using 's would make things more complicated
+  # because we also use ' as quote symbol
+  command = command.replace /'[ ]*s[^$a-zA-Z_]/g, "."
+
   # separate parens
   command = command.replace /\(/g, " ( "
   command = command.replace /\)/g, " ) "

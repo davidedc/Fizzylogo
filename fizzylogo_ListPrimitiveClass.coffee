@@ -86,6 +86,13 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
       return @
 
     # TODO this can be done much cheaper
+    # Permits something similar to closures:
+    # code is just a list of atoms, and with the quote
+    # assignment (or any quote for that matter)
+    # its elements (excluding "self") are all evaluated,
+    # hence the bound elements are copied in terms of their values.
+    # The unassigned elements are kept as is and hence
+    # they are free to be bound later.
     toBeReturned.evaluatedElementsList = (context) ->
       newList = FLList.createNew()
       for i in [0...@length()]
@@ -94,7 +101,10 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
         if (@elementAt i).flClass == FLList
           evalled = (@elementAt i).evaluatedElementsList context
         else
-          evalled = ((@elementAt i).eval context, @, true)[0].returned
+          if (@elementAt i).flClass == FLAtom and (@elementAt i).value == "self"
+            evalled = (@elementAt i)
+          else 
+            evalled = ((@elementAt i).eval context, @, true)[0].returned
 
         newList = newList.flListImmutablePush evalled
 
