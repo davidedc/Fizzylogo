@@ -1812,7 +1812,7 @@ tests = [
   Counter.counter = 0
 
   Counter answer
-  ﹍﹍incrementInPlace
+  ﹍﹍increment
   ﹍by
   ﹍﹍self.counter = self.counter plus 1
 
@@ -1822,7 +1822,7 @@ tests = [
   MyClass answer
   ﹍whenNew
   by
-  ﹍self.instantiationsCounter incrementInPlace
+  ﹍self.instantiationsCounter increment
   ﹍self
 
   MyClass answer
@@ -1856,7 +1856,7 @@ tests = [
   Counter.counter = 0
 
   Counter answer
-  ﹍﹍incrementInPlace
+  ﹍﹍increment
   ﹍by
   ﹍﹍self.counter = self.counter plus 1
 
