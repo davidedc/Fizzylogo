@@ -15,7 +15,7 @@ class FLAtomClass extends FLPrimitiveClasses
       if remainingMessage? and remainingMessage.flClass == FLList
         console.log "remainingMessage: " + remainingMessage.print()
         console.log "secondElementIsEqual: " + remainingMessage.secondElementIsEqual()
-        if remainingMessage.secondElementIsEqual()
+        if remainingMessage.startsWithCompoundAssignmentOperator() or remainingMessage.secondElementIsEqual()
           theContext.returned = @
           return [theContext]
 

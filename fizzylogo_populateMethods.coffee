@@ -221,6 +221,10 @@ FLAtom.addMethod \
     return valueToAssign
 
 
+FLAtom.addMethod \
+  (flParse "+= ( operandum )"),
+  (flParse "self ← self eval plus operandum")
+
 # Nil ---------------------------------------------------------------------------
 
 FLNil.addMethod \

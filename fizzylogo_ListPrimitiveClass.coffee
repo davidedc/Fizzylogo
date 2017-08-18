@@ -290,6 +290,16 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
         throw "no first element, array is empty"
       return @elementAt 0
 
+    toBeReturned.startsWithCompoundAssignmentOperator =  ->
+      if @length() >= 2
+        if (@elementAt 1).flClass == FLAtom
+          if (@elementAt 1).value == "+="
+            console.log "startsWithCompoundAssignmentOperator: oh yes"
+            return true
+      console.log "startsWithCompoundAssignmentOperator: oh no"
+      return false
+
+
     toBeReturned.secondElementIsEqual =  ->
       if @length() >= 2
         if (@elementAt 1).flClass == FLAtom
