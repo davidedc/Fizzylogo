@@ -386,8 +386,11 @@ FLNumber.addMethod \
   (flParse "doublePrint"),
   flParse "self print print"
 
+# mutates the very object
 FLNumber.addMethod \
-  (flParse "increment"),
+  (flParse "incrementInPlace"),
+  # this one below actually mutates the number
+  # object
   flParse "self ← self plus 1"
 
 FLNumber.addMethod \
@@ -480,6 +483,7 @@ FLNumber.addMethod \
     else
       return FLBoolean.createNew false
 
+# mutating the number
 FLNumber.addMethod \
   (flParse "← ( valueToAssign )"),
   (context) ->

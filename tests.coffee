@@ -39,53 +39,53 @@ tests = [
   "test stringtest stringa"
 
   # ---------------------------------------------------------------------------
-  "'a←5;a increment;'a←a plus 1;a print"
+  "'a←5;a incrementInPlace;'a←a plus 1;a print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5;a increment;a=a plus 1;a print"
+  "a=5;a incrementInPlace;a=a plus 1;a print"
   "7"
 
   # ---------------------------------------------------------------------------
   # testing crazy statement separations
 
-  "'a←5;;a increment; ;;;  ;'a←a plus 1;a print"
+  "'a←5;;a incrementInPlace; ;;;  ;'a←a plus 1;a print"
   "7"
 
-  ";'a←5;;a increment; ;;;  ;'a←a plus 1;a print;"
+  ";'a←5;;a incrementInPlace; ;;;  ;'a←a plus 1;a print;"
   "7"
 
-  ";;'a←5;;a increment; ;;;  ;'a←a plus 1;a print;;"
+  ";;'a←5;;a incrementInPlace; ;;;  ;'a←a plus 1;a print;;"
   "7"
 
-  "; ;'a←5;;a increment; ;;;  ;'a←a plus 1;a print; ;"
+  "; ;'a←5;;a incrementInPlace; ;;;  ;'a←a plus 1;a print; ;"
   "7"
 
-  ";;;'a←5;;a increment; ;;;  ;'a←a plus 1;a print;;;"
-  "7"
-
-  # ---------------------------------------------------------------------------
-  "'a←5;'a←a plus 1;a increment print"
-  "7"
-
-  # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5;a=a plus 1;a increment print"
+  ";;;'a←5;;a incrementInPlace; ;;;  ;'a←a plus 1;a print;;;"
   "7"
 
   # ---------------------------------------------------------------------------
-  "'a←5plus 1;a increment print"
+  "'a←5;'a←a plus 1;a incrementInPlace print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5plus 1;a increment print"
+  "a=5;a=a plus 1;a incrementInPlace print"
   "7"
 
   # ---------------------------------------------------------------------------
-  "'a←(5plus 1);a increment print"
+  "'a←5plus 1;a incrementInPlace print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=(5plus 1);a increment print"
+  "a=5plus 1;a incrementInPlace print"
+  "7"
+
+  # ---------------------------------------------------------------------------
+  "'a←(5plus 1);a incrementInPlace print"
+  "7"
+
+  # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
+  "a=(5plus 1);a incrementInPlace print"
   "7"
 
   # ---------------------------------------------------------------------------
@@ -93,27 +93,27 @@ tests = [
   "6"
 
   # ---------------------------------------------------------------------------
-  "'a←(4plus 1plus 1);a increment print"
+  "'a←(4plus 1plus 1);a incrementInPlace print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=(4plus 1plus 1);a increment print"
+  "a=(4plus 1plus 1);a incrementInPlace print"
   "7"
 
   # ---------------------------------------------------------------------------
-  "'a←(4plus(1plus 1));a increment print"
+  "'a←(4plus(1plus 1));a incrementInPlace print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=(4plus(1plus 1));a increment print"
+  "a=(4plus(1plus 1));a incrementInPlace print"
   "7"
 
   # ---------------------------------------------------------------------------
-  "'a←((4plus 1)plus(0plus 1));a increment print"
+  "'a←((4plus 1)plus(0plus 1));a incrementInPlace print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=((4plus 1)plus(0plus 1));a increment print"
+  "a=((4plus 1)plus(0plus 1));a incrementInPlace print"
   "7"
 
   # ---------------------------------------------------------------------------
@@ -1800,16 +1800,19 @@ tests = [
   # (just the reference to them), so effectively
   # the counter is shared between MyClass and all its
   # instances.
-  # Note how we can't just directly use a number for the counter,
-  # because numbers are immutable i.e. we can't change a number's value
-  # , we need to swap-out the number for a new one. So, we need to wrap
-  # the number up in an object.
+  # Note how we could just directly use a number for the counter and
+  # mutate it with something like "incrementInPlace", which mutates the
+  # actual value of the number object, but here we choose the
+  # other alternative, we don't change the value of the number itself, rather
+  # we wrap the number into a "counter" object and give it a method to
+  # swap-out the number with a new incremented number we get from
+  # the result of "plus 1" invocation.
   """
   Counter = Class new
   Counter.counter = 0
 
   Counter answer
-  ﹍﹍increment
+  ﹍﹍incrementInPlace
   ﹍by
   ﹍﹍self.counter = self.counter plus 1
 
@@ -1819,7 +1822,7 @@ tests = [
   MyClass answer
   ﹍whenNew
   by
-  ﹍self.instantiationsCounter increment
+  ﹍self.instantiationsCounter incrementInPlace
   ﹍self
 
   MyClass answer
@@ -1853,7 +1856,7 @@ tests = [
   Counter.counter = 0
 
   Counter answer
-  ﹍﹍increment
+  ﹍﹍incrementInPlace
   ﹍by
   ﹍﹍self.counter = self.counter plus 1
 
@@ -1866,7 +1869,7 @@ tests = [
   MyClass answer
   ﹍whenNew
   by
-  ﹍self.instantiationsCounter increment
+  ﹍self.instantiationsCounter incrementInPlace
   ﹍self
 
   MyClass answer
