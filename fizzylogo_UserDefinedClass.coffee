@@ -15,10 +15,6 @@ class FLUserDefinedClass extends FLNonPrimitiveClasses
     super()
     @value = "some_custom_class_of_user"
 
-    @instanceVariables = FLList.emptyList()
-    @classVariables = FLList.emptyList()
-
-
   # this is going to give to the new user-defined class
   # the capacity to create objects.
   createNew: ->

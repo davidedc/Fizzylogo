@@ -58,25 +58,11 @@ class FLContext
 
     ascendingTheContext
 
+  # from here, an Atom matches a temp variable, which could be
+  # in this context, or further up across transparent contexts,
+  # OR at the top level context.
   lookUpAtomValuePlace: (theAtom) ->
-    # we first look in this context, and then we go up
-    # context by context until we reach the top without
-    # having found anything.
 
-    # so, for each context,
-    #   first, check the temporaries
-    #     if the class lists the atom in the temporaties
-    #       then the value resides in the context itself
-    #   then the instance variables
-    #     if the class lists the atom in the intance variables
-    #       then the value resides in the self object
-    #   then the class variables.
-    #     if the class lists the atom in the class variables
-    #       then the value resides in the class
-    # We always return a fizzylogo object (or a fizzylogo class
-    # , which is also a fizzylogo object)
-
-    # check the temporaries
     contextBeingSearched = @
     atomValue = theAtom.value
 

@@ -3,11 +3,6 @@ class FLClasses extends FLObjects
   msgPatterns: null # an array of FLLists
   methodBodies: null # an array of FLLists
 
-  classVariables: null # a FLList
-  instanceVariables: null # a FLList
-
-  classVariablesDict: null # a JS dictionary
-
   addMethod: (signature, methodBody) ->
     for i in [0...@msgPatterns.length]
       eachSignature = @msgPatterns[i]
@@ -30,7 +25,6 @@ class FLClasses extends FLObjects
     # are in the context, not here in the class
     # similarly, the instance variables contents
     # are in the object, not here in the class
-    @classVariablesDict = {}
     allClasses.push @
 
 
@@ -58,7 +52,6 @@ class FLClassPrimitiveClass extends FLPrimitiveClasses
   # that "new FLUserDefinedClass()" is used.
   createNew: ->
     toBeReturned = super FLClass
-    toBeReturned.classVariablesDict = {}
     toBeReturned.msgPatterns = []
     toBeReturned.methodBodies = []
     toBeReturned.instanceVariablesDict = {}

@@ -32,10 +32,7 @@ addDefaultMethods = (classToAddThemTo) ->
     variable = context.tempVariablesDict[ValidIDfromString "variable"]
     value = context.tempVariablesDict[ValidIDfromString "value"]
 
-    if @flClass.classVariablesDict[ValidIDfromString variable.value]?
-      @flClass.classVariablesDict[ValidIDfromString variable.value] = value
-    else
-      @instanceVariablesDict[ValidIDfromString variable.value] = value
+    @instanceVariablesDict[ValidIDfromString variable.value] = value
     context.findAnotherReceiver = true
 
     return @
@@ -43,11 +40,6 @@ addDefaultMethods = (classToAddThemTo) ->
   commonPropertyAccessFunction = (context) ->
     context.isTransparent = true
     variable = context.tempVariablesDict[ValidIDfromString "variable"]
-
-    console.log ". ('variable) : checking class variables"
-
-    if @flClass.classVariablesDict[ValidIDfromString variable.value]?
-      return @flClass.classVariablesDict[ValidIDfromString variable.value]
 
     console.log ". ('variable) : checking instance variables"
 
@@ -71,90 +63,6 @@ addDefaultMethods = (classToAddThemTo) ->
     (flParse ". ('variable)"),
     commonPropertyAccessFunction
 
-
-  commonIdictAssignmentFunction = (context) ->
-    variable = context.tempVariablesDict[ValidIDfromString "variable"]
-    console.log "idict adding variable: @flClass.value " + @flClass.value
-    if !@flClass.instanceVariables?
-      @flClass.instanceVariables = FLList.emptyList()
-
-    console.log "idict: context.self.flClass: "
-    console.dir @flClass
-
-    @flClass.instanceVariables = @flClass.instanceVariables.flListImmutablePush variable
-
-    return @
-
-  classToAddThemTo.addMethod \
-    (flParse "idict ← ( ' variable )"),
-    commonIdictAssignmentFunction
-
-  classToAddThemTo.addMethod \
-    (flParse "idict = ( ' variable )"),
-    commonIdictAssignmentFunction
-
-  commonCVarAssignmentFunction = (context) ->
-    variable = context.tempVariablesDict[ValidIDfromString "variable"]
-    value = context.tempVariablesDict[ValidIDfromString "value"]
-
-    console.log "cvar adding and setting class variable"
-    if !@flClass.classVariables?
-      @flClass.classVariables = FLList.emptyList()
-
-    console.log "idict: context.self.flClass: "
-    console.dir @flClass
-
-    @flClass.classVariables = @flClass.classVariables.flListImmutablePush variable
-    @flClass.classVariablesDict[ValidIDfromString variable.value] = value
-
-    return @
-
-  classToAddThemTo.addMethod \
-    (flParse "cvar ( ' variable ) ← ( value )"),
-    commonCVarAssignmentFunction
-
-  classToAddThemTo.addMethod \
-    (flParse "cvar ( ' variable ) = ( value )"),
-    commonCVarAssignmentFunction
-
-  classToAddThemTo.addMethod \
-    (flParse "cvarEvalParams ( variable ) ← ( value )"),
-    (context) ->
-      variable = context.tempVariablesDict[ValidIDfromString "variable"]
-      value = context.tempVariablesDict[ValidIDfromString "value"]
-
-      console.log "cvarEvalParams adding and setting class variable"
-      if !@flClass.classVariables?
-        @flClass.classVariables = FLList.emptyList()
-
-      console.log "cval: class variables before: "
-      console.dir @flClass.classVariablesDict
-
-      @flClass.classVariables = @flClass.classVariables.flListImmutablePush variable
-      @flClass.classVariablesDict[ValidIDfromString variable.value] = value
-
-      console.log "cvarEvalParams: class variables after: "
-      console.dir @flClass.classVariablesDict
-
-      return @
-
-
-  classToAddThemTo.addMethod \
-    (flParse "idict"),
-    (context) ->
-      if !@flClass.instanceVariables?
-        @flClass.instanceVariables = FLList.emptyList()
-
-      console.log "idict: context.self.flClass: "
-      console.dir @flClass
-      return @flClass.instanceVariables
-
-  classToAddThemTo.addMethod \
-    (flParse "cdict"),
-    (context) ->
-      if !@flClass.classVariables?
-        @flClass.classVariables = FLList.emptyList()
-      return @flClass.classVariables
 
   # TODO I think method body should NOT be quoted
   classToAddThemTo.addMethod \
@@ -376,10 +284,11 @@ FLClass.addMethod \
         console.log "///////// creating a new object from a user class - user class of object: " + objectTBR.flClass.value
         console.log "///////// creating a new object from a user class - objectTBR.value: " + objectTBR.value
         console.log "///////// creating a new object from a user class - making space for instanceVariables"
-        console.log "///////// creating a new object from a user class - instance variables in this class: " + objectTBR.flClass.instanceVariables.print()
-        for eachInstanceVariable in objectTBR.flClass.instanceVariables.value
-          console.log "///////// creating a new object from a user class - adding this to dict: " + ValidIDfromString eachInstanceVariable.value
-          objectTBR.instanceVariablesDict[ValidIDfromString eachInstanceVariable.value] = FLNil.createNew()
+
+        # copy the instance variables dict. Just the reference of the
+        # values is copied, no deep copying going on.
+        for key, value of objectTBR.flClass.instanceVariablesDict
+          objectTBR.instanceVariablesDict[key] = value
 
         # we give the chance to automatically execute some initialisation code,
         # but without any parameters. For example drawing a box, giving a message,

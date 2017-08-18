@@ -672,14 +672,6 @@ tests = [
   "8"
 
   # ---------------------------------------------------------------------------
-  "8 idict print"
-  "empty message"
-
-  # ---------------------------------------------------------------------------
-  "8 cdict print"
-  "empty message"
-
-  # ---------------------------------------------------------------------------
   "(4*2)times(1print)"
   "11111111"
 
@@ -814,7 +806,7 @@ tests = [
   "Hello world"
 
   # ---------------------------------------------------------------------------
-  "'MyClass←Class new;MyClass idict←counter;\
+  "'MyClass←Class new;MyClass.counter = nil;\
     MyClass answer(setCounterToTwo)by(self.counter←2);\
     MyClass answer(printCounter)by(self.counter print);\
     'myObject←MyClass new;myObject printCounter;\
@@ -827,7 +819,7 @@ tests = [
 
   """
   MyClass = Class new
-  MyClass idict←counter
+  MyClass.counter = nil
 
   MyClass answer
   ﹍﹍setCounterToTwo
@@ -852,14 +844,14 @@ tests = [
   "nil2nil2"
 
   # ---------------------------------------------------------------------------
-  "'MyClass←Class new;MyClass idict←counter;\
+  "'MyClass←Class new;MyClass.counter = nil;\
     MyClass answer(setCounterToTwo)by(self.counter←2);\
     'myObject←MyClass new;\
     myObject setCounterToTwo;myObject's counter print"
   "2"
 
   # ---------------------------------------------------------------------------
-  "'MyClass←Class new;MyClass idict←counter;\
+  "'MyClass←Class new;MyClass.counter = nil;\
     MyClass answer(setCounterToTwo)by(self.counter←2);\
     'myObject←MyClass new;\
     myObject setCounterToTwo;myObject.counter print"
@@ -870,7 +862,7 @@ tests = [
   # dot notation here
   """
   MyClass = Class new
-  MyClass idict = counter
+  MyClass.counter = nil
   MyClass answer
   ﹍setCounterToTwo
   by
@@ -917,7 +909,7 @@ tests = [
   ﹍self's counter=2
 
   MyClass=Class new
-  MyClass idict = counter
+  MyClass.counter = nil
   MyClass answer
   ﹍setCounterToTwo
   by
@@ -937,7 +929,7 @@ tests = [
   ﹍self.counter=2
 
   MyClass=Class new
-  MyClass idict = counter
+  MyClass.counter = nil
   MyClass answer
   ﹍setCounterToTwo
   by
@@ -957,7 +949,7 @@ tests = [
   ﹍self's counter=2
 
   MyClass=Class new
-  MyClass idict = counter
+  MyClass.counter = nil
   MyClass answer
   ﹍setCounterToTwo
   by
@@ -981,7 +973,7 @@ tests = [
   ﹍self.counter=2
 
   MyClass=Class new
-  MyClass idict = counter
+  MyClass.counter = nil
   MyClass answer
   ﹍setCounterToTwo
   by
@@ -1000,7 +992,7 @@ tests = [
   "236"
 
   # ---------------------------------------------------------------------------
-  # note that while the dot notation can be used to access variables,
+  # note that while the dot notation can be used to access instance variables,
   # and in theory it could be used to invoke methods without
   # parameters, it can't be used to invoke methods with parameters
   # (you can just omit the dot and it works though)
@@ -1028,18 +1020,6 @@ tests = [
   myObject.printtwo "hello"
   """
   "! exception: message to nil: hello"
-
-  # ---------------------------------------------------------------------------
-  "'MyClass←Class new;MyClass cvar classCounter ← 0;\
-    MyClass answer(incrementClassCounterByTwo)by(self.classCounter = self.classCounter plus 2);\
-    MyClass answer(printClassCounter)by(self.classCounter print);\
-    'myObject←MyClass new;myObject printClassCounter;\
-    myObject incrementClassCounterByTwo;\
-    myObject printClassCounter;\
-    'myObject2←MyClass new;myObject2 printClassCounter;\
-    myObject2 incrementClassCounterByTwo;\
-    myObject2 printClassCounter"
-  "0224"
 
   # ---------------------------------------------------------------------------
   "to sayHello (withName (name)) do (\"Hello \" print; name print); sayHello withName \"Dave\""
@@ -1810,6 +1790,57 @@ tests = [
   """
   "nil2"
 
+  # ---------------------------------------------------------------------------
+  # simple example on how to implement a class variable
+  # even though there is no special mechanism for them -
+  # the classic "instantiations" counter.
+  # We keep a "counter" object in MyClass.
+  # When new objects are created from MyClass,
+  # the class's instance variables are copied
+  # (just the reference to them), so effectively
+  # the counter is shared between MyClass and all its
+  # instances.
+  # Note how we can't just directly use a number for the counter,
+  # because numbers are immutable i.e. we can't change a number's value
+  # , we need to swap-out the number for a new one. So, we need to wrap
+  # the number up in an object.
+  """
+  Counter = Class new
+  Counter.counter = 0
+
+  Counter answer
+  ﹍﹍increment
+  ﹍by
+  ﹍﹍self.counter = self.counter plus 1
+
+  MyClass = Class new
+  MyClass.instantiationsCounter = Counter new
+
+  MyClass answer
+  ﹍whenNew
+  by
+  ﹍self.instantiationsCounter increment
+  ﹍self
+
+  MyClass answer
+  ﹍getCount
+  by
+  ﹍self.instantiationsCounter.counter
+
+  MyClass getCount print
+
+  myObject = MyClass new
+  MyClass getCount print
+  myObject getCount print
+
+  myObject2 = MyClass new
+  MyClass getCount print
+  myObject getCount print
+  myObject2 getCount print
+
+  """
+  "011222"
+
 ]
 
 ###
@@ -1885,8 +1916,6 @@ for i in [0...tests.length] by 2
     parsed.isMessage = true
     outerMostContext = new FLContext null, rWorkspace
     flContexts.jsArrayPush outerMostContext
-
-    rWorkspace.flClass.instanceVariables = FLList.emptyList()
     
     keywordsAndTheirInit = [
       "WorkSpace", FLWorkspace # todo probably not needed?
