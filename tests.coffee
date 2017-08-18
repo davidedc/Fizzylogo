@@ -1841,6 +1841,72 @@ tests = [
   """
   "011222"
 
+  # ---------------------------------------------------------------------------
+  # because the field look-up mechanism, you can add a field to a class
+  # at any time and it will affect all its objects (the ones already created
+  # from it and the ones created from it after).
+  # but of course as soon as an object changes the value, the object will
+  # create the field in itself and stop "looking up the chain" (just like in
+  # javascript).
+  """
+  Counter = Class new
+  Counter.counter = 0
+
+  Counter answer
+  ﹍﹍increment
+  ﹍by
+  ﹍﹍self.counter = self.counter plus 1
+
+  MyClass = Class new
+
+  myObject = MyClass new
+
+  MyClass.instantiationsCounter = Counter new
+
+  MyClass answer
+  ﹍whenNew
+  by
+  ﹍self.instantiationsCounter increment
+  ﹍self
+
+  MyClass answer
+  ﹍getCount
+  by
+  ﹍self.instantiationsCounter.counter
+
+  MyClass getCount print
+  myObject getCount print
+
+  myObject2 = MyClass new
+  MyClass getCount print
+  myObject getCount print
+  myObject2 getCount print
+
+  myObject2.fieldAddedToObject2 = 2
+
+  MyClass.fieldAddedToObject2 print
+  myObject.fieldAddedToObject2 print
+  myObject2.fieldAddedToObject2 print
+
+  MyClass.fieldAddedToClass = 3
+  MyClass.fieldAddedToClass print
+  myObject.fieldAddedToClass print
+  myObject2.fieldAddedToClass print
+
+  myObject.fieldAddedToClass = 4
+  MyClass.fieldAddedToClass print
+  myObject.fieldAddedToClass print
+  myObject2.fieldAddedToClass print
+
+  myObject2.fieldAddedToClass = 5
+  MyClass.fieldAddedToClass print
+  myObject.fieldAddedToClass print
+  myObject2.fieldAddedToClass print
+
+
+  """
+  "00111nilnil2333343345"
+
 ]
 
 ###

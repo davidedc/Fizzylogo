@@ -43,18 +43,23 @@ addDefaultMethods = (classToAddThemTo) ->
 
     console.log ". ('variable) : checking instance variables"
 
-    if @instanceVariablesDict[ValidIDfromString variable.value]?
-      console.log "yes it's an instance variable"
-      return @instanceVariablesDict[ValidIDfromString variable.value]
+    # somewhat similar to Javascript, the lookup starts at the object
+    # and climbs up to its class.
+    objectsBeingChecked = @
+    while true
+      if objectsBeingChecked.instanceVariablesDict[ValidIDfromString variable.value]?
+        console.log "yes it's an instance variable"
+        return objectsBeingChecked.instanceVariablesDict[ValidIDfromString variable.value]
+      if objectsBeingChecked == objectsBeingChecked.flClass
+        break
+      else objectsBeingChecked = objectsBeingChecked.flClass
 
     return FLNil.createNew()
 
-  # TODO this should be different for classes
   classToAddThemTo.addMethod \
     (flParse ". ('variable) = (value)"),
     commonPropertyAssignmentFunction
 
-  # TODO this should be different for classes
   classToAddThemTo.addMethod \
     (flParse ". ('variable) ← (value)"),
     commonPropertyAssignmentFunction
@@ -284,11 +289,6 @@ FLClass.addMethod \
         console.log "///////// creating a new object from a user class - user class of object: " + objectTBR.flClass.value
         console.log "///////// creating a new object from a user class - objectTBR.value: " + objectTBR.value
         console.log "///////// creating a new object from a user class - making space for instanceVariables"
-
-        # copy the instance variables dict. Just the reference of the
-        # values is copied, no deep copying going on.
-        for key, value of objectTBR.flClass.instanceVariablesDict
-          objectTBR.instanceVariablesDict[key] = value
 
         # we give the chance to automatically execute some initialisation code,
         # but without any parameters. For example drawing a box, giving a message,
