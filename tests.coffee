@@ -47,6 +47,11 @@ tests = [
   "7"
 
   # ---------------------------------------------------------------------------
+  # the powers and dangers of mutating numbers in place
+  "a=1;b=a;a print;b print;a incrementInPlace; a print; b print"
+  "1122"
+
+  # ---------------------------------------------------------------------------
   # testing crazy statement separations
 
   "'a←5;;a incrementInPlace; ;;;  ;'a←a plus 1;a print"
