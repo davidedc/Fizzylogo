@@ -1869,7 +1869,7 @@ tests = [
   MyClass answer
   ﹍whenNew
   by
-  ﹍self.instantiationsCounter incrementInPlace
+  ﹍self.instantiationsCounter increment
   ﹍self
 
   MyClass answer
