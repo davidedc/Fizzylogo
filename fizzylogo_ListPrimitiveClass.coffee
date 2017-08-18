@@ -299,6 +299,14 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
       console.log "startsWithCompoundAssignmentOperator: oh no"
       return false
 
+    toBeReturned.startsWithIncrementOrDecrementOperator =  ->
+      if @length() >= 2
+        if (@elementAt 1).flClass == FLAtom
+          if (@elementAt 1).value == "++" or (@elementAt 1).value == "--"
+            console.log "startsWithIncrementOrDecrementOperator: oh yes"
+            return true
+      console.log "startsWithIncrementOrDecrementOperator: oh no"
+      return false
 
     toBeReturned.secondElementIsEqual =  ->
       if @length() >= 2

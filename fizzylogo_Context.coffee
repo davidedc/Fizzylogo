@@ -77,12 +77,12 @@ class FLContext
 
       # check if temp variable is in current context.
       if contextBeingSearched.tempVariablesDict[ValidIDfromString atomValue]?
-        console.log "evaluation " + indentation() + "lookup: found in context at depth " + contextBeingSearched.depth() + " with self: " + contextBeingSearched.self.print()
+        console.log "evaluation " + indentation() + "lookup: found in context at depth " + contextBeingSearched.depth() + " with self: " + contextBeingSearched.self.print?()
         return contextBeingSearched.tempVariablesDict
 
       # nothing found from this context, move up
       # to the sender (i.e. the callee)
-      console.log "evaluation " + indentation() + "lookup: not found in context at depth " + contextBeingSearched.depth() + " with self: " + contextBeingSearched.self.print()
+      console.log "evaluation " + indentation() + "lookup: not found in context at depth " + contextBeingSearched.depth() + " with self: " + contextBeingSearched.self.print?()
 
 
       if contextBeingSearched.isTransparent

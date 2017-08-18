@@ -1942,6 +1942,192 @@ tests = [
   """
   "4"
 
+  # trick question
+  """
+  a = 1
+  b = 2
+  a += b print
+  """
+  "2"
+
+  """
+  a = 1
+  b = 2
+  (a += b) print
+  """
+  "3"
+
+
+
+  # ---------------------------------------------------------------------------
+  # increment/decrement operators
+  # ---------------------------------------------------------------------------
+
+  """
+  a = 1
+  a++
+  a print
+  """
+  "2"
+
+  """
+  a = 1
+  a++ plus 1
+  a print
+  """
+  "2"
+
+  """
+  a = 1
+  a = a++ plus 1
+  a print
+  """
+  "3"
+
+  """
+  a = 1
+  a++ print
+  """
+  "2"
+
+  """
+  a = 1
+  a++ ++
+  a print
+  """
+  "2"
+
+  """
+  a = 1
+  a++ ++ print
+  """
+  "3"
+
+  """
+  a = 1
+  (a++ ++) print
+  """
+  "3"
+
+  """
+  MyClass = Class new
+  myObject = MyClass new
+  myObject.someField = 2
+  myObject.someField += 2
+  myObject.someField print
+  """
+  "4"
+
+  """
+  MyClass = Class new
+  myObject = MyClass new
+  myObject.someField = 2
+  (myObject.someField += 2) print
+  """
+  "4"
+
+  """
+  MyClass = Class new
+  myObject = MyClass new
+  myObject.someField = 2
+  myObject.someField++
+  myObject.someField print
+  """
+  "3"
+
+  """
+  MyClass = Class new
+  myObject = MyClass new
+  myObject.someField = 2
+  myObject.someField++ print
+  """
+  "3"
+
+  """
+  MyClass = Class new
+  myObject = MyClass new
+  myObject.someField = 2
+  myObject.someField++ ++ print
+  myObject.someField print
+  """
+  "43"
+
+  """
+  myArray = '(1 2 3)
+  myArray[0]++
+  myArray print
+  """
+  "( 2 2 3 )"
+
+  """
+  myArray = '(1 2 3)
+  myArray[0]++ ++ print
+  myArray print
+  """
+  "3( 2 2 3 )"
+
+  """
+  myArray = '(1 2 3)
+  (myArray[0] += myArray[1] plus myArray[2]) print
+  myArray print
+  """
+  "6( 6 2 3 )"
+
+  """
+  myArray = '(1 2 3)
+  myArray[0]++ print
+  """
+  "2"
+
+  """
+  myArray = '(1 2 3)
+  myArray[0]++ ++ print
+  myArray[0] print
+  """
+  "32"
+
+  # this shows how the ++ operator
+  # CREATES a new object, so it creates
+  # an entry in the object if it wasn't there
+  """
+  MyClass = Class new
+  MyClass.count = 0
+
+  myObject = MyClass new
+  myObject2 = MyClass new
+
+  MyClass.count print // 0
+  myObject.count print // 0
+  myObject2.count print // 0
+
+  MyClass.count++
+
+  MyClass.count print // 1
+  myObject.count print // 1
+  myObject2.count print // 1
+
+  myObject.count++
+
+  MyClass.count print // 1
+  myObject.count print // 2
+  myObject2.count print // 1
+
+  myObject2.count++
+  myObject2.count++
+
+  MyClass.count print // 1
+  myObject.count print // 2
+  myObject2.count print // 3
+
+  MyClass.count++
+
+  MyClass.count print // 2
+  myObject.count print // 2
+  myObject2.count print // 3
+
+  """
+  "000111121123223"
+
 
 ]
 

@@ -65,6 +65,40 @@ addDefaultMethods = (classToAddThemTo) ->
     commonPropertyAssignmentFunction
 
   classToAddThemTo.addMethod \
+    (flParse ". evaluating (variable)"),
+    commonPropertyAccessFunction
+
+  classToAddThemTo.addMethod \
+    (flParse ". ('variable) += (value)"),
+    (context) ->
+      # this is an atom
+      variable = context.tempVariablesDict[ValidIDfromString "variable"]
+      value = context.tempVariablesDict[ValidIDfromString "value"]
+
+      runThis = flParse "(self . evaluating variable) += value"
+
+      toBeReturned = (runThis.eval context, runThis)[0].returned
+
+      @instanceVariablesDict[ValidIDfromString variable.value] = toBeReturned
+      context.findAnotherReceiver = true
+
+      return toBeReturned
+
+  classToAddThemTo.addMethod \
+    (flParse ". ('variable) ++"),
+    (context) ->
+      # this is an atom
+      variable = context.tempVariablesDict[ValidIDfromString "variable"]
+
+      runThis = flParse "(self . evaluating variable) ++"
+
+      toBeReturned = (runThis.eval context, runThis)[0].returned
+
+      @instanceVariablesDict[ValidIDfromString variable.value] = toBeReturned
+
+      return toBeReturned
+
+  classToAddThemTo.addMethod \
     (flParse ". ('variable)"),
     commonPropertyAccessFunction
 
@@ -224,6 +258,11 @@ FLAtom.addMethod \
 FLAtom.addMethod \
   (flParse "+= ( operandum )"),
   (flParse "self ← self eval plus operandum")
+
+FLAtom.addMethod \
+  (flParse "++"),
+  (flParse "self ← self eval plus 1")
+
 
 # Nil ---------------------------------------------------------------------------
 
@@ -396,6 +435,21 @@ FLNumber.addMethod \
   # this one below actually mutates the number
   # object
   flParse "self ← self plus 1"
+
+# although there are some good reasons to have this,
+# it can get confusing, consider for example
+# a++ ++
+# the first ++ does this: a = a+1 and returns a number
+# the second just increments the number without modifying
+# a.
+FLNumber.addMethod \
+  (flParse "++"),
+  flParse "self plus 1"
+
+# see "++" regarding why this could be confusing
+FLNumber.addMethod \
+  (flParse "+= (value)"),
+  flParse "self plus value"
 
 FLNumber.addMethod \
   (flParse "factorial"),
@@ -597,6 +651,36 @@ FLList.addMethod \
     value = context.tempVariablesDict[ValidIDfromString "value"]
     context.findAnotherReceiver = true
     return @elementAtSetMutable indexValue.value, value
+
+FLList.addMethod \
+  (flParse "[ (indexValue) ] += (value)"),
+  (context) ->
+    indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
+    value = context.tempVariablesDict[ValidIDfromString "value"]
+
+    runThis = flParse "(self [indexValue]) += value"
+
+    toBeReturned = (runThis.eval context, runThis)[0].returned
+
+    context.findAnotherReceiver = true
+
+    @elementAtSetMutable indexValue.value, toBeReturned
+
+    return toBeReturned
+
+FLList.addMethod \
+  (flParse "[ (indexValue) ] ++"),
+  (context) ->
+    indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
+
+    runThis = flParse "(self [indexValue]) ++"
+
+    toBeReturned = (runThis.eval context, runThis)[0].returned
+
+    @elementAtSetMutable indexValue.value, toBeReturned
+
+    return toBeReturned
+
 
 FLList.addMethod \
   (flParse "[ (indexValue) ]"),
