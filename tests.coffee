@@ -1462,6 +1462,20 @@ tests = [
 
   # ---------------------------------------------------------------------------
   """
+  MyClass = Class new
+  myObject = MyClass new
+  myObject.someField print
+  myObject.someOtherField print
+  myObject.someField =' (9 3 15 5 7)
+  myObject.someField[1 plus 1] = 1 plus 1
+  myObject.someOtherField =' ("Hello " "Dave " ("oh " "so ") "dear " "friend")
+  myObject.someOtherField[myObject.someField[1 plus 1]] print
+
+  """
+  "nilnil( \"oh \" \"so \" )"
+
+  # ---------------------------------------------------------------------------
+  """
   numbers =' (9 3 2 5 7)
   myList =' ("Hello " "Dave " ("oh " "so ") "dear " "friend")
   myList[numbers[1plus 1]][0 plus 1] print
@@ -1785,6 +1799,16 @@ tests = [
   ﹍﹍codeToBeRun eval
   """
   "! exception: for...each expects a list"
+
+  # ---------------------------------------------------------------------------
+  """
+  MyClass = Class new
+  myObject = MyClass new
+  myObject.someField print
+  myObject.someField = 2
+  myObject.someField print
+  """
+  "nil2"
 
 ]
 
