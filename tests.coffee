@@ -879,6 +879,26 @@ tests = [
   "2"
 
   # ---------------------------------------------------------------------------
+  # navigating a little list via dot notation
+  """
+  MyClass = Class new
+  MyClass.link = nil
+
+  myObject = MyClass new
+  myObject2 = MyClass new
+  myObject3 = MyClass new
+  myObject4 = MyClass new
+
+  myObject.link = myObject2
+  myObject2.link = myObject3
+  myObject3.link = myObject4
+  myObject4.link = "the end"
+
+  myObject.link.link.link.link print
+  """
+  "the end"
+
+  # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
   ﹍counter=2
