@@ -196,7 +196,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
         #  - no more message to consume
         #  - exceptions being thrown or done object
         #  - the message is not understood
-        while true
+        loop
 
           # this happens for example in the "if" statement
           # (actually called ⇒ ). If the true branch is executed,

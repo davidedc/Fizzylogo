@@ -69,8 +69,7 @@ class FLContext
     if tokenString == "self"
       return @firstNonTransparentContext()
 
-    while true
-
+    loop
       console.log "evaluation " + indentation() + "context temps: " 
       for keys of contextBeingSearched.tempVariablesDict
         console.log keys

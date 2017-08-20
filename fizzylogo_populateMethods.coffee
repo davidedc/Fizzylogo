@@ -46,7 +46,7 @@ addDefaultMethods = (classToAddThemTo) ->
     # somewhat similar to Javascript, the lookup starts at the object
     # and climbs up to its class.
     objectsBeingChecked = @
-    while true
+    loop
       if objectsBeingChecked.instanceVariablesDict[ValidIDfromString variable.value]?
         console.log "yes it's an instance variable"
         return objectsBeingChecked.instanceVariablesDict[ValidIDfromString variable.value]
@@ -746,7 +746,7 @@ FLRepeat1.addMethod \
     loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
     console.log "FLRepeat1 ⇒ loop code is: " + loopCode.print()
 
-    while true
+    loop
       toBeReturned = (loopCode.eval context, loopCode)[0].returned
 
       flContexts.pop()
