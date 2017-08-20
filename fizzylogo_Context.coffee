@@ -99,14 +99,6 @@ class FLContext
     console.log "evaluation " + indentation() + "lookup: " + tokenString + " not found!"
     return null
 
-
-  createNonExistentValueLookup: ->
-    # if the variable doesn't exist anywhere and
-    # we are currently in context linked to the
-    # workspace...
-    return @firstNonTransparentContext().tempVariablesDict
-
-
   lookUpTokenValue: (theToken, alreadyKnowWhichDict) ->
     # we first look _where_ the value of the token is,
     # then we fetch it
@@ -117,7 +109,7 @@ class FLContext
       dictWhereValueIs = @whichDictionaryContainsToken theToken
 
     if !dictWhereValueIs?
-      dictWhereValueIs = @createNonExistentValueLookup()
+      dictWhereValueIs = @firstNonTransparentContext().tempVariablesDict
 
     #console.log "evaluation " + indentation() + "lookup: " + theToken.value + " found dictionary and it contains:"
     #console.dir dictWhereValueIs
