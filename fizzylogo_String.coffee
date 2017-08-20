@@ -1,4 +1,4 @@
-class FLStringPrimitiveClass extends FLPrimitiveClasses
+class FLStringClass extends FLClasses
 
   createNew: (value) ->
     toBeReturned = super FLString
@@ -13,4 +13,4 @@ class FLStringPrimitiveClass extends FLPrimitiveClasses
     return toBeReturned
     
 
-FLString = new FLStringPrimitiveClass()
+FLString = new FLStringClass()

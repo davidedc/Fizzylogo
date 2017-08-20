@@ -1,4 +1,4 @@
-class FLToClass extends FLAnonymousClass
+class FLToClass extends FLClasses
   createNew: ->
     toBeReturned = super FLTo
     toBeReturned.value = null
@@ -11,4 +11,4 @@ class FLToClass extends FLAnonymousClass
 
     return toBeReturned
 
-FLTo = new FLToClass() # this is a class, an anonymous class
+FLTo = new FLToClass()

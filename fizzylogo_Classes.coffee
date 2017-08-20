@@ -3,6 +3,9 @@ class FLClasses extends FLObjects
   msgPatterns: null # an array of FLLists
   methodBodies: null # an array of FLLists
 
+  createNew: (theClass) ->
+    return new FLObjects theClass
+
   addMethod: (signature, methodBody) ->
     for i in [0...@msgPatterns.length]
       eachSignature = @msgPatterns[i]
@@ -28,22 +31,10 @@ class FLClasses extends FLObjects
     allClasses.push @
 
 
-# implementation of these is not changeable
-# and not inspectable. "Below the surface" native
-# implementations here.
-class FLPrimitiveClasses extends FLClasses
-  createNew: (theClass) ->
-    return new FLPrimitiveObjects theClass
-
-class FLNonPrimitiveClasses extends FLClasses
-  createNew: ->
-    return new FLNonPrimitiveObjects()
-
-
 # class "Class". We'll create exactyly one object for
 # this class, which is going to be also called "Class".
 # such object will allow users to create their classes.
-class FLClassPrimitiveClass extends FLPrimitiveClasses
+class FLClassClass extends FLClasses
 
   # this is invoked only once at start, to
   # create the object Class, which allows users
@@ -59,7 +50,5 @@ class FLClassPrimitiveClass extends FLPrimitiveClasses
     return toBeReturned
     
 
-FLClass = new FLClassPrimitiveClass FLClass
-
-class FLAnonymousClass extends FLPrimitiveClasses
+FLClass = new FLClassClass FLClass
 

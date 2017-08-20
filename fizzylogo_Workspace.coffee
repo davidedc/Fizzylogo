@@ -1,4 +1,4 @@
-class FLWorkspaceClass extends FLAnonymousClass
+class FLWorkspaceClass extends FLClasses
   createNew: ->
     toBeReturned = super FLWorkspace
     toBeReturned.value = "the workspace object"

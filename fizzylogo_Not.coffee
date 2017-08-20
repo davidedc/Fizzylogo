@@ -1,4 +1,4 @@
-class FLNotClass extends FLAnonymousClass
+class FLNotClass extends FLClasses
   createNew: ->
     toBeReturned = super FLNot
 
@@ -9,4 +9,4 @@ class FLNotClass extends FLAnonymousClass
 
     return toBeReturned
 
-FLNot = new FLNotClass() # this is a class, an anonymous class
+FLNot = new FLNotClass()

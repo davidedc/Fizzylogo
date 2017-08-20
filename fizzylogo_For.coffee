@@ -1,4 +1,4 @@
-class FLForClass extends FLAnonymousClass
+class FLForClass extends FLClasses
   createNew: ->
     toBeReturned = super FLFor
 
@@ -9,4 +9,4 @@ class FLForClass extends FLAnonymousClass
 
     return toBeReturned
 
-FLFor = new FLForClass() # this is a class, an anonymous class
+FLFor = new FLForClass()

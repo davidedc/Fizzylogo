@@ -1,4 +1,4 @@
-class FLThrowClass extends FLAnonymousClass
+class FLThrowClass extends FLClasses
   createNew: ->
     toBeReturned = super FLThrow
 
@@ -9,4 +9,4 @@ class FLThrowClass extends FLAnonymousClass
 
     return toBeReturned
 
-FLThrow = new FLThrowClass() # this is a class, an anonymous class
+FLThrow = new FLThrowClass()

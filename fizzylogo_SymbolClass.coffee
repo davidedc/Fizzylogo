@@ -1,8 +1,7 @@
 # symbols don't have a value and fon't get sent any messages,
 # they are just special markers.
-# we just have them to be part of the anonymous class.
 
-class FLSymbolClass extends FLAnonymousClass
+class FLSymbolClass extends FLClasses
   createNew: (value) ->
     toBeReturned = super FLSymbol
     toBeReturned.value = value
@@ -14,6 +13,6 @@ class FLSymbolClass extends FLAnonymousClass
 
     return toBeReturned
 
-FLSymbol = new FLSymbolClass() # this is a class, an anonymous class
+FLSymbol = new FLSymbolClass()
 
 RStatementSeparatorSymbol = FLSymbol.createNew ";"

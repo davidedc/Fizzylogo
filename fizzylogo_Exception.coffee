@@ -1,4 +1,4 @@
-class FLExceptionPrimitiveClass extends FLPrimitiveClasses
+class FLExceptionClass extends FLClasses
   createNew: (value) ->
     toBeReturned = super FLException
     toBeReturned.value = value
@@ -11,4 +11,4 @@ class FLExceptionPrimitiveClass extends FLPrimitiveClasses
     return toBeReturned
     
 
-FLException = new FLExceptionPrimitiveClass()
+FLException = new FLExceptionClass()

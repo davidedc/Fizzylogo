@@ -1,4 +1,4 @@
-class FLRepeat1Class extends FLAnonymousClass
+class FLRepeat1Class extends FLClasses
   createNew: ->
     toBeReturned = super FLRepeat1
 
@@ -9,4 +9,4 @@ class FLRepeat1Class extends FLAnonymousClass
 
     return toBeReturned
 
-FLRepeat1 = new FLRepeat1Class() # this is a class, an anonymous class
+FLRepeat1 = new FLRepeat1Class()

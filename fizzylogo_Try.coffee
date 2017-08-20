@@ -1,4 +1,4 @@
-class FLTryClass extends FLAnonymousClass
+class FLTryClass extends FLClasses
   createNew: ->
     toBeReturned = super FLTry
 
@@ -9,4 +9,4 @@ class FLTryClass extends FLAnonymousClass
 
     return toBeReturned
 
-FLTry = new FLTryClass() # this is a class, an anonymous class
+FLTry = new FLTryClass()

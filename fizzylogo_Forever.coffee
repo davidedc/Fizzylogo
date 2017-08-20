@@ -1,4 +1,4 @@
-class FLForeverClass extends FLAnonymousClass
+class FLForeverClass extends FLClasses
   createNew: ->
     toBeReturned = super FLForever
     toBeReturned.value = null
@@ -11,4 +11,4 @@ class FLForeverClass extends FLAnonymousClass
 
     return toBeReturned
 
-FLForever = new FLForeverClass() # this is a class, an anonymous class
+FLForever = new FLForeverClass()

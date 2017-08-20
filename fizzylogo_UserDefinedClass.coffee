@@ -1,4 +1,4 @@
-class FLUserDefinedClass extends FLNonPrimitiveClasses
+class FLUserDefinedClass extends FLClasses
   # this gets invoked when user does "Class new"
   # that's going to create an object that represents a new
   # user-defined Class.
@@ -6,7 +6,7 @@ class FLUserDefinedClass extends FLNonPrimitiveClasses
   # So it's going to be:
   #   userClass = new FLUserDefinedClass()
   # which mirrors what we do when we do
-  #   FLBoolean = new FLBooleanPrimitiveClass()
+  #   FLBoolean = new FLBooleanClass()
   #
   # the .flClass of this object will point to the object
   # itself, just like in all fizzylogo classes, since
@@ -21,7 +21,7 @@ class FLUserDefinedClass extends FLNonPrimitiveClasses
     # the @ here below is the class created by the
     # user, obviously the objects its creates must
     # belong to it.
-    toBeReturned = new FLNonPrimitiveObjects @
+    toBeReturned = new FLObjects @
     toBeReturned.value = "object_from_a_user_class"
 
     toBeReturned.print = ->

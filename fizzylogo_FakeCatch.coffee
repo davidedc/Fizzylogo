@@ -29,7 +29,7 @@
 #  ". the end." print  
 #
 
-class FLFakeCatchClass extends FLAnonymousClass
+class FLFakeCatchClass extends FLClasses
   createNew: ->
     toBeReturned = super FLFakeCatch
 
@@ -40,4 +40,4 @@ class FLFakeCatchClass extends FLAnonymousClass
 
     return toBeReturned
 
-FLFakeCatch = new FLFakeCatchClass() # this is a class, an anonymous class
+FLFakeCatch = new FLFakeCatchClass()

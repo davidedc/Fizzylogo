@@ -1,6 +1,6 @@
 # See IfThen class for explanation.
 
-class FLIfFallThroughClass extends FLAnonymousClass
+class FLIfFallThroughClass extends FLClasses
   createNew: ->
     toBeReturned = super FLIfFallThrough
     toBeReturned.value = null
@@ -13,4 +13,4 @@ class FLIfFallThroughClass extends FLAnonymousClass
 
     return toBeReturned
 
-FLIfFallThrough = new FLIfFallThroughClass() # this is a class, an anonymous class
+FLIfFallThrough = new FLIfFallThroughClass()

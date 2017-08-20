@@ -1,4 +1,4 @@
-class FLListPrimitiveClass extends FLPrimitiveClasses
+class FLListClass extends FLClasses
 
 
   # A note about messages, which are special lists.
@@ -398,4 +398,4 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
     return toBeReturned
 
     
-FLList = new FLListPrimitiveClass()
+FLList = new FLListClass()

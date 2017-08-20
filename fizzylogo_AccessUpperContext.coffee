@@ -1,4 +1,4 @@
-class FLAccessUpperContextClass extends FLPrimitiveClasses
+class FLAccessUpperContextClass extends FLClasses
   createNew: (tokenString) ->
     toBeReturned = super FLAccessUpperContext
     toBeReturned.value = tokenString

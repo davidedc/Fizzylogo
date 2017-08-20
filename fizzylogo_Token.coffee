@@ -1,4 +1,4 @@
-class FLTokenClass extends FLPrimitiveClasses
+class FLTokenClass extends FLClasses
   createNew: (tokenString) ->
     toBeReturned = super FLToken
     toBeReturned.value = tokenString

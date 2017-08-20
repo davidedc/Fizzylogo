@@ -1,4 +1,4 @@
-class FLNilPrimitiveClass extends FLPrimitiveClasses
+class FLNilClass extends FLClasses
 
   createNew: ->
     toBeReturned = super FLNil
@@ -12,4 +12,4 @@ class FLNilPrimitiveClass extends FLPrimitiveClasses
     return toBeReturned
     
 
-FLNil = new FLNilPrimitiveClass()
+FLNil = new FLNilClass()

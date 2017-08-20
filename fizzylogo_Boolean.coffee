@@ -1,4 +1,4 @@
-class FLBooleanPrimitiveClass extends FLPrimitiveClasses
+class FLBooleanClass extends FLClasses
   createNew: (value) ->
     toBeReturned = super FLBoolean
     toBeReturned.value = value
@@ -11,4 +11,4 @@ class FLBooleanPrimitiveClass extends FLPrimitiveClasses
     return toBeReturned
     
 
-FLBoolean = new FLBooleanPrimitiveClass()
+FLBoolean = new FLBooleanClass()

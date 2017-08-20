@@ -1,4 +1,4 @@
-class FLNumberPrimitiveClass extends FLPrimitiveClasses
+class FLNumberClass extends FLClasses
 
   createNew: (value) ->
     toBeReturned = super FLNumber
@@ -12,4 +12,4 @@ class FLNumberPrimitiveClass extends FLPrimitiveClasses
     return toBeReturned
     
 
-FLNumber = new FLNumberPrimitiveClass()
+FLNumber = new FLNumberClass()

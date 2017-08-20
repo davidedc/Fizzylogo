@@ -205,5 +205,3 @@ class FLObjects
     return contextToBeReturned
 
 
-class FLPrimitiveObjects extends FLObjects
-class FLNonPrimitiveObjects extends FLObjects

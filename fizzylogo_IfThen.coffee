@@ -33,7 +33,7 @@
 # This is similar to the try-catch mechanism, but there
 # an "exception" falls through the catchers.
 
-class FLIfThenClass extends FLAnonymousClass
+class FLIfThenClass extends FLClasses
   createNew: ->
     toBeReturned = super FLIfThen
     toBeReturned.value = null
@@ -46,4 +46,4 @@ class FLIfThenClass extends FLAnonymousClass
 
     return toBeReturned
 
-FLIfThen = new FLIfThenClass() # this is a class, an anonymous class
+FLIfThen = new FLIfThenClass()

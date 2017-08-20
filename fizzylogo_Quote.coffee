@@ -1,4 +1,4 @@
-class FLQuoteClass extends FLAnonymousClass
+class FLQuoteClass extends FLClasses
 
   createNew: ->
     toBeReturned = super FLQuote
@@ -10,4 +10,4 @@ class FLQuoteClass extends FLAnonymousClass
 
     return toBeReturned
 
-FLQuote = new FLQuoteClass() # this is a class, an anonymous class
+FLQuote = new FLQuoteClass()
