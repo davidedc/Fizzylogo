@@ -877,13 +877,13 @@ FLIfFallThrough.addMethod \
 # FakeElse -----------------------------------------------------------------------------
 
 FLFakeElse.addMethod \
-  (flParse "else if ( predicate ) then ('trueBranch)"),
+  (flParse "if ( predicate ) then ('trueBranch)"),
   (context) ->
     context.findAnotherReceiver = true
     return @
 
 FLFakeElse.addMethod \
-  (flParse "else ('trueBranch)"),
+  (flParse "('trueBranch)"),
   (context) ->
     context.findAnotherReceiver = true
     return @
