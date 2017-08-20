@@ -935,6 +935,25 @@ tests = [
   "( counter = 2 )"
 
   # ---------------------------------------------------------------------------
+  """
+  my = 1
+  little = "hello"
+  array = false
+  myLittleArray =' (my little array)
+  myLittleArray print
+  (myLittleArray[0]+1) print
+  (myLittleArray[1]) print
+  if
+  ﹍myLittleArray[2]
+  then
+  ﹍"true!" print
+  else
+  ﹍"false!" print
+  """
+  "( 1 \"hello\" false )1hellofalse!"
+
+
+  # ---------------------------------------------------------------------------
   # something similar to closures, the
   # code is just a list of tokens, and with the quote
   # assignment (or any quote for that matter)
