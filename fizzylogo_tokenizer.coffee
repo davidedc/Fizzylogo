@@ -216,7 +216,7 @@ flParse = (command) ->
       listsStack[listsStack.length-1] = listsStack[listsStack.length-1].flListImmutablePush nestedList
     else
       console.log eachToken + " is something else"
-      listsStack[listsStack.length-1] = listsStack[listsStack.length-1].flListImmutablePush FLAtom.createNew eachToken
+      listsStack[listsStack.length-1] = listsStack[listsStack.length-1].flListImmutablePush FLToken.createNew eachToken
 
   return listsStack[listsStack.length-1]
 

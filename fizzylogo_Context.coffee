@@ -1,12 +1,12 @@
 # Notes on the scope mechanics:
-# atoms are always looked-up in the temp variables.
+# tokens are always looked-up in the temp variables.
 # temp variables are local to the context, _however_
 # if you open a context (with the accessUpperContext) command
 # then you can see and influence the context(s) above.
 # So, in a normal method invocation the new context is sealed,
 # but other constructs such as the _for_ construct
 # create an "open" context
-# i.e. the atoms can also be looked up in the context(s) above
+# i.e. the tokens can also be looked up in the context(s) above
 # as well and
 # the newly created variables are visible from above.
 # (however note that the for construct creates the loop
@@ -58,15 +58,15 @@ class FLContext
 
     ascendingTheContext
 
-  # from here, an Atom matches a temp variable, which could be
+  # from here, a Token matches a temp variable, which could be
   # in this context, or further up across transparent contexts,
   # OR at the top level context.
-  lookUpAtomValuePlace: (theAtom) ->
+  whichDictionaryContainsToken: (theToken) ->
 
     contextBeingSearched = @
-    atomValue = theAtom.value
+    tokenString = theToken.value
 
-    if atomValue == "self"
+    if tokenString == "self"
       return @firstNonTransparentContext()
 
     while true
@@ -76,7 +76,7 @@ class FLContext
         console.log keys
 
       # check if temp variable is in current context.
-      if contextBeingSearched.tempVariablesDict[ValidIDfromString atomValue]?
+      if contextBeingSearched.tempVariablesDict[ValidIDfromString tokenString]?
         console.log "evaluation " + indentation() + "lookup: found in context at depth " + contextBeingSearched.depth() + " with self: " + contextBeingSearched.self.print?()
         return contextBeingSearched.tempVariablesDict
 
@@ -92,11 +92,11 @@ class FLContext
         break
 
     # check if temp variable is in the outer-most context
-    if outerMostContext.tempVariablesDict[ValidIDfromString atomValue]?
+    if outerMostContext.tempVariablesDict[ValidIDfromString tokenString]?
       return outerMostContext.tempVariablesDict
 
 
-    console.log "evaluation " + indentation() + "lookup: " + atomValue + " not found!"
+    console.log "evaluation " + indentation() + "lookup: " + tokenString + " not found!"
     return null
 
 
@@ -107,25 +107,25 @@ class FLContext
     return @firstNonTransparentContext().tempVariablesDict
 
 
-  lookUpAtomValue: (theAtom, alreadyKnowWhichDict) ->
-    # we first look _where_ the value of the Atom is,
+  lookUpTokenValue: (theToken, alreadyKnowWhichDict) ->
+    # we first look _where_ the value of the token is,
     # then we fetch it
 
     if alreadyKnowWhichDict?
       dictWhereValueIs = alreadyKnowWhichDict
     else  
-      dictWhereValueIs = @lookUpAtomValuePlace theAtom
+      dictWhereValueIs = @whichDictionaryContainsToken theToken
 
     if !dictWhereValueIs?
       dictWhereValueIs = @createNonExistentValueLookup()
 
-    #console.log "evaluation " + indentation() + "lookup: " + theAtom.value + " found dictionary and it contains:"
+    #console.log "evaluation " + indentation() + "lookup: " + theToken.value + " found dictionary and it contains:"
     #console.dir dictWhereValueIs
-    console.log "evaluation " + indentation() + "lookup: " + theAtom.value + " also known as " + (ValidIDfromString theAtom.value)
+    console.log "evaluation " + indentation() + "lookup: " + theToken.value + " also known as " + (ValidIDfromString theToken.value)
 
     console.log "evaluation " + indentation() + "lookup: value looked up: "
-    console.dir dictWhereValueIs[ValidIDfromString theAtom.value]
+    console.dir dictWhereValueIs[ValidIDfromString theToken.value]
 
-    return dictWhereValueIs[ValidIDfromString theAtom.value]
+    return dictWhereValueIs[ValidIDfromString theToken.value]
 
 

@@ -60,39 +60,39 @@ class FLObjects
 
       until eachSignature.isEmpty() or methodInvocation.isEmpty()
 
-        console.log "evaluation " + indentation() + "  matching: - next signature piece: " + eachSignature.print() + " is atom: " + " with: " + methodInvocation.print()
+        console.log "evaluation " + indentation() + "  matching: - next signature piece: " + eachSignature.print() + " is token: " + " with: " + methodInvocation.print()
 
         [eachElementOfSignature, eachSignature] = eachSignature.nextElement()
 
         
         # the element of a signature can only be of two kinds:
-        # an atom or an FLList containing one parameter (with
+        # a token or an FLList containing one parameter (with
         # prepended "@" in case the parameter doesn't require
         # evaluation)
-        if eachElementOfSignature.flClass == FLAtom or eachElementOfSignature.flClass == FLSymbol
-          # if the signature contains an atom, the message
-          # must contain the same atom, otherwise we don't
+        if eachElementOfSignature.flClass == FLToken or eachElementOfSignature.flClass == FLSymbol
+          # if the signature contains a token, the message
+          # must contain the same token, otherwise we don't
           # have a match.
 
           [eachElementOfInvocation, methodInvocation] = methodInvocation.nextElement()
 
-          if eachElementOfInvocation.flClass == FLAtom or eachElementOfInvocation.flClass == FLSymbol
+          if eachElementOfInvocation.flClass == FLToken or eachElementOfInvocation.flClass == FLSymbol
 
-            #console.log "evaluation " + indentation() + "  matching atoms: - next signature piece: " + eachElementOfSignature.print() + " is atom: " + (eachElementOfSignature.flClass == FLAtom) + " with: " + eachElementOfInvocation.print()
+            #console.log "evaluation " + indentation() + "  matching tokens: - next signature piece: " + eachElementOfSignature.print() + " is token: " + (eachElementOfSignature.flClass == FLToken) + " with: " + eachElementOfInvocation.print()
 
-            # ok at least the message contains an atom, but
+            # ok at least the message contains a token, but
             # now we have to check that they spell the same
             if eachElementOfSignature.value == eachElementOfInvocation.value
-              console.log "evaluation " + indentation() + "  matching - atom matched: " + eachElementOfSignature.print()
-              # OK good match of atomsr,
+              console.log "evaluation " + indentation() + "  matching - token matched: " + eachElementOfSignature.print()
+              # OK good match of tokens,
               # check the next token in the signature
               continue
             else
-              # no match between the atoms, check next signature
+              # no match between the tokens, check next signature
               soFarEverythingMatched = false
               break
           else
-            # the signature sais "atom" but the message contains
+            # the signature says "token" but the message contains
             # something else: no match, check the next
             # signature
             #console.log "evaluation " + indentation() + "  matching - no match: " + eachElementOfSignature.print() + " vs. " + eachElementOfInvocation.print()
@@ -102,12 +102,12 @@ class FLObjects
         else
           # the signature has a param. we have to check if
           # it requires an evaluation or not
-          console.log "evaluation " + indentation() + "  matching - getting the atom inside the parameter: " + eachElementOfSignature.print()
-          paramAtom = eachElementOfSignature.getParamAtom()
-          #console.dir paramAtom
-          console.log "evaluation " + indentation() + "  matching - atom inside the parameter: " + paramAtom.print()
+          console.log "evaluation " + indentation() + "  matching - getting the token inside the parameter: " + eachElementOfSignature.print()
+          paramToken = eachElementOfSignature.getParamToken()
+          #console.dir paramToken
+          console.log "evaluation " + indentation() + "  matching - token inside the parameter: " + paramToken.print()
           if eachElementOfSignature.isEvaluatingParam()
-            console.log "evaluation " + indentation() + "  matching - need to evaluate next msg element from invocation: " + methodInvocation.print() + " and bind to: " + paramAtom.print()
+            console.log "evaluation " + indentation() + "  matching - need to evaluate next msg element from invocation: " + methodInvocation.print() + " and bind to: " + paramToken.print()
             # if the first element is a list,
             # then the list is evaluated on
             # its own, without considering what comes after it.
@@ -135,12 +135,12 @@ class FLObjects
 
           else
             # don't need to evaluate the parameter
-            console.log "evaluation " + indentation() + "  matching - need to get next msg element from invocation: " + methodInvocation.print() + " and bind to: " + paramAtom.print()
+            console.log "evaluation " + indentation() + "  matching - need to get next msg element from invocation: " + methodInvocation.print() + " and bind to: " + paramToken.print()
             [valueToBeBound, methodInvocation] = methodInvocation.nextElement()
 
           
-          console.log "evaluation " + indentation() + "  matching - adding paramater " + paramAtom.print() + " to tempVariables dictionary in current frame"
-          newContext.tempVariablesDict[ValidIDfromString paramAtom.value] = valueToBeBound
+          console.log "evaluation " + indentation() + "  matching - adding paramater " + paramToken.print() + " to tempVariables dictionary in current frame"
+          newContext.tempVariablesDict[ValidIDfromString paramToken.value] = valueToBeBound
 
           # ok we matched a paramenter, now let's keep matching further
           # parts of the signature

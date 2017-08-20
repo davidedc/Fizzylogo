@@ -1,7 +1,7 @@
 class FLAccessUpperContextClass extends FLPrimitiveClasses
-  createNew: (theAtomName) ->
+  createNew: (tokenString) ->
     toBeReturned = super FLAccessUpperContext
-    toBeReturned.value = theAtomName
+    toBeReturned.value = tokenString
 
     toBeReturned.print = ->
       return @value

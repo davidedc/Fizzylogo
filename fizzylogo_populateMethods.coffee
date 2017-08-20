@@ -71,7 +71,7 @@ addDefaultMethods = (classToAddThemTo) ->
   classToAddThemTo.addMethod \
     (flParse ". ('variable) += (value)"),
     (context) ->
-      # this is an atom
+      # this is a token
       variable = context.tempVariablesDict[ValidIDfromString "variable"]
       value = context.tempVariablesDict[ValidIDfromString "value"]
 
@@ -87,7 +87,7 @@ addDefaultMethods = (classToAddThemTo) ->
   classToAddThemTo.addMethod \
     (flParse ". ('variable) ++"),
     (context) ->
-      # this is an atom
+      # this is a token
       variable = context.tempVariablesDict[ValidIDfromString "variable"]
 
       runThis = flParse "(self . evaluating variable) ++"
@@ -140,26 +140,26 @@ for eachClass in allClasses
 # WorkSpace ---------------------------------------------------------------------------
 
 
-# Atom ---------------------------------------------------------------------------
+# Token ---------------------------------------------------------------------------
 
 
 
-FLAtom.addMethod \
+FLToken.addMethod \
   (flParse "← ( valueToAssign )"),
   (context) ->
     valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
 
-    theAtomName = @value
+    tokenString = @value
 
-    console.log "evaluation " + indentation() + "assignment to atom " + theAtomName
-    console.log "evaluation " + indentation() + "value to assign to atom: " + theAtomName + " : " + valueToAssign.value
+    console.log "evaluation " + indentation() + "assignment to token " + tokenString
+    console.log "evaluation " + indentation() + "value to assign to token: " + tokenString + " : " + valueToAssign.value
 
     context.isTransparent = true
 
     # check if temp variable is visible from here.
     # if not, create it.
-    dictToPutAtomIn = context.lookUpAtomValuePlace @
-    if !dictToPutAtomIn?
+    dictToPutValueIn = context.whichDictionaryContainsToken @
+    if !dictToPutValueIn?
       # no such variable, hence we create it as temp, but
       # we can't create them in this very call context, that would
       # be useless, we place it in the context of the _previous_ context
@@ -169,17 +169,17 @@ FLAtom.addMethod \
       # could be achieved for example by marking in a special way contexts
       # that have been created because of method calls and climbing back
       # to the last one of those...
-      console.log "evaluation " + indentation() + "creating temp atom: " + theAtomName + " at depth: " + context.firstNonTransparentContext().depth() + " with self: " + context.firstNonTransparentContext().self.print()
-      dictToPutAtomIn = context.firstNonTransparentContext().tempVariablesDict
+      console.log "evaluation " + indentation() + "creating temp token: " + tokenString + " at depth: " + context.firstNonTransparentContext().depth() + " with self: " + context.firstNonTransparentContext().self.print()
+      dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict
     else
-      console.log "evaluation " + indentation() + "found temp atom: " + theAtomName
+      console.log "evaluation " + indentation() + "found temp token: " + tokenString
 
-    dictToPutAtomIn[ValidIDfromString theAtomName] = valueToAssign
+    dictToPutValueIn[ValidIDfromString tokenString] = valueToAssign
 
     console.log "evaluation " + indentation() + "stored value in dictionary"
     return valueToAssign
 
-FLAtom.addMethod \
+FLToken.addMethod \
   (flParse "=' ( 'valueToAssign )"),
   (context) ->
     valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
@@ -187,17 +187,17 @@ FLAtom.addMethod \
     if valueToAssign.flClass == FLList
       valueToAssign = valueToAssign.evaluatedElementsList context
 
-    theAtomName = @value
+    tokenString = @value
 
-    console.log "evaluation " + indentation() + "assignment to atom " + theAtomName
-    console.log "evaluation " + indentation() + "value to assign to atom: " + theAtomName + " : " + valueToAssign.value
+    console.log "evaluation " + indentation() + "assignment to token " + tokenString
+    console.log "evaluation " + indentation() + "value to assign to token: " + tokenString + " : " + valueToAssign.value
 
     context.isTransparent = true
 
     # check if temp variable is visible from here.
     # if not, create it.
-    dictToPutAtomIn = context.lookUpAtomValuePlace @
-    if !dictToPutAtomIn?
+    dictToPutValueIn = context.whichDictionaryContainsToken @
+    if !dictToPutValueIn?
       # no such variable, hence we create it as temp, but
       # we can't create them in this very call context, that would
       # be useless, we place it in the context of the _previous_ context
@@ -207,33 +207,33 @@ FLAtom.addMethod \
       # could be achieved for example by marking in a special way contexts
       # that have been created because of method calls and climbing back
       # to the last one of those...
-      console.log "evaluation " + indentation() + "creating temp atom: " + theAtomName
-      dictToPutAtomIn = context.firstNonTransparentContext().tempVariablesDict
+      console.log "evaluation " + indentation() + "creating temp token: " + tokenString
+      dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict
     else
-      console.log "evaluation " + indentation() + "found temp atom: " + theAtomName
+      console.log "evaluation " + indentation() + "found temp token: " + tokenString
 
-    dictToPutAtomIn[ValidIDfromString theAtomName] = valueToAssign
+    dictToPutValueIn[ValidIDfromString tokenString] = valueToAssign
 
     console.log "evaluation " + indentation() + "stored value in dictionary"
     context.findAnotherReceiver = true
     return valueToAssign
 
-FLAtom.addMethod \
+FLToken.addMethod \
   (flParse "= ( valueToAssign )"),
   (context) ->
     valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
 
-    theAtomName = @value
+    tokenString = @value
 
-    console.log "evaluation " + indentation() + "assignment to atom " + theAtomName
-    console.log "evaluation " + indentation() + "value to assign to atom: " + theAtomName + " : " + valueToAssign.value
+    console.log "evaluation " + indentation() + "assignment to token " + tokenString
+    console.log "evaluation " + indentation() + "value to assign to token: " + tokenString + " : " + valueToAssign.value
 
     context.isTransparent = true
 
     # check if temp variable is visible from here.
     # if not, create it.
-    dictToPutAtomIn = context.lookUpAtomValuePlace @
-    if !dictToPutAtomIn?
+    dictToPutValueIn = context.whichDictionaryContainsToken @
+    if !dictToPutValueIn?
       # no such variable, hence we create it as temp, but
       # we can't create them in this very call context, that would
       # be useless, we place it in the context of the _previous_ context
@@ -243,23 +243,23 @@ FLAtom.addMethod \
       # could be achieved for example by marking in a special way contexts
       # that have been created because of method calls and climbing back
       # to the last one of those...
-      console.log "evaluation " + indentation() + "creating temp atom: " + theAtomName
-      dictToPutAtomIn = context.firstNonTransparentContext().tempVariablesDict
+      console.log "evaluation " + indentation() + "creating temp token: " + tokenString
+      dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict
     else
-      console.log "evaluation " + indentation() + "found temp atom: " + theAtomName
+      console.log "evaluation " + indentation() + "found temp token: " + tokenString
 
-    dictToPutAtomIn[ValidIDfromString theAtomName] = valueToAssign
+    dictToPutValueIn[ValidIDfromString tokenString] = valueToAssign
 
     console.log "evaluation " + indentation() + "stored value in dictionary"
     context.findAnotherReceiver = true
     return valueToAssign
 
 
-FLAtom.addMethod \
+FLToken.addMethod \
   (flParse "+= ( operandum )"),
   (flParse "self ← self eval plus operandum")
 
-FLAtom.addMethod \
+FLToken.addMethod \
   (flParse "++"),
   (flParse "self ← self eval plus 1")
 

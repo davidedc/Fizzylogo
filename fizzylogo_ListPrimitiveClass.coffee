@@ -87,7 +87,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
 
     # TODO this can be done much cheaper
     # Permits something similar to closures:
-    # code is just a list of atoms, and with the quote
+    # code is just a list of tokens, and with the quote
     # assignment (or any quote for that matter)
     # its elements (excluding "self") are all evaluated,
     # hence the bound elements are copied in terms of their values.
@@ -101,7 +101,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
         if (@elementAt i).flClass == FLList
           evalled = (@elementAt i).evaluatedElementsList context
         else
-          if (@elementAt i).flClass == FLAtom and (@elementAt i).value == "self"
+          if (@elementAt i).flClass == FLToken and (@elementAt i).value == "self"
             evalled = (@elementAt i)
           else 
             evalled = ((@elementAt i).eval context, @, true)[0].returned
@@ -140,14 +140,14 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
 
       # here is the case of the "statement with one command" e.g.
       #    1 print. singleCommand . 2 print
-      # in this case, "singleCommand" could be just an atom that
-      # points to an object. Typical case is the "done" atom
+      # in this case, "singleCommand" could be just a token that
+      # points to an object. Typical case is the "done" token
       # ponting to a Done object.
-      # So, in these cases you want "done" atom to look up the
+      # So, in these cases you want "done" token to look up the
       # done object AND THEN you want to eval the object (as if
       # it got the empty message). So here we do that check and
       # do the further evaluation.
-      if receiver? and restOfMessage.isEmpty() and receiver.flClass != FLAtom and receiver.flClass != FLList
+      if receiver? and restOfMessage.isEmpty() and receiver.flClass != FLToken and receiver.flClass != FLList
         console.log "evaluation " + indentation() +  " contents can be evalued further"
         receiver = (receiver.eval returnedContext, receiver)[0].returned
 
@@ -292,7 +292,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
 
     toBeReturned.startsWithCompoundAssignmentOperator =  ->
       if @length() >= 2
-        if (@elementAt 1).flClass == FLAtom
+        if (@elementAt 1).flClass == FLToken
           if (@elementAt 1).value == "+="
             console.log "startsWithCompoundAssignmentOperator: oh yes"
             return true
@@ -301,7 +301,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
 
     toBeReturned.startsWithIncrementOrDecrementOperator =  ->
       if @length() >= 2
-        if (@elementAt 1).flClass == FLAtom
+        if (@elementAt 1).flClass == FLToken
           if (@elementAt 1).value == "++" or (@elementAt 1).value == "--"
             console.log "startsWithIncrementOrDecrementOperator: oh yes"
             return true
@@ -310,14 +310,14 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
 
     toBeReturned.secondElementIsEqual =  ->
       if @length() >= 2
-        if (@elementAt 1).flClass == FLAtom
+        if (@elementAt 1).flClass == FLToken
           if (@elementAt 1).value == "="
             return true
       return false
 
     toBeReturned.isMatchAllSignature =  ->
       if @length() == 1
-        if (@elementAt 0).flClass == FLAtom
+        if (@elementAt 0).flClass == FLToken
           if (@elementAt 0).value == "$$MATCHALL$$"
             return true
       return false
@@ -365,7 +365,7 @@ class FLListPrimitiveClass extends FLPrimitiveClasses
     toBeReturned.isEvaluatingParam =  ->
       @length() == 1
 
-    toBeReturned.getParamAtom = ->
+    toBeReturned.getParamToken = ->
       if @isEvaluatingParam()
         return @elementAt(0)
       else

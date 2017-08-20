@@ -908,7 +908,7 @@ tests = [
 
   # ---------------------------------------------------------------------------
   # something similar to closures, the
-  # code is just a list of atoms, and with the quote
+  # code is just a list of tokens, and with the quote
   # assignment (or any quote for that matter)
   # its elements (excluding "self") are all evaluated,
   # hence the bound elements are copied in terms of their values, so
