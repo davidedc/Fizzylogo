@@ -4,6 +4,11 @@
 addDefaultMethods = (classToAddThemTo) ->
 
   classToAddThemTo.addMethod \
+    (flParse "*nothing*"),
+    (context) ->
+      return @
+
+  classToAddThemTo.addMethod \
     (flParse "print"),
     (context) ->
       console.log "///////// program printout: " + @value
@@ -718,6 +723,16 @@ FLList.addMethod \
     return toBeReturned
 
 
+# AccessUpperContextClass -------------------------------------------------------------------------
+
+FLAccessUpperContext.addMethod \
+  (flParse "*nothing*"),
+  (context) ->
+    console.log "Done_object running emptyMessage"
+    context.previousContext.isTransparent = true
+    return @
+
+
 # Done -------------------------------------------------------------------------
 
 FLDone.addMethod \
@@ -725,6 +740,13 @@ FLDone.addMethod \
   (context) ->
     console.log "///////// program printout: " + "Done_object"
     environmentPrintout += "Done_object"
+    return @
+
+FLDone.addMethod \
+  (flParse "*nothing*"),
+  (context) ->
+    console.log "Done_object running emptyMessage"
+    context.throwing = true
     return @
 
 

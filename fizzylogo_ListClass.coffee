@@ -34,6 +34,7 @@ class FLListClass extends FLClasses
     newMessage = FLList.createNew().toMessage()
     return newMessage
 
+  # unused at the moment
   emptyList: ->
     newMessage = FLList.createNew()
     return newMessage
@@ -140,16 +141,22 @@ class FLListClass extends FLClasses
 
       # here is the case of the "statement with one command" e.g.
       #    1 print. singleCommand . 2 print
-      # in this case, "singleCommand" could be just a token that
-      # points to an object. Typical case is the "done" token
+      # in this case, "singleCommand" is a receiver (could be just a token that
+      # points to an object), so it's
+      # evaluated once as a receiver. Then, it's as if that receiver
+      # was sent the empty message. Typical case is the "done" token
       # ponting to a Done object.
       # So, in these cases you want "done" token to look up the
-      # done object AND THEN you want to eval the object (as if
-      # it got the empty message). So here we do that check and
-      # do the further evaluation.
-      if receiver? and restOfMessage.isEmpty() and receiver.flClass != FLToken and receiver.flClass != FLList
-        console.log "evaluation " + indentation() +  " contents can be evalued further"
-        receiver = (receiver.eval returnedContext, receiver)[0].returned
+      # done object AND THEN you want to send the done object the
+      # empty message, which properly throws the "done".
+      # So here we do that check and do the further message send.
+      if restOfMessage.isEmpty()
+        console.log "evaluation " + indentation() + "trying to send empty message to " + receiver.print()
+        [returnedContextFromEmptyMessage, ignored] = receiver.findSignatureBindParamsAndMakeCall (flParse "*nothing*"), returnedContext
+        if returnedContextFromEmptyMessage?
+          receiver = returnedContextFromEmptyMessage.returned
+          returnedContext = returnedContextFromEmptyMessage
+
 
       return [returnedContext, restOfMessage, receiver]
 

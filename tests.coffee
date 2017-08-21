@@ -952,6 +952,22 @@ tests = [
   """
   "( 1 \"hello\" false )1hellofalse!"
 
+  # ---------------------------------------------------------------------------
+
+  # a token containing a list doesn't cause
+  # the list to be run
+  """
+  myArray =' (1 print)
+  myArray
+  """
+  ""
+
+  # classic "explicit" eval
+  """
+  myArray =' (1 print)
+  myArray eval
+  """
+  "1"
 
   # ---------------------------------------------------------------------------
   # something similar to closures, the
@@ -2194,6 +2210,11 @@ tests = [
 
   """
   "000111121123223"
+
+  # ---------------------------------------------------------------------------
+  # running with empty signature (which unfortunately is not really empty)
+  "to sayHello (*nothing*) do (\"Hello\" print); sayHello;"
+  "Hello"
 
 
 ]
