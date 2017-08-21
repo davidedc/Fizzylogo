@@ -75,7 +75,7 @@ class FLListClass extends FLClasses
       if @isEmpty()
         return false
 
-      if @elementAt(@length()-1) == RStatementSeparatorSymbol
+      if @elementAt(@length()-1).isStatementSeparator?()
         return true
 
       return false
@@ -384,15 +384,15 @@ class FLListClass extends FLClasses
       lastStatementEnd = @cursorStart - 1
       for i in [@cursorStart..@cursorEnd]
         console.log "evaluation " + indentation() + "separating statements   examining element " + @value[i].print()
-        if (@value[i] == RStatementSeparatorSymbol) or (i == @cursorEnd)
+        if (@value[i].isStatementSeparator?()) or (i == @cursorEnd)
           statementToBeAdded = @copy().toList()
           statementToBeAdded.cursorStart = lastStatementEnd + 1
           statementToBeAdded.cursorEnd = i - 1
-          if i == @cursorEnd and @value[@cursorEnd] != RStatementSeparatorSymbol
+          if i == @cursorEnd and !@value[@cursorEnd].isStatementSeparator?()
             console.log " last char: " + @value[@cursorEnd].print()
             statementToBeAdded.cursorEnd++
           lastStatementEnd = i
-          if !statementToBeAdded.isEmpty() and statementToBeAdded.firstElement() != RStatementSeparatorSymbol
+          if !statementToBeAdded.isEmpty() and !statementToBeAdded.firstElement().isStatementSeparator?()
             console.log " adding: " + statementToBeAdded.print()
             arrayOfStatements.jsArrayPush statementToBeAdded
           console.log "evaluation " + indentation() + "separating statements isolated new statement " + statementToBeAdded.print()

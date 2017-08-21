@@ -69,14 +69,14 @@ class FLObjects
         # a token or an FLList containing one parameter (with
         # prepended "@" in case the parameter doesn't require
         # evaluation)
-        if eachElementOfSignature.flClass == FLToken or eachElementOfSignature.flClass == FLSymbol
+        if eachElementOfSignature.flClass == FLToken
           # if the signature contains a token, the message
           # must contain the same token, otherwise we don't
           # have a match.
 
           [eachElementOfInvocation, methodInvocation] = methodInvocation.nextElement()
 
-          if eachElementOfInvocation.flClass == FLToken or eachElementOfInvocation.flClass == FLSymbol
+          if eachElementOfInvocation.flClass == FLToken
 
             #console.log "evaluation " + indentation() + "  matching tokens: - next signature piece: " + eachElementOfSignature.print() + " is token: " + (eachElementOfSignature.flClass == FLToken) + " with: " + eachElementOfInvocation.print()
 

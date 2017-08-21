@@ -6,6 +6,9 @@ class FLTokenClass extends FLClasses
     toBeReturned.print = ->
       return @value
 
+    toBeReturned.isStatementSeparator = ->
+      return @value == ";"
+
     toBeReturned.printForList = toBeReturned.print
 
     toBeReturned.eval = (theContext, remainingMessage, ignoreUnassigned) ->

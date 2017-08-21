@@ -204,7 +204,7 @@ flParse = (command) ->
 
     if /^;$/.test(eachToken)
       console.log eachToken + " is separator symbol"
-      listsStack[listsStack.length-1] = listsStack[listsStack.length-1].flListImmutablePush RStatementSeparatorSymbol
+      listsStack[listsStack.length-1] = listsStack[listsStack.length-1].flListImmutablePush FLToken.createNew ";"
     else if /\$STRINGS_TABLE_(\d+)/g.test(eachToken)
       console.log eachToken + " is a string literal"
       listsStack[listsStack.length-1] = listsStack[listsStack.length-1].flListImmutablePush FLString.createNew injectStrings eachToken, stringsTable
