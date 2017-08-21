@@ -178,7 +178,7 @@ linearize = (code) ->
 
 
 
-flParse = (command) ->
+flTokenize = (command) ->
   listsStack = []
   listsStack.jsArrayPush FLList.createNew()
 
@@ -202,10 +202,7 @@ flParse = (command) ->
   for eachToken in simpleTokenization
     console.log "eachToken: " + eachToken
 
-    if /^;$/.test(eachToken)
-      console.log eachToken + " is separator symbol"
-      listsStack[listsStack.length-1] = listsStack[listsStack.length-1].flListImmutablePush FLToken.createNew ";"
-    else if /\$STRINGS_TABLE_(\d+)/g.test(eachToken)
+    if /\$STRINGS_TABLE_(\d+)/g.test(eachToken)
       console.log eachToken + " is a string literal"
       listsStack[listsStack.length-1] = listsStack[listsStack.length-1].flListImmutablePush FLString.createNew injectStrings eachToken, stringsTable
     else if /^\($/.test(eachToken)

@@ -4,24 +4,24 @@
 addDefaultMethods = (classToAddThemTo) ->
 
   classToAddThemTo.addMethod \
-    (flParse "*nothing*"),
+    (flTokenize "*nothing*"),
     (context) ->
       return @
 
   classToAddThemTo.addMethod \
-    (flParse "print"),
+    (flTokenize "print"),
     (context) ->
       console.log "///////// program printout: " + @value
       environmentPrintout += @value
       return @
 
   classToAddThemTo.addMethod \
-    (flParse "whenNew"),
+    (flTokenize "whenNew"),
     (context) ->
       return @
 
   classToAddThemTo.addMethod \
-    (flParse "eval"),
+    (flTokenize "eval"),
     (context) ->
       context.isTransparent = true
       newContext = new FLContext context
@@ -62,25 +62,25 @@ addDefaultMethods = (classToAddThemTo) ->
     return FLNil.createNew()
 
   classToAddThemTo.addMethod \
-    (flParse ". ('variable) = (value)"),
+    (flTokenize ". ('variable) = (value)"),
     commonPropertyAssignmentFunction
 
   classToAddThemTo.addMethod \
-    (flParse ". ('variable) ← (value)"),
+    (flTokenize ". ('variable) ← (value)"),
     commonPropertyAssignmentFunction
 
   classToAddThemTo.addMethod \
-    (flParse ". evaluating (variable)"),
+    (flTokenize ". evaluating (variable)"),
     commonPropertyAccessFunction
 
   classToAddThemTo.addMethod \
-    (flParse ". ('variable) += (value)"),
+    (flTokenize ". ('variable) += (value)"),
     (context) ->
       # this is a token
       variable = context.tempVariablesDict[ValidIDfromString "variable"]
       value = context.tempVariablesDict[ValidIDfromString "value"]
 
-      runThis = flParse "(self . evaluating variable) += value"
+      runThis = flTokenize "(self . evaluating variable) += value"
 
       toBeReturned = (runThis.eval context, runThis)[0].returned
 
@@ -90,12 +90,12 @@ addDefaultMethods = (classToAddThemTo) ->
       return toBeReturned
 
   classToAddThemTo.addMethod \
-    (flParse ". ('variable) ++"),
+    (flTokenize ". ('variable) ++"),
     (context) ->
       # this is a token
       variable = context.tempVariablesDict[ValidIDfromString "variable"]
 
-      runThis = flParse "(self . evaluating variable) ++"
+      runThis = flTokenize "(self . evaluating variable) ++"
 
       toBeReturned = (runThis.eval context, runThis)[0].returned
 
@@ -104,13 +104,13 @@ addDefaultMethods = (classToAddThemTo) ->
       return toBeReturned
 
   classToAddThemTo.addMethod \
-    (flParse ". ('variable)"),
+    (flTokenize ". ('variable)"),
     commonPropertyAccessFunction
 
 
   # TODO I think method body should NOT be quoted
   classToAddThemTo.addMethod \
-    (flParse "answer ( ' signature ) by ( ' methodBody )"),
+    (flTokenize "answer ( ' signature ) by ( ' methodBody )"),
     (context) ->
       signature = context.tempVariablesDict[ValidIDfromString "signature"]
       methodBody = context.tempVariablesDict[ValidIDfromString "methodBody"]
@@ -121,7 +121,7 @@ addDefaultMethods = (classToAddThemTo) ->
       return @
 
   classToAddThemTo.addMethod \
-    (flParse "answerEvalParams ( signature ) by ( methodBody )"),
+    (flTokenize "answerEvalParams ( signature ) by ( methodBody )"),
     (context) ->
       signature = context.tempVariablesDict[ValidIDfromString "signature"]
       methodBody = context.tempVariablesDict[ValidIDfromString "methodBody"]
@@ -150,7 +150,7 @@ for eachClass in allClasses
 
 
 FLToken.addMethod \
-  (flParse "← ( valueToAssign )"),
+  (flTokenize "← ( valueToAssign )"),
   (context) ->
     valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
 
@@ -185,7 +185,7 @@ FLToken.addMethod \
     return valueToAssign
 
 FLToken.addMethod \
-  (flParse "=' ( 'valueToAssign )"),
+  (flTokenize "=' ( 'valueToAssign )"),
   (context) ->
     valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
 
@@ -224,7 +224,7 @@ FLToken.addMethod \
     return valueToAssign
 
 FLToken.addMethod \
-  (flParse "= ( valueToAssign )"),
+  (flTokenize "= ( valueToAssign )"),
   (context) ->
     valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
 
@@ -261,18 +261,18 @@ FLToken.addMethod \
 
 
 FLToken.addMethod \
-  (flParse "+= ( operandum )"),
-  (flParse "self ← self eval plus operandum")
+  (flTokenize "+= ( operandum )"),
+  (flTokenize "self ← self eval plus operandum")
 
 FLToken.addMethod \
-  (flParse "++"),
-  (flParse "self ← self eval plus 1")
+  (flTokenize "++"),
+  (flTokenize "self ← self eval plus 1")
 
 
 # Nil ---------------------------------------------------------------------------
 
 FLNil.addMethod \
-  (flParse "('anything)"),
+  (flTokenize "('anything)"),
   (context) ->
     anything = context.tempVariablesDict[ValidIDfromString "anything"]
 
@@ -285,7 +285,7 @@ FLNil.addMethod \
 # In ---------------------------------------------------------------------------
 
 FLIn.addMethod \
-  (flParse "(object) do ('code)"),
+  (flTokenize "(object) do ('code)"),
   (context) ->
     object = context.tempVariablesDict[ValidIDfromString "object"]
     code = context.tempVariablesDict[ValidIDfromString "code"]
@@ -301,8 +301,8 @@ FLIn.addMethod \
 
 # TODO it's be nice if there was a way not to leak the TempClass
 FLTo.addMethod \
-  (flParse "( ' functionObjectName ) ( ' signature ) do ( ' functionBody )"),
-  flParse \
+  (flTokenize "( ' functionObjectName ) ( ' signature ) do ( ' functionBody )"),
+  flTokenize \
     "accessUpperContext; 'TempClass ← Class new;\
     TempClass answerEvalParams (signature) by (functionBody);\
     functionObjectName ← TempClass new;"
@@ -314,14 +314,14 @@ FLTo.addMethod \
 # new classes, via the "new" message below.
 
 FLClass.addMethod \
-  (flParse "print"),
+  (flTokenize "print"),
   (context) ->
     console.log "///////// program printout: " + "Class object!"
     environmentPrintout += "Class_object"
     return @
 
 FLClass.addMethod \
-  (flParse "new"),
+  (flTokenize "new"),
   (context) ->
     console.log "///////// creating a new class for the user!"
 
@@ -330,7 +330,7 @@ FLClass.addMethod \
     # the class we are creating has a "new"
     # so user can create objects for it
     newUserClass.addMethod \
-      (flParse "new"),
+      (flTokenize "new"),
       (context) ->
         console.log "///////// creating a new object from a user class!"
         objectTBR = @createNew()
@@ -349,7 +349,7 @@ FLClass.addMethod \
         # Passing parameters to whenNew (and consuming them) from in here
         # defies the whole architecture of the mechanism.
         console.log "invoking whenNew"
-        returnedContext = (objectTBR.findSignatureBindParamsAndMakeCall (flParse "whenNew"), context)[0]
+        returnedContext = (objectTBR.findSignatureBindParamsAndMakeCall (flTokenize "whenNew"), context)[0]
         toBeReturned = returnedContext.returned
         return toBeReturned
 
@@ -360,19 +360,19 @@ FLClass.addMethod \
 # Exception -------------------------------------------------------------------------
 
 FLException.addMethod \
-  (flParse "new"),
+  (flTokenize "new"),
   (context) ->
     @flClass.createNew ""
 
 FLException.addMethod \
-  (flParse "initWith ( ' errorMessage )"),
+  (flTokenize "initWith ( ' errorMessage )"),
   (context) ->
     errorMessage = context.tempVariablesDict[ValidIDfromString "errorMessage"]
     @value = errorMessage.value
     return @
 
 FLException.addMethod \
-  (flParse "catch all handle ( ' errorHandle )"),
+  (flTokenize "catch all handle ( ' errorHandle )"),
   (context) ->
     errorHandle = context.tempVariablesDict[ValidIDfromString "errorHandle"]
 
@@ -385,7 +385,7 @@ FLException.addMethod \
     return toBeReturned
 
 FLException.addMethod \
-  (flParse "catch ( theError ) handle ( ' errorHandle )"),
+  (flTokenize "catch ( theError ) handle ( ' errorHandle )"),
   (context) ->
     theError = context.tempVariablesDict[ValidIDfromString "theError"]
     errorHandle = context.tempVariablesDict[ValidIDfromString "errorHandle"]
@@ -404,7 +404,7 @@ FLException.addMethod \
     return toBeReturned
 
 FLException.addMethod \
-  (flParse "$$MATCHALL$$"),
+  (flTokenize "$$MATCHALL$$"),
   (context) ->
     console.log "exception - no more cacthes, has to be re-thrown"
     context.throwing = true
@@ -414,12 +414,12 @@ FLException.addMethod \
 # String -------------------------------------------------------------------------
 
 FLString.addMethod \
-  (flParse "new"),
+  (flTokenize "new"),
   (context) ->
     @flClass.createNew ""
 
 FLString.addMethod \
-  (flParse "+ ( stringToBeAppended )"),
+  (flTokenize "+ ( stringToBeAppended )"),
   (context) ->
     stringToBeAppended = context.tempVariablesDict[ValidIDfromString "stringToBeAppended"]
     return FLString.createNew @value + stringToBeAppended.print()
@@ -427,19 +427,19 @@ FLString.addMethod \
 # Number -------------------------------------------------------------------------
 
 FLNumber.addMethod \
-  (flParse "anotherPrint"),
-  flParse "self print"
+  (flTokenize "anotherPrint"),
+  flTokenize "self print"
 
 FLNumber.addMethod \
-  (flParse "doublePrint"),
-  flParse "self print print"
+  (flTokenize "doublePrint"),
+  flTokenize "self print print"
 
 # mutates the very object
 FLNumber.addMethod \
-  (flParse "incrementInPlace"),
+  (flTokenize "incrementInPlace"),
   # this one below actually mutates the number
   # object
-  flParse "self ← self plus 1"
+  flTokenize "self ← self plus 1"
 
 # although there are some good reasons to have this,
 # it can get confusing, consider for example
@@ -448,71 +448,71 @@ FLNumber.addMethod \
 # the second just increments the number without modifying
 # a.
 FLNumber.addMethod \
-  (flParse "++"),
-  flParse "self plus 1"
+  (flTokenize "++"),
+  flTokenize "self plus 1"
 
 # see "++" regarding why this could be confusing
 FLNumber.addMethod \
-  (flParse "+= (value)"),
-  flParse "self plus value"
+  (flTokenize "+= (value)"),
+  flTokenize "self plus value"
 
 FLNumber.addMethod \
-  (flParse "factorial"),
-  flParse "( self == 0 ) ⇒ ( 1 ) ( self minus 1 ) factorial * self"
+  (flTokenize "factorial"),
+  flTokenize "( self == 0 ) ⇒ ( 1 ) ( self minus 1 ) factorial * self"
 
 FLNumber.addMethod \
-  (flParse "factorialtwo"),
-  flParse "( self == 0 ) ⇒ ( 1 ) self * ( ( self minus 1 ) factorialtwo )"
+  (flTokenize "factorialtwo"),
+  flTokenize "( self == 0 ) ⇒ ( 1 ) self * ( ( self minus 1 ) factorialtwo )"
 
 FLNumber.addMethod \
-  (flParse "factorialthree"),
-  flParse "( self == 0 ) ⇒ ( 1 ) ('temp ← self; temp print; ( self minus 1 ) factorialthree * temp )"
+  (flTokenize "factorialthree"),
+  flTokenize "( self == 0 ) ⇒ ( 1 ) ('temp ← self; temp print; ( self minus 1 ) factorialthree * temp )"
 
 FLNumber.addMethod \
-  (flParse "factorialfour"),
-  flParse \
+  (flTokenize "factorialfour"),
+  flTokenize \
     "( self == 0 ) ⇒ ( 1 ) ('temp ← self;\
     ( self minus 1 ) factorialfour * temp )"
 
 FLNumber.addMethod \
-  (flParse "factorialfive"),
-  flParse \
+  (flTokenize "factorialfive"),
+  flTokenize \
     "( self == 0 ) ⇒ ( 1 ) (1 plus 1;'temp ← self;\
     ( self minus 1 ) factorialfive * temp )"
 
 FLNumber.addMethod \
-  (flParse "amIZero"),
-  flParse "self == 0"
+  (flTokenize "amIZero"),
+  flTokenize "self == 0"
 
 FLNumber.addMethod \
-  (flParse "printAFromDeeperCall"),
-  flParse "a print"
+  (flTokenize "printAFromDeeperCall"),
+  flTokenize "a print"
 
 FLNumber.addMethod \
-  (flParse "plus ( operandum )"),
+  (flTokenize "plus ( operandum )"),
   (context) ->
     operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
     return FLNumber.createNew @value + operandum.value
 
 FLNumber.addMethod \
-  (flParse "minus ( operandum )"),
+  (flTokenize "minus ( operandum )"),
   (context) ->
     operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
     return FLNumber.createNew @value - operandum.value
 
 FLNumber.addMethod \
-  (flParse "selftimesminusone"),
-  flParse "self * self minus 1"
+  (flTokenize "selftimesminusone"),
+  flTokenize "self * self minus 1"
 
 FLNumber.addMethod \
-  (flParse "* ( operandum )"),
+  (flTokenize "* ( operandum )"),
   (context) ->
     operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
     console.log "evaluation " + indentation() + "multiplying " + @value + " to " + operandum.value  
     return FLNumber.createNew @value * operandum.value
 
 FLNumber.addMethod \
-  (flParse "times ( ' loopCode )"),
+  (flTokenize "times ( ' loopCode )"),
   (context) ->
     loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
     console.log "FLNumber ⇒ DO loop code is: " + loopCode.print()
@@ -538,7 +538,7 @@ FLNumber.addMethod \
 
 
 FLNumber.addMethod \
-  (flParse "== ( toCompare )"),
+  (flTokenize "== ( toCompare )"),
   (context) ->
     toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
     if @value == toCompare.value
@@ -548,7 +548,7 @@ FLNumber.addMethod \
 
 # mutating the number
 FLNumber.addMethod \
-  (flParse "← ( valueToAssign )"),
+  (flTokenize "← ( valueToAssign )"),
   (context) ->
     console.log "evaluation " + indentation() + "assigning to number! "
     valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
@@ -560,18 +560,18 @@ FLNumber.addMethod \
 # Boolean -------------------------------------------------------------------------
 
 FLBoolean.addMethod \
-  (flParse "negate"),
+  (flTokenize "negate"),
   (context) ->
     return FLBoolean.createNew !@value
 
 FLBoolean.addMethod \
-  (flParse "and ( operandum )"),
+  (flTokenize "and ( operandum )"),
   (context) ->
     operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
     return FLBoolean.createNew @value and operandum.value
 
 FLBoolean.addMethod \
-  (flParse "⇒ ( ' trueBranch )"),
+  (flTokenize "⇒ ( ' trueBranch )"),
   (context) ->
     context.isTransparent = true
     trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
@@ -599,7 +599,7 @@ FLBoolean.addMethod \
 
 
 FLBoolean.addMethod \
-  (flParse "or ( operandum )"),
+  (flTokenize "or ( operandum )"),
   (context) ->
     console.log "executing an or! "
     operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
@@ -609,7 +609,7 @@ FLBoolean.addMethod \
 # FLQuote --------------------------------------------------------------------------
 
 FLQuote.addMethod \
-  (flParse "( ' operandum )"),
+  (flTokenize "( ' operandum )"),
   (context) ->
     operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
 
@@ -621,36 +621,36 @@ FLQuote.addMethod \
 
 # Not --------------------------------------------------------------------------
 FLNot.addMethod \
-  (flParse "( operandum )"),
-  flParse "operandum negate"
+  (flTokenize "( operandum )"),
+  flTokenize "operandum negate"
 
 # List -------------------------------------------------------------------------
 
 FLList.addMethod \
-  (flParse "new"),
+  (flTokenize "new"),
   (context) ->
     @flClass.createNew()
 
 FLList.addMethod \
-  (flParse "print"),
+  (flTokenize "print"),
   (context) ->
     console.log "///////// program printout: " + @print()
     environmentPrintout += @print()
     return context
 
 FLList.addMethod \
-  (flParse "+ ( elementToBeAppended )"),
+  (flTokenize "+ ( elementToBeAppended )"),
   (context) ->
     elementToBeAppended = context.tempVariablesDict[ValidIDfromString "elementToBeAppended"]
     return @flListImmutablePush elementToBeAppended
 
 FLList.addMethod \
-  (flParse "length"),
+  (flTokenize "length"),
   (context) ->
     return FLNumber.createNew @length()
 
 FLList.addMethod \
-  (flParse "[ (indexValue) ] = (value)"),
+  (flTokenize "[ (indexValue) ] = (value)"),
   (context) ->
     indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
     value = context.tempVariablesDict[ValidIDfromString "value"]
@@ -658,12 +658,12 @@ FLList.addMethod \
     return @elementAtSetMutable indexValue.value, value
 
 FLList.addMethod \
-  (flParse "[ (indexValue) ] += (value)"),
+  (flTokenize "[ (indexValue) ] += (value)"),
   (context) ->
     indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
     value = context.tempVariablesDict[ValidIDfromString "value"]
 
-    runThis = flParse "(self [indexValue]) += value"
+    runThis = flTokenize "(self [indexValue]) += value"
 
     toBeReturned = (runThis.eval context, runThis)[0].returned
 
@@ -674,11 +674,11 @@ FLList.addMethod \
     return toBeReturned
 
 FLList.addMethod \
-  (flParse "[ (indexValue) ] ++"),
+  (flTokenize "[ (indexValue) ] ++"),
   (context) ->
     indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
 
-    runThis = flParse "(self [indexValue]) ++"
+    runThis = flTokenize "(self [indexValue]) ++"
 
     toBeReturned = (runThis.eval context, runThis)[0].returned
 
@@ -688,14 +688,14 @@ FLList.addMethod \
 
 
 FLList.addMethod \
-  (flParse "[ (indexValue) ]"),
+  (flTokenize "[ (indexValue) ]"),
   (context) ->
     indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
     return @elementAt indexValue.value
 
 
 FLList.addMethod \
-  (flParse "each ( ' variable ) do ( ' code )"),
+  (flTokenize "each ( ' variable ) do ( ' code )"),
   (context) ->
 
     variable = context.tempVariablesDict[ValidIDfromString "variable"]
@@ -726,7 +726,7 @@ FLList.addMethod \
 # AccessUpperContextClass -------------------------------------------------------------------------
 
 FLAccessUpperContext.addMethod \
-  (flParse "*nothing*"),
+  (flTokenize "*nothing*"),
   (context) ->
     console.log "Done_object running emptyMessage"
     context.previousContext.isTransparent = true
@@ -736,14 +736,14 @@ FLAccessUpperContext.addMethod \
 # Done -------------------------------------------------------------------------
 
 FLDone.addMethod \
-  (flParse "print"),
+  (flTokenize "print"),
   (context) ->
     console.log "///////// program printout: " + "Done_object"
     environmentPrintout += "Done_object"
     return @
 
 FLDone.addMethod \
-  (flParse "*nothing*"),
+  (flTokenize "*nothing*"),
   (context) ->
     console.log "Done_object running emptyMessage"
     context.throwing = true
@@ -751,7 +751,7 @@ FLDone.addMethod \
 
 
 FLDone.addMethod \
-  (flParse "with ( valueToReturn )"),
+  (flTokenize "with ( valueToReturn )"),
   (context) ->
     valueToReturn = context.tempVariablesDict[ValidIDfromString "valueToReturn"]
 
@@ -762,7 +762,7 @@ FLDone.addMethod \
 # Repeat1 -------------------------------------------------------------------------
 
 FLRepeat1.addMethod \
-  (flParse "( ' loopCode )"),
+  (flTokenize "( ' loopCode )"),
   (context) ->
     context.isTransparent = true
     loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
@@ -794,7 +794,7 @@ FLRepeat1.addMethod \
 # Repeat2 -------------------------------------------------------------------------
 
 FLRepeat2.addMethod \
-  (flParse "(howManyTimes) do ( ' loopCode )"),
+  (flTokenize "(howManyTimes) do ( ' loopCode )"),
   (context) ->
     context.isTransparent = true
     howManyTimes = context.tempVariablesDict[ValidIDfromString "howManyTimes"]
@@ -835,7 +835,7 @@ FLRepeat2.addMethod \
 # Throw -----------------------------------------------------------------------------
 
 FLThrow.addMethod \
-  (flParse "( theError )"),
+  (flTokenize "( theError )"),
   (context) ->
     theError = context.tempVariablesDict[ValidIDfromString "theError"]
     console.log "throwing an error: " + theError.value
@@ -845,7 +845,7 @@ FLThrow.addMethod \
 # IfThen -----------------------------------------------------------------------------
 
 FLIfThen.addMethod \
-  (flParse "( predicate ) then ('trueBranch)"),
+  (flTokenize "( predicate ) then ('trueBranch)"),
   (context) ->
     predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
     trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
@@ -863,7 +863,7 @@ FLIfThen.addMethod \
 # FLIfFallThrough -----------------------------------------------------------------------------
 
 FLIfFallThrough.addMethod \
-  (flParse "else if ( predicate ) then ('trueBranch)"),
+  (flTokenize "else if ( predicate ) then ('trueBranch)"),
   (context) ->
     predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
     trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
@@ -879,7 +879,7 @@ FLIfFallThrough.addMethod \
     return toBeReturned
 
 FLIfFallThrough.addMethod \
-  (flParse "else ('trueBranch)"),
+  (flTokenize "else ('trueBranch)"),
   (context) ->
     trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
 
@@ -889,7 +889,7 @@ FLIfFallThrough.addMethod \
     return toBeReturned
 
 FLIfFallThrough.addMethod \
-  (flParse "$$MATCHALL$$"),
+  (flTokenize "$$MATCHALL$$"),
   (context) ->
     console.log "no more cases for the if"
     context.findAnotherReceiver = true
@@ -899,13 +899,13 @@ FLIfFallThrough.addMethod \
 # FakeElse -----------------------------------------------------------------------------
 
 FLFakeElse.addMethod \
-  (flParse "if ( predicate ) then ('trueBranch)"),
+  (flTokenize "if ( predicate ) then ('trueBranch)"),
   (context) ->
     context.findAnotherReceiver = true
     return @
 
 FLFakeElse.addMethod \
-  (flParse "('trueBranch)"),
+  (flTokenize "('trueBranch)"),
   (context) ->
     context.findAnotherReceiver = true
     return @
@@ -915,7 +915,7 @@ FLFakeElse.addMethod \
 # Try -----------------------------------------------------------------------------
 
 FLTry.addMethod \
-  (flParse "( ' code )"),
+  (flTokenize "( ' code )"),
   (context) ->
     code = context.tempVariablesDict[ValidIDfromString "code"]
     toBeReturned = (code.eval context, code)[0].returned
@@ -937,13 +937,13 @@ FLTry.addMethod \
 # definition for explained example.
 
 FLFakeCatch.addMethod \
-  (flParse "all handle ( ' errorHandle )"),
+  (flTokenize "all handle ( ' errorHandle )"),
   (context) ->
     context.findAnotherReceiver = true
     return @
 
 FLFakeCatch.addMethod \
-  (flParse "( theError ) handle ( ' errorHandle )"),
+  (flTokenize "( theError ) handle ( ' errorHandle )"),
   (context) ->
     context.findAnotherReceiver = true
     return @
@@ -951,7 +951,7 @@ FLFakeCatch.addMethod \
 # For -----------------------------------------------------------------------------
 
 FLFor.addMethod \
-  (flParse "( ' loopVar ) from ( startIndex ) to ( endIndex ) do ( ' loopCode )"),
+  (flTokenize "( ' loopVar ) from ( startIndex ) to ( endIndex ) do ( ' loopCode )"),
   (context) ->
     context.isTransparent = true
     loopVar = context.tempVariablesDict[ValidIDfromString "loopVar"]
@@ -999,7 +999,7 @@ FLFor.addMethod \
 # pass (list) when you are in indented form, which makes
 # more sense to the user.
 FLFor.addMethod \
-  (flParse "each ( ' variable ) in ( theList ) do ( ' code )"),
+  (flTokenize "each ( ' variable ) in ( theList ) do ( ' code )"),
   (context) ->
     context.isTransparent = true
     variable = context.tempVariablesDict[ValidIDfromString "variable"]

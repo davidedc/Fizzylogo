@@ -2279,7 +2279,7 @@ for i in [0...tests.length] by 2
     testBodyMultiline = testBody.replace /\n/g, ' ⏎ '
     console.log "starting test: " + (i/2+1) + ": " + testBodyMultiline
     
-    parsed = flParse testBody
+    parsed = flTokenize testBody
 
     console.log parsed.value.length
     for eachParsedItem in parsed.value
