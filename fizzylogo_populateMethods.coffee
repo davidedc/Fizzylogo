@@ -376,7 +376,7 @@ FLException.addMethod \
     return @
 
 FLException.addMethod \
-  (flTokenize "catch all handle ( ' errorHandle )"),
+  (flTokenize "catch all handle: ( ' errorHandle )"),
   (context) ->
     errorHandle = context.tempVariablesDict[ValidIDfromString "errorHandle"]
 
@@ -389,10 +389,26 @@ FLException.addMethod \
     return toBeReturned
 
 FLException.addMethod \
-  (flTokenize "catch ( theError ) handle ( ' errorHandle )"),
+  # theError here is a token!
+  (flTokenize "catch ( 'theError ) handle: ( ' errorHandle )"),
   (context) ->
     theError = context.tempVariablesDict[ValidIDfromString "theError"]
     errorHandle = context.tempVariablesDict[ValidIDfromString "errorHandle"]
+
+    # OK this is tricky: we'd normally just evaluate this from the
+    # signature BUT we can't, because it's going to be in this form:
+    # WITHOUT parens
+    #    catch someError handle:
+    # so it's going to try to match the "handle" token, and
+    # whenever an exception touches
+    # anything else other than a catch, it ALWAYS matches and
+    # re-throws itself, because this
+    # is how we get exceptions to bubble up when they are not
+    # caught. So, we get the token instead, and we look it up
+    # here.
+    # theError here is a token, with this evaluation we get an
+    # actual exception.
+    theError = (theError.eval context, theError)[0].returned
 
     console.log "catch: same as one to catch?" + (@ == theError) + " being thrown? " + context.throwing
 
@@ -925,7 +941,7 @@ FLFakeElse.addMethod \
 # Try -----------------------------------------------------------------------------
 
 FLTry.addMethod \
-  (flTokenize "( ' code )"),
+  (flTokenize ": ( ' code )"),
   (context) ->
     code = context.tempVariablesDict[ValidIDfromString "code"]
     toBeReturned = (code.eval context, code)[0].returned
@@ -947,13 +963,13 @@ FLTry.addMethod \
 # definition for explained example.
 
 FLFakeCatch.addMethod \
-  (flTokenize "all handle ( ' errorHandle )"),
+  (flTokenize "all handle: ( ' errorHandle )"),
   (context) ->
     context.findAnotherReceiver = true
     return @
 
 FLFakeCatch.addMethod \
-  (flTokenize "( theError ) handle ( ' errorHandle )"),
+  (flTokenize "( 'theError ) handle: ( ' errorHandle )"),
   (context) ->
     context.findAnotherReceiver = true
     return @
