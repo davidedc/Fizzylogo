@@ -1335,7 +1335,7 @@ tests = [
   # wrong way to raise exceptions, they must be thrown
   "'someException ← Exception new initWith \"my custom error\";\
     try: ( 1 print; someException )\
-    catch someException handle: ( \" caught the error I wanted\" print )"
+    catch someException: ( \" caught the error I wanted\" print )"
   "1"
 
   # ---------------------------------------------------------------------------
@@ -1343,7 +1343,7 @@ tests = [
   "'someException ← Exception new initWith \"my custom error\";\
     'someOtherException ← Exception new initWith \"my other custom error\";\
     try: ( 1 print; someException )\
-    catch someException handle: ( \" caught the error I wanted\" print )"
+    catch someException: ( \" caught the error I wanted\" print )"
   "1"
 
   # ---------------------------------------------------------------------------
@@ -1351,14 +1351,14 @@ tests = [
   "'someException ← Exception new initWith \"my custom error\";\
     'someOtherException ← Exception new initWith \"my other custom error\";\
     try: ( 1 print; someException )\
-    catch someOtherException handle: ( \" caught the error I wanted\" print )"
+    catch someOtherException: ( \" caught the error I wanted\" print )"
   "1"
 
   # ---------------------------------------------------------------------------
   # thrown exception, note how the statement after the throw is not executed
   "'someException ← Exception new initWith \"my custom error\";\
     try: ( 1 print; throw someException; 2 print )\
-    catch someException handle: ( \" caught the error I wanted\" print )"
+    catch someException: ( \" caught the error I wanted\" print )"
   "1 caught the error I wanted"
 
   # ---------------------------------------------------------------------------
@@ -1368,7 +1368,7 @@ tests = [
   ﹍1 print
   ﹍throw someException
   ﹍2 print
-  catch someException handle:
+  catch someException:
   ﹍" caught the error I wanted" print
   ". the end." print
   """
@@ -1379,7 +1379,7 @@ tests = [
   "'someException ← Exception new initWith \"my custom error\";\
     'someOtherException ← Exception new initWith \"my other custom error\";\
     try: ( 1 print; throw someException; 2 print )\
-    catch someException handle: ( \" caught the error I wanted\" print )"
+    catch someException: ( \" caught the error I wanted\" print )"
   "1 caught the error I wanted"
 
   # ---------------------------------------------------------------------------
@@ -1391,7 +1391,7 @@ tests = [
   ﹍1 print
   ﹍throw someException
   ﹍2 print
-  catch someException handle:
+  catch someException:
   ﹍" caught the error I wanted" print
   ". the end." print
   """
@@ -1402,7 +1402,7 @@ tests = [
   "'someException ← Exception new initWith \"my custom error\";\
     'someOtherException ← Exception new initWith \"my other custom error\";\
     try: ( 1 print; throw someException; 2 print )\
-    catch someOtherException handle: ( \" caught the error I wanted\" print )"
+    catch someOtherException: ( \" caught the error I wanted\" print )"
   "1"
 
   # ---------------------------------------------------------------------------
@@ -1416,7 +1416,7 @@ tests = [
   ﹍1 print
   ﹍throw someException
   ﹍2 print
-  catch someOtherException handle:
+  catch someOtherException:
   ﹍" caught the error I wanted" print
   ". the end." print  
   """
@@ -1427,8 +1427,8 @@ tests = [
   "'someException ← Exception new initWith \"my custom error\";\
     'someOtherException ← Exception new initWith \"my other custom error\";\
     try: ( 1 print; throw someOtherException; 2 print )\
-    catch someOtherException handle: ( \" caught the error the first time around\" print)\
-    catch someException handle: ( \" caught the error the second time around\" print)"
+    catch someOtherException: ( \" caught the error the first time around\" print)\
+    catch someException: ( \" caught the error the second time around\" print)"
   "1 caught the error the first time around"
 
   # ---------------------------------------------------------------------------
@@ -1439,9 +1439,9 @@ tests = [
   ﹍1 print
   ﹍throw someOtherException
   ﹍2 print
-  catch someOtherException handle:
+  catch someOtherException:
   ﹍" caught the error the first time around" print
-  catch someException handle:
+  catch someException:
   ﹍" caught the error the second time around" print
   ". the end." print
   """
@@ -1451,8 +1451,8 @@ tests = [
   "'someException ← Exception new initWith \"my custom error\";\
     'someOtherException ← Exception new initWith \"my other custom error\";\
     try: ( 1 print; throw someException; 2 print )\
-    catch someOtherException handle: ( \" caught the error the first time around\" print)\
-    catch someException handle: ( \" caught the error the second time around\" print)"
+    catch someOtherException: ( \" caught the error the first time around\" print)\
+    catch someException: ( \" caught the error the second time around\" print)"
   "1 caught the error the second time around"
 
   # ---------------------------------------------------------------------------
@@ -1463,9 +1463,9 @@ tests = [
   ﹍1 print
   ﹍throw someException
   ﹍2 print
-  catch someOtherException handle:
+  catch someOtherException:
   ﹍" caught the error the first time around" print
-  catch someException handle:
+  catch someException:
   ﹍" caught the error the second time around" print
   ". the end." print
   """
@@ -1476,9 +1476,9 @@ tests = [
   "'someException ← Exception new initWith \"my custom error\";\
     'someOtherException ← Exception new initWith \"my other custom error\";\
     try: ( 1 print; throw someOtherException; 2 print )\
-    catch someOtherException handle: ( \" caught the error the first time around\" print)\
-    catch someException handle: ( \" caught the error the second time around\" print)\
-    catch all handle: (\" catch all branch\" print)"
+    catch someOtherException: ( \" caught the error the first time around\" print)\
+    catch someException: ( \" caught the error the second time around\" print)\
+    catch all: (\" catch all branch\" print)"
   "1 caught the error the first time around"
 
   # ---------------------------------------------------------------------------
@@ -1489,11 +1489,11 @@ tests = [
   ﹍1 print
   ﹍throw someOtherException
   ﹍2 print
-  catch someOtherException handle:
+  catch someOtherException:
   ﹍" caught the error the first time around" print
-  catch someException handle:
+  catch someException:
   ﹍" caught the error the second time around" print
-  catch all handle:
+  catch all:
   ﹍" catch all branch" print
   ". the end." print
   """
@@ -1504,9 +1504,9 @@ tests = [
   "'someException ← Exception new initWith \"my custom error\";\
     'someOtherException ← Exception new initWith \"my other custom error\";\
     try: ( 1 print; throw someException; 2 print )\
-    catch someOtherException handle: ( \" caught the error the first time around\" print)\
-    catch someException handle: ( \" caught the error the second time around\" print)\
-    catch all handle: (\" catch all branch\" print)"
+    catch someOtherException: ( \" caught the error the first time around\" print)\
+    catch someException: ( \" caught the error the second time around\" print)\
+    catch all: (\" catch all branch\" print)"
   "1 caught the error the second time around"
 
   # ---------------------------------------------------------------------------
@@ -1517,11 +1517,11 @@ tests = [
   ﹍1 print
   ﹍throw someException
   ﹍2 print
-  catch someOtherException handle:
+  catch someOtherException:
   ﹍" caught the error the first time around" print
-  catch someException handle:
+  catch someException:
   ﹍" caught the error the second time around" print
-  catch all handle:
+  catch all:
   ﹍" catch all branch" print
   ". the end." print
   """
@@ -1533,9 +1533,9 @@ tests = [
     'someOtherException ← Exception new initWith \"my other custom error\";\
     'yetAnotherException ← Exception new initWith \"another custom error that is only caught by the catch all branch\";\
     try: ( 1 print; throw yetAnotherException; 2 print )\
-    catch someOtherException handle: ( \" caught the error the first time around\" print)\
-    catch someException handle: ( \" caught the error the second time around\" print)\
-    catch all handle: (\" catch all branch\" print)"
+    catch someOtherException: ( \" caught the error the first time around\" print)\
+    catch someException: ( \" caught the error the second time around\" print)\
+    catch all: (\" catch all branch\" print)"
   "1 catch all branch"
 
   # ---------------------------------------------------------------------------
@@ -1547,11 +1547,11 @@ tests = [
   ﹍1 print
   ﹍throw yetAnotherException
   ﹍2 print
-  catch someOtherException handle:
+  catch someOtherException:
   ﹍" caught the error the first time around" print
-  catch someException handle:
+  catch someException:
   ﹍" caught the error the second time around" print
-  catch all handle:
+  catch all:
   ﹍" catch all branch" print
   ". the end." print
   """

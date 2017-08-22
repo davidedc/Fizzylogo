@@ -376,7 +376,7 @@ FLException.addMethod \
     return @
 
 FLException.addMethod \
-  (flTokenize "catch all handle: ( ' errorHandle )"),
+  (flTokenize "catch all : ( ' errorHandle )"),
   (context) ->
     errorHandle = context.tempVariablesDict[ValidIDfromString "errorHandle"]
 
@@ -390,7 +390,7 @@ FLException.addMethod \
 
 FLException.addMethod \
   # theError here is a token!
-  (flTokenize "catch ( 'theError ) handle: ( ' errorHandle )"),
+  (flTokenize "catch ( 'theError ) : ( ' errorHandle )"),
   (context) ->
     theError = context.tempVariablesDict[ValidIDfromString "theError"]
     errorHandle = context.tempVariablesDict[ValidIDfromString "errorHandle"]
@@ -398,8 +398,8 @@ FLException.addMethod \
     # OK this is tricky: we'd normally just evaluate this from the
     # signature BUT we can't, because it's going to be in this form:
     # WITHOUT parens
-    #    catch someError handle:
-    # so it's going to try to match the "handle" token, and
+    #    catch someError :
+    # so it's going to try to match the ":" token, and
     # whenever an exception touches
     # anything else other than a catch, it ALWAYS matches and
     # re-throws itself, because this
@@ -963,13 +963,13 @@ FLTry.addMethod \
 # definition for explained example.
 
 FLFakeCatch.addMethod \
-  (flTokenize "all handle: ( ' errorHandle )"),
+  (flTokenize "all : ( ' errorHandle )"),
   (context) ->
     context.findAnotherReceiver = true
     return @
 
 FLFakeCatch.addMethod \
-  (flTokenize "( 'theError ) handle: ( ' errorHandle )"),
+  (flTokenize "( 'theError ) : ( ' errorHandle )"),
   (context) ->
     context.findAnotherReceiver = true
     return @

@@ -2,7 +2,7 @@
 #
 # This catch is not actually going to do the proper
 # "catch" (that's done by the catch as a message).
-# The catch object enter the scene when a catch has
+# The catch object enters the scene when a catch has
 # already happened, it works like this:
 #
 #  someException = Exception new initWith "my custom error"
