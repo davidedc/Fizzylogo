@@ -334,9 +334,7 @@ tests = [
   """
   a=5
 
-  if
-  ﹍a==5
-  then
+  if a==5:
   ﹍"yes a is 5" print
   """
   "yes a is 5"
@@ -345,9 +343,7 @@ tests = [
   """
   a=5
 
-  if
-  ﹍a==5
-  then
+  if a==5:
   ﹍"yes a is 5" print
   ". the end." print
   """
@@ -357,11 +353,9 @@ tests = [
   """
   a=5
 
-  if
-  ﹍a==5
-  then
+  if a==5:
   ﹍"yes a is 5" print
-  else
+  else:
   ﹍"no a is not 5" print
   ". the end." print
   """
@@ -371,11 +365,9 @@ tests = [
   """
   a=0
 
-  if
-  ﹍a==5
-  then
+  if a==5:
   ﹍"yes a is 5" print
-  else
+  else:
   ﹍"no a is not 5" print
   ". the end." print
   """
@@ -385,9 +377,7 @@ tests = [
   """
   a=0
 
-  if
-  ﹍a==5
-  then
+  if a==5:
   ﹍"yes a is 5" print
   "the end." print
   """
@@ -508,9 +498,7 @@ tests = [
   """
   'a←5
 
-  repeat
-  ﹍forever
-  do
+  repeat forever:
   ﹍(a==0)⇒
   ﹍﹍done
   ﹍'a←a minus 1
@@ -522,9 +510,7 @@ tests = [
   """
   a=5
 
-  repeat
-  ﹍forever
-  do
+  repeat forever:
   ﹍(a==0)⇒
   ﹍﹍done
   ﹍a=a minus 1
@@ -536,14 +522,10 @@ tests = [
   """
   a=5
 
-  repeat
-  ﹍forever
-  do
-  ﹍if
-  ﹍﹍a==0
-  ﹍then
+  repeat forever:
+  ﹍if a==0:
   ﹍﹍done
-  ﹍else
+  ﹍else:
   ﹍﹍a=a minus 1
   a print
   """
@@ -554,12 +536,10 @@ tests = [
   """
   a=5
 
-  repeat (forever) do
-  ﹍if
-  ﹍﹍a==0
-  ﹍then
+  repeat (forever):
+  ﹍if a==0:
   ﹍﹍done
-  ﹍else
+  ﹍else:
   ﹍﹍a=a minus 1
   a print
   """
@@ -569,13 +549,9 @@ tests = [
   """
   a=5
 
-  repeat
-  ﹍2
-  do
+  repeat 2:
   ﹍a=a minus 1
-  if
-  ﹍a==3
-  then
+  if a==3:
   ﹍"yes a is 3" print
   """
   "yes a is 3"
@@ -585,9 +561,7 @@ tests = [
   a=5
   a print
   b print
-  repeat
-  ﹍2
-  do
+  repeat 2:
   ﹍a=a minus 1
   ﹍b = 0
   ﹍c = 0
@@ -717,11 +691,12 @@ tests = [
   "11111111"
 
   # ---------------------------------------------------------------------------
-  "for k from(1)to(10)do(k print)"
+  "for k from(1)to(10):(k print)"
   "12345678910"
 
   # ---------------------------------------------------------------------------
-  "for k from 1 to 10 do(k print)"
+
+  "for k from 1 to 10 :(k print)"
   "12345678910"
 
   # ---------------------------------------------------------------------------
@@ -730,7 +705,7 @@ tests = [
   ﹍1
   to
   ﹍10
-  do
+  :
   ﹍k print
   "done" print
   """
@@ -743,7 +718,7 @@ tests = [
   ﹍1
   to
   ﹍1
-  do
+  :
   ﹍localTemp = " - local temp"
   ﹍localTemp print
   localTemp print
@@ -752,11 +727,7 @@ tests = [
 
   # ---------------------------------------------------------------------------
   """
-  for k from
-  ﹍1
-  to
-  ﹍1
-  do
+  for k from 1 to 1:
   ﹍localTemp = "local temp "
   ﹍localTemp print
   localTemp print
@@ -773,11 +744,7 @@ tests = [
   j = 1
   j print
   k print
-  for k from
-  ﹍1
-  to
-  ﹍2
-  do
+  for k from 1 to 2:
   ﹍j = k
   ﹍j print
   ﹍k print
@@ -960,11 +927,9 @@ tests = [
   myLittleArray print
   (myLittleArray[0]+1) print
   (myLittleArray[1]) print
-  if
-  ﹍myLittleArray[2]
-  then
+  if myLittleArray[2]:
   ﹍"true!" print
-  else
+  else:
   ﹍"false!" print
   """
   "( 1 \"hello\" false )1hellofalse!"
@@ -1127,33 +1092,48 @@ tests = [
   "! exception: message to nil: TOKEN:hello"
 
   # ---------------------------------------------------------------------------
-  "to sayHello (withName (name)) do (\"Hello \" print; name print); sayHello withName \"Dave\""
+  # FLTO
+  "to sayHello: (withName (name)) do: (\"Hello \" print; name print); sayHello withName \"Dave\""
   "Hello Dave"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
+  # FLTO
   """
-  to sayHello
-  ﹍withName (name)
-  do
-  ﹍"Hello " print; name print
+  to sayHello:
+  ﹍﹍withName (name)
+  ﹍do:
+  ﹍﹍"Hello " print; name print
+  sayHello withName "Dave"
+  """
+  "Hello Dave"
+
+  # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
+  # FLTO
+  """
+  to sayHello:
+  ﹍﹍withName (name)
+  ﹍do:
+  ﹍﹍"Hello " print
+  ﹍﹍name print
   sayHello withName "Dave"
   """
   "Hello Dave"
 
 
   # ---------------------------------------------------------------------------
-  "to sayHello2 ((name)) do (\"HELLO \" print; name print); sayHello2 \"Dave\""
+  # FLTO
+
+  "to sayHello2: ((name)) do: (\"HELLO \" print; name print); sayHello2 \"Dave\""
   "HELLO Dave"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
 
-  # todo needs a way to remove that empty line
-  # before the sayHello2 "Dave"
   """
-  to sayHello2
-  ﹍(name)
-  do
-  ﹍"HELLO " print; name print
+  to sayHello2:
+  ﹍﹍(name)
+  ﹍do:
+  ﹍﹍"HELLO " print
+  ﹍﹍name print
   sayHello2 "Dave"
   """
   "HELLO Dave"
@@ -1163,56 +1143,43 @@ tests = [
   "Hello Dave my dear friend"
 
   # ---------------------------------------------------------------------------
-  # note here how the list is evaluated. Because it's a "wrapped" list,
-  # its evaluation is the unwrapped content, so it's the list
-  # as you expect it
-
-  # WRONG WAY OF DOING IT
-  """
-  for each word in
-  ﹍("Hello " "Dave " "my " "dear " "friend")
-  do
-  ﹍word print
-  """
-  "TOKEN:Hello TOKEN:Dave TOKEN:my TOKEN:dear TOKEN:friend"
-
-  # ---------------------------------------------------------------------------
-  """
-  for each word in
-  ﹍'("Hello " "Dave " "my " "dear " "friend")
-  do
-  ﹍word print
-  """
-  "Hello Dave my dear friend"
-
-  # ---------------------------------------------------------------------------
   """
   for each word in '
   ﹍"Hello " "Dave " "my " "dear " "friend"
-  do
+  do:
   ﹍word print
   """
   "Hello Dave my dear friend"
 
   # ---------------------------------------------------------------------------
-  # WRONG WAY OF DOING IT
   """
-  codeToBeRun ='
+  for each word in:
+  ﹍"Hello " "Dave " "my " "dear " "friend"
+  do:
   ﹍word print
-  for each word in
-  ﹍("Hello " "Dave " "my " "dear " "friend")
-  do
-  ﹍codeToBeRun eval
   """
-  "TOKEN:Hello TOKEN:Dave TOKEN:my TOKEN:dear TOKEN:friend"
+  "Hello Dave my dear friend"
+
+  # ---------------------------------------------------------------------------
+  """
+  for each word in:
+  ﹍"Hello "\\
+  ﹍"Dave "\\
+  ﹍"my "\\
+  ﹍"dear "\\
+  ﹍"friend"
+  do:
+  ﹍word print
+  """
+  "Hello Dave my dear friend"
 
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
   ﹍word print
-  for each word in
-  ﹍'("Hello " "Dave " "my " "dear " "friend")
-  do
+  for each word in:
+  ﹍"Hello " "Dave " "my " "dear " "friend"
+  do:
   ﹍codeToBeRun eval
   """
   "Hello Dave my dear friend"
@@ -1221,9 +1188,9 @@ tests = [
   """
   codeToBeRun ='
   ﹍word print
-  for each word in '
+  for each word in:
   ﹍"Hello " "Dave " "my " "dear " "friend"
-  do
+  do:
   ﹍codeToBeRun eval
   """
   "Hello Dave my dear friend"
@@ -1235,7 +1202,7 @@ tests = [
   myList =' ("Hello " "Dave " "my " "dear " "friend")
   for each word in
   ﹍myList
-  do
+  do:
   ﹍codeToBeRun eval
   """
   "Hello Dave my dear friend"
@@ -1248,10 +1215,24 @@ tests = [
   ﹍"Hello " "Dave " "my " "dear " "friend"
   for each word in
   ﹍myList
-  do
+  do:
   ﹍codeToBeRun eval
   """
   "Hello Dave my dear friend"
+
+  # ---------------------------------------------------------------------------
+  """
+  codeToBeRun =:
+  ﹍word print
+  myList =:
+  ﹍"Hello " "Dave " "my " "dear " "friend"
+  for each word in
+  ﹍myList
+  do:
+  ﹍codeToBeRun eval
+  """
+  "Hello Dave my dear friend"
+
 
   # ---------------------------------------------------------------------------
   # in this case "myList" ends up being a wrapped list i.e. ((wrapped))
@@ -1264,7 +1245,7 @@ tests = [
   ﹍("Hello " "Dave " "my " "dear " "friend")
   for each word in
   ﹍myList
-  do
+  do:
   ﹍codeToBeRun eval
   """
   "TOKEN:Hello TOKEN:Dave TOKEN:my TOKEN:dear TOKEN:friend"
@@ -1280,7 +1261,7 @@ tests = [
   ﹍'("Hello " "Dave " "my " "dear " "friend")
   for each word in
   ﹍myList
-  do
+  do:
   ﹍codeToBeRun eval
   """
   "Hello Dave my dear friend"
@@ -1296,7 +1277,7 @@ tests = [
   ﹍"Hello " "Dave " "my " "dear " "friend"
   for each word in
   ﹍myList
-  do
+  do:
   ﹍codeToBeRun eval
   """
   "Hello Dave my dear friend"
@@ -1306,7 +1287,7 @@ tests = [
   acc = 0
   for each number in
   ﹍'(1 2 3 4)
-  do
+  do:
   ﹍acc += number
   acc print
   """
@@ -1317,7 +1298,18 @@ tests = [
   acc = 0
   for each number in '
   ﹍1 2 3 4
-  do
+  do:
+  ﹍acc += number
+  acc print
+  """
+  "10"
+
+  # ---------------------------------------------------------------------------
+  """
+  acc = 0
+  for each number in:
+  ﹍1 2 3 4
+  do:
   ﹍acc += number
   acc print
   """
@@ -1330,8 +1322,8 @@ tests = [
   myList = 9
   for each word in
   ﹍myList
-  do
-  ﹍codeToBeRun eval
+  do:
+  ﹍codeToBeRun
   """
   "! exception: for...each expects a list"
 
@@ -1917,15 +1909,11 @@ tests = [
   """
   a=5
 
-  repeat
-  ﹍﹍forever
-  ﹍do
-  ﹍﹍if
-  ﹍﹍﹍a==0
-  ﹍﹍then
-  ﹍﹍﹍done
-  ﹍﹍else
-  ﹍﹍﹍a=a minus 1
+  repeat forever:
+  ﹍if a==0:
+  ﹍﹍done
+  ﹍else:
+  ﹍﹍a=a minus 1
   a print
   """
   "0"
@@ -1935,15 +1923,11 @@ tests = [
   """
   a=5
 
-  repeat
-  ﹍﹍forever
-  ﹍do
-  ﹍﹍if
-  ﹍﹍﹍﹍a==0
-  ﹍﹍﹍then
-  ﹍﹍﹍﹍done
-  ﹍﹍﹍else
-  ﹍﹍﹍﹍a=a minus 1
+  repeat forever:
+  ﹍if a==0:
+  ﹍﹍﹍done
+  ﹍﹍else:
+  ﹍﹍﹍a=a minus 1
   a print
   """
   "0"
@@ -1976,8 +1960,8 @@ tests = [
   myList = 9
   for each word in
   ﹍﹍myList
-  ﹍do
-  ﹍﹍codeToBeRun eval
+  ﹍do:
+  ﹍﹍codeToBeRun
   """
   "! exception: for...each expects a list"
 
@@ -2326,7 +2310,9 @@ tests = [
 
   # ---------------------------------------------------------------------------
   # running with empty signature (which unfortunately is not really empty)
-  "to sayHello (*nothing*) do (\"Hello\" print); sayHello;"
+  # FLTO
+
+  "to sayHello: (*nothing*) do: (\"Hello\" print); sayHello;"
   "Hello"
 
   # ---------------------------------------------------------------------------
@@ -2349,22 +2335,25 @@ tests = [
   ""
 
   # ---------------------------------------------------------------------------
+  # FLTO
   """
-  to 🚀
+  to 🚀:
   ﹍*nothing*
-  do
+  do:
   ﹍"launch!" print
   🚀
   """
   "launch!"
 
+
   # ---------------------------------------------------------------------------
   # you can assign arbitrary things to a string token, including
   # objects which take the empty message
+  # FLTO
   """
-  to "🚀"
+  to "🚀":
   ﹍*nothing*
-  do
+  do:
   ﹍"launch!" print
   "🚀"
   """
@@ -2372,6 +2361,12 @@ tests = [
 
 
 ]
+
+# ---------------------------------------------------------------------------
+# TODO this crashes
+#"to sayHello '(*nothing*) do '(\"Hello\" print); sayHello;"
+#"Hello"
+
 
 ###
 # ---------------------------------------------------------------------------
@@ -2481,6 +2476,7 @@ for i in [0...tests.length] by 2
       "nil", FLNil.createNew()
 
       "'", FLQuote.createNew()
+      ":", FLQuote.createNew()
     ]
 
     for keywords in [0...keywordsAndTheirInit.length] by 2

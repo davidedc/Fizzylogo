@@ -305,7 +305,7 @@ FLIn.addMethod \
 
 # TODO it's be nice if there was a way not to leak the TempClass
 FLTo.addMethod \
-  (flTokenize "( ' functionObjectName ) ( ' signature ) do ( ' functionBody )"),
+  (flTokenize "( ' functionObjectName ) : ( 'signature ) do ( functionBody )"),
   flTokenize \
     "accessUpperContext; 'TempClass ← Class new;\
     TempClass answerEvalParams (signature) by (functionBody);\
@@ -798,7 +798,7 @@ FLRepeat1.addMethod \
 # Repeat2 -------------------------------------------------------------------------
 
 FLRepeat2.addMethod \
-  (flTokenize "(howManyTimes) do ( ' loopCode )"),
+  (flTokenize "(howManyTimes) :( ' loopCode )"),
   (context) ->
     context.isTransparent = true
     howManyTimes = context.tempVariablesDict[ValidIDfromString "howManyTimes"]
@@ -849,7 +849,7 @@ FLThrow.addMethod \
 # IfThen -----------------------------------------------------------------------------
 
 FLIfThen.addMethod \
-  (flTokenize "( predicate ) then ('trueBranch)"),
+  (flTokenize "( predicate ) : ('trueBranch)"),
   (context) ->
     predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
     trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
@@ -867,7 +867,7 @@ FLIfThen.addMethod \
 # FLIfFallThrough -----------------------------------------------------------------------------
 
 FLIfFallThrough.addMethod \
-  (flTokenize "else if ( predicate ) then ('trueBranch)"),
+  (flTokenize "else if ( predicate ): ('trueBranch)"),
   (context) ->
     predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
     trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
@@ -883,7 +883,7 @@ FLIfFallThrough.addMethod \
     return toBeReturned
 
 FLIfFallThrough.addMethod \
-  (flTokenize "else ('trueBranch)"),
+  (flTokenize "else: ('trueBranch)"),
   (context) ->
     trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
 
@@ -903,13 +903,19 @@ FLIfFallThrough.addMethod \
 # FakeElse -----------------------------------------------------------------------------
 
 FLFakeElse.addMethod \
-  (flTokenize "if ( predicate ) then ('trueBranch)"),
+  # note that we make all the parameters as literals because we
+  # are not interested in any evaluation, we are just eating
+  # up tokens
+  (flTokenize "if ( 'predicate ) : ('trueBranch)"),
   (context) ->
     context.findAnotherReceiver = true
     return @
 
 FLFakeElse.addMethod \
-  (flTokenize "('trueBranch)"),
+  # note that we make all the parameters as literals because we
+  # are not interested in any evaluation, we are just eating
+  # up tokens
+  (flTokenize ": ('trueBranch)"),
   (context) ->
     context.findAnotherReceiver = true
     return @
@@ -955,7 +961,7 @@ FLFakeCatch.addMethod \
 # For -----------------------------------------------------------------------------
 
 FLFor.addMethod \
-  (flTokenize "( ' loopVar ) from ( startIndex ) to ( endIndex ) do ( ' loopCode )"),
+  (flTokenize "( ' loopVar ) from ( startIndex ) to ( endIndex ) : ( 'loopCode )"),
   (context) ->
     context.isTransparent = true
     loopVar = context.tempVariablesDict[ValidIDfromString "loopVar"]
@@ -1003,7 +1009,7 @@ FLFor.addMethod \
 # pass (list) when you are in indented form, which makes
 # more sense to the user.
 FLFor.addMethod \
-  (flTokenize "each ( ' variable ) in ( theList ) do ( ' code )"),
+  (flTokenize "each ( ' variable ) in ( theList ) do: ( 'code )"),
   (context) ->
     context.isTransparent = true
     variable = context.tempVariablesDict[ValidIDfromString "variable"]

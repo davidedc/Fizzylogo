@@ -27,6 +27,7 @@ tokenizeCommand = (command) ->
   command = command.replace /([+\-^*/=←⇒.])[ ]*([+\-^*/=←⇒.])/g, "$1$2"
 
   command = command.replace /'/g, " ' "
+  command = command.replace /:/g, " : "
 
   # quote symbol used by Rosetta Smalltalk
   # while we use the standard ' i.e. "quote"
@@ -34,6 +35,8 @@ tokenizeCommand = (command) ->
 
   # collapse all multiple spaces to one
   command = command.replace /[ ]+/g, " "
+
+
   command = command.trim()
 
 removeComments = (code) ->
@@ -192,6 +195,9 @@ linearize = (code) ->
 flTokenize = (command) ->
   listsStack = []
   listsStack.jsArrayPush FLList.createNew()
+
+  # join the multi-line first before we do the strings
+  command = command.replace /\\\n﹍*/g, " "
 
   command = removeStrings command
   console.log "codeWithoutStrings: " + command
