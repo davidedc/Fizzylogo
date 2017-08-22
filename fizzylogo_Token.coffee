@@ -4,7 +4,11 @@ class FLTokenClass extends FLClasses
     toBeReturned.value = tokenString
 
     toBeReturned.print = ->
-      return @value
+      if /\$STRING_TOKEN_([\$a-zA-Z0-9_]+)/g.test @value
+        toPrint = "TOKEN:" + injectStrings @value
+      else
+        toPrint = @value
+      return toPrint
 
     toBeReturned.isStatementSeparator = ->
       return @value == ";"
@@ -35,6 +39,10 @@ class FLTokenClass extends FLClasses
       else if /^\d+$/.test @value
         theContext.returned = FLNumber.createNew @value
         return [theContext]
+      else if /\$STRING_TOKEN_([\$a-zA-Z0-9_]+)/g.test @value
+        theContext.returned = FLString.createNew injectStrings @value
+        return [theContext]
+
 
       if ignoreUnassigned
         console.log "evaluation " + indentation() + "not found temp token: " + @value + " and ignoring "

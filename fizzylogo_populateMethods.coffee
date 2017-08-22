@@ -11,8 +11,12 @@ addDefaultMethods = (classToAddThemTo) ->
   classToAddThemTo.addMethod \
     (flTokenize "print"),
     (context) ->
-      console.log "///////// program printout: " + @value
-      environmentPrintout += @value
+      if /\$STRING_TOKEN_([\$a-zA-Z0-9_]+)/g.test @value
+        toPrint = "TOKEN:" + injectStrings @value
+      else
+        toPrint = @value
+      console.log "///////// program printout: " + toPrint
+      environmentPrintout += toPrint
       return @
 
   classToAddThemTo.addMethod \
@@ -365,7 +369,7 @@ FLException.addMethod \
     @flClass.createNew ""
 
 FLException.addMethod \
-  (flTokenize "initWith ( ' errorMessage )"),
+  (flTokenize "initWith ( errorMessage )"),
   (context) ->
     errorMessage = context.tempVariablesDict[ValidIDfromString "errorMessage"]
     @value = errorMessage.value

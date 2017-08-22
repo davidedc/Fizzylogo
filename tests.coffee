@@ -2,12 +2,12 @@ tests = [
   # ---------------------------------------------------------------------------
   # surprise! this language "chains" to the right
   # so "streams" of things are run right to left. 
-  "1plus 1 print"
+  "1 plus 1 print"
   "1"
 
   # ---------------------------------------------------------------------------
   # parens can help
-  "(1plus 1)print"
+  "(1 plus 1)print"
   "2"
 
   # ---------------------------------------------------------------------------
@@ -15,7 +15,7 @@ tests = [
   # nothing with it, so first (1 plus 1) is
   # printed, and then the result of that is
   # printed again.
-  "(1plus 1)print print"
+  "(1 plus 1)print print"
   "22"
 
   # ---------------------------------------------------------------------------
@@ -78,113 +78,113 @@ tests = [
   "7"
 
   # ---------------------------------------------------------------------------
-  "'a←5plus 1;a incrementInPlace print"
+  "'a←5 plus 1;a incrementInPlace print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5plus 1;a incrementInPlace print"
+  "a=5 plus 1;a incrementInPlace print"
   "7"
 
   # ---------------------------------------------------------------------------
-  "'a←(5plus 1);a incrementInPlace print"
+  "'a←(5 plus 1);a incrementInPlace print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=(5plus 1);a incrementInPlace print"
+  "a=(5 plus 1);a incrementInPlace print"
   "7"
 
   # ---------------------------------------------------------------------------
-  "(4plus 1plus 1)print"
+  "(4 plus 1 plus 1)print"
   "6"
 
   # ---------------------------------------------------------------------------
-  "'a←(4plus 1plus 1);a incrementInPlace print"
+  "'a←(4 plus 1 plus 1);a incrementInPlace print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=(4plus 1plus 1);a incrementInPlace print"
+  "a=(4 plus 1 plus 1);a incrementInPlace print"
   "7"
 
   # ---------------------------------------------------------------------------
-  "'a←(4plus(1plus 1));a incrementInPlace print"
+  "'a←(4 plus(1 plus 1));a incrementInPlace print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=(4plus(1plus 1));a incrementInPlace print"
+  "a=(4 plus(1 plus 1));a incrementInPlace print"
   "7"
 
   # ---------------------------------------------------------------------------
-  "'a←((4plus 1)plus(0plus 1));a incrementInPlace print"
+  "'a←((4 plus 1)plus(0 plus 1));a incrementInPlace print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=((4plus 1)plus(0plus 1));a incrementInPlace print"
+  "a=((4 plus 1)plus(0 plus 1));a incrementInPlace print"
   "7"
 
   # ---------------------------------------------------------------------------
-  "7anotherPrint"
+  "7 anotherPrint"
   "7"
 
   # ---------------------------------------------------------------------------
-  "7doublePrint"
+  "7 doublePrint"
   "77"
 
   # ---------------------------------------------------------------------------
-  "7print print"
+  "7 print print"
   "77"
 
   # ---------------------------------------------------------------------------
-  "(6doublePrint plus 1)print"
+  "(6 doublePrint plus 1)print"
   "667"
 
   # ---------------------------------------------------------------------------
-  "6doublePrint plus 1print"
+  "6 doublePrint plus 1 print"
   "661"
 
   # ---------------------------------------------------------------------------
-  "(4plus 3)print"
+  "(4 plus 3)print"
   "7"
 
   # ---------------------------------------------------------------------------
-  "(4plus 3print)print"
+  "(4 plus 3 print)print"
   "37"
 
   # ---------------------------------------------------------------------------
-  "(4plus(2plus 1))print"
+  "(4 plus(2 plus 1))print"
   "7"
 
   # ---------------------------------------------------------------------------
-  "4plus(2plus 1)print"
+  "4 plus(2 plus 1)print"
   "7"
 
   # ---------------------------------------------------------------------------
-  "4plus 2plus 1print"
+  "4 plus 2 plus 1 print"
   "1"
 
   # ---------------------------------------------------------------------------
-  "('(1plus 1))print"
+  "('(1 plus 1))print"
   "( 1 plus 1 )"
 
   # ---------------------------------------------------------------------------
   # the ' still ties to the first element
   # that comes after it i.e. ( 1 plus 1 )
-  "'(1plus 1)print"
+  "'(1 plus 1)print"
   "( 1 plus 1 )"
 
   # ---------------------------------------------------------------------------
-  "('(1plus 1))length print"
+  "('(1 plus 1))length print"
   "3"
 
   # ---------------------------------------------------------------------------
-  "'(1plus 1)length print"
+  "'(1 plus 1)length print"
   "3"
 
   # ---------------------------------------------------------------------------
-  "(('(1plus 1))eval)print"
+  "(('(1 plus 1))eval)print"
   "2"
 
   # ---------------------------------------------------------------------------
-  "('(1plus 1))eval print"
+  "('(1 plus 1))eval print"
   "2"
 
   # ---------------------------------------------------------------------------
@@ -207,7 +207,7 @@ tests = [
   # note how the first not understood
   # prevents any further statement to be
   # executed
-  "1 negate; 2print"
+  "1 negate; 2 print"
   "! message was not understood: ( negate )"
 
   # ---------------------------------------------------------------------------
@@ -247,7 +247,7 @@ tests = [
   ""
 
   # ---------------------------------------------------------------------------
-  "1 == 1 negate; 2print"
+  "1 == 1 negate; 2 print"
   "2"
 
   # ---------------------------------------------------------------------------
@@ -299,11 +299,11 @@ tests = [
   "true"
 
   # ---------------------------------------------------------------------------
-  "true⇒(1print)"
+  "true⇒(1 print)"
   "1"
 
   # ---------------------------------------------------------------------------
-  "false⇒(1print)2print"
+  "false⇒(1 print)2 print"
   "2"
 
   # ---------------------------------------------------------------------------
@@ -315,19 +315,19 @@ tests = [
   "false"
 
   # ---------------------------------------------------------------------------
-  "(0amIZero)print"
+  "(0 amIZero)print"
   "true"
 
   # ---------------------------------------------------------------------------
-  "(1amIZero)print"
+  "(1 amIZero)print"
   "false"
 
   # ---------------------------------------------------------------------------
-  "(8minus 1)print"
+  "(8 minus 1)print"
   "7"
 
   # ---------------------------------------------------------------------------
-  "true⇒(1print)2print"
+  "true⇒(1 print)2 print"
   "1"
 
   # ---------------------------------------------------------------------------
@@ -394,59 +394,59 @@ tests = [
   "the end."
 
   # ---------------------------------------------------------------------------
-  "0factorial print"
+  "0 factorial print"
   "1"
 
   # ---------------------------------------------------------------------------
-  "1factorial print"
+  "1 factorial print"
   "1"
 
   # ---------------------------------------------------------------------------
-  "2factorial print"
+  "2 factorial print"
   "2"
 
   # ---------------------------------------------------------------------------
-  "7factorial print"
+  "7 factorial print"
   "5040"
 
   # ---------------------------------------------------------------------------
-  "0factorialtwo print"
+  "0 factorialtwo print"
   "1"
 
   # ---------------------------------------------------------------------------
-  "1factorialtwo print"
+  "1 factorialtwo print"
   "1"
 
   # ---------------------------------------------------------------------------
-  "2factorialtwo print"
+  "2 factorialtwo print"
   "2"
 
   # ---------------------------------------------------------------------------
-  "7factorialtwo print"
+  "7 factorialtwo print"
   "5040"
 
   # ---------------------------------------------------------------------------
-  "7factorialthree print"
+  "7 factorialthree print"
   "76543215040"
 
   # ---------------------------------------------------------------------------
-  "7factorialfour print"
+  "7 factorialfour print"
   "5040"
 
   # ---------------------------------------------------------------------------
-  "7factorialfive print"
+  "7 factorialfive print"
   "5040"
 
   # ---------------------------------------------------------------------------
-  "7selftimesminusone print"
+  "7 selftimesminusone print"
   "42"
 
   # ---------------------------------------------------------------------------
-  "'a←5;1printAFromDeeperCall"
+  "'a←5;1 printAFromDeeperCall"
   "5"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5;1printAFromDeeperCall"
+  "a=5;1 printAFromDeeperCall"
   "5"
 
   # ---------------------------------------------------------------------------
@@ -665,47 +665,55 @@ tests = [
   "object_from_a_user_class"
 
   # ---------------------------------------------------------------------------
-  "'false←true;false⇒(1print)2print"
+  "'false←true;false⇒(1 print)2 print"
   "1"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "false=true;false⇒(1print)2print"
+  "false=true;false⇒(1 print)2 print"
   "1"
 
   # ---------------------------------------------------------------------------
-  "'temp←true;'true←false;'false←temp;false⇒(1print)2print"
+  "'temp←true;'true←false;'false←temp;false⇒(1 print)2 print"
   "1"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "temp=true;true=false;false=temp;false⇒(1print)2print"
+  "temp=true;true=false;false=temp;false⇒(1 print)2 print"
   "1"
 
   # ---------------------------------------------------------------------------
-  "'temp←true;'true←false;'false←temp;true⇒(1print)2print"
+  "'temp←true;'true←false;'false←temp;true⇒(1 print)2 print"
   "2"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "temp=true;true=false;false=temp;true⇒(1print)2print"
+  "temp=true;true=false;false=temp;true⇒(1 print)2 print"
   "2"
 
   # ---------------------------------------------------------------------------
-  "'2←10;2print"
+  """
+  "world" = "Dave"
+  "Hello " print
+  "world" print
+  """
+  "Hello Dave"
+
+  # ---------------------------------------------------------------------------
+  "'2←10;2 print"
   "10"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "2=10;2print"
+  "2=10;2 print"
   "10"
 
   # ---------------------------------------------------------------------------
-  "' @ ← '; @a←8;a print"
+  "' @ ← '; @ a←8;a print"
   "8"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "@ = '; @a←8;a print"
+  "@ = '; @ a←8;a print"
   "8"
 
   # ---------------------------------------------------------------------------
-  "(4*2)times(1print)"
+  "(4*2)times(1 print)"
   "11111111"
 
   # ---------------------------------------------------------------------------
@@ -713,7 +721,7 @@ tests = [
   "12345678910"
 
   # ---------------------------------------------------------------------------
-  "for k from 1to 10do(k print)"
+  "for k from 1 to 10 do(k print)"
   "12345678910"
 
   # ---------------------------------------------------------------------------
@@ -799,7 +807,7 @@ tests = [
   "( 1 2 )"
 
   # ---------------------------------------------------------------------------
-  "('(1)+(2plus 1))print"
+  "('(1)+(2 plus 1))print"
   "( 1 3 )"
 
   # ---------------------------------------------------------------------------
@@ -931,6 +939,15 @@ tests = [
   codeToBeRun ='
   ﹍counter=2
   codeToBeRun print
+  """
+  "( counter = 2 )"
+
+  # ---------------------------------------------------------------------------
+  # you can assign arbitrary things to string tokens, even functions
+  """
+  "codeToBeRun" ='
+  ﹍counter=2
+  "codeToBeRun" print
   """
   "( counter = 2 )"
 
@@ -1107,7 +1124,7 @@ tests = [
   myObject = MyClass new
   myObject.printtwo "hello"
   """
-  "! exception: message to nil: hello"
+  "! exception: message to nil: TOKEN:hello"
 
   # ---------------------------------------------------------------------------
   "to sayHello (withName (name)) do (\"Hello \" print; name print); sayHello withName \"Dave\""
@@ -1150,9 +1167,19 @@ tests = [
   # its evaluation is the unwrapped content, so it's the list
   # as you expect it
 
+  # WRONG WAY OF DOING IT
   """
   for each word in
   ﹍("Hello " "Dave " "my " "dear " "friend")
+  do
+  ﹍word print
+  """
+  "TOKEN:Hello TOKEN:Dave TOKEN:my TOKEN:dear TOKEN:friend"
+
+  # ---------------------------------------------------------------------------
+  """
+  for each word in
+  ﹍'("Hello " "Dave " "my " "dear " "friend")
   do
   ﹍word print
   """
@@ -1160,10 +1187,42 @@ tests = [
 
   # ---------------------------------------------------------------------------
   """
+  for each word in '
+  ﹍"Hello " "Dave " "my " "dear " "friend"
+  do
+  ﹍word print
+  """
+  "Hello Dave my dear friend"
+
+  # ---------------------------------------------------------------------------
+  # WRONG WAY OF DOING IT
+  """
   codeToBeRun ='
   ﹍word print
   for each word in
   ﹍("Hello " "Dave " "my " "dear " "friend")
+  do
+  ﹍codeToBeRun eval
+  """
+  "TOKEN:Hello TOKEN:Dave TOKEN:my TOKEN:dear TOKEN:friend"
+
+  # ---------------------------------------------------------------------------
+  """
+  codeToBeRun ='
+  ﹍word print
+  for each word in
+  ﹍'("Hello " "Dave " "my " "dear " "friend")
+  do
+  ﹍codeToBeRun eval
+  """
+  "Hello Dave my dear friend"
+
+  # ---------------------------------------------------------------------------
+  """
+  codeToBeRun ='
+  ﹍word print
+  for each word in '
+  ﹍"Hello " "Dave " "my " "dear " "friend"
   do
   ﹍codeToBeRun eval
   """
@@ -1208,7 +1267,61 @@ tests = [
   do
   ﹍codeToBeRun eval
   """
+  "TOKEN:Hello TOKEN:Dave TOKEN:my TOKEN:dear TOKEN:friend"
+
+  # ---------------------------------------------------------------------------
+  # in this case "myList" ends up being a wrapped list i.e. ((wrapped))
+  # so, when the right-side is evaluated, it ends up being the normal
+  # un-wrapped contents, so it all works out without the ' after the =
+  """
+  codeToBeRun ='
+  ﹍word print
+  myList =
+  ﹍'("Hello " "Dave " "my " "dear " "friend")
+  for each word in
+  ﹍myList
+  do
+  ﹍codeToBeRun eval
+  """
   "Hello Dave my dear friend"
+
+  # ---------------------------------------------------------------------------
+  # in this case "myList" ends up being a wrapped list i.e. ((wrapped))
+  # so, when the right-side is evaluated, it ends up being the normal
+  # un-wrapped contents, so it all works out without the ' after the =
+  """
+  codeToBeRun ='
+  ﹍word print
+  myList = '
+  ﹍"Hello " "Dave " "my " "dear " "friend"
+  for each word in
+  ﹍myList
+  do
+  ﹍codeToBeRun eval
+  """
+  "Hello Dave my dear friend"
+
+  # ---------------------------------------------------------------------------
+  """
+  acc = 0
+  for each number in
+  ﹍'(1 2 3 4)
+  do
+  ﹍acc += number
+  acc print
+  """
+  "10"
+
+  # ---------------------------------------------------------------------------
+  """
+  acc = 0
+  for each number in '
+  ﹍1 2 3 4
+  do
+  ﹍acc += number
+  acc print
+  """
+  "10"
 
   # ---------------------------------------------------------------------------
   """
@@ -1508,7 +1621,7 @@ tests = [
   """
   numbers =' (9 3 2 5 7)
   myList =' ("Hello " "Dave " "my " "dear " "friend")
-  myList[numbers[1plus 1]] = "oh "
+  myList[numbers[1 plus 1]] = "oh "
   myList print
   """
   "( \"Hello \" \"Dave \" \"oh \" \"dear \" \"friend\" )"
@@ -1546,7 +1659,7 @@ tests = [
   """
   numbers =' (9 3 2 5 7)
   myList =' ("Hello " "Dave " ("oh " "so ") "dear " "friend")
-  myList[numbers[1plus 1]][0 plus 1] print
+  myList[numbers[1 plus 1]][0 plus 1] print
   """
   "so "
 
@@ -2216,6 +2329,47 @@ tests = [
   "to sayHello (*nothing*) do (\"Hello\" print); sayHello;"
   "Hello"
 
+  # ---------------------------------------------------------------------------
+  #    emojis!
+  # ---------------------------------------------------------------------------
+  "😁 = 4; 😁 print"
+  "4"
+
+  # ---------------------------------------------------------------------------
+  "😁 =4;😁 print"
+  "4"
+
+  # ---------------------------------------------------------------------------
+  "😁=4;😁 print"
+  "4"
+
+  # ---------------------------------------------------------------------------
+  # here "😁print" is a single token, so there is no print happening
+  "😁=4;😁print"
+  ""
+
+  # ---------------------------------------------------------------------------
+  """
+  to 🚀
+  ﹍*nothing*
+  do
+  ﹍"launch!" print
+  🚀
+  """
+  "launch!"
+
+  # ---------------------------------------------------------------------------
+  # you can assign arbitrary things to a string token, including
+  # objects which take the empty message
+  """
+  to "🚀"
+  ﹍*nothing*
+  do
+  ﹍"launch!" print
+  "🚀"
+  """
+  "launch!"
+
 
 ]
 
@@ -2275,6 +2429,8 @@ for i in [0...tests.length] by 2
     [testBody, testResult] = tests[i .. i + 1]
     environmentPrintout = ""
     environmentErrors = ""
+    if DEBUG_STRINGIFICATION_CHECKS
+      stringsTable_TO_CHECK_CONVERTIONS = {}
 
     testBodyMultiline = testBody.replace /\n/g, ' ⏎ '
     console.log "starting test: " + (i/2+1) + ": " + testBodyMultiline

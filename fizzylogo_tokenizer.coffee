@@ -4,7 +4,7 @@ tokenizeCommand = (command) ->
   # we can just use the dot instead of 's.
   # Using 's would make things more complicated
   # because we also use ' as quote symbol
-  command = command.replace /'[ ]*s[^$a-zA-Z_]/g, "."
+  command = command.replace /'[ ]*s[\s]/g, "."
 
   # separate parens
   command = command.replace /\(/g, " ( "
@@ -15,12 +15,16 @@ tokenizeCommand = (command) ->
   # this is the statement separator
   command = command.replace /;/g, " ; "
   
-  # separate identifiers
-  command = command.replace /([$A-Z_][0-9A-Z_$]*)/gi, " $1 "
+  # separate numbers and punctuation from anything else
+  # note that numbers and punctuation are dealt together because
+  # otherwise something like 3.14 is separated into 3 . 14
+  # so we need to handle them both here so we get that floating
+  # point case before we separate the dots
+  command = command.replace /([0-9]*\.[0-9]+([eE][- ]?[0-9]*)?)|([+\-^*/()=←⇒.])/g, " $1 $3 "
 
-  # separate the digits from anything, unless they are part of
-  # an identifier
-  command = command.replace /([^$A-Z_])([0-9]+)/gi, "$1 $2 "
+  # re-group consecutive punctuation, so things like ++, --, +=, **
+  # ^^, etc. can all live separately to have their own meaning
+  command = command.replace /([+\-^*/=←⇒.])[ ]*([+\-^*/=←⇒.])/g, "$1$2"
 
   command = command.replace /'/g, " ' "
 
@@ -60,19 +64,26 @@ removeComments = (code) ->
 # references to a table, which we'll replace back
 # later with string objects.
 removeStrings = (code) ->
-  stringsTable = []
   codeWithoutStrings = code.replace(/"((?:[^"\\\n]|\\.)*)"/g, (all, quoted) ->
-    index = stringsTable.length
-    stringsTable.jsArrayPush quoted
-    return "$STRINGS_TABLE_" + index
+    if DEBUG_STRINGIFICATION_CHECKS
+      stringsTable_TO_CHECK_CONVERTIONS[ValidIDfromString quoted] = quoted
+    console.log "$STRING_TOKEN_" + (ValidIDfromString quoted)
+    console.log "i.e." + quoted
+    return "$STRING_TOKEN_" + (ValidIDfromString quoted)
   )
-  return [codeWithoutStrings, stringsTable]
+  return codeWithoutStrings
 
 # replaces strings and regexs keyed by index with an array of strings
 # see "removeStrings" function
-injectStrings = (code, stringsTable) ->
-  code = code.replace /\$STRINGS_TABLE_(\d+)/g, (all, index) ->
-    val = stringsTable[index]
+injectStrings = (code) ->
+  code = code.replace /\$STRING_TOKEN_([\$a-zA-Z0-9_]+)/g, (all, index) ->
+    val = StringFromValidID index
+    if DEBUG_STRINGIFICATION_CHECKS
+      if val != stringsTable_TO_CHECK_CONVERTIONS[index]
+        throw "ERROR cannot get back string from ID, got back: " + StringFromValidID index
+
+    console.log "INJECTING $STRING_TOKEN_" + index
+    console.log "INJECTING i.e. " +  val
     return val
   return code
 
@@ -182,9 +193,8 @@ flTokenize = (command) ->
   listsStack = []
   listsStack.jsArrayPush FLList.createNew()
 
-  [command, stringsTable] = removeStrings command
+  command = removeStrings command
   console.log "codeWithoutStrings: " + command
-  console.log "stringsTable: " + stringsTable
 
   command = removeComments command
 
@@ -202,9 +212,9 @@ flTokenize = (command) ->
   for eachToken in simpleTokenization
     console.log "eachToken: " + eachToken
 
-    if /\$STRINGS_TABLE_(\d+)/g.test(eachToken)
+    if /\$STRING_TOKEN_([\$a-zA-Z0-9_]+)/g.test(eachToken)
       console.log eachToken + " is a string literal"
-      listsStack[listsStack.length-1] = listsStack[listsStack.length-1].flListImmutablePush FLString.createNew injectStrings eachToken, stringsTable
+      listsStack[listsStack.length-1] = listsStack[listsStack.length-1].flListImmutablePush FLToken.createNew eachToken
     else if /^\($/.test(eachToken)
       nestedList = FLList.createNew()
       listsStack.jsArrayPush nestedList
