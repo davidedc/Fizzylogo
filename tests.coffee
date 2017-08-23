@@ -641,6 +641,11 @@ tests = [
     'myObject←MyClass new;myObject printtwo"
   "object_from_a_user_class"
 
+  "'MyClass←Class new;\
+    MyClass answer:(printtwo)by:(@ print);\
+    'myObject←MyClass new;myObject printtwo"
+  "object_from_a_user_class"
+
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
   """
   MyClass = Class new
@@ -648,6 +653,17 @@ tests = [
   ﹍printtwo
   by:
   ﹍self print
+  myObject = MyClass new
+  myObject printtwo
+  """
+  "object_from_a_user_class"
+
+  """
+  MyClass = Class new
+  MyClass answer:
+  ﹍printtwo
+  by:
+  ﹍@ print
   myObject = MyClass new
   myObject printtwo
   """
@@ -694,11 +710,11 @@ tests = [
   "10"
 
   # ---------------------------------------------------------------------------
-  "' @ ← '; @ a←8;a print"
+  "' & ← '; & a←8;a print"
   "8"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "@ = '; @ a←8;a print"
+  "& = '; & a←8;a print"
   "8"
 
   # ---------------------------------------------------------------------------
@@ -866,6 +882,34 @@ tests = [
   """
   "nil2nil2"
 
+  # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
+
+  """
+  MyClass = Class new
+  MyClass.counter = nil
+
+  MyClass answer:
+  ﹍﹍setCounterToTwo
+  ﹍by:
+  ﹍﹍@counter←2
+
+  MyClass answer:
+  ﹍﹍printCounter
+  ﹍by:
+  ﹍﹍@counter print
+
+  myObject = MyClass new
+  myObject printCounter
+  myObject setCounterToTwo
+  myObject printCounter
+
+  myObject2 = MyClass new
+  myObject2 printCounter
+  myObject2 setCounterToTwo
+  myObject2 printCounter
+  """
+  "nil2nil2"
+
   # ---------------------------------------------------------------------------
   "'MyClass←Class new;MyClass.counter = nil;\
     MyClass answer:(setCounterToTwo)by:(self.counter←2);\
@@ -890,6 +934,22 @@ tests = [
   ﹍setCounterToTwo
   by:
   ﹍self.counter = 2
+  myObject = MyClass new
+  myObject setCounterToTwo
+  myObject.counter print
+  """
+  "2"
+
+  # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
+
+  # dot notation here
+  """
+  MyClass = Class new
+  MyClass.counter = nil
+  MyClass answer:
+  ﹍setCounterToTwo
+  by:
+  ﹍@counter = 2
   myObject = MyClass new
   myObject setCounterToTwo
   myObject.counter print
@@ -1070,6 +1130,30 @@ tests = [
   ﹍myObject
   do
   ﹍self.counter = 3
+  myObject.counter print
+  (myObject.counter+myObject.counter) print
+  """
+
+  "236"
+
+  # ---------------------------------------------------------------------------
+  """
+  codeToBeRun ='
+  ﹍@counter=2
+
+  MyClass=Class new
+  MyClass.counter = nil
+  MyClass answer:
+  ﹍setCounterToTwo
+  by:
+  ﹍codeToBeRun eval
+  myObject=MyClass new
+  myObject setCounterToTwo
+  myObject.counter print
+  in
+  ﹍myObject
+  do
+  ﹍@counter = 3
   myObject.counter print
   (myObject.counter+myObject.counter) print
   """
@@ -1752,6 +1836,18 @@ tests = [
   """
   "hey I'm new! ...done!"
 
+  """
+  MyClass = Class new
+  MyClass answer:
+  ﹍whenNew
+  by:
+  ﹍"hey I'm new!" print
+  ﹍@
+  myObject = MyClass new
+  " ...done!" print
+  """
+  "hey I'm new! ...done!"
+
   # ---------------------------------------------------------------------------
   # in this case the assignment
   # consumes up to
@@ -1765,6 +1861,17 @@ tests = [
   by:
   ﹍2
   ﹍self
+  myObject = MyClass new 1 print
+  """
+  "1"
+
+  """
+  MyClass = Class new
+  MyClass answer:
+  ﹍whenNew
+  by:
+  ﹍2
+  ﹍@
   myObject = MyClass new 1 print
   """
   "1"
@@ -1798,6 +1905,23 @@ tests = [
   by:
   ﹍param print
   ﹍self
+  myObject = MyClass new initWith " hello again! I am... "
+  myObject print
+  """
+  "hey I'm new! hello again! I am... object_from_a_user_class"
+
+  """
+  MyClass = Class new
+  MyClass answer:
+  ﹍whenNew
+  by:
+  ﹍"hey I'm new!" print
+  ﹍@
+  MyClass answer:
+  ﹍initWith (param)
+  by:
+  ﹍param print
+  ﹍@
   myObject = MyClass new initWith " hello again! I am... "
   myObject print
   """
@@ -1998,6 +2122,43 @@ tests = [
   """
   "011222"
 
+  """
+  Counter = Class new
+  Counter.counter = 0
+
+  Counter answer:
+  ﹍﹍increment
+  ﹍by:
+  ﹍﹍@counter = @counter+1
+
+  MyClass = Class new
+  MyClass.instantiationsCounter = Counter new
+
+  MyClass answer:
+  ﹍whenNew
+  by:
+  ﹍@instantiationsCounter increment
+  ﹍@
+
+  MyClass answer:
+  ﹍getCount
+  by:
+  ﹍@instantiationsCounter.counter
+
+  MyClass getCount print
+
+  myObject = MyClass new
+  MyClass getCount print
+  myObject getCount print
+
+  myObject2 = MyClass new
+  MyClass getCount print
+  myObject getCount print
+  myObject2 getCount print
+
+  """
+  "011222"
+
   # ---------------------------------------------------------------------------
   # because the field look-up mechanism, you can add a field to a class
   # at any time and it will affect all its objects (the ones already created
@@ -2030,6 +2191,65 @@ tests = [
   ﹍getCount
   by:
   ﹍self.instantiationsCounter.counter
+
+  MyClass getCount print
+  myObject getCount print
+
+  myObject2 = MyClass new
+  MyClass getCount print
+  myObject getCount print
+  myObject2 getCount print
+
+  myObject2.fieldAddedToObject2 = 2
+
+  MyClass.fieldAddedToObject2 print
+  myObject.fieldAddedToObject2 print
+  myObject2.fieldAddedToObject2 print
+
+  MyClass.fieldAddedToClass = 3
+  MyClass.fieldAddedToClass print
+  myObject.fieldAddedToClass print
+  myObject2.fieldAddedToClass print
+
+  myObject.fieldAddedToClass = 4
+  MyClass.fieldAddedToClass print
+  myObject.fieldAddedToClass print
+  myObject2.fieldAddedToClass print
+
+  myObject2.fieldAddedToClass = 5
+  MyClass.fieldAddedToClass print
+  myObject.fieldAddedToClass print
+  myObject2.fieldAddedToClass print
+
+
+  """
+  "00111nilnil2333343345"
+
+  """
+  Counter = Class new
+  Counter.counter = 0
+
+  Counter answer:
+  ﹍﹍increment
+  ﹍by:
+  ﹍﹍@counter++
+
+  MyClass = Class new
+
+  myObject = MyClass new
+
+  MyClass.instantiationsCounter = Counter new
+
+  MyClass answer:
+  ﹍whenNew
+  by:
+  ﹍@instantiationsCounter increment
+  ﹍@
+
+  MyClass answer:
+  ﹍getCount
+  by:
+  ﹍@instantiationsCounter.counter
 
   MyClass getCount print
   myObject getCount print

@@ -14,6 +14,22 @@ tokenizeCommand = (command) ->
 
   # this is the statement separator
   command = command.replace /;/g, " ; "
+
+  # @ as shorthand for "self." and "self", à la coffeescript:
+  # any @ that is just before something that is not a closing delimiter
+  # is a field access. Note that there must be no space, so:
+  #
+  #    @print // is a field access
+  #
+  #  ...is different from:
+  #
+  #    @ print // not a field access
+  #
+  # any other @ (i.e. next to a space or a closing delimeter) is just
+  # "self" like in the second case.
+
+  command = command.replace /@([^\]);\s])/g, " self . $1"
+  command = command.replace /@/g, " self "
   
   # separate numbers and punctuation from anything else
   # note that:
