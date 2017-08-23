@@ -559,12 +559,12 @@ BasePlusFunction =  (context) ->
   return FLNumber.createNew @value + operandum.value
 
 FLNumber.addMethod \
-  (flTokenize "$+ ( operandum )"),
+  (flTokenize "$plus_binary ( operandum )"),
   BasePlusFunction
 
 FLNumber.addMethod \
   (flTokenize "+ ( operandum )"),
-  (flTokenize "self $+ operandum")
+  (flTokenize "self $plus_binary operandum")
 
 # ---
 

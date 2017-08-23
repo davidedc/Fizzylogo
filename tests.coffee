@@ -12,7 +12,7 @@ tests = [
 
   # ---------------------------------------------------------------------------
 
-  "(1+1)print;Number answer:(+(operandum))by:(self print;\"+\" print;operandum print);2+3;Number answer:(+(operandum))by:(self $+ operandum);"
+  "(1+1)print;Number answer:(+(operandum))by:(self print;\"+\" print;operandum print);2+3;Number answer:(+(operandum))by:(self $plus_binary operandum);"
   "22+3"
 
   # ---------------------------------------------------------------------------
