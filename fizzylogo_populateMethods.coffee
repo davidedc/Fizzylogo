@@ -302,11 +302,11 @@ FLToken.addMethod \
 
 FLToken.addMethod \
   (flTokenize "+= ( operandum )"),
-  (flTokenize "self ← self eval plus operandum")
+  (flTokenize "self ← self eval + operandum")
 
 FLToken.addMethod \
   (flTokenize "++"),
-  (flTokenize "self ← self eval plus 1")
+  (flTokenize "self ← self eval + 1")
 
 
 # Nil ---------------------------------------------------------------------------
@@ -503,7 +503,7 @@ FLNumber.addMethod \
   (flTokenize "incrementInPlace"),
   # this one below actually mutates the number
   # object
-  flTokenize "self ← self plus 1"
+  flTokenize "self ← self + 1"
 
 # although there are some good reasons to have this,
 # it can get confusing, consider for example
@@ -513,12 +513,12 @@ FLNumber.addMethod \
 # a.
 FLNumber.addMethod \
   (flTokenize "++"),
-  flTokenize "self plus 1"
+  flTokenize "self + 1"
 
 # see "++" regarding why this could be confusing
 FLNumber.addMethod \
   (flTokenize "+= (value)"),
-  flTokenize "self plus value"
+  flTokenize "self + value"
 
 FLNumber.addMethod \
   (flTokenize "factorial"),
@@ -541,7 +541,7 @@ FLNumber.addMethod \
 FLNumber.addMethod \
   (flTokenize "factorialfive"),
   flTokenize \
-    "( self == 0 ) ⇒ ( 1 ) (1 plus 1;'temp ← self;\
+    "( self == 0 ) ⇒ ( 1 ) (1 + 1;'temp ← self;\
     ( self minus 1 ) factorialfive * temp )"
 
 FLNumber.addMethod \
@@ -559,12 +559,12 @@ BasePlusFunction =  (context) ->
   return FLNumber.createNew @value + operandum.value
 
 FLNumber.addMethod \
-  (flTokenize "$plus ( operandum )"),
+  (flTokenize "$+ ( operandum )"),
   BasePlusFunction
 
 FLNumber.addMethod \
-  (flTokenize "plus ( operandum )"),
-  (flTokenize "self $plus operandum")
+  (flTokenize "+ ( operandum )"),
+  (flTokenize "self $+ operandum")
 
 # ---
 

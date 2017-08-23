@@ -2,25 +2,25 @@ tests = [
   # ---------------------------------------------------------------------------
   # surprise! this language "chains" to the right
   # so "streams" of things are run right to left. 
-  "1 plus 1 print"
+  "1+1 print"
   "1"
 
   # ---------------------------------------------------------------------------
   # parens can help
-  "(1 plus 1)print"
+  "(1+1)print"
   "2"
 
   # ---------------------------------------------------------------------------
 
-  "(1 plus 1)print;Number answer:(plus(operandum))by:(self print;\"+\" print;operandum print);2 plus 3;Number answer:(plus(operandum))by:(self $plus operandum);"
+  "(1+1)print;Number answer:(+(operandum))by:(self print;\"+\" print;operandum print);2+3;Number answer:(+(operandum))by:(self $+ operandum);"
   "22+3"
 
   # ---------------------------------------------------------------------------
   # here "print" takes "print" and does
-  # nothing with it, so first (1 plus 1) is
+  # nothing with it, so first (1+1) is
   # printed, and then the result of that is
   # printed again.
-  "(1 plus 1)print print"
+  "(1+1)print print"
   "22"
 
   # ---------------------------------------------------------------------------
@@ -44,11 +44,11 @@ tests = [
   "test stringtest stringa"
 
   # ---------------------------------------------------------------------------
-  "'a←5;a incrementInPlace;'a←a plus 1;a print"
+  "'a←5;a incrementInPlace;'a←a+1;a print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5;a incrementInPlace;a=a plus 1;a print"
+  "a=5;a incrementInPlace;a=a+1;a print"
   "7"
 
   # ---------------------------------------------------------------------------
@@ -59,71 +59,71 @@ tests = [
   # ---------------------------------------------------------------------------
   # testing crazy statement separations
 
-  "'a←5;;a incrementInPlace; ;;;  ;'a←a plus 1;a print"
+  "'a←5;;a incrementInPlace; ;;;  ;'a←a+1;a print"
   "7"
 
-  ";'a←5;;a incrementInPlace; ;;;  ;'a←a plus 1;a print;"
+  ";'a←5;;a incrementInPlace; ;;;  ;'a←a+1;a print;"
   "7"
 
-  ";;'a←5;;a incrementInPlace; ;;;  ;'a←a plus 1;a print;;"
+  ";;'a←5;;a incrementInPlace; ;;;  ;'a←a+1;a print;;"
   "7"
 
-  "; ;'a←5;;a incrementInPlace; ;;;  ;'a←a plus 1;a print; ;"
+  "; ;'a←5;;a incrementInPlace; ;;;  ;'a←a+1;a print; ;"
   "7"
 
-  ";;;'a←5;;a incrementInPlace; ;;;  ;'a←a plus 1;a print;;;"
+  ";;;'a←5;;a incrementInPlace; ;;;  ;'a←a+1;a print;;;"
   "7"
 
   # ---------------------------------------------------------------------------
-  "'a←5;'a←a plus 1;a incrementInPlace print"
+  "'a←5;'a←a+1;a incrementInPlace print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5;a=a plus 1;a incrementInPlace print"
+  "a=5;a=a+1;a incrementInPlace print"
   "7"
 
   # ---------------------------------------------------------------------------
-  "'a←5 plus 1;a incrementInPlace print"
+  "'a←5+1;a incrementInPlace print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5 plus 1;a incrementInPlace print"
+  "a=5+1;a incrementInPlace print"
   "7"
 
   # ---------------------------------------------------------------------------
-  "'a←(5 plus 1);a incrementInPlace print"
+  "'a←(5+1);a incrementInPlace print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=(5 plus 1);a incrementInPlace print"
+  "a=(5+1);a incrementInPlace print"
   "7"
 
   # ---------------------------------------------------------------------------
-  "(4 plus 1 plus 1)print"
+  "(4+1+1)print"
   "6"
 
   # ---------------------------------------------------------------------------
-  "'a←(4 plus 1 plus 1);a incrementInPlace print"
+  "'a←(4+1+1);a incrementInPlace print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=(4 plus 1 plus 1);a incrementInPlace print"
+  "a=(4+1+1);a incrementInPlace print"
   "7"
 
   # ---------------------------------------------------------------------------
-  "'a←(4 plus(1 plus 1));a incrementInPlace print"
+  "'a←(4 +(1+1));a incrementInPlace print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=(4 plus(1 plus 1));a incrementInPlace print"
+  "a=(4 +(1+1));a incrementInPlace print"
   "7"
 
   # ---------------------------------------------------------------------------
-  "'a←((4 plus 1)plus(0 plus 1));a incrementInPlace print"
+  "'a←((4+1)+(0+1));a incrementInPlace print"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=((4 plus 1)plus(0 plus 1));a incrementInPlace print"
+  "a=((4+1)+(0+1));a incrementInPlace print"
   "7"
 
   # ---------------------------------------------------------------------------
@@ -139,61 +139,61 @@ tests = [
   "77"
 
   # ---------------------------------------------------------------------------
-  "(6 doublePrint plus 1)print"
+  "(6 doublePrint+1)print"
   "667"
 
   # ---------------------------------------------------------------------------
-  "6 doublePrint plus 1 print"
+  "6 doublePrint+1 print"
   "661"
 
   # ---------------------------------------------------------------------------
-  "(4 plus 3)print"
+  "(4+3)print"
   "7"
 
   # ---------------------------------------------------------------------------
-  "(4 plus 3 print)print"
+  "(4+3 print)print"
   "37"
 
   # ---------------------------------------------------------------------------
-  "(4 plus(2 plus 1))print"
+  "(4 +(2+1))print"
   "7"
 
   # ---------------------------------------------------------------------------
-  "4 plus(2 plus 1)print"
+  "4 +(2+1)print"
   "7"
 
   # ---------------------------------------------------------------------------
-  "4 plus 2 plus 1 print"
+  "4+2+1 print"
   "1"
 
   # ---------------------------------------------------------------------------
-  "('(1 plus 1))print"
-  "( 1 plus 1 )"
+  "('(1+1))print"
+  "( 1 + 1 )"
 
   # ---------------------------------------------------------------------------
   # the ' still ties to the first element
-  # that comes after it i.e. ( 1 plus 1 )
-  "'(1 plus 1)print"
-  "( 1 plus 1 )"
+  # that comes after it i.e. ( 1+1 )
+  "'(1+1)print"
+  "( 1 + 1 )"
 
   # ---------------------------------------------------------------------------
-  "('(1 plus 1))length print"
+  "('(1+1))length print"
   "3"
 
   # ---------------------------------------------------------------------------
-  "'(1 plus 1)length print"
+  "'(1+1)length print"
   "3"
 
   # ---------------------------------------------------------------------------
-  "(('(1 plus 1))eval)print"
+  "(('(1+1))eval)print"
   "2"
 
   # ---------------------------------------------------------------------------
-  "('(1 plus 1))eval print"
+  "('(1+1))eval print"
   "2"
 
   # ---------------------------------------------------------------------------
-  "'(1 plus 1)eval print"
+  "'(1+1)eval print"
   "2"
 
   # ---------------------------------------------------------------------------
@@ -226,8 +226,8 @@ tests = [
   "nil"
 
   # ---------------------------------------------------------------------------
-  "negate print; negate = 2; negate print; negate = nil; negate print; negate plus"
-  "nil2nil! exception: message to nil: plus"
+  "negate print; negate = 2; negate print; negate = nil; negate print; negate +"
+  "nil2nil! exception: message to nil: +"
 
   # ---------------------------------------------------------------------------
   # this is what happens here: "a" is sent the message "b".
@@ -597,12 +597,12 @@ tests = [
 
   # ---------------------------------------------------------------------------
   "'a←5;repeat1\
-    ((a==0)⇒(done with a plus 1)'a←a minus 1)print"
+    ((a==0)⇒(done with a+1)'a←a minus 1)print"
   "1"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
   "a=5;repeat1\
-    ((a==0)⇒(done with a plus 1)a=a minus 1)print"
+    ((a==0)⇒(done with a+1)a=a minus 1)print"
   "1"
 
   # ---------------------------------------------------------------------------
@@ -789,11 +789,11 @@ tests = [
   "( 1 2 )"
 
   # ---------------------------------------------------------------------------
-  "('(1)+(2 plus 1))print"
+  "('(1)+(2+1))print"
   "( 1 3 )"
 
   # ---------------------------------------------------------------------------
-  "('() + \"how to enclose something in a list\")print"
+  "('()+\"how to enclose something in a list\")print"
   "( \"how to enclose something in a list\" )"
 
   # ---------------------------------------------------------------------------
@@ -947,7 +947,7 @@ tests = [
   else:
   ﹍"false!" print
   """
-  "( 1 \"hello\" false )1hellofalse!"
+  "( 1 \"hello\" false )2hellofalse!"
 
   # ---------------------------------------------------------------------------
 
@@ -978,7 +978,7 @@ tests = [
   """
   op1 = 2
   codeToBeRun ='
-  ﹍(op1 plus op2) print
+  ﹍(op1+op2) print
   op2 = 3
   codeToBeRun eval
   op2 = 6
@@ -1047,7 +1047,7 @@ tests = [
   do
   ﹍self's counter = 3
   myObject's counter print
-  (myObject's counter plus myObject's counter) print
+  (myObject's counter+myObject's counter) print
   """
 
   "236"
@@ -1071,7 +1071,7 @@ tests = [
   do
   ﹍self.counter = 3
   myObject.counter print
-  (myObject.counter plus myObject.counter) print
+  (myObject.counter+myObject.counter) print
   """
 
   "236"
@@ -1576,8 +1576,8 @@ tests = [
   """
   foo = 3
   things =' ()
-  things = things + 3
-  things = things + "hello"
+  things = things+3
+  things = things+"hello"
   things print
   """
   "( 3 \"hello\" )"
@@ -1586,14 +1586,14 @@ tests = [
   """
   myList =' ("Hello " "Dave " "my " "dear " "friend")
   myList[0] print
-  myList[1 plus 1] print
+  myList[1+1] print
   """
   "Hello my "
 
   # ---------------------------------------------------------------------------
   """
   myList =' ("Hello " "Dave " "my " "dear " "friend")
-  myList[1 plus 1] = "oh "
+  myList[1+1] = "oh "
   myList print
   """
   "( \"Hello \" \"Dave \" \"oh \" \"dear \" \"friend\" )"
@@ -1602,7 +1602,7 @@ tests = [
   """
   numbers =' (9 3 2 5 7)
   myList =' ("Hello " "Dave " "my " "dear " "friend")
-  myList[numbers[1 plus 1]] = "oh "
+  myList[numbers[1+1]] = "oh "
   myList print
   """
   "( \"Hello \" \"Dave \" \"oh \" \"dear \" \"friend\" )"
@@ -1610,7 +1610,7 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   numbers =' (9 3 2 5 7)
-  (numbers[0] plus numbers[1]) print
+  (numbers[0]+numbers[1]) print
   """
   "12"
 
@@ -1629,9 +1629,9 @@ tests = [
   myObject.someField print
   myObject.someOtherField print
   myObject.someField =' (9 3 15 5 7)
-  myObject.someField[1 plus 1] = 1 plus 1
+  myObject.someField[1+1] = 1+1
   myObject.someOtherField =' ("Hello " "Dave " ("oh " "so ") "dear " "friend")
-  myObject.someOtherField[myObject.someField[1 plus 1]] print
+  myObject.someOtherField[myObject.someField[1+1]] print
 
   """
   "nilnil( \"oh \" \"so \" )"
@@ -1640,7 +1640,7 @@ tests = [
   """
   numbers =' (9 3 2 5 7)
   myList =' ("Hello " "Dave " ("oh " "so ") "dear " "friend")
-  myList[numbers[1 plus 1]][0 plus 1] print
+  myList[numbers[1+1]][0+1] print
   """
   "so "
 
@@ -1960,7 +1960,7 @@ tests = [
   # other alternative, we don't change the value of the number itself, rather
   # we wrap the number into a "counter" object and give it a method to
   # swap-out the number with a new incremented number we get from
-  # the result of "plus 1" invocation.
+  # the result of "+ 1" invocation.
   """
   Counter = Class new
   Counter.counter = 0
@@ -1968,7 +1968,7 @@ tests = [
   Counter answer:
   ﹍﹍increment
   ﹍by:
-  ﹍﹍self.counter = self.counter plus 1
+  ﹍﹍self.counter = self.counter+1
 
   MyClass = Class new
   MyClass.instantiationsCounter = Counter new
@@ -2012,7 +2012,7 @@ tests = [
   Counter answer:
   ﹍﹍increment
   ﹍by:
-  ﹍﹍self.counter = self.counter plus 1
+  ﹍﹍self.counter = self.counter+1
 
   MyClass = Class new
 
@@ -2086,7 +2086,7 @@ tests = [
   """
   a = 1
   b = 2
-  a += b plus 1
+  a += b+1
   a print
   """
   "4"
@@ -2121,14 +2121,14 @@ tests = [
 
   """
   a = 1
-  a++ plus 1
+  a++ + 1
   a print
   """
   "2"
 
   """
   a = 1
-  a = a++ plus 1
+  a = a++ + 1
   a print
   """
   "3"
@@ -2217,7 +2217,7 @@ tests = [
 
   """
   myArray = '(1 2 3)
-  (myArray[0] += myArray[1] plus myArray[2]) print
+  (myArray[0] += myArray[1]+myArray[2]) print
   myArray print
   """
   "6( 6 2 3 )"
@@ -2365,9 +2365,9 @@ foo print
 ((things[1] eval) eval) print
 things[2] print
 2 = 10
-things[1 plus 1] print
+things[1+1] print
 things =' (foo ('foo) 2)
-things[1 plus 1] print
+things[1+1] print
 """
 "3( ' foo )foo3 bar bar2210"
 
@@ -2375,17 +2375,17 @@ things[1 plus 1] print
 """
 foo = 3
 things =' ()
-things = things + foo
+things = things+foo
 things print
 things[0] print
 " // " print
 things =' ()
-things = things + 'foo
+things = things+'foo
 things print
 things[0] print
 " // " print
 things =' ()
-things = things + '('foo)
+things = things+'('foo)
 things print
 things[0] print
 """
