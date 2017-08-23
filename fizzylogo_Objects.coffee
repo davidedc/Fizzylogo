@@ -23,8 +23,8 @@ class FLObjects
     console.log "evaluation " + indentation() + "  I am: " + @value
     console.log "evaluation " + indentation() + "  matching - my class patterns: "
 
-    for eachClassPattern in @flClass.msgPatterns
-      console.log "evaluation " + indentation() + eachClassPattern.print()
+    #for eachClassPattern in @flClass.msgPatterns
+    #  console.log "evaluation " + indentation() + eachClassPattern.print()
 
     # fake context push so that we can make
     # the context stack handling easier
@@ -108,15 +108,6 @@ class FLObjects
           console.log "evaluation " + indentation() + "  matching - token inside the parameter: " + paramToken.print()
           if eachElementOfSignature.isEvaluatingParam()
             console.log "evaluation " + indentation() + "  matching - need to evaluate next msg element from invocation: " + methodInvocation.print() + " and bind to: " + paramToken.print()
-            # if the first element is a list,
-            # then the list is evaluated on
-            # its own, without considering what comes after it.
-            # I.e. a list doesn't chain with further tokens, it's
-            # used as a parameter as is
-            # If the first element is not a list, then we
-            # run the evaluation as long as it takes us,
-            # as far as things "chain" with messages they
-            # understand.
 
             # note how we need to evaluate the params in a context that has the
             # same SELF as the calling one, not the new one that
@@ -125,13 +116,8 @@ class FLObjects
             # to the receiver, which we don't want
             # like in "7 * self" we don't want to bind self to 7
 
-            if methodInvocation.firstElement().flClass == FLList
-              console.log "evaluation " + indentation() + "  matching - what to evaluate is a list right away "
-              [returnedContext, methodInvocation] = methodInvocation.evalFirstListElementAndTurnRestIntoMessage theContext
-              valueToBeBound = returnedContext.returned                
-            else
-              [returnedContext, methodInvocation] = methodInvocation.eval theContext, methodInvocation
-              valueToBeBound = returnedContext.returned                
+            [returnedContext, methodInvocation] = methodInvocation.eval theContext, methodInvocation
+            valueToBeBound = returnedContext.returned
 
           else
             # don't need to evaluate the parameter

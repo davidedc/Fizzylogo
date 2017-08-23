@@ -2,13 +2,12 @@ tests = [
   # ---------------------------------------------------------------------------
   # surprise! this language "chains" to the right
   # so "streams" of things are run right to left. 
-  "1+1 print"
-  "1"
+  "console print_ 2 * 3 + 1"
+  "8"
 
   # ---------------------------------------------------------------------------
-  # parens can help
-  "(1+1)print"
-  "2"
+  "console print_ (2 * 3) + 1"
+  "7"
 
   # ---------------------------------------------------------------------------
 
@@ -160,7 +159,7 @@ tests = [
 
   # ---------------------------------------------------------------------------
   "4 +(2+1)print"
-  "7"
+  "3"
 
   # ---------------------------------------------------------------------------
   "4+2+1 print"
@@ -1334,20 +1333,20 @@ tests = [
 
 
   # ---------------------------------------------------------------------------
-  # in this case "myList" ends up being a wrapped list i.e. ((wrapped))
-  # so, when the right-side is evaluated, it ends up being the normal
-  # un-wrapped contents, so it all works out without the ' after the =
+  # in this case "myList =..." causes an evaluation which ends up returning just
+  # "Hello "
   """
   codeToBeRun ='
   ﹍word print
   myList =
   ﹍("Hello " "Dave " "my " "dear " "friend")
+  myList print
   for each word in
   ﹍myList
   do:
   ﹍codeToBeRun eval
   """
-  "TOKEN:Hello TOKEN:Dave TOKEN:my TOKEN:dear TOKEN:friend"
+  "Hello ! exception: for...each expects a list"
 
   # ---------------------------------------------------------------------------
   # in this case "myList" ends up being a wrapped list i.e. ((wrapped))
@@ -1795,6 +1794,8 @@ tests = [
   """
   "! message was not understood: ( 1 print )"
 
+  # careful! here is the ...3 print that ends up
+  # running!
   """
   MyClass = Class new
   MyClass answer:
@@ -1807,7 +1808,7 @@ tests = [
   ﹍3
   print
   """
-  ""
+  "3"
 
   """
   MyClass = Class new
@@ -2654,6 +2655,7 @@ for i in [0...tests.length] by 2
       "String", FLString
       "Exception", FLException
       "Number", FLNumber
+      "Console", FLConsole
 
       "not", FLNot.createNew()
       "true", FLBoolean.createNew true
@@ -2678,6 +2680,8 @@ for i in [0...tests.length] by 2
       "accessUpperContext", FLAccessUpperContext.createNew()
 
       "nil", FLNil.createNew()
+
+      "console", FLConsole.createNew()
 
       "'", FLQuote.createNew()
       ":", FLQuote.createNew()

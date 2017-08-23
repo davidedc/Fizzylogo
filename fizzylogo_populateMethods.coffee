@@ -810,6 +810,17 @@ FLAccessUpperContext.addMethod \
     context.previousContext.isTransparent = true
     return @
 
+# Console -----------------------------------------------------------------------------
+
+FLConsole.addMethod \
+  (flTokenize "print_ ( thingToPrint )"),
+  (context) ->
+    thingToPrint = context.tempVariablesDict[ValidIDfromString "thingToPrint"]
+    stringToPrint = thingToPrint.print()
+    console.log "///////// program printout: " + stringToPrint
+    environmentPrintout += stringToPrint
+    return thingToPrint
+
 
 # Done -------------------------------------------------------------------------
 

@@ -6,7 +6,8 @@ if DEBUG_STRINGIFICATION_CHECKS
   stringsTable_TO_CHECK_CONVERTIONS = null
 
 indentation = ->
-  return " ".repeat(flContexts.length * 2)
+  #return " ".repeat(flContexts.length * 2)
+  return ""
 
 # to disambiguate between when we are operating
 # on JS arrays from when we are operating
@@ -21,10 +22,10 @@ Array::jsArrayPush = (element) ->
 keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789Γಠ_'
 ValidIDfromString = (input) ->
 
-    console.log "ValidIDfromString encoding: " + input
+    #console.log "ValidIDfromString encoding: " + input
 
     if /^([A-Z_][0-9A-Z_$]*)$/gi.test input
-      console.log "ValidIDfromString encoded as: " + input
+      #console.log "ValidIDfromString encoded as: " + input
       return input
 
     utf8_encode = (string) ->
@@ -62,7 +63,7 @@ ValidIDfromString = (input) ->
       else if isNaN(chr3)
         enc4 = 64
       output = output + keyStr.charAt(enc1) + keyStr.charAt(enc2) + keyStr.charAt(enc3) + keyStr.charAt(enc4)
-    console.log "ValidIDfromString encoded as: " + "$" + output
+    #console.log "ValidIDfromString encoded as: " + "$" + output
     return "$" + output
 
 StringFromValidID = (input) ->
@@ -90,7 +91,7 @@ StringFromValidID = (input) ->
 
     input = input.replace(/[^ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789Γಠ_]/g, '')
     input = input.replace(/^\$/, '')
-    console.log "StringFromValidID decoding: " + input
+    #console.log "StringFromValidID decoding: " + input
     output = ''
     i = 0
     while i < input.length

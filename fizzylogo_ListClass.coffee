@@ -172,15 +172,6 @@ class FLListClass extends FLClasses
 
       @toList()
 
-      # quick case: ((list)) just evals to (list)
-      # so: the amount of parentheses _is_ relevant.
-      # this is needed in the indented syntax for when you pass a list
-      # see for...each definition and examples.
-      if @isWrappedList()
-        theContext.returned = @unwrapList()
-        return [theContext, FLList.emptyMessage()]
-
-
       statements = @separateStatements()
 
       for eachStatement in statements
@@ -328,16 +319,6 @@ class FLListClass extends FLClasses
           if (@elementAt 0).value == "$$MATCHALL$$"
             return true
       return false
-
-    toBeReturned.isWrappedList =  ->
-      if @length() == 1 and @elementAt(0).flClass == FLList
-        return true
-      return false
-
-    toBeReturned.unwrapList =  ->
-      if @isWrappedList()
-        return @elementAt 0
-      return @
 
     # returns the first element and returns
     # a copy of the rest of the message

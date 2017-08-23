@@ -70,9 +70,9 @@ class FLContext
       return @firstNonTransparentContext()
 
     loop
-      console.log "evaluation " + indentation() + "context temps: " 
-      for keys of contextBeingSearched.tempVariablesDict
-        console.log keys
+      #console.log "evaluation " + indentation() + "context temps: " 
+      #for keys of contextBeingSearched.tempVariablesDict
+      #  console.log keys
 
       # check if temp variable is in current context.
       if contextBeingSearched.tempVariablesDict[ValidIDfromString tokenString]?
