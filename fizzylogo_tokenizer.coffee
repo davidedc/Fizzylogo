@@ -15,7 +15,7 @@ tokenizeCommand = (command) ->
   # this is the statement separator
   command = command.replace /;/g, " ; "
 
-  # @ as shorthand for "self." and "self", à la coffeescript:
+  # @ as shorthand for "self." or "self", à la coffeescript:
   # any @ that is just before something that is not a closing delimiter
   # is a field access. Note that there must be no space, so:
   #
