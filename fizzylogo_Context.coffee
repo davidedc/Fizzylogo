@@ -115,7 +115,7 @@ class FLContext
     console.log "evaluation " + indentation() + "lookup: " + theToken.value + " also known as " + (ValidIDfromString theToken.value)
 
     console.log "evaluation " + indentation() + "lookup: value looked up: "
-    console.dir dictWhereValueIs[ValidIDfromString theToken.value]
+    #console.dir dictWhereValueIs[ValidIDfromString theToken.value]
 
     return dictWhereValueIs[ValidIDfromString theToken.value]
 

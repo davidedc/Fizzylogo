@@ -9,12 +9,14 @@ class FLClasses extends FLObjects
   addMethod: (signature, methodBody) ->
     for i in [0...@msgPatterns.length]
       eachSignature = @msgPatterns[i]
-      console.dir eachSignature
+      #console.dir eachSignature
       if eachSignature.print() == signature.print()
         @msgPatterns[i] = signature
         @methodBodies[i] = methodBody
+        console.log "adding method  signature: " + signature.print() + " body: " + methodBody.print?()
         return
 
+    console.log "adding method  signature: " + signature.print() + " body: " + methodBody.print?()
     @msgPatterns.jsArrayPush signature
     @methodBodies.jsArrayPush methodBody
 

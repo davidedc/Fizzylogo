@@ -222,7 +222,7 @@ class FLListClass extends FLClasses
             findAnotherReceiver = false
             [returnedContext, restOfMessage, receiver] = restOfMessage.findReceiver returnedContext
             console.log "found next receiver and now message is: " + restOfMessage.print()
-            console.dir receiver
+            #console.dir receiver
             console.log "3 returnedContext.throwing: " + returnedContext.throwing
 
           # where we detect an exception being thrown
