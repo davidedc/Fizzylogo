@@ -622,16 +622,21 @@ tests = [
 
   # ---------------------------------------------------------------------------
   "'MyClass←Class new;\
-    MyClass answer(printtwo)by(self print);\
+    MyClass answer:(printtwo)by'(self print);\
+    'myObject←MyClass new;myObject printtwo"
+  "object_from_a_user_class"
+
+  "'MyClass←Class new;\
+    MyClass answer:(printtwo)by:(self print);\
     'myObject←MyClass new;myObject printtwo"
   "object_from_a_user_class"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
   """
   MyClass = Class new
-  MyClass answer
+  MyClass answer:
   ﹍printtwo
-  by
+  by:
   ﹍self print
   myObject = MyClass new
   myObject printtwo
@@ -815,8 +820,8 @@ tests = [
 
   # ---------------------------------------------------------------------------
   "'MyClass←Class new;MyClass.counter = nil;\
-    MyClass answer(setCounterToTwo)by(self.counter←2);\
-    MyClass answer(printCounter)by(self.counter print);\
+    MyClass answer:(setCounterToTwo)by:(self.counter←2);\
+    MyClass answer:(printCounter)by:(self.counter print);\
     'myObject←MyClass new;myObject printCounter;\
     myObject setCounterToTwo;myObject printCounter;\
     'myObject2←MyClass new;myObject2 printCounter;\
@@ -829,14 +834,14 @@ tests = [
   MyClass = Class new
   MyClass.counter = nil
 
-  MyClass answer
+  MyClass answer:
   ﹍﹍setCounterToTwo
-  ﹍by
+  ﹍by:
   ﹍﹍self.counter←2
 
-  MyClass answer
+  MyClass answer:
   ﹍﹍printCounter
-  ﹍by
+  ﹍by:
   ﹍﹍self.counter print
 
   myObject = MyClass new
@@ -853,14 +858,14 @@ tests = [
 
   # ---------------------------------------------------------------------------
   "'MyClass←Class new;MyClass.counter = nil;\
-    MyClass answer(setCounterToTwo)by(self.counter←2);\
+    MyClass answer:(setCounterToTwo)by:(self.counter←2);\
     'myObject←MyClass new;\
     myObject setCounterToTwo;myObject's counter print"
   "2"
 
   # ---------------------------------------------------------------------------
   "'MyClass←Class new;MyClass.counter = nil;\
-    MyClass answer(setCounterToTwo)by(self.counter←2);\
+    MyClass answer:(setCounterToTwo)by:(self.counter←2);\
     'myObject←MyClass new;\
     myObject setCounterToTwo;myObject.counter print"
   "2"
@@ -871,9 +876,9 @@ tests = [
   """
   MyClass = Class new
   MyClass.counter = nil
-  MyClass answer
+  MyClass answer:
   ﹍setCounterToTwo
-  by
+  by:
   ﹍self.counter = 2
   myObject = MyClass new
   myObject setCounterToTwo
@@ -980,9 +985,9 @@ tests = [
 
   MyClass=Class new
   MyClass.counter = nil
-  MyClass answer
+  MyClass answer:
   ﹍setCounterToTwo
-  by
+  by:
   ﹍codeToBeRun eval
   myObject=MyClass new
   myObject setCounterToTwo
@@ -1000,9 +1005,9 @@ tests = [
 
   MyClass=Class new
   MyClass.counter = nil
-  MyClass answer
+  MyClass answer:
   ﹍setCounterToTwo
-  by
+  by:
   ﹍codeToBeRun eval
   myObject=MyClass new
   myObject setCounterToTwo
@@ -1020,9 +1025,9 @@ tests = [
 
   MyClass=Class new
   MyClass.counter = nil
-  MyClass answer
+  MyClass answer:
   ﹍setCounterToTwo
-  by
+  by:
   ﹍codeToBeRun eval
   myObject=MyClass new
   myObject setCounterToTwo
@@ -1044,9 +1049,9 @@ tests = [
 
   MyClass=Class new
   MyClass.counter = nil
-  MyClass answer
+  MyClass answer:
   ﹍setCounterToTwo
-  by
+  by:
   ﹍codeToBeRun eval
   myObject=MyClass new
   myObject setCounterToTwo
@@ -1069,9 +1074,9 @@ tests = [
 
   """
   MyClass = Class new
-  MyClass answer
+  MyClass answer:
   ﹍printtwo (argument)
-  by
+  by:
   ﹍argument print
   myObject = MyClass new
   myObject printtwo "hello"
@@ -1082,9 +1087,9 @@ tests = [
 
   """
   MyClass = Class new
-  MyClass answer
+  MyClass answer:
   ﹍printtwo (argument)
-  by
+  by:
   ﹍argument print
   myObject = MyClass new
   myObject.printtwo "hello"
@@ -1672,9 +1677,9 @@ tests = [
   # the obligation of having to chain with them.
   """
   MyClass = Class new
-  MyClass answer
+  MyClass answer:
   ﹍getYourself (param)
-  by
+  by:
   ﹍param
   myObject = MyClass new
   myObject getYourself
@@ -1685,9 +1690,9 @@ tests = [
 
   """
   MyClass = Class new
-  MyClass answer
+  MyClass answer:
   ﹍getYourself (param)
-  by
+  by:
   ﹍param
   myObject = MyClass new
   myObject getYourself
@@ -1698,9 +1703,9 @@ tests = [
 
   """
   MyClass = Class new
-  MyClass answer
+  MyClass answer:
   ﹍getYourself (param)
-  by
+  by:
   ﹍param
   ﹍
   myObject = MyClass new
@@ -1712,9 +1717,9 @@ tests = [
 
   """
   MyClass = Class new
-  MyClass answer
+  MyClass answer:
   ﹍getYourself (param)
-  by
+  by:
   ﹍param
   ﹍
   myObject = MyClass new
@@ -1727,9 +1732,9 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   MyClass = Class new
-  MyClass answer
+  MyClass answer:
   ﹍whenNew
-  by
+  by:
   ﹍"hey I'm new!" print
   ﹍self
   myObject = MyClass new
@@ -1745,9 +1750,9 @@ tests = [
   # and lets "1 print" loose
   """
   MyClass = Class new
-  MyClass answer
+  MyClass answer:
   ﹍whenNew
-  by
+  by:
   ﹍2
   ﹍self
   myObject = MyClass new 1 print
@@ -1761,9 +1766,9 @@ tests = [
   # for the factory pattern to construct other things
   """
   MyClass = Class new
-  MyClass answer
+  MyClass answer:
   ﹍whenNew
-  by
+  by:
   ﹍2
   myObject = MyClass new
   myObject print
@@ -1773,14 +1778,14 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   MyClass = Class new
-  MyClass answer
+  MyClass answer:
   ﹍whenNew
-  by
+  by:
   ﹍"hey I'm new!" print
   ﹍self
-  MyClass answer
+  MyClass answer:
   ﹍initWith (param)
-  by
+  by:
   ﹍param print
   ﹍self
   myObject = MyClass new initWith " hello again! I am... "
@@ -1792,10 +1797,10 @@ tests = [
   """
   // a comment here
   MyClass = Class new
-  MyClass answer
+  MyClass answer:
   ﹍whenNew
   // another comment here
-  by
+  by:
   ﹍2
   myObject = MyClass new
   myObject print
@@ -1807,9 +1812,9 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   MyClass = Class new
-  MyClass answer
+  MyClass answer:
   ﹍﹍printtwo (argument)
-  ﹍by
+  ﹍by:
   ﹍﹍argument print
   myObject = MyClass new
   myObject printtwo "hello"
@@ -1819,9 +1824,9 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   MyClass = Class new
-  MyClass answer
+  MyClass answer:
   ﹍﹍﹍﹍printthree (argument)
-  ﹍by
+  ﹍by:
   ﹍﹍﹍﹍argument print
   myObject = MyClass new
   myObject printthree "hello"
@@ -1832,9 +1837,9 @@ tests = [
   # unclear why you'd do this but it works
   """
   MyClass = Class new
-  MyClass answer
+  MyClass answer:
   ﹍﹍﹍﹍﹍﹍﹍﹍﹍printthree (argument)
-  ﹍by
+  ﹍by:
   ﹍﹍﹍﹍argument print
   myObject = MyClass new
   myObject printthree "hello"
@@ -1845,9 +1850,9 @@ tests = [
   # unclear why you'd do this but it works
   """
   MyClass = Class new
-  MyClass answer
+  MyClass answer:
   ﹍﹍﹍﹍printthree (argument)
-  ﹍by
+  ﹍by:
   ﹍﹍﹍﹍﹍﹍﹍﹍﹍argument print
   myObject = MyClass new
   myObject printthree "hello"
@@ -1857,9 +1862,9 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   MyClass = Class new
-  MyClass answer
+  MyClass answer:
   ﹍﹍﹍﹍printthree (argument)
-  ﹍﹍by
+  ﹍﹍by:
   ﹍﹍﹍﹍argument print
   myObject = MyClass new
   myObject printthree "hello"
@@ -1869,9 +1874,9 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   MyClass = Class new
-  MyClass answer
+  MyClass answer:
   ﹍﹍﹍﹍printthree (argument)
-  ﹍﹍﹍by
+  ﹍﹍﹍by:
   ﹍﹍﹍﹍argument print
   myObject = MyClass new
   myObject printthree "hello"
@@ -1950,23 +1955,23 @@ tests = [
   Counter = Class new
   Counter.counter = 0
 
-  Counter answer
+  Counter answer:
   ﹍﹍increment
-  ﹍by
+  ﹍by:
   ﹍﹍self.counter = self.counter plus 1
 
   MyClass = Class new
   MyClass.instantiationsCounter = Counter new
 
-  MyClass answer
+  MyClass answer:
   ﹍whenNew
-  by
+  by:
   ﹍self.instantiationsCounter increment
   ﹍self
 
-  MyClass answer
+  MyClass answer:
   ﹍getCount
-  by
+  by:
   ﹍self.instantiationsCounter.counter
 
   MyClass getCount print
@@ -1994,9 +1999,9 @@ tests = [
   Counter = Class new
   Counter.counter = 0
 
-  Counter answer
+  Counter answer:
   ﹍﹍increment
-  ﹍by
+  ﹍by:
   ﹍﹍self.counter = self.counter plus 1
 
   MyClass = Class new
@@ -2005,15 +2010,15 @@ tests = [
 
   MyClass.instantiationsCounter = Counter new
 
-  MyClass answer
+  MyClass answer:
   ﹍whenNew
-  by
+  by:
   ﹍self.instantiationsCounter increment
   ﹍self
 
-  MyClass answer
+  MyClass answer:
   ﹍getCount
-  by
+  by:
   ﹍self.instantiationsCounter.counter
 
   MyClass getCount print

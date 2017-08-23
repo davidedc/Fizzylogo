@@ -114,7 +114,7 @@ addDefaultMethods = (classToAddThemTo) ->
 
   # TODO I think method body should NOT be quoted
   classToAddThemTo.addMethod \
-    (flTokenize "answer ( ' signature ) by ( ' methodBody )"),
+    (flTokenize "answer: ( ' signature ) by ( methodBody )"),
     (context) ->
       signature = context.tempVariablesDict[ValidIDfromString "signature"]
       methodBody = context.tempVariablesDict[ValidIDfromString "methodBody"]
