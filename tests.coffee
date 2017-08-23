@@ -621,6 +621,11 @@ tests = [
   ""
 
   # ---------------------------------------------------------------------------
+
+  "Number answer:(aaa(operandum))by:(operandum print);1 aaa 1"
+  "1"
+
+  # ---------------------------------------------------------------------------
   "'MyClass←Class new;\
     MyClass answer:(printtwo)by'(self print);\
     'myObject←MyClass new;myObject printtwo"

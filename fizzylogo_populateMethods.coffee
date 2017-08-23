@@ -678,7 +678,11 @@ FLQuote.addMethod \
     operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
 
     if operandum.flClass == FLList
-      operandum = operandum.evaluatedElementsList context
+      # in the unfortunate case that the list contains the element
+      # "operandum" - we can't bind that to the "operandum" RIGHT IN THIS
+      # CONTEXT! Hence we need to evaluate the list elements in the
+      # previous context!
+      operandum = operandum.evaluatedElementsList context.previousContext
 
     return operandum
 
