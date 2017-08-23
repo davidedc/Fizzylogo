@@ -2299,6 +2299,13 @@ tests = [
   """
   "launch!"
 
+  """
+  to 🚀:
+  ﹍"launch!" print
+  🚀
+  """
+  "launch!"
+
 
   # ---------------------------------------------------------------------------
   # you can assign arbitrary things to a string token, including
@@ -2308,6 +2315,13 @@ tests = [
   to "🚀":
   ﹍*nothing*
   do:
+  ﹍"launch!" print
+  "🚀"
+  """
+  "launch!"
+
+ """
+  to "🚀":
   ﹍"launch!" print
   "🚀"
   """

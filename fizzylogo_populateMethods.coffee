@@ -311,6 +311,14 @@ FLTo.addMethod \
     TempClass answerEvalParams (signature) by (functionBody);\
     functionObjectName ← TempClass new;"
 
+# TODO it's be nice if there was a way not to leak the TempClass
+FLTo.addMethod \
+  (flTokenize "( ' functionObjectName ) : ( functionBody )"),
+  flTokenize \
+    "accessUpperContext; 'TempClass ← Class new;\
+    TempClass answerEvalParams (*nothing*) by (functionBody);\
+    functionObjectName ← TempClass new;"
+
 # Class -------------------------------------------------------------------------
 
 # Class. There is only one object in the system that belongs to this class
