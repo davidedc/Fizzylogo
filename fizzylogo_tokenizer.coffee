@@ -16,15 +16,25 @@ tokenizeCommand = (command) ->
   command = command.replace /;/g, " ; "
   
   # separate numbers and punctuation from anything else
-  # note that numbers and punctuation are dealt together because
+  # note that:
+  # 1) numbers and punctuation are dealt together because
   # otherwise something like 3.14 is separated into 3 . 14
   # so we need to handle them both here so we get that floating
   # point case before we separate the dots
-  command = command.replace /([0-9]*\.[0-9]+([eE][- ]?[0-9]*)?)|([+\-^*/()=←⇒.])/g, " $1 $3 "
+  #
+  # 2) consecutive operators like ++, --, +=, **
+  # ^^ are left untouched, so you can give good meaning to them
+  # for example this:
+  #   a++ +
+  # becomes
+  #   a ++ +
+  # so the spacing between the operators can be significant
+  #
+  # see this playground with an example:
+  # https://regex101.com/r/LRqxeN/3
+  #
+  command = command.replace /([0-9]*\.[0-9]+([eE][- ]?[0-9]*)?)|([^+\-^*/()=←⇒.])([+\-^*/()=←⇒.]+)/g, "$1$3 $4 "
 
-  # re-group consecutive punctuation, so things like ++, --, +=, **
-  # ^^, etc. can all live separately to have their own meaning
-  command = command.replace /([+\-^*/=←⇒.])[ ]*([+\-^*/=←⇒.])/g, "$1$2"
 
   command = command.replace /'/g, " ' "
   command = command.replace /:/g, " : "
