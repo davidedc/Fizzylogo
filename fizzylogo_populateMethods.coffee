@@ -552,11 +552,21 @@ FLNumber.addMethod \
   (flTokenize "printAFromDeeperCall"),
   flTokenize "a print"
 
+# ---
+
+BasePlusFunction =  (context) ->
+  operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+  return FLNumber.createNew @value + operandum.value
+
+FLNumber.addMethod \
+  (flTokenize "$plus ( operandum )"),
+  BasePlusFunction
+
 FLNumber.addMethod \
   (flTokenize "plus ( operandum )"),
-  (context) ->
-    operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
-    return FLNumber.createNew @value + operandum.value
+  (flTokenize "self $plus operandum")
+
+# ---
 
 FLNumber.addMethod \
   (flTokenize "minus ( operandum )"),

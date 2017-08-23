@@ -11,6 +11,11 @@ tests = [
   "2"
 
   # ---------------------------------------------------------------------------
+
+  "(1 plus 1)print;Number answer:(plus(operandum))by:(self print;\"+\" print;operandum print);2 plus 3;Number answer:(plus(operandum))by:(self $plus operandum);"
+  "22+3"
+
+  # ---------------------------------------------------------------------------
   # here "print" takes "print" and does
   # nothing with it, so first (1 plus 1) is
   # printed, and then the result of that is
@@ -2428,6 +2433,7 @@ for i in [0...tests.length] by 2
       "List", FLList
       "String", FLString
       "Exception", FLException
+      "Number", FLNumber
 
       "not", FLNot.createNew()
       "true", FLBoolean.createNew true
