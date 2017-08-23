@@ -11,7 +11,7 @@ tests = [
 
   # ---------------------------------------------------------------------------
 
-  "(1+1)print;Number answer:(+(operandum))by:(self print;\"+\" print;operandum print);2+3;Number answer:(+(operandum))by:(self $plus_binary operandum);"
+  "console print_ 1+1;Number answer:(+(operandum))by:(console print_ self;console print_ \"+\";console print_ operandum);2+3;Number answer:(+(operandum))by:(self $plus_binary operandum);"
   "22+3"
 
   # ---------------------------------------------------------------------------
@@ -19,7 +19,7 @@ tests = [
   # nothing with it, so first (1+1) is
   # printed, and then the result of that is
   # printed again.
-  "(1+1)print print"
+  "console print_(console print_ 1+1)"
   "22"
 
   # ---------------------------------------------------------------------------
@@ -28,101 +28,101 @@ tests = [
   # more difficult to decypher.
   #
   # The semicolon separates stataments.
-  "'a ← \"test string\"; 'b ← a; 'c ← 'a; 'a eval print;'b eval print;'c eval print"
+  "'a ← \"test string\"; 'b ← a; 'c ← 'a; console print_ 'a eval;console print_ 'b eval;console print_ 'c eval"
   "test stringtest stringa"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
 
   # the equal sign is less technically thorough but
   # it's move obvious from anybody coming from a mainstream language.
-  "a=\"test string\";b=a;c='a;'a eval print;'b eval print;'c eval print"
+  "a=\"test string\";b=a;c='a;console print_ 'a eval;console print_ 'b eval;console print_ 'c eval"
   "test stringtest stringa"
 
-  # the three "'x eval print" above are equivalent to "x print"
-  "a=\"test string\";b=a;c='a;a print;b print;c print"
+  # the three "console print_ 'x eval" above are equivalent to "console print_ x"
+  "a=\"test string\";b=a;c='a;console print_ a;console print_ b;console print_ c"
   "test stringtest stringa"
 
   # ---------------------------------------------------------------------------
-  "'a←5;a incrementInPlace;'a←a+1;a print"
+  "'a←5;a incrementInPlace;'a←a+1;console print_ a"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5;a incrementInPlace;a=a+1;a print"
+  "a=5;a incrementInPlace;a=a+1;console print_ a"
   "7"
 
   # ---------------------------------------------------------------------------
   # the powers and dangers of mutating numbers in place
-  "a=1;b=a;a print;b print;a incrementInPlace; a print; b print"
+  "a=1;b=a;console print_ a;console print_ b;a incrementInPlace;console print_ a;console print_ b"
   "1122"
 
   # ---------------------------------------------------------------------------
   # testing crazy statement separations
 
-  "'a←5;;a incrementInPlace; ;;;  ;'a←a+1;a print"
+  "'a←5;;a incrementInPlace; ;;;  ;'a←a+1;console print_ a"
   "7"
 
-  ";'a←5;;a incrementInPlace; ;;;  ;'a←a+1;a print;"
+  ";'a←5;;a incrementInPlace; ;;;  ;'a←a+1;console print_ a;"
   "7"
 
-  ";;'a←5;;a incrementInPlace; ;;;  ;'a←a+1;a print;;"
+  ";;'a←5;;a incrementInPlace; ;;;  ;'a←a+1;console print_ a;;"
   "7"
 
-  "; ;'a←5;;a incrementInPlace; ;;;  ;'a←a+1;a print; ;"
+  "; ;'a←5;;a incrementInPlace; ;;;  ;'a←a+1;console print_ a; ;"
   "7"
 
-  ";;;'a←5;;a incrementInPlace; ;;;  ;'a←a+1;a print;;;"
+  ";;;'a←5;;a incrementInPlace; ;;;  ;'a←a+1;console print_ a;;;"
   "7"
 
   # ---------------------------------------------------------------------------
-  "'a←5;'a←a+1;a incrementInPlace print"
+  "'a←5;'a←a+1;console print_ a incrementInPlace"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5;a=a+1;a incrementInPlace print"
+  "a=5;a=a+1;console print_ a incrementInPlace"
   "7"
 
   # ---------------------------------------------------------------------------
-  "'a←5+1;a incrementInPlace print"
+  "'a←5+1;console print_ a incrementInPlace"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5+1;a incrementInPlace print"
+  "a=5+1;console print_ a incrementInPlace"
   "7"
 
   # ---------------------------------------------------------------------------
-  "'a←(5+1);a incrementInPlace print"
+  "'a←(5+1);console print_ a incrementInPlace"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=(5+1);a incrementInPlace print"
+  "a=(5+1);console print_ a incrementInPlace"
   "7"
 
   # ---------------------------------------------------------------------------
-  "(4+1+1)print"
+  "console print_ 4+1+1"
   "6"
 
   # ---------------------------------------------------------------------------
-  "'a←(4+1+1);a incrementInPlace print"
+  "'a←(4+1+1);console print_ a incrementInPlace"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=(4+1+1);a incrementInPlace print"
+  "a=(4+1+1);console print_ a incrementInPlace"
   "7"
 
   # ---------------------------------------------------------------------------
-  "'a←(4 +(1+1));a incrementInPlace print"
+  "'a←(4 +(1+1));console print_ a incrementInPlace"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=(4 +(1+1));a incrementInPlace print"
+  "a=(4 +(1+1));console print_ a incrementInPlace"
   "7"
 
   # ---------------------------------------------------------------------------
-  "'a←((4+1)+(0+1));a incrementInPlace print"
+  "'a←((4+1)+(0+1));console print_ a incrementInPlace"
   "7"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=((4+1)+(0+1));a incrementInPlace print"
+  "a=((4+1)+(0+1));console print_ a incrementInPlace"
   "7"
 
   # ---------------------------------------------------------------------------
@@ -134,84 +134,84 @@ tests = [
   "77"
 
   # ---------------------------------------------------------------------------
-  "7 print print"
+  "console print_ console print_ 7"
   "77"
 
   # ---------------------------------------------------------------------------
-  "(6 doublePrint+1)print"
+  "console print_ 6 doublePrint+1"
   "667"
 
   # ---------------------------------------------------------------------------
-  "6 doublePrint+1 print"
+  "6 doublePrint + console print_ 1"
   "661"
 
   # ---------------------------------------------------------------------------
-  "(4+3)print"
+  "console print_ 4+3"
   "7"
 
   # ---------------------------------------------------------------------------
-  "(4+3 print)print"
-  "37"
+  "console print_ console print_ 4+3"
+  "77"
 
   # ---------------------------------------------------------------------------
-  "(4 +(2+1))print"
+  "console print_ (4 +(2+1))"
   "7"
 
   # ---------------------------------------------------------------------------
-  "4 +(2+1)print"
+  "4 + console print_ 2+1"
   "3"
 
   # ---------------------------------------------------------------------------
-  "4+2+1 print"
+  "4+2+ console print_ 1"
   "1"
 
   # ---------------------------------------------------------------------------
-  "('(1+1))print"
+  "console print_ ('(1+1))"
   "( 1 + 1 )"
 
   # ---------------------------------------------------------------------------
   # the ' still ties to the first element
   # that comes after it i.e. ( 1+1 )
-  "'(1+1)print"
+  "console print_ '(1+1)"
   "( 1 + 1 )"
 
   # ---------------------------------------------------------------------------
-  "('(1+1))length print"
+  "console print_ ('(1+1))length"
   "3"
 
   # ---------------------------------------------------------------------------
-  "'(1+1)length print"
+  "console print_ '(1+1)length"
   "3"
 
   # ---------------------------------------------------------------------------
-  "(('(1+1))eval)print"
+  "console print_ (('(1+1))eval)"
   "2"
 
   # ---------------------------------------------------------------------------
-  "('(1+1))eval print"
+  "console print_ ('(1+1))eval"
   "2"
 
   # ---------------------------------------------------------------------------
-  "'(1+1)eval print"
+  "console print_ '(1+1)eval"
   "2"
 
   # ---------------------------------------------------------------------------
-  "'a←5;'b←'a;b print;a print"
+  "'a←5;'b←'a;console print_ b;console print_ a"
   "a5"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5;b='a;b print;a print"
+  "a=5;b='a;console print_ b;console print_ a"
   "a5"
 
   # ---------------------------------------------------------------------------
-  "true negate print"
+  "console print_ true negate"
   "false"
 
   # ---------------------------------------------------------------------------
   # note how the first not understood
   # prevents any further statement to be
   # executed
-  "1 negate; 2 print"
+  "1 negate; console print_ 2"
   "! message was not understood: ( negate )"
 
   # ---------------------------------------------------------------------------
@@ -221,11 +221,11 @@ tests = [
   "! message was not understood: ( 1 print )"
 
   # ---------------------------------------------------------------------------
-  "negate print"
+  "console print_ negate"
   "nil"
 
   # ---------------------------------------------------------------------------
-  "negate print; negate = 2; negate print; negate = nil; negate print; negate +"
+  "console print_ negate; negate = 2; console print_ negate; negate = nil; console print_ negate; negate +"
   "nil2nil! exception: message to nil: +"
 
   # ---------------------------------------------------------------------------
@@ -233,14 +233,14 @@ tests = [
   # "a" doesn't know what to do with it, so it returns itself
   # and "b" remains unconsumed.
   # So the assignment will assign "a" to a, then it will mandate
-  # a new receiver. The new receiver will be "b. a print" (the
+  # a new receiver. The new receiver will be "b. console print_ a" (the
   # semicolon separating the statements
   # comes from the linearisation), which was still
   # there to be consumed. "b." will just return itself and do nothing,
-  # so then "a print" will be run, which results in "a"
+  # so then "console print_ a" will be run, which results in "a"
   """
   a = "a" "b"
-  a print
+  console print_ a
   """
   """
   a
@@ -251,87 +251,125 @@ tests = [
   ""
 
   # ---------------------------------------------------------------------------
-  "1 == 1 negate; 2 print"
+  "1 == 1 negate; console print_ 2"
   "2"
 
   # ---------------------------------------------------------------------------
-  "(false and false)print"
+  "console print_ false and false"
   "false"
 
   # ---------------------------------------------------------------------------
-  "(false and true)print"
+  "console print_ false and true"
   "false"
 
   # ---------------------------------------------------------------------------
-  "(true and false)print"
+  "console print_ true and false"
   "false"
 
   # ---------------------------------------------------------------------------
-  "(true and true)print"
+  "console print_ true and true"
   "true"
 
   # ---------------------------------------------------------------------------
-  "(false or false)print"
+  "console print_ false or false"
   "false"
 
   # ---------------------------------------------------------------------------
-  "(false or true)print"
+  "console print_ false or true"
   "true"
 
   # ---------------------------------------------------------------------------
-  "(true or false)print"
+  "console print_ true or false"
   "true"
 
   # ---------------------------------------------------------------------------
-  "(true or true)print"
+  "console print_ true or true"
   "true"
 
   # ---------------------------------------------------------------------------
-  "(not true)print"
+  "console print_ not true"
   "false"
 
   # ---------------------------------------------------------------------------
-  "(not not true)print"
+  "console print_ not(not true)"
+  "true"
+
+  "console print_ not not true"
+  "true"
+
+  "console print_ (not not true)"
   "true"
 
   # ---------------------------------------------------------------------------
-  "(not not not true)print"
+  "console print_ (not not not true)"
+  "false"
+
+  "console print_ not not not true"
   "false"
 
   # ---------------------------------------------------------------------------
-  "(not not not not true)print"
+  "console print_ (not not not not true)"
+  "true"
+
+  "console print_ not not not not true"
   "true"
 
   # ---------------------------------------------------------------------------
-  "true⇒(1 print)"
+  "true⇒(console print_ 1)"
   "1"
 
+  # Boolean's "⇒" message cannot evaluate
+  # its argument automatically (because if it's
+  # false obviously it can't evaluate it), so this means
+  # it must pick the true branch literally, which means it
+  # must be in parens. Here "console" is picked, then the
+  # "remaing part" of the message is considered to be the
+  # false brench and is hence discarded.
+  "true⇒console print_ 1"
+  ""
+
   # ---------------------------------------------------------------------------
-  "false⇒(1 print)2 print"
+  "false⇒(console print_ 1)console print_ 2"
   "2"
 
   # ---------------------------------------------------------------------------
-  "(0==0)print"
+  "console print_ (0==0)"
+  "true"
+
+  "console print_ 0==0"
   "true"
 
   # ---------------------------------------------------------------------------
-  "(1==0)print"
+  "console print_ (1==0)"
+  "false"
+
+  "console print_ 1==0"
   "false"
 
   # ---------------------------------------------------------------------------
-  "(0 amIZero)print"
+  "console print_ (0 amIZero)"
+  "true"
+
+  "console print_ 0 amIZero"
   "true"
 
   # ---------------------------------------------------------------------------
-  "(1 amIZero)print"
+  "console print_ (1 amIZero)"
+  "false"
+
+  "console print_ 1 amIZero"
   "false"
 
   # ---------------------------------------------------------------------------
-  "(8 minus 1)print"
+  "console print_ (8 minus 1)"
+  "7"
+
+  "console print_ 8 minus 1"
   "7"
 
   # ---------------------------------------------------------------------------
-  "true⇒(1 print)2 print"
+  # can't remove those parens!
+  "true⇒(console print_ 1)console print_ 2"
   "1"
 
   # ---------------------------------------------------------------------------
@@ -339,7 +377,7 @@ tests = [
   a=5
 
   if a==5:
-  ﹍"yes a is 5" print
+  ﹍console print_ "yes a is 5"
   """
   "yes a is 5"
 
@@ -348,8 +386,8 @@ tests = [
   a=5
 
   if a==5:
-  ﹍"yes a is 5" print
-  ". the end." print
+  ﹍console print_ "yes a is 5"
+  console print_ ". the end."
   """
   "yes a is 5. the end."
 
@@ -358,10 +396,10 @@ tests = [
   a=5
 
   if a==5:
-  ﹍"yes a is 5" print
+  ﹍console print_ "yes a is 5"
   else:
-  ﹍"no a is not 5" print
-  ". the end." print
+  ﹍console print_ "no a is not 5"
+  console print_ ". the end."
   """
   "yes a is 5. the end."
 
@@ -370,10 +408,10 @@ tests = [
   a=0
 
   if a==5:
-  ﹍"yes a is 5" print
+  ﹍console print_ "yes a is 5"
   else:
-  ﹍"no a is not 5" print
-  ". the end." print
+  ﹍console print_ "no a is not 5"
+  console print_ ". the end."
   """
   "no a is not 5. the end."
 
@@ -382,57 +420,57 @@ tests = [
   a=0
 
   if a==5:
-  ﹍"yes a is 5" print
-  "the end." print
+  ﹍console print_ "yes a is 5"
+  console print_ "the end."
   """
   "the end."
 
   # ---------------------------------------------------------------------------
-  "0 factorial print"
+  "console print_ 0 factorial"
   "1"
 
   # ---------------------------------------------------------------------------
-  "1 factorial print"
+  "console print_ 1 factorial"
   "1"
 
   # ---------------------------------------------------------------------------
-  "2 factorial print"
+  "console print_ 2 factorial"
   "2"
 
   # ---------------------------------------------------------------------------
-  "7 factorial print"
+  "console print_ 7 factorial"
   "5040"
 
   # ---------------------------------------------------------------------------
-  "0 factorialtwo print"
+  "console print_ 0 factorialtwo"
   "1"
 
   # ---------------------------------------------------------------------------
-  "1 factorialtwo print"
+  "console print_ 1 factorialtwo"
   "1"
 
   # ---------------------------------------------------------------------------
-  "2 factorialtwo print"
+  "console print_ 2 factorialtwo"
   "2"
 
   # ---------------------------------------------------------------------------
-  "7 factorialtwo print"
+  "console print_ 7 factorialtwo"
   "5040"
 
   # ---------------------------------------------------------------------------
-  "7 factorialthree print"
+  "console print_ 7 factorialthree"
   "76543215040"
 
   # ---------------------------------------------------------------------------
-  "7 factorialfour print"
+  "console print_ 7 factorialfour"
   "5040"
 
   # ---------------------------------------------------------------------------
-  "7 factorialfive print"
+  "console print_ 7 factorialfive"
   "5040"
 
   # ---------------------------------------------------------------------------
-  "7 selftimesminusone print"
+  "console print_ 7 selftimesminusone"
   "42"
 
   # ---------------------------------------------------------------------------
@@ -444,11 +482,11 @@ tests = [
   "5"
 
   # ---------------------------------------------------------------------------
-  "'a←5;repeat1((a==0)⇒(done)'a←a minus 1);a print"
+  "'a←5;repeat1((a==0)⇒(done)'a←a minus 1);console print_ a"
   "0"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5;repeat1((a==0)⇒(done)a=a minus 1);a print"
+  "a=5;repeat1((a==0)⇒(done)a=a minus 1);console print_ a"
   "0"
 
   # ---------------------------------------------------------------------------
@@ -459,7 +497,7 @@ tests = [
   ﹍﹍done
   ﹍'a←a minus 1
   
-  a print
+  console print_ a
   """
   "0"
 
@@ -471,7 +509,7 @@ tests = [
   ﹍﹍done
   ﹍a=a minus 1
   
-  a print
+  console print_ a
   """
   "0"
 
@@ -482,7 +520,7 @@ tests = [
   ﹍(a==0)⇒
   ﹍﹍done
   ﹍'a←a minus 1
-  ;a print
+  ;console print_ a
   """
   "0"
 
@@ -493,7 +531,7 @@ tests = [
   ﹍(a==0)⇒
   ﹍﹍done
   ﹍a=a minus 1
-  ;a print
+  ;console print_ a
   """
   "0"
 
@@ -506,7 +544,7 @@ tests = [
   ﹍(a==0)⇒
   ﹍﹍done
   ﹍'a←a minus 1
-  a print
+  console print_ a
   """
   "0"
 
@@ -518,7 +556,7 @@ tests = [
   ﹍(a==0)⇒
   ﹍﹍done
   ﹍a=a minus 1
-  a print
+  console print_ a
   """
   "0"
 
@@ -531,7 +569,7 @@ tests = [
   ﹍﹍done
   ﹍else:
   ﹍﹍a=a minus 1
-  a print
+  console print_ a
   """
   "0"
 
@@ -545,7 +583,7 @@ tests = [
   ﹍﹍done
   ﹍else:
   ﹍﹍a=a minus 1
-  a print
+  console print_ a
   """
   "0"
 
@@ -556,52 +594,52 @@ tests = [
   repeat 2:
   ﹍a=a minus 1
   if a==3:
-  ﹍"yes a is 3" print
+  ﹍console print_ "yes a is 3"
   """
   "yes a is 3"
 
   # ---------------------------------------------------------------------------
   """
   a=5
-  a print
-  b print
+  console print_ a
+  console print_ b
   repeat 2:
   ﹍a=a minus 1
   ﹍b = 0
   ﹍c = 0
-  a print
-  b print
-  c print
+  console print_ a
+  console print_ b
+  console print_ c
   """
   "5nil300"
 
 
   # ---------------------------------------------------------------------------
-  "'a←5;repeat1((a==0)⇒(done)'a←a minus 1)print"
+  "'a←5;console print_ repeat1((a==0)⇒(done)'a←a minus 1)"
   "Done_object"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5;repeat1((a==0)⇒(done)a=a minus 1)print"
+  "a=5;console print_ repeat1((a==0)⇒(done)a=a minus 1)"
   "Done_object"
 
   # ---------------------------------------------------------------------------
   # "done" stop the execution from within a loop,
   # nothing is executed after them
-  "'a←5;repeat1((a==0)⇒(done; 2 print)'a←a minus 1);a print"
+  "'a←5;repeat1((a==0)⇒(done; console print_ 2)'a←a minus 1);console print_ a"
   "0"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5;repeat1((a==0)⇒(done; 2 print)a=a minus 1);a print"
+  "a=5;repeat1((a==0)⇒(done; console print_ 2)a=a minus 1);console print_ a"
   "0"
 
   # ---------------------------------------------------------------------------
-  "'a←5;repeat1\
-    ((a==0)⇒(done with a+1)'a←a minus 1)print"
+  "'a←5;console print_ repeat1\
+    ((a==0)⇒(done with a+1)'a←a minus 1)"
   "1"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5;repeat1\
-    ((a==0)⇒(done with a+1)a=a minus 1)print"
+  "a=5;console print_ repeat1\
+    ((a==0)⇒(done with a+1)a=a minus 1)"
   "1"
 
   # ---------------------------------------------------------------------------
@@ -609,11 +647,11 @@ tests = [
   "Class_object"
 
   # ---------------------------------------------------------------------------
-  "'something←3;something print"
+  "'something←3;console print_ something"
   "3"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "something=3;something print"
+  "something=3;console print_ something"
   "3"
 
   # ---------------------------------------------------------------------------
@@ -626,22 +664,22 @@ tests = [
 
   # ---------------------------------------------------------------------------
 
-  "Number answer:(aaa(operandum))by:(operandum print);1 aaa 1"
+  "Number answer:(aaa(operandum))by:(console print_ operandum);1 aaa 1"
   "1"
 
   # ---------------------------------------------------------------------------
   "'MyClass←Class new;\
-    MyClass answer:(printtwo)by'(self print);\
+    MyClass answer:(printtwo)by'(console print_ self);\
     'myObject←MyClass new;myObject printtwo"
   "object_from_a_user_class"
 
   "'MyClass←Class new;\
-    MyClass answer:(printtwo)by:(self print);\
+    MyClass answer:(printtwo)by:(console print_ self);\
     'myObject←MyClass new;myObject printtwo"
   "object_from_a_user_class"
 
   "'MyClass←Class new;\
-    MyClass answer:(printtwo)by:(@ print);\
+    MyClass answer:(printtwo)by:(console print_ @);\
     'myObject←MyClass new;myObject printtwo"
   "object_from_a_user_class"
 
@@ -651,7 +689,7 @@ tests = [
   MyClass answer:
   ﹍printtwo
   by:
-  ﹍self print
+  ﹍console print_ self
   myObject = MyClass new
   myObject printtwo
   """
@@ -662,71 +700,71 @@ tests = [
   MyClass answer:
   ﹍printtwo
   by:
-  ﹍@ print
+  ﹍console print_ @
   myObject = MyClass new
   myObject printtwo
   """
   "object_from_a_user_class"
 
   # ---------------------------------------------------------------------------
-  "'false←true;false⇒(1 print)2 print"
+  "'false←true;false⇒(console print_ 1)console print_ 2"
   "1"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "false=true;false⇒(1 print)2 print"
+  "false=true;false⇒(console print_ 1)console print_ 2"
   "1"
 
   # ---------------------------------------------------------------------------
-  "'temp←true;'true←false;'false←temp;false⇒(1 print)2 print"
+  "'temp←true;'true←false;'false←temp;false⇒(console print_ 1)console print_ 2"
   "1"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "temp=true;true=false;false=temp;false⇒(1 print)2 print"
+  "temp=true;true=false;false=temp;false⇒(console print_ 1)console print_ 2"
   "1"
 
   # ---------------------------------------------------------------------------
-  "'temp←true;'true←false;'false←temp;true⇒(1 print)2 print"
+  "'temp←true;'true←false;'false←temp;true⇒(console print_ 1)console print_ 2"
   "2"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "temp=true;true=false;false=temp;true⇒(1 print)2 print"
+  "temp=true;true=false;false=temp;true⇒(console print_ 1)console print_ 2"
   "2"
 
   # ---------------------------------------------------------------------------
   """
   "world" = "Dave"
-  "Hello " print
-  "world" print
+  console print_ "Hello "
+  console print_ "world"
   """
   "Hello Dave"
 
   # ---------------------------------------------------------------------------
-  "'2←10;2 print"
+  "'2←10;console print_ 2"
   "10"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "2=10;2 print"
+  "2=10;console print_ 2"
   "10"
 
   # ---------------------------------------------------------------------------
-  "' & ← '; & a←8;a print"
+  "' & ← '; & a←8;console print_ a"
   "8"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "& = '; & a←8;a print"
+  "& = '; & a←8;console print_ a"
   "8"
 
   # ---------------------------------------------------------------------------
-  "(4*2)times(1 print)"
+  "(4*2)times(console print_ 1)"
   "11111111"
 
   # ---------------------------------------------------------------------------
-  "for k from(1)to(10):(k print)"
+  "for k from(1)to(10):(console print_ k)"
   "12345678910"
 
   # ---------------------------------------------------------------------------
 
-  "for k from 1 to 10 :(k print)"
+  "for k from 1 to 10 :(console print_ k)"
   "12345678910"
 
   # ---------------------------------------------------------------------------
@@ -736,22 +774,22 @@ tests = [
   to
   ﹍10
   :
-  ﹍k print
-  "done" print
+  ﹍console print_ k
+  console print_ "done"
   """
   "12345678910done"
 
   # ---------------------------------------------------------------------------
   """
-  localTemp print
+  console print_ localTemp
   for k from
   ﹍1
   to
   ﹍1
   :
   ﹍localTemp = " - local temp"
-  ﹍localTemp print
-  localTemp print
+  ﹍console print_ localTemp
+  console print_ localTemp
   """
   "nil - local temp - local temp"
 
@@ -759,8 +797,8 @@ tests = [
   """
   for k from 1 to 1:
   ﹍localTemp = "local temp "
-  ﹍localTemp print
-  localTemp print
+  ﹍console print_ localTemp
+  console print_ localTemp
   """
   "local temp local temp "
 
@@ -772,17 +810,17 @@ tests = [
 
   """
   j = 1
-  j print
-  k print
+  console print_ j
+  console print_ k
   for k from 1 to 2:
   ﹍j = k
-  ﹍j print
-  ﹍k print
+  ﹍console print_ j
+  ﹍console print_ k
   ﹍l = k
   ﹍
-  j print
-  k print
-  l print
+  console print_ j
+  console print_ k
+  console print_ l
   """
   "1nil11222nil2"
 
@@ -796,19 +834,19 @@ tests = [
 
 
   # ---------------------------------------------------------------------------
-  "\"hello world\" print"
+  "console print_ \"hello world\""
   "hello world"
 
   # ---------------------------------------------------------------------------
-  "('(1)+2)print"
+  "console print_ ('(1)+2)"
   "( 1 2 )"
 
   # ---------------------------------------------------------------------------
-  "('(1)+(2+1))print"
+  "console print_ ('(1)+(2+1))"
   "( 1 3 )"
 
   # ---------------------------------------------------------------------------
-  "('()+\"how to enclose something in a list\")print"
+  "console print_ ('()+\"how to enclose something in a list\")"
   "( \"how to enclose something in a list\" )"
 
   # ---------------------------------------------------------------------------
@@ -817,36 +855,36 @@ tests = [
   # is evaluated. If you want to pass
   # a list you need to quote it, see
   # afterwards
-  "('(1)+(2))print"
+  "console print_ ('(1)+(2))"
   "( 1 2 )"
 
   # ---------------------------------------------------------------------------
-  "('(1)+'(2))print"
+  "console print_ ('(1)+'(2))"
   "( 1 ( 2 ) )"
 
   # ---------------------------------------------------------------------------
-  "('((1))+2)print"
+  "console print_ ('((1))+2)"
   "( ( 1 ) 2 )"
 
   # ---------------------------------------------------------------------------
-  "('((1))+'(2))print"
+  "console print_ ('((1))+'(2))"
   "( ( 1 ) ( 2 ) )"
 
   # ---------------------------------------------------------------------------
-  "'myList←List new;myList print;'myList←myList+2;myList print"
+  "'myList←List new;console print_ myList;'myList←myList+2;console print_ myList"
   "empty message( 2 )"
 
   # ---------------------------------------------------------------------------
-  "'myString←String new;myString print;\
+  "'myString←String new;console print_ myString;\
     'myString←myString+\"Hello \";\
     'myString←myString+\"world\";\
-    myString print"
+    console print_ myString"
   "Hello world"
 
   # ---------------------------------------------------------------------------
   "'MyClass←Class new;MyClass.counter = nil;\
     MyClass answer:(setCounterToTwo)by:(self.counter←2);\
-    MyClass answer:(printCounter)by:(self.counter print);\
+    MyClass answer:(printCounter)by:(console print_ self.counter);\
     'myObject←MyClass new;myObject printCounter;\
     myObject setCounterToTwo;myObject printCounter;\
     'myObject2←MyClass new;myObject2 printCounter;\
@@ -867,7 +905,7 @@ tests = [
   MyClass answer:
   ﹍﹍printCounter
   ﹍by:
-  ﹍﹍self.counter print
+  ﹍﹍console print_ self.counter
 
   myObject = MyClass new
   myObject printCounter
@@ -895,7 +933,7 @@ tests = [
   MyClass answer:
   ﹍﹍printCounter
   ﹍by:
-  ﹍﹍@counter print
+  ﹍﹍console print_ @counter
 
   myObject = MyClass new
   myObject printCounter
@@ -913,14 +951,14 @@ tests = [
   "'MyClass←Class new;MyClass.counter = nil;\
     MyClass answer:(setCounterToTwo)by:(self.counter←2);\
     'myObject←MyClass new;\
-    myObject setCounterToTwo;myObject's counter print"
+    myObject setCounterToTwo;console print_ myObject's counter"
   "2"
 
   # ---------------------------------------------------------------------------
   "'MyClass←Class new;MyClass.counter = nil;\
     MyClass answer:(setCounterToTwo)by:(self.counter←2);\
     'myObject←MyClass new;\
-    myObject setCounterToTwo;myObject.counter print"
+    myObject setCounterToTwo;console print_ myObject.counter"
   "2"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
@@ -935,7 +973,7 @@ tests = [
   ﹍self.counter = 2
   myObject = MyClass new
   myObject setCounterToTwo
-  myObject.counter print
+  console print_ myObject.counter
   """
   "2"
 
@@ -951,7 +989,7 @@ tests = [
   ﹍@counter = 2
   myObject = MyClass new
   myObject setCounterToTwo
-  myObject.counter print
+  console print_ myObject.counter
   """
   "2"
 
@@ -971,7 +1009,7 @@ tests = [
   myObject3.link = myObject4
   myObject4.link = "the end"
 
-  myObject.link.link.link.link print
+  console print_ myObject.link.link.link.link
   """
   "the end"
 
@@ -979,7 +1017,7 @@ tests = [
   """
   codeToBeRun ='
   ﹍counter=2
-  codeToBeRun print
+  console print_ codeToBeRun
   """
   "( counter = 2 )"
 
@@ -988,7 +1026,7 @@ tests = [
   """
   "codeToBeRun" ='
   ﹍counter=2
-  "codeToBeRun" print
+  console print_ "codeToBeRun"
   """
   "( counter = 2 )"
 
@@ -998,13 +1036,13 @@ tests = [
   little = "hello"
   array = false
   myLittleArray =' (my little array)
-  myLittleArray print
-  (myLittleArray[0]+1) print
-  (myLittleArray[1]) print
+  console print_ myLittleArray
+  console print_ myLittleArray[0]+1
+  console print_ myLittleArray[1]
   if myLittleArray[2]:
-  ﹍"true!" print
+  ﹍console print_ "true!"
   else:
-  ﹍"false!" print
+  ﹍console print_ "false!"
   """
   "( 1 \"hello\" false )2hellofalse!"
 
@@ -1013,14 +1051,14 @@ tests = [
   # a token containing a list doesn't cause
   # the list to be run
   """
-  myArray =' (1 print)
+  myArray =' (console print_ 1)
   myArray
   """
   ""
 
   # classic "explicit" eval
   """
-  myArray =' (1 print)
+  myArray =' (console print_ 1)
   myArray eval
   """
   "1"
@@ -1037,7 +1075,7 @@ tests = [
   """
   op1 = 2
   codeToBeRun ='
-  ﹍(op1+op2) print
+  ﹍console print_ (op1+op2)
   op2 = 3
   codeToBeRun eval
   op2 = 6
@@ -1060,9 +1098,9 @@ tests = [
   ﹍codeToBeRun eval
   myObject=MyClass new
   myObject setCounterToTwo
-  myObject's counter print
+  console print_ myObject's counter
   myObject's counter = 3
-  myObject's counter print
+  console print_ myObject's counter
   """
 
   "23"
@@ -1080,9 +1118,9 @@ tests = [
   ﹍codeToBeRun eval
   myObject=MyClass new
   myObject setCounterToTwo
-  myObject.counter print
+  console print_ myObject.counter
   myObject.counter = 3
-  myObject.counter print
+  console print_ myObject.counter
   """
 
   "23"
@@ -1100,13 +1138,13 @@ tests = [
   ﹍codeToBeRun eval
   myObject=MyClass new
   myObject setCounterToTwo
-  myObject's counter print
+  console print_ myObject's counter
   in
   ﹍myObject
   do
   ﹍self's counter = 3
-  myObject's counter print
-  (myObject's counter+myObject's counter) print
+  console print_ myObject's counter
+  console print_ myObject's counter+myObject's counter
   """
 
   "236"
@@ -1124,13 +1162,13 @@ tests = [
   ﹍codeToBeRun eval
   myObject=MyClass new
   myObject setCounterToTwo
-  myObject.counter print
+  console print_ myObject.counter
   in
   ﹍myObject
   do
   ﹍self.counter = 3
-  myObject.counter print
-  (myObject.counter+myObject.counter) print
+  console print_ myObject.counter
+  console print_ myObject.counter+myObject.counter
   """
 
   "236"
@@ -1148,13 +1186,13 @@ tests = [
   ﹍codeToBeRun eval
   myObject=MyClass new
   myObject setCounterToTwo
-  myObject.counter print
+  console print_ myObject.counter
   in
   ﹍myObject
   do
   ﹍@counter = 3
-  myObject.counter print
-  (myObject.counter+myObject.counter) print
+  console print_ myObject.counter
+  console print_ myObject.counter+myObject.counter
   """
 
   "236"
@@ -1170,7 +1208,7 @@ tests = [
   MyClass answer:
   ﹍printtwo (argument)
   by:
-  ﹍argument print
+  ﹍console print_ argument
   myObject = MyClass new
   myObject printtwo "hello"
   """
@@ -1183,7 +1221,7 @@ tests = [
   MyClass answer:
   ﹍printtwo (argument)
   by:
-  ﹍argument print
+  ﹍console print_ argument
   myObject = MyClass new
   myObject.printtwo "hello"
   """
@@ -1191,7 +1229,7 @@ tests = [
 
   # ---------------------------------------------------------------------------
   # FLTO
-  "to sayHello: (withName (name)) do: (\"Hello \" print; name print); sayHello withName \"Dave\""
+  "to sayHello: (withName (name)) do: (console print_ \"Hello \";console print_ name); sayHello withName \"Dave\""
   "Hello Dave"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
@@ -1200,7 +1238,7 @@ tests = [
   to sayHello:
   ﹍﹍withName (name)
   ﹍do:
-  ﹍﹍"Hello " print; name print
+  ﹍﹍console print_ "Hello "; console print_ name
   sayHello withName "Dave"
   """
   "Hello Dave"
@@ -1211,8 +1249,8 @@ tests = [
   to sayHello:
   ﹍﹍withName (name)
   ﹍do:
-  ﹍﹍"Hello " print
-  ﹍﹍name print
+  ﹍﹍console print_ "Hello "
+  ﹍﹍console print_ name
   sayHello withName "Dave"
   """
   "Hello Dave"
@@ -1221,7 +1259,7 @@ tests = [
   # ---------------------------------------------------------------------------
   # FLTO
 
-  "to sayHello2: ((name)) do: (\"HELLO \" print; name print); sayHello2 \"Dave\""
+  "to sayHello2: ((name)) do: (console print_ \"HELLO \"; console print_ name); sayHello2 \"Dave\""
   "HELLO Dave"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
@@ -1230,14 +1268,14 @@ tests = [
   to sayHello2:
   ﹍﹍(name)
   ﹍do:
-  ﹍﹍"HELLO " print
-  ﹍﹍name print
+  ﹍﹍console print_ "HELLO "
+  ﹍﹍console print_ name
   sayHello2 "Dave"
   """
   "HELLO Dave"
 
   # ---------------------------------------------------------------------------
-  "'( \"Hello \" \"Dave \" \"my \" \"dear \" \"friend\") each word do (word print)"
+  "'( \"Hello \" \"Dave \" \"my \" \"dear \" \"friend\") each word do (console print_ word)"
   "Hello Dave my dear friend"
 
   # ---------------------------------------------------------------------------
@@ -1245,7 +1283,7 @@ tests = [
   for each word in '
   ﹍"Hello " "Dave " "my " "dear " "friend"
   do:
-  ﹍word print
+  ﹍console print_ word
   """
   "Hello Dave my dear friend"
 
@@ -1254,7 +1292,7 @@ tests = [
   for each word in:
   ﹍"Hello " "Dave " "my " "dear " "friend"
   do:
-  ﹍word print
+  ﹍console print_ word
   """
   "Hello Dave my dear friend"
 
@@ -1267,14 +1305,14 @@ tests = [
   ﹍"dear "\\
   ﹍"friend"
   do:
-  ﹍word print
+  ﹍console print_ word
   """
   "Hello Dave my dear friend"
 
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
-  ﹍word print
+  ﹍console print_ word
   for each word in:
   ﹍"Hello " "Dave " "my " "dear " "friend"
   do:
@@ -1285,7 +1323,7 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
-  ﹍word print
+  ﹍console print_ word
   for each word in:
   ﹍"Hello " "Dave " "my " "dear " "friend"
   do:
@@ -1296,7 +1334,7 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
-  ﹍word print
+  ﹍console print_ word
   myList =' ("Hello " "Dave " "my " "dear " "friend")
   for each word in
   ﹍myList
@@ -1308,7 +1346,7 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
-  ﹍word print
+  ﹍console print_ word
   myList ='
   ﹍"Hello " "Dave " "my " "dear " "friend"
   for each word in
@@ -1321,7 +1359,7 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   codeToBeRun =:
-  ﹍word print
+  ﹍console print_ word
   myList =:
   ﹍"Hello " "Dave " "my " "dear " "friend"
   for each word in
@@ -1337,10 +1375,10 @@ tests = [
   # "Hello "
   """
   codeToBeRun ='
-  ﹍word print
+  ﹍console print_ word
   myList =
   ﹍("Hello " "Dave " "my " "dear " "friend")
-  myList print
+  console print_ myList
   for each word in
   ﹍myList
   do:
@@ -1354,7 +1392,7 @@ tests = [
   # un-wrapped contents, so it all works out without the ' after the =
   """
   codeToBeRun ='
-  ﹍word print
+  ﹍console print_ word
   myList =
   ﹍'("Hello " "Dave " "my " "dear " "friend")
   for each word in
@@ -1370,7 +1408,7 @@ tests = [
   # un-wrapped contents, so it all works out without the ' after the =
   """
   codeToBeRun ='
-  ﹍word print
+  ﹍console print_ word
   myList = '
   ﹍"Hello " "Dave " "my " "dear " "friend"
   for each word in
@@ -1387,7 +1425,7 @@ tests = [
   ﹍'(1 2 3 4)
   do:
   ﹍acc += number
-  acc print
+  console print_ acc
   """
   "10"
 
@@ -1398,7 +1436,7 @@ tests = [
   ﹍1 2 3 4
   do:
   ﹍acc += number
-  acc print
+  console print_ acc
   """
   "10"
 
@@ -1409,14 +1447,14 @@ tests = [
   ﹍1 2 3 4
   do:
   ﹍acc += number
-  acc print
+  console print_ acc
   """
   "10"
 
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
-  ﹍word print
+  ﹍console print_ word
   myList = 9
   for each word in
   ﹍myList
@@ -1426,49 +1464,49 @@ tests = [
   "! exception: for...each expects a list"
 
   # ---------------------------------------------------------------------------
-  "'someException ← Exception new initWith \"my custom error\"; someException print"
+  "'someException ← Exception new initWith \"my custom error\"; console print_ someException"
   "my custom error"
 
   # ---------------------------------------------------------------------------
   # wrong way to raise exceptions, they must be thrown
   "'someException ← Exception new initWith \"my custom error\";\
-    try: ( 1 print; someException )\
-    catch someException: ( \" caught the error I wanted\" print )"
+    try: ( console print_ 1; someException )\
+    catch someException: ( console print_ \" caught the error I wanted\" )"
   "1"
 
   # ---------------------------------------------------------------------------
   # wrong way to raise exceptions, they must be thrown
   "'someException ← Exception new initWith \"my custom error\";\
     'someOtherException ← Exception new initWith \"my other custom error\";\
-    try: ( 1 print; someException )\
-    catch someException: ( \" caught the error I wanted\" print )"
+    try: ( console print_ 1; someException )\
+    catch someException: ( console print_ \" caught the error I wanted\" )"
   "1"
 
   # ---------------------------------------------------------------------------
   # wrong way to raise exceptions, they must be thrown
   "'someException ← Exception new initWith \"my custom error\";\
     'someOtherException ← Exception new initWith \"my other custom error\";\
-    try: ( 1 print; someException )\
-    catch someOtherException: ( \" caught the error I wanted\" print )"
+    try: ( console print_ 1; someException )\
+    catch someOtherException: ( console print_ \" caught the error I wanted\" )"
   "1"
 
   # ---------------------------------------------------------------------------
   # thrown exception, note how the statement after the throw is not executed
   "'someException ← Exception new initWith \"my custom error\";\
-    try: ( 1 print; throw someException; 2 print )\
-    catch someException: ( \" caught the error I wanted\" print )"
+    try: ( console print_ 1; throw someException; console print_ 2 )\
+    catch someException: ( console print_ \" caught the error I wanted\" )"
   "1 caught the error I wanted"
 
   # ---------------------------------------------------------------------------
   """
   someException = Exception new initWith "my custom error"
   try:
-  ﹍1 print
+  ﹍console print_ 1
   ﹍throw someException
-  ﹍2 print
+  ﹍console print_ 2
   catch someException:
-  ﹍" caught the error I wanted" print
-  ". the end." print
+  ﹍console print_ " caught the error I wanted"
+  console print_ ". the end."
   """
   "1 caught the error I wanted. the end."
 
@@ -1476,8 +1514,8 @@ tests = [
   # thrown exception, note how the statement after the throw is not executed
   "'someException ← Exception new initWith \"my custom error\";\
     'someOtherException ← Exception new initWith \"my other custom error\";\
-    try: ( 1 print; throw someException; 2 print )\
-    catch someException: ( \" caught the error I wanted\" print )"
+    try: ( console print_ 1; throw someException; console print_ 2 )\
+    catch someException: ( console print_ \" caught the error I wanted\" )"
   "1 caught the error I wanted"
 
   # ---------------------------------------------------------------------------
@@ -1486,12 +1524,12 @@ tests = [
   someException = Exception new initWith "my custom error"
   someOtherException = Exception new initWith "my other custom error"
   try:
-  ﹍1 print
+  ﹍console print_ 1
   ﹍throw someException
-  ﹍2 print
+  ﹍console print_ 2
   catch someException:
-  ﹍" caught the error I wanted" print
-  ". the end." print
+  ﹍console print_ " caught the error I wanted"
+  console print_ ". the end."
   """
   "1 caught the error I wanted. the end."
 
@@ -1499,8 +1537,8 @@ tests = [
   # thrown exception, note how the statement after the throw is not executed
   "'someException ← Exception new initWith \"my custom error\";\
     'someOtherException ← Exception new initWith \"my other custom error\";\
-    try: ( 1 print; throw someException; 2 print )\
-    catch someOtherException: ( \" caught the error I wanted\" print )"
+    try: ( console print_ 1; throw someException; console print_ 2 )\
+    catch someOtherException: ( console print_ \" caught the error I wanted\" )"
   "1"
 
   # ---------------------------------------------------------------------------
@@ -1511,12 +1549,12 @@ tests = [
   someException = Exception new initWith "my custom error"
   someOtherException = Exception new initWith "my other custom error"
   try:
-  ﹍1 print
+  ﹍console print_ 1
   ﹍throw someException
-  ﹍2 print
+  ﹍console print_ 2
   catch someOtherException:
-  ﹍" caught the error I wanted" print
-  ". the end." print  
+  ﹍console print_ " caught the error I wanted"
+  console print_ ". the end."  
   """
   "1! exception: my custom error"
 
@@ -1524,9 +1562,9 @@ tests = [
   # thrown exception, note how the statement after the throw is not executed
   "'someException ← Exception new initWith \"my custom error\";\
     'someOtherException ← Exception new initWith \"my other custom error\";\
-    try: ( 1 print; throw someOtherException; 2 print )\
-    catch someOtherException: ( \" caught the error the first time around\" print)\
-    catch someException: ( \" caught the error the second time around\" print)"
+    try: ( console print_ 1; throw someOtherException; console print_ 2 )\
+    catch someOtherException: ( console print_ \" caught the error the first time around\")\
+    catch someException: ( console print_ \" caught the error the second time around\")"
   "1 caught the error the first time around"
 
   # ---------------------------------------------------------------------------
@@ -1534,23 +1572,23 @@ tests = [
   someException = Exception new initWith "my custom error"
   someOtherException = Exception new initWith "my other custom error"
   try:
-  ﹍1 print
+  ﹍console print_ 1
   ﹍throw someOtherException
-  ﹍2 print
+  ﹍console print_ 2
   catch someOtherException:
-  ﹍" caught the error the first time around" print
+  ﹍console print_ " caught the error the first time around"
   catch someException:
-  ﹍" caught the error the second time around" print
-  ". the end." print
+  ﹍console print_ " caught the error the second time around"
+  console print_ ". the end."
   """
   "1 caught the error the first time around. the end."
 
   # ---------------------------------------------------------------------------
   "'someException ← Exception new initWith \"my custom error\";\
     'someOtherException ← Exception new initWith \"my other custom error\";\
-    try: ( 1 print; throw someException; 2 print )\
-    catch someOtherException: ( \" caught the error the first time around\" print)\
-    catch someException: ( \" caught the error the second time around\" print)"
+    try: ( console print_ 1; throw someException; console print_ 2 )\
+    catch someOtherException: ( console print_ \" caught the error the first time around\")\
+    catch someException: ( console print_ \" caught the error the second time around\")"
   "1 caught the error the second time around"
 
   # ---------------------------------------------------------------------------
@@ -1558,14 +1596,14 @@ tests = [
   someException = Exception new initWith "my custom error"
   someOtherException = Exception new initWith "my other custom error"
   try:
-  ﹍1 print
+  ﹍console print_ 1
   ﹍throw someException
-  ﹍2 print
+  ﹍console print_ 2
   catch someOtherException:
-  ﹍" caught the error the first time around" print
+  ﹍console print_ " caught the error the first time around"
   catch someException:
-  ﹍" caught the error the second time around" print
-  ". the end." print
+  ﹍console print_ " caught the error the second time around"
+  console print_ ". the end."
   """
   "1 caught the error the second time around. the end."
 
@@ -1573,10 +1611,10 @@ tests = [
   # catch-all case 1
   "'someException ← Exception new initWith \"my custom error\";\
     'someOtherException ← Exception new initWith \"my other custom error\";\
-    try: ( 1 print; throw someOtherException; 2 print )\
-    catch someOtherException: ( \" caught the error the first time around\" print)\
-    catch someException: ( \" caught the error the second time around\" print)\
-    catch all: (\" catch all branch\" print)"
+    try: ( console print_ 1; throw someOtherException; console print_ 2 )\
+    catch someOtherException: ( console print_ \" caught the error the first time around\")\
+    catch someException: ( console print_ \" caught the error the second time around\")\
+    catch all: (console print_ \" catch all branch\")"
   "1 caught the error the first time around"
 
   # ---------------------------------------------------------------------------
@@ -1584,16 +1622,16 @@ tests = [
   someException = Exception new initWith "my custom error"
   someOtherException = Exception new initWith "my other custom error"
   try:
-  ﹍1 print
+  ﹍console print_ 1
   ﹍throw someOtherException
-  ﹍2 print
+  ﹍console print_ 2
   catch someOtherException:
-  ﹍" caught the error the first time around" print
+  ﹍console print_ " caught the error the first time around"
   catch someException:
-  ﹍" caught the error the second time around" print
+  ﹍console print_ " caught the error the second time around"
   catch all:
-  ﹍" catch all branch" print
-  ". the end." print
+  ﹍console print_ " catch all branch"
+  console print_ ". the end."
   """
   "1 caught the error the first time around. the end."
 
@@ -1601,10 +1639,10 @@ tests = [
   # catch-all case 2
   "'someException ← Exception new initWith \"my custom error\";\
     'someOtherException ← Exception new initWith \"my other custom error\";\
-    try: ( 1 print; throw someException; 2 print )\
-    catch someOtherException: ( \" caught the error the first time around\" print)\
-    catch someException: ( \" caught the error the second time around\" print)\
-    catch all: (\" catch all branch\" print)"
+    try: ( console print_ 1; throw someException; console print_ 2 )\
+    catch someOtherException: ( console print_ \" caught the error the first time around\")\
+    catch someException: ( console print_ \" caught the error the second time around\")\
+    catch all: (console print_ \" catch all branch\")"
   "1 caught the error the second time around"
 
   # ---------------------------------------------------------------------------
@@ -1612,16 +1650,16 @@ tests = [
   someException = Exception new initWith "my custom error"
   someOtherException = Exception new initWith "my other custom error"
   try:
-  ﹍1 print
+  ﹍console print_ 1
   ﹍throw someException
-  ﹍2 print
+  ﹍console print_ 2
   catch someOtherException:
-  ﹍" caught the error the first time around" print
+  ﹍console print_ " caught the error the first time around"
   catch someException:
-  ﹍" caught the error the second time around" print
+  ﹍console print_ " caught the error the second time around"
   catch all:
-  ﹍" catch all branch" print
-  ". the end." print
+  ﹍console print_ " catch all branch"
+  console print_ ". the end."
   """
   "1 caught the error the second time around. the end."
 
@@ -1630,10 +1668,10 @@ tests = [
   "'someException ← Exception new initWith \"my custom error\";\
     'someOtherException ← Exception new initWith \"my other custom error\";\
     'yetAnotherException ← Exception new initWith \"another custom error that is only caught by the catch all branch\";\
-    try: ( 1 print; throw yetAnotherException; 2 print )\
-    catch someOtherException: ( \" caught the error the first time around\" print)\
-    catch someException: ( \" caught the error the second time around\" print)\
-    catch all: (\" catch all branch\" print)"
+    try: ( console print_ 1; throw yetAnotherException; console print_ 2 )\
+    catch someOtherException: ( console print_ \" caught the error the first time around\")\
+    catch someException: ( console print_ \" caught the error the second time around\")\
+    catch all: (console print_ \" catch all branch\")"
   "1 catch all branch"
 
   # ---------------------------------------------------------------------------
@@ -1642,16 +1680,16 @@ tests = [
   someOtherException = Exception new initWith "my other custom error"
   yetAnotherException = Exception new initWith "another custom error that is only caught by the catch all branch"
   try:
-  ﹍1 print
+  ﹍console print_ 1
   ﹍throw yetAnotherException
-  ﹍2 print
+  ﹍console print_ 2
   catch someOtherException:
-  ﹍" caught the error the first time around" print
+  ﹍console print_ " caught the error the first time around"
   catch someException:
-  ﹍" caught the error the second time around" print
+  ﹍console print_ " caught the error the second time around"
   catch all:
-  ﹍" catch all branch" print
-  ". the end." print
+  ﹍console print_ " catch all branch"
+  console print_ ". the end."
   """
   "1 catch all branch. the end."
 
@@ -1661,15 +1699,15 @@ tests = [
   things =' ()
   things = things+3
   things = things+"hello"
-  things print
+  console print_ things
   """
   "( 3 \"hello\" )"
 
   # ---------------------------------------------------------------------------
   """
   myList =' ("Hello " "Dave " "my " "dear " "friend")
-  myList[0] print
-  myList[1+1] print
+  console print_ myList[0]
+  console print_ myList[1+1]
   """
   "Hello my "
 
@@ -1677,7 +1715,7 @@ tests = [
   """
   myList =' ("Hello " "Dave " "my " "dear " "friend")
   myList[1+1] = "oh "
-  myList print
+  console print_ myList
   """
   "( \"Hello \" \"Dave \" \"oh \" \"dear \" \"friend\" )"
 
@@ -1686,14 +1724,14 @@ tests = [
   numbers =' (9 3 2 5 7)
   myList =' ("Hello " "Dave " "my " "dear " "friend")
   myList[numbers[1+1]] = "oh "
-  myList print
+  console print_ myList
   """
   "( \"Hello \" \"Dave \" \"oh \" \"dear \" \"friend\" )"
 
   # ---------------------------------------------------------------------------
   """
   numbers =' (9 3 2 5 7)
-  (numbers[0]+numbers[1]) print
+  console print_ numbers[0]+numbers[1]
   """
   "12"
 
@@ -1701,7 +1739,7 @@ tests = [
   """
   numbers =' (9 3 2 5 7)
   myList =' ("Hello " "Dave " ("oh " "so ") "dear " "friend")
-  myList[numbers[2]] print
+  console print_ myList[numbers[2]]
   """
   "( \"oh \" \"so \" )"
 
@@ -1709,12 +1747,12 @@ tests = [
   """
   MyClass = Class new
   myObject = MyClass new
-  myObject.someField print
-  myObject.someOtherField print
+  console print_ myObject.someField
+  console print_ myObject.someOtherField
   myObject.someField =' (9 3 15 5 7)
   myObject.someField[1+1] = 1+1
   myObject.someOtherField =' ("Hello " "Dave " ("oh " "so ") "dear " "friend")
-  myObject.someOtherField[myObject.someField[1+1]] print
+  console print_ myObject.someOtherField[myObject.someField[1+1]]
 
   """
   "nilnil( \"oh \" \"so \" )"
@@ -1723,14 +1761,14 @@ tests = [
   """
   numbers =' (9 3 2 5 7)
   myList =' ("Hello " "Dave " ("oh " "so ") "dear " "friend")
-  myList[numbers[1+1]][0+1] print
+  console print_ myList[numbers[1+1]][0+1]
   """
   "so "
 
   # ---------------------------------------------------------------------------
   """
   things =' (false true)
-  (things[0] or things[1]) print
+  console print_ things[0] or things[1]
   """
   "true"
 
@@ -1738,10 +1776,10 @@ tests = [
   """
   foo = 3
   things =' (foo bar 2)
-  things[0] print
-  things[1] print
-  things[2] print
-  things print
+  console print_ things[0]
+  console print_ things[1]
+  console print_ things[2]
+  console print_ things
   """
   "3bar2( 3 bar 2 )"
 
@@ -1749,15 +1787,15 @@ tests = [
   """
   things1 =' (my little list)
   things2 = things1
-  things1 print
-  things2 print
+  console print_ things1
+  console print_ things2
   things1[0] = 'your
   things2[1] = 'big
-  things1 print
-  things2 print
+  console print_ things1
+  console print_ things2
   things1 = " no more a list "
-  things1 print
-  things2 print
+  console print_ things1
+  console print_ things2
   """
   "( my little list )( my little list )( your big list )( your big list ) no more a list ( your big list )"
 
@@ -1790,9 +1828,9 @@ tests = [
   myObject = MyClass new
   myObject getYourself
   ﹍2
-  1 print
+  console print_ 1
   """
-  "! message was not understood: ( 1 print )"
+  "! message was not understood: ( console print_ 1 )"
 
   # careful! here is the ...3 print that ends up
   # running!
@@ -1820,7 +1858,7 @@ tests = [
   myObject = MyClass new
   myObject getYourself
   ﹍3
-  1 print
+  console print_ 1
   """
   "1"
 
@@ -1830,10 +1868,10 @@ tests = [
   MyClass answer:
   ﹍whenNew
   by:
-  ﹍"hey I'm new!" print
+  ﹍console print_ "hey I'm new!"
   ﹍self
   myObject = MyClass new
-  " ...done!" print
+  console print_ " ...done!"
   """
   "hey I'm new! ...done!"
 
@@ -1842,10 +1880,10 @@ tests = [
   MyClass answer:
   ﹍whenNew
   by:
-  ﹍"hey I'm new!" print
+  ﹍console print_ "hey I'm new!"
   ﹍@
   myObject = MyClass new
-  " ...done!" print
+  console print_ " ...done!"
   """
   "hey I'm new! ...done!"
 
@@ -1854,7 +1892,7 @@ tests = [
   # consumes up to
   #    myObject = MyClass new
   # and then it breaks the chain
-  # and lets "1 print" loose
+  # and lets "console print_ 1" loose
   """
   MyClass = Class new
   MyClass answer:
@@ -1862,7 +1900,7 @@ tests = [
   by:
   ﹍2
   ﹍self
-  myObject = MyClass new 1 print
+  myObject = MyClass new console print_ 1
   """
   "1"
 
@@ -1873,7 +1911,7 @@ tests = [
   by:
   ﹍2
   ﹍@
-  myObject = MyClass new 1 print
+  myObject = MyClass new console print_ 1
   """
   "1"
 
@@ -1889,7 +1927,7 @@ tests = [
   by:
   ﹍2
   myObject = MyClass new
-  myObject print
+  console print_ myObject
   """
   "2"
 
@@ -1899,15 +1937,15 @@ tests = [
   MyClass answer:
   ﹍whenNew
   by:
-  ﹍"hey I'm new!" print
+  ﹍console print_ "hey I'm new!"
   ﹍self
   MyClass answer:
   ﹍initWith (param)
   by:
-  ﹍param print
+  ﹍console print_ param
   ﹍self
   myObject = MyClass new initWith " hello again! I am... "
-  myObject print
+  console print_ myObject
   """
   "hey I'm new! hello again! I am... object_from_a_user_class"
 
@@ -1916,15 +1954,15 @@ tests = [
   MyClass answer:
   ﹍whenNew
   by:
-  ﹍"hey I'm new!" print
+  ﹍console print_ "hey I'm new!"
   ﹍@
   MyClass answer:
   ﹍initWith (param)
   by:
-  ﹍param print
+  ﹍console print_ param
   ﹍@
   myObject = MyClass new initWith " hello again! I am... "
-  myObject print
+  console print_ myObject
   """
   "hey I'm new! hello again! I am... object_from_a_user_class"
 
@@ -1938,7 +1976,7 @@ tests = [
   by:
   ﹍2
   myObject = MyClass new
-  myObject print
+  console print_ myObject
   """
   "2"
 
@@ -1950,7 +1988,7 @@ tests = [
   MyClass answer:
   ﹍﹍printtwo (argument)
   ﹍by:
-  ﹍﹍argument print
+  ﹍﹍console print_ argument
   myObject = MyClass new
   myObject printtwo "hello"
   """
@@ -1962,7 +2000,7 @@ tests = [
   MyClass answer:
   ﹍﹍﹍﹍printthree (argument)
   ﹍by:
-  ﹍﹍﹍﹍argument print
+  ﹍﹍﹍﹍console print_ argument
   myObject = MyClass new
   myObject printthree "hello"
   """
@@ -1975,7 +2013,7 @@ tests = [
   MyClass answer:
   ﹍﹍﹍﹍﹍﹍﹍﹍﹍printthree (argument)
   ﹍by:
-  ﹍﹍﹍﹍argument print
+  ﹍﹍﹍﹍console print_ argument
   myObject = MyClass new
   myObject printthree "hello"
   """
@@ -1988,7 +2026,7 @@ tests = [
   MyClass answer:
   ﹍﹍﹍﹍printthree (argument)
   ﹍by:
-  ﹍﹍﹍﹍﹍﹍﹍﹍﹍argument print
+  ﹍﹍﹍﹍﹍﹍﹍﹍﹍console print_ argument
   myObject = MyClass new
   myObject printthree "hello"
   """
@@ -2000,7 +2038,7 @@ tests = [
   MyClass answer:
   ﹍﹍﹍﹍printthree (argument)
   ﹍﹍by:
-  ﹍﹍﹍﹍argument print
+  ﹍﹍﹍﹍console print_ argument
   myObject = MyClass new
   myObject printthree "hello"
   """
@@ -2012,7 +2050,7 @@ tests = [
   MyClass answer:
   ﹍﹍﹍﹍printthree (argument)
   ﹍﹍﹍by:
-  ﹍﹍﹍﹍argument print
+  ﹍﹍﹍﹍console print_ argument
   myObject = MyClass new
   myObject printthree "hello"
   """
@@ -2028,7 +2066,7 @@ tests = [
   ﹍﹍done
   ﹍else:
   ﹍﹍a=a minus 1
-  a print
+  console print_ a
   """
   "0"
 
@@ -2042,7 +2080,7 @@ tests = [
   ﹍﹍﹍done
   ﹍﹍else:
   ﹍﹍﹍a=a minus 1
-  a print
+  console print_ a
   """
   "0"
 
@@ -2050,7 +2088,7 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
-  ﹍word print
+  ﹍console print_ word
   myList = 9
   for each word in
   ﹍﹍myList
@@ -2063,9 +2101,9 @@ tests = [
   """
   MyClass = Class new
   myObject = MyClass new
-  myObject.someField print
+  console print_ myObject.someField
   myObject.someField = 2
-  myObject.someField print
+  console print_ myObject.someField
   """
   "nil2"
 
@@ -2109,16 +2147,16 @@ tests = [
   by:
   ﹍self.instantiationsCounter.counter
 
-  MyClass getCount print
+  console print_ MyClass getCount
 
   myObject = MyClass new
-  MyClass getCount print
-  myObject getCount print
+  console print_ MyClass getCount
+  console print_ myObject getCount
 
   myObject2 = MyClass new
-  MyClass getCount print
-  myObject getCount print
-  myObject2 getCount print
+  console print_ MyClass getCount
+  console print_ myObject getCount
+  console print_ myObject2 getCount
 
   """
   "011222"
@@ -2146,16 +2184,16 @@ tests = [
   by:
   ﹍@instantiationsCounter.counter
 
-  MyClass getCount print
+  console print_ MyClass getCount
 
   myObject = MyClass new
-  MyClass getCount print
-  myObject getCount print
+  console print_ MyClass getCount
+  console print_ myObject getCount
 
   myObject2 = MyClass new
-  MyClass getCount print
-  myObject getCount print
-  myObject2 getCount print
+  console print_ MyClass getCount
+  console print_ myObject getCount
+  console print_ myObject2 getCount
 
   """
   "011222"
@@ -2193,34 +2231,34 @@ tests = [
   by:
   ﹍self.instantiationsCounter.counter
 
-  MyClass getCount print
-  myObject getCount print
+  console print_ MyClass getCount
+  console print_ myObject getCount
 
   myObject2 = MyClass new
-  MyClass getCount print
-  myObject getCount print
-  myObject2 getCount print
+  console print_ MyClass getCount
+  console print_ myObject getCount
+  console print_ myObject2 getCount
 
   myObject2.fieldAddedToObject2 = 2
 
-  MyClass.fieldAddedToObject2 print
-  myObject.fieldAddedToObject2 print
-  myObject2.fieldAddedToObject2 print
+  console print_ MyClass.fieldAddedToObject2
+  console print_ myObject.fieldAddedToObject2
+  console print_ myObject2.fieldAddedToObject2
 
   MyClass.fieldAddedToClass = 3
-  MyClass.fieldAddedToClass print
-  myObject.fieldAddedToClass print
-  myObject2.fieldAddedToClass print
+  console print_ MyClass.fieldAddedToClass
+  console print_ myObject.fieldAddedToClass
+  console print_ myObject2.fieldAddedToClass
 
   myObject.fieldAddedToClass = 4
-  MyClass.fieldAddedToClass print
-  myObject.fieldAddedToClass print
-  myObject2.fieldAddedToClass print
+  console print_ MyClass.fieldAddedToClass
+  console print_ myObject.fieldAddedToClass
+  console print_ myObject2.fieldAddedToClass
 
   myObject2.fieldAddedToClass = 5
-  MyClass.fieldAddedToClass print
-  myObject.fieldAddedToClass print
-  myObject2.fieldAddedToClass print
+  console print_ MyClass.fieldAddedToClass
+  console print_ myObject.fieldAddedToClass
+  console print_ myObject2.fieldAddedToClass
 
 
   """
@@ -2252,34 +2290,34 @@ tests = [
   by:
   ﹍@instantiationsCounter.counter
 
-  MyClass getCount print
-  myObject getCount print
+  console print_ MyClass getCount
+  console print_ myObject getCount
 
   myObject2 = MyClass new
-  MyClass getCount print
-  myObject getCount print
-  myObject2 getCount print
+  console print_ MyClass getCount
+  console print_ myObject getCount
+  console print_ myObject2 getCount
 
   myObject2.fieldAddedToObject2 = 2
 
-  MyClass.fieldAddedToObject2 print
-  myObject.fieldAddedToObject2 print
-  myObject2.fieldAddedToObject2 print
+  console print_ MyClass.fieldAddedToObject2
+  console print_ myObject.fieldAddedToObject2
+  console print_ myObject2.fieldAddedToObject2
 
   MyClass.fieldAddedToClass = 3
-  MyClass.fieldAddedToClass print
-  myObject.fieldAddedToClass print
-  myObject2.fieldAddedToClass print
+  console print_ MyClass.fieldAddedToClass
+  console print_ myObject.fieldAddedToClass
+  console print_ myObject2.fieldAddedToClass
 
   myObject.fieldAddedToClass = 4
-  MyClass.fieldAddedToClass print
-  myObject.fieldAddedToClass print
-  myObject2.fieldAddedToClass print
+  console print_ MyClass.fieldAddedToClass
+  console print_ myObject.fieldAddedToClass
+  console print_ myObject2.fieldAddedToClass
 
   myObject2.fieldAddedToClass = 5
-  MyClass.fieldAddedToClass print
-  myObject.fieldAddedToClass print
-  myObject2.fieldAddedToClass print
+  console print_ MyClass.fieldAddedToClass
+  console print_ myObject.fieldAddedToClass
+  console print_ myObject2.fieldAddedToClass
 
 
   """
@@ -2292,7 +2330,7 @@ tests = [
   """
   a = 1
   a += a
-  a print
+  console print_ a
   """
   "2"
 
@@ -2300,7 +2338,7 @@ tests = [
   a = 1
   b = 2
   a += b
-  a print
+  console print_ a
   """
   "3"
 
@@ -2308,7 +2346,7 @@ tests = [
   a = 1
   b = 2
   a += b+1
-  a print
+  console print_ a
   """
   "4"
 
@@ -2316,14 +2354,14 @@ tests = [
   """
   a = 1
   b = 2
-  a += b print
+  a += console print_ b
   """
   "2"
 
   """
   a = 1
   b = 2
-  (a += b) print
+  console print_ a += b
   """
   "3"
 
@@ -2336,55 +2374,50 @@ tests = [
   """
   a = 1
   a++
-  a print
+  console print_ a
   """
   "2"
 
   """
   a = 1
   a++ + 1
-  a print
+  console print_ a
   """
   "2"
 
   """
   a = 1
   a = a++ + 1
-  a print
+  console print_ a
   """
   "3"
 
   """
   a = 1
-  a++ print
+  console print_ a++
   """
   "2"
 
   """
   a = 1
   a++ ++
-  a print
+  console print_ a
   """
   "2"
 
   """
   a = 1
-  a++ ++ print
+  console print_ a++ ++
   """
   "3"
 
-  """
-  a = 1
-  (a++ ++) print
-  """
-  "3"
 
   """
   MyClass = Class new
   myObject = MyClass new
   myObject.someField = 2
   myObject.someField += 2
-  myObject.someField print
+  console print_ myObject.someField
   """
   "4"
 
@@ -2392,7 +2425,7 @@ tests = [
   MyClass = Class new
   myObject = MyClass new
   myObject.someField = 2
-  (myObject.someField += 2) print
+  console print_ myObject.someField += 2
   """
   "4"
 
@@ -2401,7 +2434,7 @@ tests = [
   myObject = MyClass new
   myObject.someField = 2
   myObject.someField++
-  myObject.someField print
+  console print_ myObject.someField
   """
   "3"
 
@@ -2409,7 +2442,7 @@ tests = [
   MyClass = Class new
   myObject = MyClass new
   myObject.someField = 2
-  myObject.someField++ print
+  console print_ myObject.someField++
   """
   "3"
 
@@ -2417,42 +2450,42 @@ tests = [
   MyClass = Class new
   myObject = MyClass new
   myObject.someField = 2
-  myObject.someField++ ++ print
-  myObject.someField print
+  console print_ myObject.someField++ ++
+  console print_ myObject.someField
   """
   "43"
 
   """
   myArray = '(1 2 3)
   myArray[0]++
-  myArray print
+  console print_ myArray
   """
   "( 2 2 3 )"
 
   """
   myArray = '(1 2 3)
-  myArray[0]++ ++ print
-  myArray print
+  console print_ myArray[0]++ ++
+  console print_ myArray
   """
   "3( 2 2 3 )"
 
   """
   myArray = '(1 2 3)
-  (myArray[0] += myArray[1]+myArray[2]) print
-  myArray print
+  console print_ myArray[0] += myArray[1]+myArray[2]
+  console print_ myArray
   """
   "6( 6 2 3 )"
 
   """
   myArray = '(1 2 3)
-  myArray[0]++ print
+  console print_ myArray[0]++
   """
   "2"
 
   """
   myArray = '(1 2 3)
-  myArray[0]++ ++ print
-  myArray[0] print
+  console print_ myArray[0]++ ++
+  console print_ myArray[0]
   """
   "32"
 
@@ -2466,34 +2499,34 @@ tests = [
   myObject = MyClass new
   myObject2 = MyClass new
 
-  MyClass.count print // 0
-  myObject.count print // 0
-  myObject2.count print // 0
+  console print_ MyClass.count // 0
+  console print_ myObject.count // 0
+  console print_ myObject2.count // 0
 
   MyClass.count++
 
-  MyClass.count print // 1
-  myObject.count print // 1
-  myObject2.count print // 1
+  console print_ MyClass.count // 1
+  console print_ myObject.count // 1
+  console print_ myObject2.count // 1
 
   myObject.count++
 
-  MyClass.count print // 1
-  myObject.count print // 2
-  myObject2.count print // 1
+  console print_ MyClass.count // 1
+  console print_ myObject.count // 2
+  console print_ myObject2.count // 1
 
   myObject2.count++
   myObject2.count++
 
-  MyClass.count print // 1
-  myObject.count print // 2
-  myObject2.count print // 3
+  console print_ MyClass.count // 1
+  console print_ myObject.count // 2
+  console print_ myObject2.count // 3
 
   MyClass.count++
 
-  MyClass.count print // 2
-  myObject.count print // 2
-  myObject2.count print // 3
+  console print_ MyClass.count // 2
+  console print_ myObject.count // 2
+  console print_ myObject2.count // 3
 
   """
   "000111121123223"
@@ -2502,27 +2535,27 @@ tests = [
   # running with empty signature (which unfortunately is not really empty)
   # FLTO
 
-  "to sayHello: (*nothing*) do: (\"Hello\" print); sayHello;"
+  "to sayHello: (*nothing*) do: (console print_ \"Hello\"); sayHello;"
   "Hello"
 
   # ---------------------------------------------------------------------------
   #    emojis!
   # ---------------------------------------------------------------------------
-  "😁 = 4; 😁 print"
+  "😁 = 4; console print_ 😁"
   "4"
 
   # ---------------------------------------------------------------------------
-  "😁 =4;😁 print"
+  "😁 =4;console print_ 😁"
   "4"
 
   # ---------------------------------------------------------------------------
-  "😁=4;😁 print"
+  "😁=4;console print_ 😁"
   "4"
 
   # ---------------------------------------------------------------------------
-  # here "😁print" is a single token, so there is no print happening
-  "😁=4;😁print"
-  ""
+  # here "print_😁" is a single token, so there is no print happening
+  "😁=4;console print_😁"
+  "! message was not understood: ( print_😁 )"
 
   # ---------------------------------------------------------------------------
   # FLTO
@@ -2530,14 +2563,14 @@ tests = [
   to 🚀:
   ﹍*nothing*
   do:
-  ﹍"launch!" print
+  ﹍console print_ "launch!"
   🚀
   """
   "launch!"
 
   """
   to 🚀:
-  ﹍"launch!" print
+  ﹍console print_ "launch!"
   🚀
   """
   "launch!"
@@ -2551,14 +2584,14 @@ tests = [
   to "🚀":
   ﹍*nothing*
   do:
-  ﹍"launch!" print
+  ﹍console print_ "launch!"
   "🚀"
   """
   "launch!"
 
  """
   to "🚀":
-  ﹍"launch!" print
+  ﹍console print_ "launch!"
   "🚀"
   """
   "launch!"
@@ -2568,7 +2601,7 @@ tests = [
 
 # ---------------------------------------------------------------------------
 # TODO this crashes
-#"to sayHello '(*nothing*) do '(\"Hello\" print); sayHello;"
+#"to sayHello '(*nothing*) do '(console print_ \"Hello\"); sayHello;"
 #"Hello"
 
 
@@ -2597,17 +2630,17 @@ things[1+1] print
 foo = 3
 things =' ()
 things = things+foo
-things print
+console print_ things
 things[0] print
 " // " print
 things =' ()
 things = things+'foo
-things print
+console print_ things
 things[0] print
 " // " print
 things =' ()
 things = things+'('foo)
-things print
+console print_ things
 things[0] print
 """
 "( 3 )3 // ( foo )3 // ( ( ' foo ) )( ' foo )"

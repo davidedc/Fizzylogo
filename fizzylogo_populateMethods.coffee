@@ -19,7 +19,7 @@
 #  ﹍﹍done
 #  ﹍else:
 #  ﹍﹍a=a minus 1
-#  a print
+#  console print_ a
 #
 # On the other hand, in "to" and "answer", the code block is passed as
 # evaluated so it's actually closed (in read-only mode). This is
@@ -492,11 +492,11 @@ FLString.addMethod \
 
 FLNumber.addMethod \
   (flTokenize "anotherPrint"),
-  flTokenize "self print"
+  flTokenize "console print_ self"
 
 FLNumber.addMethod \
   (flTokenize "doublePrint"),
-  flTokenize "self print print"
+  flTokenize "console print_(console print_ self)"
 
 # mutates the very object
 FLNumber.addMethod \
@@ -530,7 +530,7 @@ FLNumber.addMethod \
 
 FLNumber.addMethod \
   (flTokenize "factorialthree"),
-  flTokenize "( self == 0 ) ⇒ ( 1 ) ('temp ← self; temp print; ( self minus 1 ) factorialthree * temp )"
+  flTokenize "( self == 0 ) ⇒ ( 1 ) ('temp ← self;console print_ temp; ( self minus 1 ) factorialthree * temp )"
 
 FLNumber.addMethod \
   (flTokenize "factorialfour"),
@@ -550,7 +550,7 @@ FLNumber.addMethod \
 
 FLNumber.addMethod \
   (flTokenize "printAFromDeeperCall"),
-  flTokenize "a print"
+  flTokenize "console print_ a"
 
 # ---
 
