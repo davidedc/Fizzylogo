@@ -1,3 +1,39 @@
+# Overall comments -------------------------------------------
+
+# ----
+# in the "for" and in the "repeat" and in all the branches in the if-then-else,
+# the loopCode/branch is passed as UNevaluated.
+# This is because if it were passed as evaluated, it'd have to be passed as
+#   repeat 3 'code
+# which would turn it into a closure.
+# Since out closures are read-only, that usually creates chaos, because
+# you are very likely to reference several variables from outside the
+# loop, and "closing" those as read only is problematic for example
+# this never ends, because the "a" inside the branch "a=a minus 1" is
+# replaced with a 5 when closed, so it never decreases to zero!
+#
+#  a=5
+#
+#  repeat forever:
+#  ﹍if a==0:
+#  ﹍﹍done
+#  ﹍else:
+#  ﹍﹍a=a minus 1
+#  a print
+#
+# On the other hand, in "to" and "answer", the code block is passed as
+# evaluated so it's actually closed (in read-only mode). This is
+# because in those cases one is less prone towards changing variables
+# from the outer scope. You can read them, but you can't write them.
+#
+# ----
+# all signatures are passed as unevaluated. This is for two reasons:
+# 1) we absolutely don't want to risk to close a parameter
+# 2) it would really never happen that one passes the signature
+#    from a parameter. That actually only happens in one place
+#    and in fact we need answerEvalParams for that case.
+
+
 # helper to add default methods -------------------------------------------
 
 
