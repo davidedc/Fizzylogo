@@ -235,11 +235,6 @@ class FLListClass extends FLClasses
 
             return [theContext, restOfMessage]
 
-          if !receiver?
-            theContext.returned = null
-            theContext.unparsedMessage = restOfMessage
-            return [theContext, restOfMessage]
-
           if restOfMessage.isEmpty()
             break
 
