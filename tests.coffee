@@ -1275,6 +1275,21 @@ tests = [
   "HELLO Dave"
 
   # ---------------------------------------------------------------------------
+  # FLTO with no signature
+  """
+  to testingReturn:
+  ﹍console print "start"
+  """
+  ""
+
+  """
+  to testingReturn:
+  ﹍console print "start"
+  testingReturn
+  """
+  "start"
+
+  # ---------------------------------------------------------------------------
   "'( \"Hello \" \"Dave \" \"my \" \"dear \" \"friend\") each word do (console print word)"
   "Hello Dave my dear friend"
 
@@ -2524,7 +2539,7 @@ tests = [
   # running with empty signature (which unfortunately is not really empty)
   # FLTO
 
-  "to sayHello: (*nothing*) do: (console print \"Hello\"); sayHello;"
+  "to sayHello: ($nothing$) do: (console print \"Hello\"); sayHello;"
   "Hello"
 
   # ---------------------------------------------------------------------------
@@ -2550,7 +2565,7 @@ tests = [
   # FLTO
   """
   to 🚀:
-  ﹍*nothing*
+  ﹍$nothing$
   do:
   ﹍console print "launch!"
   🚀
@@ -2571,14 +2586,14 @@ tests = [
   # FLTO
   """
   to "🚀":
-  ﹍*nothing*
+  ﹍$nothing$
   do:
   ﹍console print "launch!"
   "🚀"
   """
   "launch!"
 
- """
+  """
   to "🚀":
   ﹍console print "launch!"
   "🚀"
@@ -2608,6 +2623,55 @@ tests = [
   # it's the Javascript runtime doing this sum between number and boolean
   "console print 1 + true"
   "2"
+
+  # ---------------------------------------------------------------------------
+  # return
+  # ---------------------------------------------------------------------------
+
+  """
+  to testingReturn:
+  ﹍console print "start - "
+  ﹍return 1+1
+  ﹍console print "never reached"
+  console print testingReturn
+  """
+  "start - 2"
+
+  """
+  to testingReturn:
+  ﹍console print "start - "
+  ﹍return 1+1
+  ﹍console print "never reached"
+  testingReturn + 1
+  """
+  "start - "
+
+  """
+  to testingReturn:
+  ﹍console print "start - "
+  ﹍return 1+1
+  ﹍console print "never reached"
+  console print (testingReturn) + 1
+  """
+  "start - 3"
+
+  """
+  to testingReturn:
+  ﹍console print "start - "
+  ﹍return
+  ﹍console print "never reached"
+  console print testingReturn
+  """
+  "start - nil"
+
+  """
+  to testingReturn:
+  ﹍console print "start - "
+  ﹍return
+  ﹍console print "never reached"
+  (testingReturn 1 + 1) postfixPrint
+  """
+  "start - nil"
 
 ]
 
@@ -2657,6 +2721,8 @@ tests = [
 ]
 ###
 
+
+
 flContexts = []
 rWorkspace = null
 
@@ -2703,6 +2769,7 @@ for i in [0...tests.length] by 2
       "for", FLFor.createNew()
       "repeat1", FLRepeat1.createNew()
       "done", FLDone.createNew()
+      "return", FLReturn.createNew()
 
       "if", FLIfThen.createNew()
       "else", FLFakeElse.createNew()

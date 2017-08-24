@@ -151,9 +151,17 @@ class FLObjects
 
 
     # we are still here trying to match but
-    # there are no signatures left, time to quit.
+    # there are no signatures left, almost giving up.
     console.log "evaluation " + indentation() + "  matching - no match found"
-    return [null, methodInvocationToBeChecked]
+
+    console.log "evaluation " + indentation() + "last chance - does it respond to $nothing$ message?"
+    newContext = new FLContext theContext, @
+    flContexts.jsArrayPush newContext
+    [returnedContext, returnedMessage] = @findSignatureBindParamsAndMakeCall (flTokenize "$nothing$"), newContext
+    if returnedContext? and returnedContext.returned != @
+      return [returnedContext, returnedMessage]
+    else
+      return [null, methodInvocationToBeChecked]
 
 
   # this could be native, in which case it's a JS call,

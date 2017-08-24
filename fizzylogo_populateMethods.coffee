@@ -40,7 +40,7 @@
 addDefaultMethods = (classToAddThemTo) ->
 
   classToAddThemTo.addMethod \
-    (flTokenize "*nothing*"),
+    (flTokenize "$nothing$"),
     (context) ->
       return @
 
@@ -350,10 +350,10 @@ FLTo.addMethod \
 
 # TODO it's be nice if there was a way not to leak the TempClass
 FLTo.addMethod \
-  (flTokenize "( ' functionObjectName ) : ( functionBody )"),
+  (flTokenize "( ' functionObjectName ) ( functionBody )"),
   flTokenize \
     "accessUpperContext; 'TempClass ← Class new;\
-    TempClass answerEvalParams (*nothing*) by (functionBody);\
+    TempClass answerEvalParams '($nothing$) by (functionBody);\
     functionObjectName ← TempClass new;"
 
 # Class -------------------------------------------------------------------------
@@ -791,7 +791,7 @@ FLList.addMethod \
 # AccessUpperContextClass -------------------------------------------------------------------------
 
 FLAccessUpperContext.addMethod \
-  (flTokenize "*nothing*"),
+  (flTokenize "$nothing$"),
   (context) ->
     console.log "Done_object running emptyMessage"
     context.previousContext.isTransparent = true
@@ -812,7 +812,7 @@ FLConsole.addMethod \
 # Done -------------------------------------------------------------------------
 
 FLDone.addMethod \
-  (flTokenize "*nothing*"),
+  (flTokenize "$nothing$"),
   (context) ->
     console.log "Done_object running emptyMessage"
     context.throwing = true
@@ -826,6 +826,28 @@ FLDone.addMethod \
 
     @value = valueToReturn
     return @
+
+# Return -------------------------------------------------------------------------
+
+FLReturn.addMethod \
+  (flTokenize "( valueToReturn )"),
+  (context) ->
+    valueToReturn = context.tempVariablesDict[ValidIDfromString "valueToReturn"]
+
+    console.log "Return_object running a value"
+
+    @value = valueToReturn
+    context.throwing = true
+    return @
+
+FLReturn.addMethod \
+  (flTokenize "$nothing$"),
+  (context) ->
+    console.log "Return_object running emptyMessage"
+    context.throwing = true
+    return @
+
+
 
 
 # Repeat1 -------------------------------------------------------------------------
