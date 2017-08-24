@@ -161,7 +161,12 @@ class FLObjects
     if returnedContext? and returnedContext.returned != @
       return [returnedContext, returnedMessage]
     else
+    # note that returnedContext here is always defined if there is
+    # a fallback $nothing$ method, as there is now
+    if !returnedContext? or returnedContext.returned == @
       return [null, methodInvocationToBeChecked]
+    else
+      return [returnedContext, returnedMessage]
 
 
   # this could be native, in which case it's a JS call,
