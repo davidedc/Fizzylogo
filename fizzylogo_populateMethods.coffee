@@ -594,7 +594,7 @@ FLNumber.addMethod \
       # catch any thrown "done" object, used to
       # exit from a loop.
       if toBeReturned?
-        if toBeReturned.flClass == FLDone
+        if context.throwing and (toBeReturned.flClass == FLDone or toBeReturned.flClass == FLBreak)
           context.throwing = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
@@ -778,7 +778,7 @@ FLList.addMethod \
       # catch any thrown "done" object, used to
       # exit from a loop.
       if toBeReturned?
-        if toBeReturned.flClass == FLDone
+        if context.throwing and (toBeReturned.flClass == FLDone or toBeReturned.flClass == FLBreak)
           context.throwing = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
@@ -825,6 +825,15 @@ FLDone.addMethod \
     valueToReturn = context.tempVariablesDict[ValidIDfromString "valueToReturn"]
 
     @value = valueToReturn
+    return @
+
+# Break -------------------------------------------------------------------------
+
+FLBreak.addMethod \
+  (flTokenize "*nothing*"),
+  (context) ->
+    console.log "Break_object"
+    context.throwing = true
     return @
 
 # Return -------------------------------------------------------------------------
@@ -890,7 +899,7 @@ FLRepeat2.addMethod \
     context.isTransparent = true
     howManyTimes = context.tempVariablesDict[ValidIDfromString "howManyTimes"]
     loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
-    console.log "FLRepeat1 ⇒ loop code is: " + loopCode.flToString()
+    console.log "FLRepeat2 ⇒ loop code is: " + loopCode.flToString()
 
     if howManyTimes.flClass == FLForever
       limit = Number.MAX_SAFE_INTEGER
@@ -899,25 +908,26 @@ FLRepeat2.addMethod \
 
 
     for i in [0...limit]
+      console.log "Repeat2 ⇒ starting a(nother) cycle: "
       toBeReturned = (loopCode.eval context, loopCode)[0].returned
 
       flContexts.pop()
 
-      console.log "Repeat1 ⇒ returning result after loop cycle: " + toBeReturned
-      console.log "Repeat1 ⇒ returning result CLASS after loop cycle: "
-      console.log "Repeat1 ⇒ remaining message after loop cycle: "
-      console.log "Repeat1 ⇒ message length:  "
-      console.log "Repeat1 ⇒ did I receive a Done? " + (if toBeReturned?.flClass == FLDone then "yes" else "no")
-      console.log "Repeat1 ⇒ did I receive a thrown object? " + (if context.throwing then "yes" else "no")
+      console.log "Repeat2 ⇒ returning result after loop cycle: " + toBeReturned
+      console.log "Repeat2 ⇒ returning result CLASS after loop cycle: "
+      console.log "Repeat2 ⇒ remaining message after loop cycle: "
+      console.log "Repeat2 ⇒ message length:  "
+      console.log "Repeat2 ⇒ did I receive a Done? " + (if toBeReturned?.flClass == FLDone then "yes" else "no")
+      console.log "Repeat2 ⇒ did I receive a thrown object? " + (if context.throwing then "yes" else "no")
 
       # catch any thrown "done" object, used to
       # exit from a loop.
       if toBeReturned?
-        if toBeReturned.flClass == FLDone
+        if context.throwing and (toBeReturned.flClass == FLDone or toBeReturned.flClass == FLBreak)
           context.throwing = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
-          console.log "Repeat1 ⇒ the loop exited with Done "
+          console.log "Repeat2 ⇒ the loop exited with Done at context depth " + context.depth()
           break
 
     context.findAnotherReceiver = true
@@ -1079,7 +1089,7 @@ FLFor.addMethod \
       # catch any thrown "done" object, used to
       # exit from a loop.
       if toBeReturned?
-        if toBeReturned.flClass == FLDone
+        if context.throwing and (toBeReturned.flClass == FLDone or toBeReturned.flClass == FLBreak)
           context.throwing = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
@@ -1124,7 +1134,7 @@ FLFor.addMethod \
       # catch any thrown "done" object, used to
       # exit from a loop.
       if toBeReturned?
-        if toBeReturned.flClass == FLDone
+        if context.throwing and (toBeReturned.flClass == FLDone or toBeReturned.flClass == FLBreak)
           context.throwing = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value

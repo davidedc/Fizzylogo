@@ -573,6 +573,83 @@ tests = [
   """
   "0"
 
+  """
+  a=5
+
+  repeat forever:
+  ﹍if a==0:
+  ﹍﹍break
+  ﹍else:
+  ﹍﹍a=a minus 1
+  console print a
+  """
+  "0"
+
+  # ---------------------------------------------------------------------------
+  # neste loops with breaks
+
+  """
+  j=5
+  counter = 0
+
+  repeat forever:
+  ﹍k=5
+  ﹍console print " o/j: " + j
+  ﹍console print " o/k: " + k
+  ﹍if j==0:
+  ﹍﹍break
+  ﹍else:
+  ﹍﹍j=j minus 1
+  ﹍﹍repeat forever:
+  ﹍﹍﹍console print " i/j: " + j
+  ﹍﹍﹍console print " i/k: " + k
+  ﹍﹍﹍if k==0:
+  ﹍﹍﹍﹍break
+  ﹍﹍﹍else:
+  ﹍﹍﹍﹍k=k minus 1
+  ﹍﹍﹍﹍counter++
+  ﹍﹍﹍﹍console print " count so far: " + counter
+
+  console print " total count: " + counter
+  """
+  " o/j: 5 o/k: 5 \
+  i/j: 4 i/k: 5 count so far: 1 \
+  i/j: 4 i/k: 4 count so far: 2 \
+  i/j: 4 i/k: 3 count so far: 3 \
+  i/j: 4 i/k: 2 count so far: 4 \
+  i/j: 4 i/k: 1 count so far: 5 \
+  i/j: 4 i/k: 0 \
+  o/j: 4 o/k: 5 \
+  i/j: 3 i/k: 5 count so far: 6 \
+  i/j: 3 i/k: 4 count so far: 7 \
+  i/j: 3 i/k: 3 count so far: 8 \
+  i/j: 3 i/k: 2 count so far: 9 \
+  i/j: 3 i/k: 1 count so far: 10 \
+  i/j: 3 i/k: 0 \
+  o/j: 3 o/k: 5 \
+  i/j: 2 i/k: 5 count so far: 11 \
+  i/j: 2 i/k: 4 count so far: 12 \
+  i/j: 2 i/k: 3 count so far: 13 \
+  i/j: 2 i/k: 2 count so far: 14 \
+  i/j: 2 i/k: 1 count so far: 15 \
+  i/j: 2 i/k: 0 \
+  o/j: 2 o/k: 5 \
+  i/j: 1 i/k: 5 count so far: 16 \
+  i/j: 1 i/k: 4 count so far: 17 \
+  i/j: 1 i/k: 3 count so far: 18 \
+  i/j: 1 i/k: 2 count so far: 19 \
+  i/j: 1 i/k: 1 count so far: 20 \
+  i/j: 1 i/k: 0 \
+  o/j: 1 o/k: 5 \
+  i/j: 0 i/k: 5 count so far: 21 \
+  i/j: 0 i/k: 4 count so far: 22 \
+  i/j: 0 i/k: 3 count so far: 23 \
+  i/j: 0 i/k: 2 count so far: 24 \
+  i/j: 0 i/k: 1 count so far: 25 \
+  i/j: 0 i/k: 0 \
+  o/j: 0 o/k: 5 \
+  total count: 25"
+
   # ---------------------------------------------------------------------------
   # alternate formatting of the above, more C-like
   """
@@ -2769,6 +2846,7 @@ for i in [0...tests.length] by 2
       "for", FLFor.createNew()
       "repeat1", FLRepeat1.createNew()
       "done", FLDone.createNew()
+      "break", FLBreak.createNew()
       "return", FLReturn.createNew()
 
       "if", FLIfThen.createNew()
