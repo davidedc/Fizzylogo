@@ -152,7 +152,7 @@ class FLListClass extends FLClasses
       # So here we do that check and do the further message send.
       if restOfMessage.isEmpty()
         console.log "evaluation " + indentation() + "trying to send empty message to " + receiver.flToString()
-        [returnedContextFromEmptyMessage, ignored] = receiver.findSignatureBindParamsAndMakeCall (flTokenize "*nothing*"), returnedContext
+        [returnedContextFromEmptyMessage, ignored] = receiver.findSignatureBindParamsAndMakeCall (flTokenize "$nothing$"), returnedContext
         if returnedContextFromEmptyMessage?
           receiver = returnedContextFromEmptyMessage.returned
           returnedContext = returnedContextFromEmptyMessage
