@@ -45,14 +45,10 @@ addDefaultMethods = (classToAddThemTo) ->
       return @
 
   classToAddThemTo.addMethod \
-    (flTokenize "print"),
+    (flTokenize "postfixPrint"),
     (context) ->
-      if /\$STRING_TOKEN_([\$a-zA-Z0-9_]+)/g.test @value
-        toPrint = "TOKEN:" + injectStrings @value
-      else
-        toPrint = @value
-      console.log "///////// program printout: " + toPrint
-      environmentPrintout += toPrint
+      console.log "///////// program printout: " + @print()
+      environmentPrintout += @print()
       return @
 
   classToAddThemTo.addMethod \
@@ -360,13 +356,6 @@ FLTo.addMethod \
 # Class. There is only one object in the system that belongs to this class
 # and it's also called "Class". We give this object the capacity to create
 # new classes, via the "new" message below.
-
-FLClass.addMethod \
-  (flTokenize "print"),
-  (context) ->
-    console.log "///////// program printout: " + "Class object!"
-    environmentPrintout += "Class_object"
-    return @
 
 FLClass.addMethod \
   (flTokenize "new"),
@@ -710,13 +699,6 @@ FLList.addMethod \
     @flClass.createNew()
 
 FLList.addMethod \
-  (flTokenize "print"),
-  (context) ->
-    console.log "///////// program printout: " + @print()
-    environmentPrintout += @print()
-    return context
-
-FLList.addMethod \
   (flTokenize "+ ( elementToBeAppended )"),
   (context) ->
     elementToBeAppended = context.tempVariablesDict[ValidIDfromString "elementToBeAppended"]
@@ -823,13 +805,6 @@ FLConsole.addMethod \
 
 
 # Done -------------------------------------------------------------------------
-
-FLDone.addMethod \
-  (flTokenize "print"),
-  (context) ->
-    console.log "///////// program printout: " + "Done_object"
-    environmentPrintout += "Done_object"
-    return @
 
 FLDone.addMethod \
   (flTokenize "*nothing*"),

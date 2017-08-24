@@ -216,9 +216,9 @@ tests = [
 
   # ---------------------------------------------------------------------------
   """
-  2 1 print
+  2 1 postfixPrint
   """
-  "! message was not understood: ( 1 print )"
+  "! message was not understood: ( 1 postfixPrint )"
 
   # ---------------------------------------------------------------------------
   "console print_ negate"
@@ -643,7 +643,7 @@ tests = [
   "1"
 
   # ---------------------------------------------------------------------------
-  "Class print"
+  "console print_ Class"
   "Class_object"
 
   # ---------------------------------------------------------------------------
@@ -1815,7 +1815,7 @@ tests = [
   myObject = MyClass new
   myObject getYourself
   ﹍2
-  print
+  postfixPrint
   """
   "2"
 
@@ -1832,7 +1832,7 @@ tests = [
   """
   "! message was not understood: ( console print_ 1 )"
 
-  # careful! here is the ...3 print that ends up
+  # careful! here is the ...3 postfixPrint that ends up
   # running!
   """
   MyClass = Class new
@@ -1844,7 +1844,7 @@ tests = [
   myObject = MyClass new
   myObject getYourself
   ﹍3
-  print
+  postfixPrint
   """
   "3"
 

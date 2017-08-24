@@ -8,6 +8,9 @@ class FLDoneClass extends FLClasses
 
     toBeReturned.printForList = toBeReturned.print
 
+    toBeReturned.print = ->
+      return "Done_object"
+
     return toBeReturned
 
 FLDone = new FLDoneClass()

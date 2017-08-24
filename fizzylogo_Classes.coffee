@@ -49,6 +49,9 @@ class FLClassClass extends FLClasses
     toBeReturned.methodBodies = []
     toBeReturned.instanceVariablesDict = {}
 
+    toBeReturned.print = ->
+      return "Class_object"
+
     return toBeReturned
     
 
