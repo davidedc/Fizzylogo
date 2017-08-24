@@ -586,7 +586,7 @@ tests = [
   "0"
 
   # ---------------------------------------------------------------------------
-  # neste loops with breaks
+  # nested loops with breaks
 
   """
   j=5
