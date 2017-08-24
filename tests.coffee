@@ -2539,7 +2539,7 @@ tests = [
   # running with empty signature (which unfortunately is not really empty)
   # FLTO
 
-  "to sayHello: ($nothing$) do: (console print \"Hello\"); sayHello;"
+  "to sayHello: (*nothing*) do: (console print \"Hello\"); sayHello;"
   "Hello"
 
   # ---------------------------------------------------------------------------
@@ -2565,7 +2565,7 @@ tests = [
   # FLTO
   """
   to 🚀:
-  ﹍$nothing$
+  ﹍*nothing*
   do:
   ﹍console print "launch!"
   🚀
@@ -2586,7 +2586,7 @@ tests = [
   # FLTO
   """
   to "🚀":
-  ﹍$nothing$
+  ﹍*nothing*
   do:
   ﹍console print "launch!"
   "🚀"

@@ -40,7 +40,7 @@
 addDefaultMethods = (classToAddThemTo) ->
 
   classToAddThemTo.addMethod \
-    (flTokenize "$nothing$"),
+    (flTokenize "*nothing*"),
     (context) ->
       return @
 
@@ -353,7 +353,7 @@ FLTo.addMethod \
   (flTokenize "( ' functionObjectName ) ( functionBody )"),
   flTokenize \
     "accessUpperContext; 'TempClass ← Class new;\
-    TempClass answerEvalParams '($nothing$) by (functionBody);\
+    TempClass answerEvalParams '(*nothing*) by (functionBody);\
     functionObjectName ← TempClass new;"
 
 # Class -------------------------------------------------------------------------
@@ -791,7 +791,7 @@ FLList.addMethod \
 # AccessUpperContextClass -------------------------------------------------------------------------
 
 FLAccessUpperContext.addMethod \
-  (flTokenize "$nothing$"),
+  (flTokenize "*nothing*"),
   (context) ->
     console.log "Done_object running emptyMessage"
     context.previousContext.isTransparent = true
@@ -812,7 +812,7 @@ FLConsole.addMethod \
 # Done -------------------------------------------------------------------------
 
 FLDone.addMethod \
-  (flTokenize "$nothing$"),
+  (flTokenize "*nothing*"),
   (context) ->
     console.log "Done_object running emptyMessage"
     context.throwing = true
@@ -841,7 +841,7 @@ FLReturn.addMethod \
     return @
 
 FLReturn.addMethod \
-  (flTokenize "$nothing$"),
+  (flTokenize "*nothing*"),
   (context) ->
     console.log "Return_object running emptyMessage"
     context.throwing = true

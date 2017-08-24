@@ -154,10 +154,10 @@ class FLObjects
     # there are no signatures left, almost giving up.
     console.log "evaluation " + indentation() + "  matching - no match found"
 
-    console.log "evaluation " + indentation() + "last chance - does it respond to $nothing$ message?"
+    console.log "evaluation " + indentation() + "last chance - does it respond to *nothing* message?"
     newContext = new FLContext theContext, @
     flContexts.jsArrayPush newContext
-    [returnedContext, returnedMessage] = @findSignatureBindParamsAndMakeCall (flTokenize "$nothing$"), newContext
+    [returnedContext, returnedMessage] = @findSignatureBindParamsAndMakeCall (flTokenize "*nothing*"), newContext
     if returnedContext? and returnedContext.returned != @
       return [returnedContext, returnedMessage]
     else
