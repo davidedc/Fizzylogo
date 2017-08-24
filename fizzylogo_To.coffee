@@ -4,10 +4,10 @@ class FLToClass extends FLClasses
     toBeReturned.value = null
 
 
-    toBeReturned.print = ->
+    toBeReturned.flToString = ->
       return "To_object"
 
-    toBeReturned.printForList = toBeReturned.print
+    toBeReturned.flToStringForList = toBeReturned.flToString
 
     return toBeReturned
 

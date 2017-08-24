@@ -6,10 +6,10 @@ class FLIfFallThroughClass extends FLClasses
     toBeReturned.value = null
 
 
-    toBeReturned.print = ->
+    toBeReturned.flToString = ->
       return "IfFallThrough_object"
 
-    toBeReturned.printForList = toBeReturned.print
+    toBeReturned.flToStringForList = toBeReturned.flToString
 
     return toBeReturned
 

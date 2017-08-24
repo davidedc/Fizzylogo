@@ -4,10 +4,10 @@ class FLConsoleClass extends FLClasses
     toBeReturned = super FLConsole
     toBeReturned.value = "Console"
 
-    toBeReturned.print = ->
+    toBeReturned.flToString = ->
       return @value
 
-    toBeReturned.printForList = toBeReturned.print
+    toBeReturned.flToStringForList = toBeReturned.flToString
 
     return toBeReturned
     

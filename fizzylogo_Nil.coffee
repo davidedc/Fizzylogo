@@ -4,10 +4,10 @@ class FLNilClass extends FLClasses
     toBeReturned = super FLNil
     toBeReturned.value = "nil"
 
-    toBeReturned.print = ->
+    toBeReturned.flToString = ->
       return @value
 
-    toBeReturned.printForList = toBeReturned.print
+    toBeReturned.flToStringForList = toBeReturned.flToString
 
     return toBeReturned
     

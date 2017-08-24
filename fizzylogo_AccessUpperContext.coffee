@@ -3,10 +3,10 @@ class FLAccessUpperContextClass extends FLClasses
     toBeReturned = super FLAccessUpperContext
     toBeReturned.value = tokenString
 
-    toBeReturned.print = ->
+    toBeReturned.flToString = ->
       return @value
 
-    toBeReturned.printForList = toBeReturned.print
+    toBeReturned.flToStringForList = toBeReturned.flToString
 
     return toBeReturned
 

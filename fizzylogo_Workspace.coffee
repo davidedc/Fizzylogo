@@ -3,10 +3,10 @@ class FLWorkspaceClass extends FLClasses
     toBeReturned = super FLWorkspace
     toBeReturned.value = "the workspace object"
 
-    toBeReturned.print = ->
+    toBeReturned.flToString = ->
       return @value
 
-    toBeReturned.printForList = toBeReturned.print
+    toBeReturned.flToStringForList = toBeReturned.flToString
 
     return toBeReturned
 

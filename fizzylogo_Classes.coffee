@@ -10,13 +10,13 @@ class FLClasses extends FLObjects
     for i in [0...@msgPatterns.length]
       eachSignature = @msgPatterns[i]
       #console.dir eachSignature
-      if eachSignature.print() == signature.print()
+      if eachSignature.flToString() == signature.flToString()
         @msgPatterns[i] = signature
         @methodBodies[i] = methodBody
-        console.log "adding method  signature: " + signature.print() + " body: " + methodBody.print?()
+        console.log "adding method  signature: " + signature.flToString() + " body: " + methodBody.flToString?()
         return
 
-    console.log "adding method  signature: " + signature.print() + " body: " + methodBody.print?()
+    console.log "adding method  signature: " + signature.flToString() + " body: " + methodBody.flToString?()
     @msgPatterns.jsArrayPush signature
     @methodBodies.jsArrayPush methodBody
 
@@ -49,7 +49,7 @@ class FLClassClass extends FLClasses
     toBeReturned.methodBodies = []
     toBeReturned.instanceVariablesDict = {}
 
-    toBeReturned.print = ->
+    toBeReturned.flToString = ->
       return "Class_object"
 
     return toBeReturned

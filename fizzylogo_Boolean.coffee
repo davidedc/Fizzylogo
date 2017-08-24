@@ -3,10 +3,10 @@ class FLBooleanClass extends FLClasses
     toBeReturned = super FLBoolean
     toBeReturned.value = value
 
-    toBeReturned.print = ->
+    toBeReturned.flToString = ->
       return @value
 
-    toBeReturned.printForList = toBeReturned.print
+    toBeReturned.flToStringForList = toBeReturned.flToString
 
     return toBeReturned
     

@@ -2,10 +2,10 @@ class FLNotClass extends FLClasses
   createNew: ->
     toBeReturned = super FLNot
 
-    toBeReturned.print = ->
+    toBeReturned.flToString = ->
       return "Not_object"
 
-    toBeReturned.printForList = toBeReturned.print
+    toBeReturned.flToStringForList = toBeReturned.flToString
 
     return toBeReturned
 

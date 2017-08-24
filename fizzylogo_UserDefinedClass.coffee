@@ -24,9 +24,9 @@ class FLUserDefinedClass extends FLClasses
     toBeReturned = new FLObjects @
     toBeReturned.value = "object_from_a_user_class"
 
-    toBeReturned.print = ->
+    toBeReturned.flToString = ->
       return @value
 
-    toBeReturned.printForList = toBeReturned.print
+    toBeReturned.flToStringForList = toBeReturned.flToString
 
     return toBeReturned

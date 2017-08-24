@@ -3,10 +3,10 @@ class FLQuoteClass extends FLClasses
   createNew: ->
     toBeReturned = super FLQuote
 
-    toBeReturned.print = ->
+    toBeReturned.flToString = ->
       return "Quote_object"
 
-    toBeReturned.printForList = toBeReturned.print
+    toBeReturned.flToStringForList = toBeReturned.flToString
 
     return toBeReturned
 

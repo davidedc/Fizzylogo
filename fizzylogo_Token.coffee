@@ -3,7 +3,7 @@ class FLTokenClass extends FLClasses
     toBeReturned = super FLToken
     toBeReturned.value = tokenString
 
-    toBeReturned.print = ->
+    toBeReturned.flToString = ->
       if /\$STRING_TOKEN_([\$a-zA-Z0-9_]+)/g.test @value
         toPrint = "TOKEN:" + injectStrings @value
       else
@@ -13,14 +13,14 @@ class FLTokenClass extends FLClasses
     toBeReturned.isStatementSeparator = ->
       return @value == ";"
 
-    toBeReturned.printForList = toBeReturned.print
+    toBeReturned.flToStringForList = toBeReturned.flToString
 
     toBeReturned.eval = (theContext, remainingMessage, ignoreUnassigned) ->
 
       # shortcut: instead of using "@a←5"
       # one can now just use "a=5"
       if remainingMessage? and remainingMessage.flClass == FLList
-        console.log "remainingMessage: " + remainingMessage.print()
+        console.log "remainingMessage: " + remainingMessage.flToString()
         console.log "secondElementIsEqual: " + remainingMessage.secondElementIsEqual()
         if remainingMessage.startsWithIncrementOrDecrementOperator() or remainingMessage.startsWithCompoundAssignmentOperator() or remainingMessage.secondElementIsEqual()
           theContext.returned = @

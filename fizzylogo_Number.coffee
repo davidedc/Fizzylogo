@@ -4,10 +4,10 @@ class FLNumberClass extends FLClasses
     toBeReturned = super FLNumber
     toBeReturned.value = parseFloat(value + "")
 
-    toBeReturned.print = ->
+    toBeReturned.flToString = ->
       return @value
 
-    toBeReturned.printForList = toBeReturned.print
+    toBeReturned.flToStringForList = toBeReturned.flToString
 
     return toBeReturned
     

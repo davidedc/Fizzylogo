@@ -19,7 +19,7 @@
 #  ﹍﹍done
 #  ﹍else:
 #  ﹍﹍a=a minus 1
-#  console print_ a
+#  console print a
 #
 # On the other hand, in "to" and "answer", the code block is passed as
 # evaluated so it's actually closed (in read-only mode). This is
@@ -47,9 +47,14 @@ addDefaultMethods = (classToAddThemTo) ->
   classToAddThemTo.addMethod \
     (flTokenize "postfixPrint"),
     (context) ->
-      console.log "///////// program printout: " + @print()
-      environmentPrintout += @print()
+      console.log "///////// program printout: " + @flToString()
+      environmentPrintout += @flToString()
       return @
+
+  classToAddThemTo.addMethod \
+    (flTokenize "toString"),
+    (context) ->
+      return FLString.createNew @flToString()
 
   classToAddThemTo.addMethod \
     (flTokenize "whenNew"),
@@ -210,7 +215,7 @@ FLToken.addMethod \
       # could be achieved for example by marking in a special way contexts
       # that have been created because of method calls and climbing back
       # to the last one of those...
-      console.log "evaluation " + indentation() + "creating temp token: " + tokenString + " at depth: " + context.firstNonTransparentContext().depth() + " with self: " + context.firstNonTransparentContext().self.print()
+      console.log "evaluation " + indentation() + "creating temp token: " + tokenString + " at depth: " + context.firstNonTransparentContext().depth() + " with self: " + context.firstNonTransparentContext().self.flToString()
       dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict
     else
       console.log "evaluation " + indentation() + "found temp token: " + tokenString
@@ -315,7 +320,7 @@ FLNil.addMethod \
     context.throwing = true
     # TODO this error should really be a stock error referanceable
     # from the workspace because someone might want to catch it.
-    return FLException.createNew "message to nil: " + anything.print()
+    return FLException.createNew "message to nil: " + anything.flToString()
 
 
 # In ---------------------------------------------------------------------------
@@ -475,17 +480,17 @@ FLString.addMethod \
   (flTokenize "+ ( stringToBeAppended )"),
   (context) ->
     stringToBeAppended = context.tempVariablesDict[ValidIDfromString "stringToBeAppended"]
-    return FLString.createNew @value + stringToBeAppended.print()
+    return FLString.createNew @value + stringToBeAppended.flToString()
 
 # Number -------------------------------------------------------------------------
 
 FLNumber.addMethod \
   (flTokenize "anotherPrint"),
-  flTokenize "console print_ self"
+  flTokenize "console print self"
 
 FLNumber.addMethod \
   (flTokenize "doublePrint"),
-  flTokenize "console print_(console print_ self)"
+  flTokenize "console print(console print self)"
 
 # mutates the very object
 FLNumber.addMethod \
@@ -519,7 +524,7 @@ FLNumber.addMethod \
 
 FLNumber.addMethod \
   (flTokenize "factorialthree"),
-  flTokenize "( self == 0 ) ⇒ ( 1 ) ('temp ← self;console print_ temp; ( self minus 1 ) factorialthree * temp )"
+  flTokenize "( self == 0 ) ⇒ ( 1 ) ('temp ← self;console print temp; ( self minus 1 ) factorialthree * temp )"
 
 FLNumber.addMethod \
   (flTokenize "factorialfour"),
@@ -539,7 +544,7 @@ FLNumber.addMethod \
 
 FLNumber.addMethod \
   (flTokenize "printAFromDeeperCall"),
-  flTokenize "console print_ a"
+  flTokenize "console print a"
 
 # ---
 
@@ -578,7 +583,7 @@ FLNumber.addMethod \
   (flTokenize "times ( ' loopCode )"),
   (context) ->
     loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
-    console.log "FLNumber ⇒ DO loop code is: " + loopCode.print()
+    console.log "FLNumber ⇒ DO loop code is: " + loopCode.flToString()
 
 
     for i in [0...@value]
@@ -795,10 +800,10 @@ FLAccessUpperContext.addMethod \
 # Console -----------------------------------------------------------------------------
 
 FLConsole.addMethod \
-  (flTokenize "print_ ( thingToPrint )"),
+  (flTokenize "print ( thingToPrint )"),
   (context) ->
     thingToPrint = context.tempVariablesDict[ValidIDfromString "thingToPrint"]
-    stringToPrint = thingToPrint.print()
+    stringToPrint = thingToPrint.flToString()
     console.log "///////// program printout: " + stringToPrint
     environmentPrintout += stringToPrint
     return thingToPrint
@@ -830,7 +835,7 @@ FLRepeat1.addMethod \
   (context) ->
     context.isTransparent = true
     loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
-    console.log "FLRepeat1 ⇒ loop code is: " + loopCode.print()
+    console.log "FLRepeat1 ⇒ loop code is: " + loopCode.flToString()
 
     loop
       toBeReturned = (loopCode.eval context, loopCode)[0].returned
@@ -863,7 +868,7 @@ FLRepeat2.addMethod \
     context.isTransparent = true
     howManyTimes = context.tempVariablesDict[ValidIDfromString "howManyTimes"]
     loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
-    console.log "FLRepeat1 ⇒ loop code is: " + loopCode.print()
+    console.log "FLRepeat1 ⇒ loop code is: " + loopCode.flToString()
 
     if howManyTimes.flClass == FLForever
       limit = Number.MAX_SAFE_INTEGER
@@ -1035,7 +1040,7 @@ FLFor.addMethod \
     forContext.isTransparent = true
     flContexts.jsArrayPush forContext
 
-    console.log "FLFor ⇒ loop code is: " + loopCode.print()
+    console.log "FLFor ⇒ loop code is: " + loopCode.flToString()
 
     for i in [startIndex.value..endIndex.value]
       console.log "FLFor ⇒ loop iterating variable to " + i
@@ -1083,7 +1088,7 @@ FLFor.addMethod \
       return FLException.createNew "for...each expects a list"
 
 
-    console.log "FLEach do on the list: " + theList.print()
+    console.log "FLEach do on the list: " + theList.flToString()
 
     forContext = new FLContext context
     forContext.isTransparent = true
@@ -1091,7 +1096,7 @@ FLFor.addMethod \
     for i in [0...theList.value.length]
 
       forContext.tempVariablesDict[ValidIDfromString variable.value] = theList.elementAt i
-      console.log "FLEach do evaling...: " + code.print()
+      console.log "FLEach do evaling...: " + code.flToString()
       toBeReturned = (code.eval forContext, code)[0].returned
 
       # catch any thrown "done" object, used to

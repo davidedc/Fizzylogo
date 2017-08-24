@@ -97,7 +97,7 @@ class FLListClass extends FLClasses
     toBeReturned.evaluatedElementsList = (context) ->
       newList = FLList.createNew()
       for i in [0...@length()]
-        console.log "toBeReturned.evaluatedElementsList evaluating " + (@elementAt i).print()
+        console.log "toBeReturned.evaluatedElementsList evaluating " + (@elementAt i).flToString()
         
         if (@elementAt i).flClass == FLList
           evalled = (@elementAt i).evaluatedElementsList context
@@ -111,7 +111,7 @@ class FLListClass extends FLClasses
 
       return newList
 
-    toBeReturned.print = ->
+    toBeReturned.flToString = ->
       #console.log "@value:" + @value
       #console.log "list print: length: " + @length()
       if @length() <= 0
@@ -120,11 +120,11 @@ class FLListClass extends FLClasses
       for i in [0...@length()]
         #console.log "@value element " + i + " : " + @value[i]
         #console.log "@value element " + i + " content: " + @value[i].value
-        toBePrinted += " " + @elementAt(i).printForList()
+        toBePrinted += " " + @elementAt(i).flToStringForList()
       toBePrinted += " )"
       return toBePrinted
 
-    toBeReturned.printForList = toBeReturned.print
+    toBeReturned.flToStringForList = toBeReturned.flToString
 
     toBeReturned.evalFirstListElementAndTurnRestIntoMessage = (theContext) ->
       firstElement = @firstElement()
@@ -137,7 +137,7 @@ class FLListClass extends FLClasses
       [returnedContext, restOfMessage] = @evalFirstListElementAndTurnRestIntoMessage theContext
       receiver = returnedContext.returned
 
-      console.log "evaluation " + indentation() + "remaining part of list to be sent as message is: " + restOfMessage.print()
+      console.log "evaluation " + indentation() + "remaining part of list to be sent as message is: " + restOfMessage.flToString()
 
       # here is the case of the "statement with one command" e.g.
       #    1 print. singleCommand . 2 print
@@ -151,7 +151,7 @@ class FLListClass extends FLClasses
       # empty message, which properly throws the "done".
       # So here we do that check and do the further message send.
       if restOfMessage.isEmpty()
-        console.log "evaluation " + indentation() + "trying to send empty message to " + receiver.print()
+        console.log "evaluation " + indentation() + "trying to send empty message to " + receiver.flToString()
         [returnedContextFromEmptyMessage, ignored] = receiver.findSignatureBindParamsAndMakeCall (flTokenize "*nothing*"), returnedContext
         if returnedContextFromEmptyMessage?
           receiver = returnedContextFromEmptyMessage.returned
@@ -168,7 +168,7 @@ class FLListClass extends FLClasses
       #  c) send to the receiver the remaining part of the statement, as the message
 
       console.log "evaluation " + indentation() + "list received empty message, evaluating content of list"
-      console.log "evaluation " + indentation() + "  i.e. " + @print()
+      console.log "evaluation " + indentation() + "  i.e. " + @flToString()
 
       @toList()
 
@@ -177,7 +177,7 @@ class FLListClass extends FLClasses
       for eachStatement in statements
 
         console.log "evaluation " + indentation() + "evaluating single statement"
-        console.log "evaluation " + indentation() + "  i.e. " + eachStatement.print()
+        console.log "evaluation " + indentation() + "  i.e. " + eachStatement.flToString()
 
         returnedContext = theContext
         restOfMessage = eachStatement
@@ -207,12 +207,12 @@ class FLListClass extends FLClasses
             returnedContext.findAnotherReceiver = false
             returnedContext = returnedContext.previousContext
             findAnotherReceiver = true
-            console.log "finding next receiver from:  " + restOfMessage.print()
+            console.log "finding next receiver from:  " + restOfMessage.flToString()
 
           if findAnotherReceiver
             findAnotherReceiver = false
             [returnedContext, restOfMessage, receiver] = restOfMessage.findReceiver returnedContext
-            console.log "found next receiver and now message is: " + restOfMessage.print()
+            console.log "found next receiver and now message is: " + restOfMessage.flToString()
             #console.dir receiver
             console.log "3 returnedContext.throwing: " + returnedContext.throwing
 
@@ -233,7 +233,7 @@ class FLListClass extends FLClasses
             break
 
           console.log "evaluation " + indentation() + "receiver: " + receiver?.value
-          console.log "evaluation " + indentation() + "message: " + restOfMessage.print()
+          console.log "evaluation " + indentation() + "message: " + restOfMessage.flToString()
 
           # now actually send the message to the receiver. Note that
           # only part of the message might be consumed, in which case
@@ -360,23 +360,23 @@ class FLListClass extends FLClasses
         return @elementAt(1)
 
     toBeReturned.separateStatements = ->
-      console.log "evaluation " + indentation() + "separating statements   start: " + @print()
+      console.log "evaluation " + indentation() + "separating statements   start: " + @flToString()
       arrayOfStatements = []
       lastStatementEnd = @cursorStart - 1
       for i in [@cursorStart..@cursorEnd]
-        console.log "evaluation " + indentation() + "separating statements   examining element " + @value[i].print()
+        console.log "evaluation " + indentation() + "separating statements   examining element " + @value[i].flToString()
         if (@value[i].isStatementSeparator?()) or (i == @cursorEnd)
           statementToBeAdded = @copy().toList()
           statementToBeAdded.cursorStart = lastStatementEnd + 1
           statementToBeAdded.cursorEnd = i - 1
           if i == @cursorEnd and !@value[@cursorEnd].isStatementSeparator?()
-            console.log " last char: " + @value[@cursorEnd].print()
+            console.log " last char: " + @value[@cursorEnd].flToString()
             statementToBeAdded.cursorEnd++
           lastStatementEnd = i
           if !statementToBeAdded.isEmpty() and !statementToBeAdded.firstElement().isStatementSeparator?()
-            console.log " adding: " + statementToBeAdded.print()
+            console.log " adding: " + statementToBeAdded.flToString()
             arrayOfStatements.jsArrayPush statementToBeAdded
-          console.log "evaluation " + indentation() + "separating statements isolated new statement " + statementToBeAdded.print()
+          console.log "evaluation " + indentation() + "separating statements isolated new statement " + statementToBeAdded.flToString()
 
 
       return arrayOfStatements

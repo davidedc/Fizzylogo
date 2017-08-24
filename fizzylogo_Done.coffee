@@ -3,12 +3,12 @@ class FLDoneClass extends FLClasses
     toBeReturned = super FLDone
     toBeReturned.value = null
 
-    toBeReturned.print = ->
+    toBeReturned.flToString = ->
       return "Done_object"
 
-    toBeReturned.printForList = toBeReturned.print
+    toBeReturned.flToStringForList = toBeReturned.flToString
 
-    toBeReturned.print = ->
+    toBeReturned.flToString = ->
       return "Done_object"
 
     return toBeReturned

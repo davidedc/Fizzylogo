@@ -4,10 +4,10 @@ class FLForeverClass extends FLClasses
     toBeReturned.value = null
 
 
-    toBeReturned.print = ->
+    toBeReturned.flToString = ->
       return "Forever_object"
 
-    toBeReturned.printForList = toBeReturned.print
+    toBeReturned.flToStringForList = toBeReturned.flToString
 
     return toBeReturned
 

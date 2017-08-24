@@ -2,10 +2,10 @@ class FLForClass extends FLClasses
   createNew: ->
     toBeReturned = super FLFor
 
-    toBeReturned.print = ->
+    toBeReturned.flToString = ->
       return "For_object"
 
-    toBeReturned.printForList = toBeReturned.print
+    toBeReturned.flToStringForList = toBeReturned.flToString
 
     return toBeReturned
 

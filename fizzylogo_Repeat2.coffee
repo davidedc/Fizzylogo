@@ -2,10 +2,10 @@ class FLRepeat2Class extends FLClasses
   createNew: ->
     toBeReturned = super FLRepeat2
 
-    toBeReturned.print = ->
+    toBeReturned.flToString = ->
       return "Repeat2_object"
 
-    toBeReturned.printForList = toBeReturned.print
+    toBeReturned.flToStringForList = toBeReturned.flToString
 
     return toBeReturned
 

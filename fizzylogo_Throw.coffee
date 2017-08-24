@@ -2,10 +2,10 @@ class FLThrowClass extends FLClasses
   createNew: ->
     toBeReturned = super FLThrow
 
-    toBeReturned.print = ->
+    toBeReturned.flToString = ->
       return "Throw_object"
 
-    toBeReturned.printForList = toBeReturned.print
+    toBeReturned.flToStringForList = toBeReturned.flToString
 
     return toBeReturned
 

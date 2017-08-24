@@ -17,14 +17,14 @@ class FLObjects
   # is not a method call (although it might lead to one),
   # this is progressing within an existing call
   findSignatureBindParamsAndMakeCall: (methodInvocationToBeChecked, theContext) ->
-    console.log "evaluation " + indentation() + "  !!! looking up method invocation " + methodInvocationToBeChecked.print() + " with signatures!"
+    console.log "evaluation " + indentation() + "  !!! looking up method invocation " + methodInvocationToBeChecked.flToString() + " with signatures!"
     console.log "evaluation " + indentation() + "  !!! looking up method invocation, is method empty? " + methodInvocationToBeChecked.isEmpty()
 
     console.log "evaluation " + indentation() + "  I am: " + @value
     console.log "evaluation " + indentation() + "  matching - my class patterns: "
 
     #for eachClassPattern in @flClass.msgPatterns
-    #  console.log "evaluation " + indentation() + eachClassPattern.print()
+    #  console.log "evaluation " + indentation() + eachClassPattern.flToString()
 
     # fake context push so that we can make
     # the context stack handling easier
@@ -35,7 +35,7 @@ class FLObjects
     for eachSignatureIndex in [0...@flClass.msgPatterns.length]
       eachSignature = @flClass.msgPatterns[eachSignatureIndex]
 
-      #console.log "evaluation " + indentation() + "  matching - checking if this signature matches: " + eachSignature.print()
+      #console.log "evaluation " + indentation() + "  matching - checking if this signature matches: " + eachSignature.flToString()
       methodInvocation = methodInvocationToBeChecked
 
       # remove the previous context because it was a
@@ -46,8 +46,8 @@ class FLObjects
       # this is the ONLY place where we change self!
       newContext = new FLContext theContext, @
       flContexts.jsArrayPush newContext
-      #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.print()
-      #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.print()
+      #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.flToString()
+      #console.log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.flToString()
 
       soFarEverythingMatched = true
       originalMethodInvocationStart = methodInvocation.cursorStart
@@ -60,7 +60,7 @@ class FLObjects
 
       until eachSignature.isEmpty() or methodInvocation.isEmpty()
 
-        console.log "evaluation " + indentation() + "  matching: - next signature piece: " + eachSignature.print() + " is token: " + " with: " + methodInvocation.print()
+        console.log "evaluation " + indentation() + "  matching: - next signature piece: " + eachSignature.flToString() + " is token: " + " with: " + methodInvocation.flToString()
 
         [eachElementOfSignature, eachSignature] = eachSignature.nextElement()
 
@@ -78,12 +78,12 @@ class FLObjects
 
           if eachElementOfInvocation.flClass == FLToken
 
-            #console.log "evaluation " + indentation() + "  matching tokens: - next signature piece: " + eachElementOfSignature.print() + " is token: " + (eachElementOfSignature.flClass == FLToken) + " with: " + eachElementOfInvocation.print()
+            #console.log "evaluation " + indentation() + "  matching tokens: - next signature piece: " + eachElementOfSignature.flToString() + " is token: " + (eachElementOfSignature.flClass == FLToken) + " with: " + eachElementOfInvocation.flToString()
 
             # ok at least the message contains a token, but
             # now we have to check that they spell the same
             if eachElementOfSignature.value == eachElementOfInvocation.value
-              console.log "evaluation " + indentation() + "  matching - token matched: " + eachElementOfSignature.print()
+              console.log "evaluation " + indentation() + "  matching - token matched: " + eachElementOfSignature.flToString()
               # OK good match of tokens,
               # check the next token in the signature
               continue
@@ -95,19 +95,19 @@ class FLObjects
             # the signature says "token" but the message contains
             # something else: no match, check the next
             # signature
-            #console.log "evaluation " + indentation() + "  matching - no match: " + eachElementOfSignature.print() + " vs. " + eachElementOfInvocation.print()
+            #console.log "evaluation " + indentation() + "  matching - no match: " + eachElementOfSignature.flToString() + " vs. " + eachElementOfInvocation.flToString()
             # this signature doesn't match check the next one
             soFarEverythingMatched = false
             break
         else
           # the signature has a param. we have to check if
           # it requires an evaluation or not
-          console.log "evaluation " + indentation() + "  matching - getting the token inside the parameter: " + eachElementOfSignature.print()
+          console.log "evaluation " + indentation() + "  matching - getting the token inside the parameter: " + eachElementOfSignature.flToString()
           paramToken = eachElementOfSignature.getParamToken()
           #console.dir paramToken
-          console.log "evaluation " + indentation() + "  matching - token inside the parameter: " + paramToken.print()
+          console.log "evaluation " + indentation() + "  matching - token inside the parameter: " + paramToken.flToString()
           if eachElementOfSignature.isEvaluatingParam()
-            console.log "evaluation " + indentation() + "  matching - need to evaluate next msg element from invocation: " + methodInvocation.print() + " and bind to: " + paramToken.print()
+            console.log "evaluation " + indentation() + "  matching - need to evaluate next msg element from invocation: " + methodInvocation.flToString() + " and bind to: " + paramToken.flToString()
 
             # note how we need to evaluate the params in a context that has the
             # same SELF as the calling one, not the new one that
@@ -121,11 +121,11 @@ class FLObjects
 
           else
             # don't need to evaluate the parameter
-            console.log "evaluation " + indentation() + "  matching - need to get next msg element from invocation: " + methodInvocation.print() + " and bind to: " + paramToken.print()
+            console.log "evaluation " + indentation() + "  matching - need to get next msg element from invocation: " + methodInvocation.flToString() + " and bind to: " + paramToken.flToString()
             [valueToBeBound, methodInvocation] = methodInvocation.nextElement()
 
           
-          console.log "evaluation " + indentation() + "  matching - adding paramater " + paramToken.print() + " to tempVariables dictionary in current frame"
+          console.log "evaluation " + indentation() + "  matching - adding paramater " + paramToken.flToString() + " to tempVariables dictionary in current frame"
           newContext.tempVariablesDict[ValidIDfromString paramToken.value] = valueToBeBound
 
           # ok we matched a paramenter, now let's keep matching further
@@ -139,11 +139,11 @@ class FLObjects
         # the original plus what we consumed from matching the
         # signature.
         console.log "evaluation " + indentation() + "  matching - consumed from matching this sig: " + (methodInvocation.cursorStart - originalMethodInvocationStart)
-        console.log "evaluation " + indentation() + "             methodInvocation: " + methodInvocation.print() + " cursor start: " + methodInvocation.cursorStart  + " original methodInvocation start: " + originalMethodInvocationStart
+        console.log "evaluation " + indentation() + "             methodInvocation: " + methodInvocation.flToString() + " cursor start: " + methodInvocation.cursorStart  + " original methodInvocation start: " + originalMethodInvocationStart
 
         console.log "methodInvocation.cursorStart - originalMethodInvocationStart: " + " " + methodInvocation.cursorStart  + " " + originalMethodInvocationStart
         theContext.unparsedMessage = null
-        console.log "theContext method invocation after: " + methodInvocation.print()
+        console.log "theContext method invocation after: " + methodInvocation.flToString()
 
         contextToBeReturned = @methodCall (@flClass.methodBodies[eachSignatureIndex]), newContext
 
@@ -172,7 +172,7 @@ class FLObjects
     # However we do affect the PC of the callee context.
     
     if methodBody.flClass == FLList
-      console.log "evaluation " + indentation() + "  matching - method body: " + methodBody.print()
+      console.log "evaluation " + indentation() + "  matching - method body: " + methodBody.flToString()
       console.log "evaluation " + indentation() + "  method body mandates receiver? " + methodBody.mandatesNewReceiver()
       # non-native method, i.e. further fizzylogo code
       # creates a context and evals the message in it

@@ -4,10 +4,10 @@ class FLStringClass extends FLClasses
     toBeReturned = super FLString
     toBeReturned.value = value + ""
 
-    toBeReturned.print = ->
+    toBeReturned.flToString = ->
       return @value
 
-    toBeReturned.printForList = ->
+    toBeReturned.flToStringForList = ->
       return '"' + @value + '"'
 
     return toBeReturned

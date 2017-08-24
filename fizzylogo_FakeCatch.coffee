@@ -33,10 +33,10 @@ class FLFakeCatchClass extends FLClasses
   createNew: ->
     toBeReturned = super FLFakeCatch
 
-    toBeReturned.print = ->
+    toBeReturned.flToString = ->
       return "Try_object"
 
-    toBeReturned.printForList = toBeReturned.print
+    toBeReturned.flToStringForList = toBeReturned.flToString
 
     return toBeReturned
 

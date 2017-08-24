@@ -3,10 +3,10 @@ class FLExceptionClass extends FLClasses
     toBeReturned = super FLException
     toBeReturned.value = value
 
-    toBeReturned.print = ->
+    toBeReturned.flToString = ->
       return @value
 
-    toBeReturned.printForList = toBeReturned.print
+    toBeReturned.flToStringForList = toBeReturned.flToString
 
     return toBeReturned
     
