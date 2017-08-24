@@ -51,6 +51,12 @@ tokenizeCommand = (command) ->
   #
   command = command.replace /([0-9]*\.[0-9]+([eE][- ]?[0-9]*)?)|([^+\-^*/()=←⇒.])([+\-^*/()=←⇒.]+)/g, "$1$3 $4 "
 
+  # separates the *end* of a sequence of punctuations from what
+  # comes after. e.g. 3.14 =a becomes 3.14 = a
+  # not that we can't/donn't need to do that with the dot because
+  # a) it was already done by the regex above and
+  # b) it would wreck floating point numbers
+  command = command.replace /([+\-^*/()=←⇒])([^+\-^*/()=←⇒])/g, "$1 $2"
 
   command = command.replace /'/g, " ' "
   command = command.replace /:/g, " : "
@@ -238,6 +244,7 @@ flTokenize = (command) ->
   console.log "command before replacements: " + command
   command = tokenizeCommand command  
   console.log "command after replacements: " + command
+  #console.log "obtained: command after replacements: " + command
 
 
   simpleTokenization = command.split(" ")

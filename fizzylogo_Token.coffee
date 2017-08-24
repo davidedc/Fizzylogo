@@ -36,7 +36,10 @@ class FLTokenClass extends FLClasses
         console.log "evaluation " + indentation() + "found temp token: " + @value
         theContext.returned = theContext.lookUpTokenValue @, existingLookedUpValuePlace
         return [theContext]
-      else if /^\d+$/.test @value
+      # you could match the leading "+" or "-", however this would
+      # be uneven with the general case of handling leading + and - 
+      #else if /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/.test @value
+      else if /^[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/.test @value
         theContext.returned = FLNumber.createNew @value
         return [theContext]
       else if /\$STRING_TOKEN_([\$a-zA-Z0-9_]+)/g.test @value
