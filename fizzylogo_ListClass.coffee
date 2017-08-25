@@ -160,7 +160,18 @@ class FLListClass extends FLClasses
 
       return [returnedContext, restOfMessage, receiver]
 
+    # this eval requires that the whole list is consumed
     toBeReturned.eval = (theContext) ->
+      [returnedContext, returnedMessage] = @partialEvalAsMessage theContext
+      if !returnedMessage.isEmpty()
+        console.log "list couldn't be fully evaluated: " + @flToString() + " unexecutable: " + returnedMessage.flToString()
+        returnedContext.returned = FLException.createNew "message was not understood: " + returnedMessage.flToString()
+        returnedContext.throwing = true
+      return [returnedContext, returnedMessage]
+
+    # this eval doesn't require that the whole list is consumed,
+    # it just consumes what it can
+    toBeReturned.partialEvalAsMessage = (theContext) ->
       # a list without any messages just evaluates itself, which
       # consists of the following:
       #  a) separate all the statements (parts separated by ";")
@@ -170,6 +181,7 @@ class FLListClass extends FLClasses
       console.log "evaluation " + indentation() + "list received empty message, evaluating content of list"
       console.log "evaluation " + indentation() + "  i.e. " + @flToString()
 
+      # todo this doesn't seem to be needed
       @toList()
 
       statements = @separateStatements()
@@ -254,6 +266,25 @@ class FLListClass extends FLClasses
             returnedContext.returned = receiver
             returnedContext.unparsedMessage = returnedMessage
             return [returnedContext, returnedMessage]
+
+
+          # where we detect an exception being thrown
+          if theContext.throwing
+            console.log "throw escape 2"
+            restOfMessage.exhaust()
+
+            if theContext.returned.flClass == FLReturn
+              console.log "got a return!"
+              theContext.throwing =false
+              if theContext.returned.value?
+                console.log "got a return with value!"
+                theContext.returned = theContext.returned.value
+              else
+                theContext.returned = FLNil.createNew()
+            else
+              theContext.throwing = true
+
+            return [theContext, restOfMessage]
 
 
           console.log "2 theContext.throwing: " + theContext.throwing

@@ -216,13 +216,13 @@ tests = [
   # prevents any further statement to be
   # executed
   "1 negate; console print 2"
-  "! message was not understood: ( negate )"
+  "! exception: message was not understood: ( negate )"
 
   # ---------------------------------------------------------------------------
   """
   2 1 postfixPrint
   """
-  "! message was not understood: ( 1 postfixPrint )"
+  "! exception: message was not understood: ( 1 postfixPrint )"
 
   # ---------------------------------------------------------------------------
   "console print negate"
@@ -911,11 +911,11 @@ tests = [
 
   # ---------------------------------------------------------------------------
   "8 unintelligibleMessage"
-  "! message was not understood: ( unintelligibleMessage )"
+  "! exception: message was not understood: ( unintelligibleMessage )"
 
   # ---------------------------------------------------------------------------
   "' a ← 5 someUndefinedMessage"
-  "! message was not understood: ( someUndefinedMessage )"
+  "! exception: message was not understood: ( someUndefinedMessage )"
 
 
   # ---------------------------------------------------------------------------
@@ -1375,6 +1375,22 @@ tests = [
   "start"
 
   # ---------------------------------------------------------------------------
+  # lists that get evaluated but cannot be evaluated fully
+  # ---------------------------------------------------------------------------
+
+  "a = (1 2 3)"
+  "! exception: message was not understood: ( 2 3 )"
+
+  "a = (\"hello\" \"world\")"
+  "! exception: message was not understood: ( TOKEN:world )"
+
+  """
+  myList = ("Hello " "Dave " "my " "dear " "friend")
+  1
+  """
+  "! exception: message was not understood: ( TOKEN:Dave  TOKEN:my  TOKEN:dear  TOKEN:friend )"
+
+  # ---------------------------------------------------------------------------
   "'( \"Hello \" \"Dave \" \"my \" \"dear \" \"friend\") each word do (console print word)"
   "Hello Dave my dear friend"
 
@@ -1465,15 +1481,10 @@ tests = [
   """
   codeToBeRun ='
   ﹍console print word
-  myList =
-  ﹍("Hello " "Dave " "my " "dear " "friend")
-  console print myList
-  for each word in
-  ﹍myList
-  do:
-  ﹍codeToBeRun eval
+  myList = ("Hello " "Dave " "my " "dear " "friend")
+  console print "myList: " + myList
   """
-  "Hello ! exception: for...each expects a list"
+  "! exception: message was not understood: ( TOKEN:Dave  TOKEN:my  TOKEN:dear  TOKEN:friend )"
 
   # ---------------------------------------------------------------------------
   # in this case "myList" ends up being a wrapped list i.e. ((wrapped))
@@ -1919,7 +1930,7 @@ tests = [
   ﹍2
   console print 1
   """
-  "! message was not understood: ( console print 1 )"
+  "! exception: message was not understood: ( console print 1 )"
 
   # careful! here is the ...3 postfixPrint that ends up
   # running!
@@ -2644,7 +2655,7 @@ tests = [
   # ---------------------------------------------------------------------------
   # here "print😁" is a single token, so there is no print happening
   "😁=4;console print😁"
-  "! message was not understood: ( print😁 )"
+  "! exception: message was not understood: ( print😁 )"
 
   # ---------------------------------------------------------------------------
   # FLTO
@@ -2908,10 +2919,6 @@ for i in [0...tests.length] by 2
       if returnedContext.throwing and returnedContext.returned.flClass == FLException
         console.log "evaluation " + indentation() + "exception: " + returnedContext.returned.value
         environmentErrors += "! exception: " + returnedContext.returned.value
-
-      if returnedContext.unparsedMessage
-        console.log "evaluation " + indentation() + "message was not understood: " + returnedContext.unparsedMessage.flToString()
-        environmentErrors += "! message was not understood: " + returnedContext.unparsedMessage.flToString()
 
 
     console.log "final return: " + returnedContext.returned?.value

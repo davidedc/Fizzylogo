@@ -116,7 +116,7 @@ class FLObjects
             # to the receiver, which we don't want
             # like in "7 * self" we don't want to bind self to 7
 
-            [returnedContext, methodInvocation] = methodInvocation.eval theContext, methodInvocation
+            [returnedContext, methodInvocation] = methodInvocation.partialEvalAsMessage theContext, methodInvocation
             valueToBeBound = returnedContext.returned
 
           else
