@@ -2903,7 +2903,7 @@ for i in [0...tests.length] by 2
     # is in here will still refer to "self" as the current self in the
     # overall message.
     
-    outerMostContext.returned = (parsed.eval outerMostContext, parsed)[0].returned
+    outerMostContext.returned = parsed.eval outerMostContext, parsed
 
     console.log "evaluation " + indentation() + "end of workspace evaluation"
 

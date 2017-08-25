@@ -23,8 +23,7 @@ class FLTokenClass extends FLClasses
         console.log "remainingMessage: " + remainingMessage.flToString()
         console.log "secondElementIsEqual: " + remainingMessage.secondElementIsEqual()
         if remainingMessage.startsWithIncrementOrDecrementOperator() or remainingMessage.startsWithCompoundAssignmentOperator() or remainingMessage.secondElementIsEqual()
-          theContext.returned = @
-          return [theContext]
+          return @
 
       # first always look up if there is a value for anything
       # if there is, that wins all the times, so you could
@@ -34,23 +33,19 @@ class FLTokenClass extends FLClasses
       existingLookedUpValuePlace = theContext.whichDictionaryContainsToken @
       if existingLookedUpValuePlace?
         console.log "evaluation " + indentation() + "found temp token: " + @value
-        theContext.returned = theContext.lookUpTokenValue @, existingLookedUpValuePlace
-        return [theContext]
+        return theContext.lookUpTokenValue @, existingLookedUpValuePlace
       # you could match the leading "+" or "-", however this would
       # be uneven with the general case of handling leading + and - 
       #else if /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/.test @value
       else if /^[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/.test @value
-        theContext.returned = FLNumber.createNew @value
-        return [theContext]
+        return FLNumber.createNew @value
       else if /\$STRING_TOKEN_([\$a-zA-Z0-9_]+)/g.test @value
-        theContext.returned = FLString.createNew injectStrings @value
-        return [theContext]
+        return FLString.createNew injectStrings @value
 
 
       if ignoreUnassigned
         console.log "evaluation " + indentation() + "not found temp token: " + @value + " and ignoring "
-        theContext.returned = @
-        return [theContext]
+        return @
 
       console.log "evaluation " + indentation() + "token " + @value + " contents: " + theContext.returned?.value
       console.log "evaluation " + indentation() + "not found temp token: " + @value
@@ -60,10 +55,8 @@ class FLTokenClass extends FLClasses
       # which is something that we are going to report.
       # We might even try to send a message to it, in which
       # case we'll report that too.
-      theContext.returned = FLNil.createNew()
       rWorkspace.lastUndefinedArom = @
-
-      return [theContext]
+      return FLNil.createNew()
 
 
     return toBeReturned

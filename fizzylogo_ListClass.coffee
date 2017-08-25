@@ -103,9 +103,9 @@ class FLListClass extends FLClasses
           evalled = (@elementAt i).evaluatedElementsList context
         else
           if (@elementAt i).flClass == FLToken and (@elementAt i).value == "self"
-            evalled = (@elementAt i)
+            evalled = @elementAt i
           else 
-            evalled = ((@elementAt i).eval context, @, true)[0].returned
+            evalled = (@elementAt i).eval context, @, true
 
         newList = newList.flListImmutablePush evalled
 
@@ -129,7 +129,7 @@ class FLListClass extends FLClasses
     toBeReturned.evalFirstListElementAndTurnRestIntoMessage = (theContext) ->
       firstElement = @firstElement()
       console.log "           " + indentation() + "evaling element " + firstElement.value
-      theContext.returned = (firstElement.eval theContext, @)[0].returned
+      theContext.returned = firstElement.eval theContext, @
       restOfMessage = @restOfMessage()
       return [theContext, restOfMessage]
 
@@ -163,12 +163,13 @@ class FLListClass extends FLClasses
     # this eval requires that the whole list is consumed
     toBeReturned.eval = (theContext) ->
       [returnedContext, returnedMessage] = @partialEvalAsMessage theContext
+
       if !returnedMessage.isEmpty()
         console.log "list couldn't be fully evaluated: " + @flToString() + " unexecutable: " + returnedMessage.flToString()
-        theContext.returned = FLException.createNew "message was not understood: " + returnedMessage.flToString()
         theContext.throwing = true
-        return [theContext, returnedMessage]
-      return [returnedContext, returnedMessage]
+        return FLException.createNew "message was not understood: " + returnedMessage.flToString()
+
+      return returnedContext.returned
 
     # this eval doesn't require that the whole list is consumed,
     # it just consumes what it can

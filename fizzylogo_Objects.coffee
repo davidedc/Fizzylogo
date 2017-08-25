@@ -8,8 +8,7 @@ class FLObjects
     @instanceVariablesDict = {}
 
   eval: (theContext) ->
-    theContext.returned = @
-    return [theContext]
+    return @
 
   # Note that only part of the message might be consumed
   # "self" remains the same since we are still in the
@@ -190,7 +189,7 @@ class FLObjects
       # the rest of the message is not used because all of the list should
       # be run, no remains from the message body should overspill
       # into the calling context.
-      theContext.returned = (methodBody.eval theContext, methodBody)[0].returned
+      theContext.returned = methodBody.eval theContext, methodBody
       theContext.findAnotherReceiver = methodBody.mandatesNewReceiver()
       console.log "evaluation " + indentation() + "  method body mandates receiver2 ? " + methodBody.mandatesNewReceiver()
     else
