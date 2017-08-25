@@ -165,8 +165,9 @@ class FLListClass extends FLClasses
       [returnedContext, returnedMessage] = @partialEvalAsMessage theContext
       if !returnedMessage.isEmpty()
         console.log "list couldn't be fully evaluated: " + @flToString() + " unexecutable: " + returnedMessage.flToString()
-        returnedContext.returned = FLException.createNew "message was not understood: " + returnedMessage.flToString()
-        returnedContext.throwing = true
+        theContext.returned = FLException.createNew "message was not understood: " + returnedMessage.flToString()
+        theContext.throwing = true
+        return [theContext, returnedMessage]
       return [returnedContext, returnedMessage]
 
     # this eval doesn't require that the whole list is consumed,
@@ -215,11 +216,13 @@ class FLListClass extends FLClasses
           if returnedContext.exhaustPreviousContextMessage == true
             restOfMessage.exhaust()
 
+
           if returnedContext.findAnotherReceiver and !returnedContext.throwing and !restOfMessage.isEmpty()
             returnedContext.findAnotherReceiver = false
             returnedContext = returnedContext.previousContext
             findAnotherReceiver = true
             console.log "finding next receiver from:  " + restOfMessage.flToString()
+
 
           if findAnotherReceiver
             findAnotherReceiver = false
@@ -229,7 +232,7 @@ class FLListClass extends FLClasses
             console.log "3 returnedContext.throwing: " + returnedContext.throwing
 
           # where we detect an exception being thrown
-          if returnedContext.throwing
+          if theContext.throwing or returnedContext.throwing
             console.log "throw escape"
             theContext.returned = receiver
             restOfMessage.exhaust()
@@ -266,25 +269,6 @@ class FLListClass extends FLClasses
             returnedContext.returned = receiver
             returnedContext.unparsedMessage = returnedMessage
             return [returnedContext, returnedMessage]
-
-
-          # where we detect an exception being thrown
-          if theContext.throwing
-            console.log "throw escape 2"
-            restOfMessage.exhaust()
-
-            if theContext.returned.flClass == FLReturn
-              console.log "got a return!"
-              theContext.throwing =false
-              if theContext.returned.value?
-                console.log "got a return with value!"
-                theContext.returned = theContext.returned.value
-              else
-                theContext.returned = FLNil.createNew()
-            else
-              theContext.throwing = true
-
-            return [theContext, restOfMessage]
 
 
           console.log "2 theContext.throwing: " + theContext.throwing
