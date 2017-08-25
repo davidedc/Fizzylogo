@@ -2903,25 +2903,25 @@ for i in [0...tests.length] by 2
     # is in here will still refer to "self" as the current self in the
     # overall message.
     
-    [returnedContext] = parsed.eval outerMostContext, parsed
+    outerMostContext.returned = (parsed.eval outerMostContext, parsed)[0].returned
 
     console.log "evaluation " + indentation() + "end of workspace evaluation"
 
-    if !returnedContext.returned?
-      if returnedContext.unparsedMessage?
-        unparsedPartOfMessage = " was sent message: " + returnedContext.unparsedMessage.flToString()
+    if !outerMostContext.returned?
+      if outerMostContext.unparsedMessage?
+        unparsedPartOfMessage = " was sent message: " + outerMostContext.unparsedMessage.flToString()
       else
         unparsedPartOfMessage = ""
       console.log "evaluation " + indentation() + "no meaning found for: " + rWorkspace.lastUndefinedArom.value + unparsedPartOfMessage
       environmentErrors += "! no meaning found for: " + rWorkspace.lastUndefinedArom.value + unparsedPartOfMessage
       rWorkspace.lastUndefinedArom
     else
-      if returnedContext.throwing and returnedContext.returned.flClass == FLException
-        console.log "evaluation " + indentation() + "exception: " + returnedContext.returned.value
-        environmentErrors += "! exception: " + returnedContext.returned.value
+      if outerMostContext.throwing and outerMostContext.returned.flClass == FLException
+        console.log "evaluation " + indentation() + "exception: " + outerMostContext.returned.value
+        environmentErrors += "! exception: " + outerMostContext.returned.value
 
 
-    console.log "final return: " + returnedContext.returned?.value
+    console.log "final return: " + outerMostContext.returned?.value
     if environmentPrintout + environmentErrors == testResult
       OKs++
       console.log "...test " + (i/2+1) + " OK, obtained: " + environmentPrintout + environmentErrors
