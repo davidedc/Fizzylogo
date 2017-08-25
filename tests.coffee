@@ -230,7 +230,7 @@ tests = [
 
   # ---------------------------------------------------------------------------
   "console print negate; negate = 2; console print negate; negate = nil; console print negate; negate +"
-  "nil2nil! exception: message to nil: +"
+  "nil2nil! exception: message was not understood: ( + )"
 
   # ---------------------------------------------------------------------------
   # this is what happens here: "a" is sent the message "b".
@@ -1310,7 +1310,7 @@ tests = [
   myObject = MyClass new
   myObject.printtwo "hello"
   """
-  "! exception: message to nil: TOKEN:hello"
+  "! exception: message was not understood: ( TOKEN:hello )"
 
   # ---------------------------------------------------------------------------
   # FLTO
@@ -2768,6 +2768,170 @@ tests = [
   (testingReturn 1 + 1) postfixPrint
   """
   "start - nil"
+
+  # ---------------------------------------------------------------------------
+  # (in)equality comparisons
+  # ---------------------------------------------------------------------------
+
+  """
+  console print 1 == 0
+  """
+  "false"
+
+  """
+  console print 1 == 1
+  """
+  "true"
+
+  """
+  console print 1.0 == 1
+  """
+  "true"
+
+  """
+  console print 0 == 0.0
+  """
+  "true"
+
+  """
+  console print 0.0 == 0.0
+  """
+  "true"
+
+  """
+  console print 1 == "hello"
+  """
+  "false"
+
+  """
+  console print "hello" == "hello"
+  """
+  "true"
+
+  """
+  console print "hello" == "world"
+  """
+  "false"
+
+  """
+  console print "hello" == true
+  """
+  "false"
+
+  """
+  console print false == false
+  """
+  "true"
+
+  """
+  console print false == 0
+  """
+  "false"
+
+  """
+  console print true == 0
+  """
+  "false"
+
+  """
+  console print true == 1
+  """
+  "false"
+
+  """
+  console print true == 1.0
+  """
+  "false"
+
+  """
+  console print true == 2
+  """
+  "false"
+
+  """
+  console print nil == nil
+  """
+  "true"
+
+  """
+  myList = '(1 2 3)
+  myList2 = '(1 2 3)
+  console print myList == myList
+  console print myList == myList2
+  """
+  "truefalse"
+
+  """
+  MyClass = Class new
+  myObject = MyClass new
+  myObject2 = MyClass new
+  console print myObject == myObject
+  console print myObject == myObject2
+  """
+  "truefalse"
+
+  # ---------------------------------------------------------------------------
+  # linked list
+  # ---------------------------------------------------------------------------
+
+  """
+  console print console.nonExisting == nil
+  """
+  "true"
+
+
+  """
+  Node = Class new
+
+  Node answer:
+  ﹍﹍initWith (item) (next)
+  ﹍by:
+  ﹍﹍@item = item
+  ﹍﹍console print " adding item: " + @item
+  ﹍﹍@next = next
+  ﹍﹍@
+
+  LinkedList = Class new
+
+  LinkedList answer:
+  ﹍﹍isEmpty
+  ﹍by:
+  ﹍﹍console print " list is empty now? " + @head == nil
+  ﹍﹍@head == nil
+
+  LinkedList answer:
+  ﹍﹍append (item)
+  ﹍by:
+  ﹍﹍node = Node new initWith item nil
+  ﹍﹍console print " 0 node is: " + node
+  ﹍﹍console print " 0 node has item: " + node.item
+  ﹍﹍if @tail != nil:
+  ﹍﹍﹍console print " 1 node is: " + node
+  ﹍﹍﹍console print " 1 node has item: " + node.item
+  ﹍﹍﹍@tail.next = node
+  ﹍﹍﹍console print " 2 node is: " + node
+  ﹍﹍﹍console print " 2 node has item: " + node.item
+  ﹍﹍if @ isEmpty:
+  ﹍﹍﹍console print " 3 node is: " + node
+  ﹍﹍﹍console print " 3 node has item: " + node.item
+  ﹍﹍﹍@head = node
+  ﹍﹍if @ isEmpty:
+  ﹍﹍﹍console print " this list should NOT be empty"
+  ﹍﹍@tail = node
+
+  myLinkedList = LinkedList new
+
+  myLinkedList append "Hello "
+  if myLinkedList isEmpty:
+  ﹍console print " this list should NOT be empty"
+
+  myLinkedList append "World"
+
+  console print " list contents: "
+  console print myLinkedList.head.item
+  console print myLinkedList.head.next.item
+  """
+  " adding item: Hello  0 node is: object_from_a_user_class 0 node has item: Hello  1 node is: object_from_a_user_class 1 node has item: Hello  2 node is: object_from_a_user_class 2 node has item: Hello  list is empty now? true 3 node is: object_from_a_user_class 3 node has item: Hello  list is empty now? false list is empty now? false adding item: World 0 node is: object_from_a_user_class 0 node has item: World 1 node is: object_from_a_user_class 1 node has item: World 2 node is: object_from_a_user_class 2 node has item: World list is empty now? false list is empty now? false list contents: Hello World"
 
 ]
 

@@ -41,7 +41,10 @@ class FLTokenClass extends FLClasses
         return FLNumber.createNew @value
       else if /\$STRING_TOKEN_([\$a-zA-Z0-9_]+)/g.test @value
         return FLString.createNew injectStrings @value
-
+      else if /^true$/.test @value
+        return FLBoolean.createNew true
+      else if /^false$/.test @value
+        return FLBoolean.createNew false
 
       if ignoreUnassigned
         console.log "evaluation " + indentation() + "not found temp token: " + @value + " and ignoring "

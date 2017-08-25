@@ -33,6 +33,20 @@
 #    from a parameter. That actually only happens in one place
 #    and in fact we need answerEvalParams for that case.
 
+commonSimpleValueEqualityFunction = (context) ->
+  toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
+  if @value == toCompare.value
+    return FLBoolean.createNew true
+  else
+    return FLBoolean.createNew false
+
+commonSimpleValueInequalityFunction = (context) ->
+  toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
+  if @value != toCompare.value
+    return FLBoolean.createNew true
+  else
+    return FLBoolean.createNew false
+
 
 # helper to add default methods -------------------------------------------
 
@@ -72,6 +86,30 @@ addDefaultMethods = (classToAddThemTo) ->
       flContexts.pop()
       return toBeReturned
 
+
+  # this is the common object identity function
+  # strings, numbers and booleans override this
+  # by just comparing the values.
+  classToAddThemTo.addMethod \
+    (flTokenize "== ( toCompare )"),
+    (context) ->
+      toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
+      if @ == toCompare
+        return FLBoolean.createNew true
+      else
+        return FLBoolean.createNew false
+
+  # this is the common object identity function
+  # strings, numbers and booleans override this
+  # by just comparing the values.
+  classToAddThemTo.addMethod \
+    (flTokenize "!= ( toCompare )"),
+    (context) ->
+      toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
+      if @ != toCompare
+        return FLBoolean.createNew true
+      else
+        return FLBoolean.createNew false
 
   commonPropertyAssignmentFunction = (context) ->
     context.isTransparent = true
@@ -313,15 +351,13 @@ FLToken.addMethod \
 # Nil ---------------------------------------------------------------------------
 
 FLNil.addMethod \
-  (flTokenize "('anything)"),
+  (flTokenize "== ( toCompare )"),
   (context) ->
-    anything = context.tempVariablesDict[ValidIDfromString "anything"]
-
-    context.throwing = true
-    # TODO this error should really be a stock error referanceable
-    # from the workspace because someone might want to catch it.
-    return FLException.createNew "message to nil: " + anything.flToString()
-
+    toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
+    if toCompare.flClass == FLNil
+      return FLBoolean.createNew true
+    else
+      return FLBoolean.createNew false
 
 # In ---------------------------------------------------------------------------
 
@@ -482,6 +518,14 @@ FLString.addMethod \
     stringToBeAppended = context.tempVariablesDict[ValidIDfromString "stringToBeAppended"]
     return FLString.createNew @value + stringToBeAppended.flToString()
 
+FLString.addMethod \
+  (flTokenize "== ( toCompare )"),
+  commonSimpleValueEqualityFunction
+
+FLString.addMethod \
+  (flTokenize "!= ( toCompare )"),
+  commonSimpleValueInequalityFunction
+
 # Number -------------------------------------------------------------------------
 
 FLNumber.addMethod \
@@ -605,14 +649,15 @@ FLNumber.addMethod \
     return toBeReturned
 
 
+
+
 FLNumber.addMethod \
   (flTokenize "== ( toCompare )"),
-  (context) ->
-    toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
-    if @value == toCompare.value
-      return FLBoolean.createNew true
-    else
-      return FLBoolean.createNew false
+  commonSimpleValueEqualityFunction
+
+FLNumber.addMethod \
+  (flTokenize "!= ( toCompare )"),
+  commonSimpleValueInequalityFunction
 
 # mutating the number
 FLNumber.addMethod \
@@ -672,6 +717,14 @@ FLBoolean.addMethod \
     console.log "executing an or! "
     operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
     return FLBoolean.createNew @value or operandum.value
+
+FLBoolean.addMethod \
+  (flTokenize "== ( toCompare )"),
+  commonSimpleValueEqualityFunction
+
+FLBoolean.addMethod \
+  (flTokenize "!= ( toCompare )"),
+  commonSimpleValueInequalityFunction
 
 
 # FLQuote --------------------------------------------------------------------------
@@ -948,11 +1001,13 @@ FLThrow.addMethod \
 FLIfThen.addMethod \
   (flTokenize "( predicate ) : ('trueBranch)"),
   (context) ->
+    context.isTransparent = true
     predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
     trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
     console.log "IfThen ⇒ , predicate value is: " + predicate.value
 
     if predicate.value
+      console.log "IfThen ⇒ , evaling true branch at depth " + context.depth()
       toBeReturned = trueBranch.eval context, trueBranch
       flContexts.pop()
       context.findAnotherReceiver = true
@@ -966,6 +1021,7 @@ FLIfThen.addMethod \
 FLIfFallThrough.addMethod \
   (flTokenize "else if ( predicate ): ('trueBranch)"),
   (context) ->
+    context.isTransparent = true
     predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
     trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
     console.log "IfThen ⇒ , predicate value is: " + predicate.value
@@ -982,6 +1038,7 @@ FLIfFallThrough.addMethod \
 FLIfFallThrough.addMethod \
   (flTokenize "else: ('trueBranch)"),
   (context) ->
+    context.isTransparent = true
     trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
 
     toBeReturned = trueBranch.eval context, trueBranch
