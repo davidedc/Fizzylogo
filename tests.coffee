@@ -3067,7 +3067,13 @@ for i in [0...tests.length] by 2
     # is in here will still refer to "self" as the current self in the
     # overall message.
     
-    outerMostContext.returned = parsed.eval outerMostContext, parsed
+    #outerMostContext.returned = parsed.eval outerMostContext, parsed
+    gen = parsed.eval outerMostContext, parsed
+    until (ret = gen.next()).done
+      if ret.value?
+        console.log "obtained: " + ret.value
+      console.log "obtained: yieldingfromtoplevel"
+    outerMostContext.returned = ret.value
 
     console.log "evaluation " + indentation() + "end of workspace evaluation"
 

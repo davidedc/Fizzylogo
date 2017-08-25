@@ -1,3 +1,5 @@
+repeatFunctionContinuation = null
+
 outerMostContext = null
 
 DEBUG_STRINGIFICATION_CHECKS = true
