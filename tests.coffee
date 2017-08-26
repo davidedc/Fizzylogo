@@ -2675,6 +2675,20 @@ tests = [
   """
   "launch!"
 
+  """
+  to 🚀:
+  ﹍console print "launch!"
+  (🚀)
+  """
+  "launch!"
+
+  """
+  to 🚀:
+  ﹍console print "launch!"
+  ((((🚀))))
+  """
+  "launch!"
+
 
   # ---------------------------------------------------------------------------
   # you can assign arbitrary things to a string token, including
