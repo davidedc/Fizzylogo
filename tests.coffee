@@ -2690,6 +2690,7 @@ tests = [
   "launch!"
 
 
+
   # ---------------------------------------------------------------------------
   # you can assign arbitrary things to a string token, including
   # objects which take the empty message
@@ -2947,7 +2948,43 @@ tests = [
   """
   " adding item: Hello  0 node is: object_from_a_user_class 0 node has item: Hello  1 node is: object_from_a_user_class 1 node has item: Hello  2 node is: object_from_a_user_class 2 node has item: Hello  list is empty now? true 3 node is: object_from_a_user_class 3 node has item: Hello  list is empty now? false list is empty now? false adding item: World 0 node is: object_from_a_user_class 0 node has item: World 1 node is: object_from_a_user_class 1 node has item: World 2 node is: object_from_a_user_class 2 node has item: World list is empty now? false list is empty now? false list contents: Hello World"
 
+# ---------------------------------------------------------------------------
+  """
+  evaluationsCounter
+  """
+  "EvaluationsCounter running $nothing$ // "
+
+  # $nothing$ is invoked multiple times as
+  # the evaluationsCounter comes out as the
+  # result of each parens...
+  """
+  (evaluationsCounter)
+  """
+  "EvaluationsCounter running $nothing$ // EvaluationsCounter running $nothing$ // "
+
+  # $nothing$ is invoked multiple times as
+  # the evaluationsCounter comes out as the
+  # result of each parens...
+  """
+  ((((evaluationsCounter))))
+  """
+  "EvaluationsCounter running $nothing$ // EvaluationsCounter running $nothing$ // EvaluationsCounter running $nothing$ // EvaluationsCounter running $nothing$ // EvaluationsCounter running $nothing$ // "
+
 ]
+
+###
+# You can't mention a "@" (or "self") in this way, you'll
+# get an infinite loop, as "@" (or "self") will be evaluated and
+# run $nothing$ which will mention "@" (or "self"), which
+# will be evaluated... forever in this case.
+"""
+to 🚀:
+﹍console print "launch!"
+﹍@
+🚀
+"""
+"launch!"
+###
 
 ###
 # ---------------------------------------------------------------------------
@@ -3059,6 +3096,8 @@ for i in [0...tests.length] by 2
 
       "in", FLIn.createNew()
       "accessUpperContext", FLAccessUpperContext.createNew()
+
+      "evaluationsCounter", FLEvaluationsCounter.createNew()
 
       "nil", FLNil.createNew()
 

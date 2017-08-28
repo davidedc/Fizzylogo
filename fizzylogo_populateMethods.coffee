@@ -1019,6 +1019,16 @@ FLRepeat2.addMethod \
   (flTokenize "(howManyTimes) :( ' loopCode )"),
   repeatFunctionContinuation
 
+# FLEvaluationsCounter -----------------------------------------------------------------------------
+
+FLEvaluationsCounter.addMethod \
+  (flTokenize "$nothing$"),
+  (context) ->
+    stringToPrint = "EvaluationsCounter running $nothing$ // "
+    console.log stringToPrint
+    environmentPrintout += stringToPrint
+    return @
+
 # Throw -----------------------------------------------------------------------------
 
 FLThrow.addMethod \
