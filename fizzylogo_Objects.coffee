@@ -52,36 +52,6 @@ class FLObjects
       soFarEverythingMatched = true
       originalMethodInvocationStart = methodInvocation.cursorStart
 
-      # here is the case of the "statement with one command" e.g.
-      #    1 print. singleCommand . 2 print
-      # in this case, "singleCommand" is a receiver (could be just a token that
-      # points to an object), so it's
-      # evaluated once as a receiver. Then, it's as if that receiver
-      # was sent the empty message. Typical case is the "done" token
-      # ponting to a Done object.
-      # So, in these cases you want "done" token to look up the
-      # done object AND THEN you want to send the done object the
-      # empty message, which properly throws the "done".
-      # So here we do that check and do the further message send.
-      if methodInvocation.isEmpty()
-        # donothing case
-        console.log "starting evaluation with doNothing case"
-        # yield from
-        [returnedContext, returnedMessage] = @findSignatureBindParamsAndMakeCall (flTokenize "$nothing$"), newContext
-        if returnedContext?
-          return [returnedContext, returnedMessage]
-        else
-          console.log "starting ...evaluation with doNothing case: NO donothing method definition"
-
-      # "match all" signature handling
-      if eachSignature.isMatchAllSignature()
-        newContext.usingFallBackMatcher = true
-        theContext.unparsedMessage = null
-        console.log "theContext method invocation after: " + methodInvocation.flToString()
-        # yield from
-        contextToBeReturned = @methodCall (@flClass.methodBodies[eachSignatureIndex]), newContext
-        return [contextToBeReturned,methodInvocation]
-
       until eachSignature.isEmpty() or methodInvocation.isEmpty()
 
         console.log "evaluation " + indentation() + "  matching: - next signature piece: " + eachSignature.flToString() + " is token: " + " with: " + methodInvocation.flToString()
@@ -159,6 +129,7 @@ class FLObjects
           continue
 
       # ok a signature has matched completely
+
       if eachSignature.isEmpty() and soFarEverythingMatched
 
         # now, the correct PC that we need to report is
@@ -178,22 +149,9 @@ class FLObjects
 
 
     # we are still here trying to match but
-    # there are no signatures left, almost giving up.
+    # there are no signatures left, time to give up.
     console.log "evaluation " + indentation() + "  matching - no match found"
-    #return [null, methodInvocationToBeChecked]
-
-    console.log "evaluation " + indentation() + "last chance - does it respond to $nothing$ message?"
-    newContext = new FLContext theContext, @
-    flContexts.jsArrayPush newContext
-    # yield from
-    [returnedContext, returnedMessage] = @findSignatureBindParamsAndMakeCall (flTokenize "$nothing$"), newContext
-
-    # note that returnedContext here is always defined if there is
-    # a fallback $nothing$ method, as there is now
-    if !returnedContext? or returnedContext.returned == @
-      return [null, methodInvocationToBeChecked]
-    else
-      return [returnedContext, returnedMessage]
+    return [null, methodInvocationToBeChecked]
 
 
   # this could be native, in which case it's a JS call,
@@ -229,7 +187,7 @@ class FLObjects
       console.log "evaluation " + indentation() + "  matching - NATIVE method body: " + methodBody
 
       if methodBody == repeatFunctionContinuation
-        console.log "obtained: " + "REPEAT FUNCTION"
+        console.log "REPEAT FUNCTION"
         # yield from
         theContext.returned = methodBody.call newSelf, theContext
       else

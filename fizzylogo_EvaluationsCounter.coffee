@@ -1,5 +1,6 @@
-# a class that prints explicitly the "eval"s and the "$nothing$"s
-# invoked... so one can see more explicitly what happens.
+# a class that prints explicitly the "eval"s and the
+# invocations of the empty method,
+# so one can see more explicitly what happens.
 
 class FLEvaluationsCounterClass extends FLClasses
   createNew: ->

@@ -54,11 +54,6 @@ commonSimpleValueInequalityFunction = (context) ->
 addDefaultMethods = (classToAddThemTo) ->
 
   classToAddThemTo.addMethod \
-    (flTokenize "$nothing$"),
-    (context) ->
-      return @
-
-  classToAddThemTo.addMethod \
     (flTokenize "postfixPrint"),
     (context) ->
       console.log "///////// program printout: " + @flToString()
@@ -393,7 +388,7 @@ FLTo.addMethod \
   (flTokenize "( ' functionObjectName ) ( functionBody )"),
   flTokenize \
     "accessUpperContext; 'TempClass ← Class new;\
-    TempClass answerEvalParams '($nothing$) by (functionBody);\
+    TempClass answerEvalParams '() by (functionBody);\
     functionObjectName ← TempClass new;"
 
 # Class -------------------------------------------------------------------------
@@ -510,10 +505,10 @@ FLException.addMethod \
     return toBeReturned
 
 FLException.addMethod \
-  (flTokenize "$$MATCHALL$$"),
+  FLList.emptyMessage(),
   (context) ->
-    console.log "exception - no more cacthes, has to be re-thrown"
-    context.throwing = true
+    if @thrown
+      context.throwing = true
     return @
 
 
@@ -861,10 +856,10 @@ FLList.addMethod \
 # AccessUpperContextClass -------------------------------------------------------------------------
 
 FLAccessUpperContext.addMethod \
-  (flTokenize "$nothing$"),
+  FLList.emptyMessage(),
   (context) ->
     console.log "FLAccessUpperContext running emptyMessage"
-    context.previousContext.previousContext.isTransparent = true
+    context.previousContext.isTransparent = true
     return @
 
 # Console -----------------------------------------------------------------------------
@@ -882,25 +877,27 @@ FLConsole.addMethod \
 # Done -------------------------------------------------------------------------
 
 FLDone.addMethod \
-  (flTokenize "$nothing$"),
-  (context) ->
-    console.log "starting Done_object running emptyMessage"
-    context.throwing = true
-    return @
-
-
-FLDone.addMethod \
   (flTokenize "with ( valueToReturn )"),
   (context) ->
     valueToReturn = context.tempVariablesDict[ValidIDfromString "valueToReturn"]
-
+    console.log "Done_object thrown with return value: " + valueToReturn.flToString()
     @value = valueToReturn
+    context.throwing = true
+    @thrown = true
+    return @
+
+FLDone.addMethod \
+  FLList.emptyMessage(),
+  (context) ->
+    console.log "Done_object running emptyMessage"
+    context.throwing = true
+    @thrown = true
     return @
 
 # Break -------------------------------------------------------------------------
 
 FLBreak.addMethod \
-  (flTokenize "$nothing$"),
+  FLList.emptyMessage(),
   (context) ->
     console.log "Break_object"
     context.throwing = true
@@ -920,7 +917,7 @@ FLReturn.addMethod \
     return @
 
 FLReturn.addMethod \
-  (flTokenize "$nothing$"),
+  FLList.emptyMessage(),
   (context) ->
     console.log "Return_object running emptyMessage"
     context.throwing = true
@@ -1011,9 +1008,9 @@ FLRepeat2.addMethod \
 # FLEvaluationsCounter -----------------------------------------------------------------------------
 
 FLEvaluationsCounter.addMethod \
-  (flTokenize "$nothing$"),
+  FLList.emptyMessage(),
   (context) ->
-    stringToPrint = "EvaluationsCounter running $nothing$ // "
+    stringToPrint = "EvaluationsCounter running the \"empty\" method // "
     console.log stringToPrint
     environmentPrintout += stringToPrint
     return @
@@ -1024,6 +1021,7 @@ FLThrow.addMethod \
   (flTokenize "( theError )"),
   (context) ->
     theError = context.tempVariablesDict[ValidIDfromString "theError"]
+    theError.thrown = true
     console.log "throwing an error: " + theError.value
     context.throwing = true
     return theError
@@ -1082,7 +1080,7 @@ FLIfFallThrough.addMethod \
     return toBeReturned
 
 FLIfFallThrough.addMethod \
-  (flTokenize "$$MATCHALL$$"),
+  FLList.emptyMessage(),
   (context) ->
     console.log "no more cases for the if"
     context.findAnotherReceiver = true

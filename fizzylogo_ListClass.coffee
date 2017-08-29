@@ -153,6 +153,11 @@ class FLListClass extends FLClasses
       # yield from
       [returnedContext, returnedMessage] = @partialEvalAsMessage theContext
 
+      console.log "list eval - returned message: " + returnedMessage.flToString()
+      console.log "list eval - returned context: " + returnedContext?.flToString?()
+      console.log "list eval - returnedcontext.returned: " + returnedContext.returned?.flToString?()
+      console.log "list eval - returnedcontext.unparsedMessage: " + returnedContext.unparsedMessage?.flToString?()
+
       if !returnedMessage.isEmpty()
         console.log "list couldn't be fully evaluated: " + @flToString() + " unexecutable: " + returnedMessage.flToString()
         theContext.throwing = true
@@ -209,7 +214,7 @@ class FLListClass extends FLClasses
             returnedContext.findAnotherReceiver = false
             returnedContext = returnedContext.previousContext
             findAnotherReceiver = true
-            console.log "starting finding next receiver from:  " + restOfMessage.flToString()
+            console.log "finding next receiver from:  " + restOfMessage.flToString()
 
 
           if findAnotherReceiver
@@ -217,13 +222,13 @@ class FLListClass extends FLClasses
             # yield from
             [returnedContext, restOfMessage, receiver] = restOfMessage.findReceiver returnedContext
 
-            console.log "starting found next receiver and now message is: " + restOfMessage.flToString()
+            console.log "found next receiver and now message is: " + restOfMessage.flToString()
             #console.dir receiver
             console.log "3 returnedContext.throwing: " + returnedContext.throwing
 
           # where we detect an exception being thrown
           if theContext.throwing or returnedContext.throwing
-            console.log "starting throw escape"
+            console.log "throw escape"
             theContext.returned = receiver
             restOfMessage.exhaust()
 
@@ -240,36 +245,45 @@ class FLListClass extends FLClasses
 
             return [theContext, restOfMessage]
 
-          console.log "starting evaluation " + indentation() + "receiver: " + receiver?.flToString?()
-          console.log "starting evaluation " + indentation() + "message: " + restOfMessage.flToString()
+          console.log "evaluation " + indentation() + "receiver: " + receiver?.flToString?()
+          console.log "evaluation " + indentation() + "message: " + restOfMessage.flToString()
 
           # now actually send the message to the receiver. Note that
           # only part of the message might be consumed, in which case
           # we'll have to find the result from what we can consume and then
           # sent the remaining part to such reult. This is why
           # we have to keep iterating until the whole message is consumed
-          
-          # yield from
-          [returnedContext, returnedMessage] = receiver.findSignatureBindParamsAndMakeCall restOfMessage, theContext
+
+          if (receiver.flClass == FLNumber or receiver.flClass == FLString or receiver.flClass == FLBoolean) and restOfMessage.isEmpty()
+            returnedContext = theContext
+            returnedMessage = restOfMessage
+            returnedContext.unparsedMessage = null
+            returnedContext.returned = receiver
+            console.log "skipping empty evaluation because basic type "
+          else
+            # yield from
+            [returnedContext, returnedMessage] = receiver.findSignatureBindParamsAndMakeCall restOfMessage, theContext
 
           if !returnedContext?
             returnedContext = theContext
             returnedContext.returned = receiver
+            console.log "restOfMessage: " + restOfMessage.flToString()
+            console.log "receiver: " + receiver.flToString()
             returnedContext.unparsedMessage = returnedMessage
+
             return [returnedContext, returnedMessage]
-
-
 
           receiver = returnedContext.returned
           restOfMessage = returnedMessage
 
-          console.log "starting evaluation " + indentation() + "list evaluation returned: " + receiver?.flToString?()
-          console.log "starting 2 theContext.throwing: " + theContext.throwing
-          console.log "starting 4 returnedContext.throwing: " + returnedContext.throwing
-          console.log "starting restOfMessage: " + restOfMessage
+          console.log "evaluation " + indentation() + "list evaluation returned: " + receiver?.flToString?()
+          console.log "theContext.throwing: " + theContext.throwing
+          console.log "returnedContext.throwing: " + returnedContext.throwing
+          console.log "restOfMessage: " + restOfMessage
+          console.log "returnedContext.findAnotherReceiver: " + returnedContext.findAnotherReceiver
 
           if restOfMessage.isEmpty() and !(theContext.throwing or returnedContext.throwing)
-            console.log "starting breaking and moving on to next statement"
+            console.log "breaking and moving on to next statement"
             break
 
 
@@ -321,13 +335,6 @@ class FLListClass extends FLClasses
       if @length() >= 2
         if (@elementAt 1).flClass == FLToken
           if (@elementAt 1).value == "="
-            return true
-      return false
-
-    toBeReturned.isMatchAllSignature =  ->
-      if @length() == 1
-        if (@elementAt 0).flClass == FLToken
-          if (@elementAt 0).value == "$$MATCHALL$$"
             return true
       return false
 

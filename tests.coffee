@@ -2632,10 +2632,10 @@ tests = [
   "000111121123223"
 
   # ---------------------------------------------------------------------------
-  # running with empty signature (which unfortunately is not really empty)
+  # running with empty signature
   # FLTO
 
-  "to sayHello: ($nothing$) do: (console print \"Hello\"); sayHello;"
+  "to sayHello: () do: (console print \"Hello\"); sayHello;"
   "Hello"
 
   # ---------------------------------------------------------------------------
@@ -2659,9 +2659,11 @@ tests = [
 
   # ---------------------------------------------------------------------------
   # FLTO
+
+  # "nothing" signature
   """
   to 🚀:
-  ﹍$nothing$
+  ﹍
   do:
   ﹍console print "launch!"
   🚀
@@ -2695,9 +2697,11 @@ tests = [
   # you can assign arbitrary things to a string token, including
   # objects which take the empty message
   # FLTO
+
+  # "nothing" signature
   """
   to "🚀":
-  ﹍$nothing$
+  ﹍
   do:
   ﹍console print "launch!"
   "🚀"
@@ -2782,7 +2786,12 @@ tests = [
   ﹍console print "never reached"
   (testingReturn 1 + 1) postfixPrint
   """
-  "start - nil"
+  "start - ! exception: message was not understood: ( 1 + 1 )"
+
+  """
+  nil 1 + 1
+  """
+  "! exception: message was not understood: ( 1 + 1 )"
 
   # ---------------------------------------------------------------------------
   # (in)equality comparisons
@@ -2952,30 +2961,30 @@ tests = [
   """
   evaluationsCounter
   """
-  "EvaluationsCounter running $nothing$ // "
+  "EvaluationsCounter running the \"empty\" method // "
 
-  # $nothing$ is invoked multiple times as
+  # the \"empty\" method is invoked multiple times as
   # the evaluationsCounter comes out as the
   # result of each parens...
   """
   (evaluationsCounter)
   """
-  "EvaluationsCounter running $nothing$ // EvaluationsCounter running $nothing$ // "
+  "EvaluationsCounter running the \"empty\" method // EvaluationsCounter running the \"empty\" method // "
 
-  # $nothing$ is invoked multiple times as
+  # the "empty" method is invoked multiple times as
   # the evaluationsCounter comes out as the
   # result of each parens...
   """
   ((((evaluationsCounter))))
   """
-  "EvaluationsCounter running $nothing$ // EvaluationsCounter running $nothing$ // EvaluationsCounter running $nothing$ // EvaluationsCounter running $nothing$ // EvaluationsCounter running $nothing$ // "
+  "EvaluationsCounter running the \"empty\" method // EvaluationsCounter running the \"empty\" method // EvaluationsCounter running the \"empty\" method // EvaluationsCounter running the \"empty\" method // EvaluationsCounter running the \"empty\" method // "
 
 ]
 
 ###
 # You can't mention a "@" (or "self") in this way, you'll
 # get an infinite loop, as "@" (or "self") will be evaluated and
-# run $nothing$ which will mention "@" (or "self"), which
+# run the empty method which will mention "@" (or "self"), which
 # will be evaluated... forever in this case.
 """
 to 🚀:
