@@ -231,7 +231,7 @@ class FLListClass extends FLClasses
             returnedContext.findAnotherReceiver = false
             returnedContext = returnedContext.previousContext
             findAnotherReceiver = true
-            console.log "finding next receiver from:  " + restOfMessage.flToString()
+            console.log "starting finding next receiver from:  " + restOfMessage.flToString()
 
 
           if findAnotherReceiver
@@ -239,13 +239,13 @@ class FLListClass extends FLClasses
             # yield from
             [returnedContext, restOfMessage, receiver] = restOfMessage.findReceiver returnedContext
 
-            console.log "found next receiver and now message is: " + restOfMessage.flToString()
+            console.log "starting found next receiver and now message is: " + restOfMessage.flToString()
             #console.dir receiver
             console.log "3 returnedContext.throwing: " + returnedContext.throwing
 
           # where we detect an exception being thrown
           if theContext.throwing or returnedContext.throwing
-            console.log "throw escape"
+            console.log "starting throw escape"
             theContext.returned = receiver
             restOfMessage.exhaust()
 
@@ -265,8 +265,8 @@ class FLListClass extends FLClasses
           if restOfMessage.isEmpty()
             break
 
-          console.log "evaluation " + indentation() + "receiver: " + receiver?.value
-          console.log "evaluation " + indentation() + "message: " + restOfMessage.flToString()
+          console.log "starting evaluation " + indentation() + "receiver: " + receiver?.flToString?()
+          console.log "starting evaluation " + indentation() + "message: " + restOfMessage.flToString()
 
           # now actually send the message to the receiver. Note that
           # only part of the message might be consumed, in which case
@@ -284,15 +284,14 @@ class FLListClass extends FLClasses
             return [returnedContext, returnedMessage]
 
 
-          console.log "2 theContext.throwing: " + theContext.throwing
-          console.log "4 returnedContext.throwing: " + returnedContext.throwing
-
 
           receiver = returnedContext.returned
           restOfMessage = returnedMessage
 
-          console.log "evaluation " + indentation() + "list evaluation returned: " + receiver?.value
-
+          console.log "starting evaluation " + indentation() + "list evaluation returned: " + receiver?.flToString?()
+          console.log "starting 2 theContext.throwing: " + theContext.throwing
+          console.log "starting 4 returnedContext.throwing: " + returnedContext.throwing
+          console.log "starting restOfMessage: " + restOfMessage
 
 
 

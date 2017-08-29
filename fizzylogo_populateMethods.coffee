@@ -863,8 +863,8 @@ FLList.addMethod \
 FLAccessUpperContext.addMethod \
   (flTokenize "$nothing$"),
   (context) ->
-    console.log "Done_object running emptyMessage"
-    context.previousContext.isTransparent = true
+    console.log "FLAccessUpperContext running emptyMessage"
+    context.previousContext.previousContext.isTransparent = true
     return @
 
 # Console -----------------------------------------------------------------------------
@@ -884,7 +884,7 @@ FLConsole.addMethod \
 FLDone.addMethod \
   (flTokenize "$nothing$"),
   (context) ->
-    console.log "Done_object running emptyMessage"
+    console.log "starting Done_object running emptyMessage"
     context.throwing = true
     return @
 

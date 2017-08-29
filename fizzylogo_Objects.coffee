@@ -24,7 +24,7 @@ class FLObjects
     console.log "evaluation " + indentation() + "  matching - my class patterns: "
 
     #for eachClassPattern in @flClass.msgPatterns
-    #  console.log "evaluation " + indentation() + eachClassPattern.flToString()
+    #  console.log "evaluation - message patterns: " + indentation() + eachClassPattern.flToString()
 
     # fake context push so that we can make
     # the context stack handling easier
@@ -156,6 +156,7 @@ class FLObjects
     # we are still here trying to match but
     # there are no signatures left, almost giving up.
     console.log "evaluation " + indentation() + "  matching - no match found"
+    #return [null, methodInvocationToBeChecked]
 
     console.log "evaluation " + indentation() + "last chance - does it respond to $nothing$ message?"
     newContext = new FLContext theContext, @

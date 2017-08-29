@@ -8,8 +8,6 @@ class FLDoneClass extends FLClasses
 
     toBeReturned.flToStringForList = toBeReturned.flToString
 
-    toBeReturned.flToString = ->
-      return "Done_object"
 
     return toBeReturned
 

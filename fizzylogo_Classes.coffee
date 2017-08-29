@@ -13,10 +13,10 @@ class FLClasses extends FLObjects
       if eachSignature.flToString() == signature.flToString()
         @msgPatterns[i] = signature
         @methodBodies[i] = methodBody
-        console.log "adding method  signature: " + signature.flToString() + " body: " + methodBody.flToString?()
+        console.log "adding method  signature (replacing): " + signature.flToString() + " body: " + methodBody.flToString?()
         return
 
-    console.log "adding method  signature: " + signature.flToString() + " body: " + methodBody.flToString?()
+    console.log "adding method  signature (appending): " + signature.flToString() + " body: " + methodBody.flToString?()
     @msgPatterns.jsArrayPush signature
     @methodBodies.jsArrayPush methodBody
 
