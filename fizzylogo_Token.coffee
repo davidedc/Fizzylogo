@@ -15,7 +15,7 @@ class FLTokenClass extends FLClasses
 
     toBeReturned.flToStringForList = toBeReturned.flToString
 
-    toBeReturned.eval = (theContext, remainingMessage, ignoreUnassigned) ->
+    toBeReturned.eval = (theContext, remainingMessage) ->
 
       #yield
       # shortcut: instead of using "@a←5"
@@ -46,10 +46,6 @@ class FLTokenClass extends FLClasses
         return FLBoolean.createNew true
       else if /^false$/.test @value
         return FLBoolean.createNew false
-
-      if ignoreUnassigned
-        console.log "evaluation " + indentation() + "not found temp token: " + @value + " and ignoring "
-        return @
 
       console.log "evaluation " + indentation() + "token " + @value + " contents: " + theContext.returned?.value
       console.log "evaluation " + indentation() + "not found temp token: " + @value

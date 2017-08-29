@@ -108,7 +108,9 @@ class FLListClass extends FLClasses
             # todo all the callers need to catch the yield so this one can yield too
             # and do the recursive yield from yield
             #catch yields
-            evalled = (@elementAt i).eval context, @, true
+            evalled = (@elementAt i).eval context, @
+            if (@elementAt i).flClass == FLToken and evalled.flClass == FLNil
+              evalled = @elementAt i
 
         newList = newList.flListImmutablePush evalled
 
