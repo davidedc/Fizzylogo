@@ -145,28 +145,6 @@ class FLListClass extends FLClasses
       receiver = returnedContext.returned
 
       console.log "evaluation " + indentation() + "remaining part of list to be sent as message is: " + restOfMessage.flToString()
-
-      # here is the case of the "statement with one command" e.g.
-      #    1 print. singleCommand . 2 print
-      # in this case, "singleCommand" is a receiver (could be just a token that
-      # points to an object), so it's
-      # evaluated once as a receiver. Then, it's as if that receiver
-      # was sent the empty message. Typical case is the "done" token
-      # ponting to a Done object.
-      # So, in these cases you want "done" token to look up the
-      # done object AND THEN you want to send the done object the
-      # empty message, which properly throws the "done".
-      # So here we do that check and do the further message send.
-      if restOfMessage.isEmpty()
-        console.log "evaluation " + indentation() + "trying to send empty message to " + receiver.flToString()
-        # yield from
-        [returnedContextFromEmptyMessage, ignored] = receiver.findSignatureBindParamsAndMakeCall (flTokenize "$nothing$"), returnedContext
-
-        if returnedContextFromEmptyMessage?
-          receiver = returnedContextFromEmptyMessage.returned
-          returnedContext = returnedContextFromEmptyMessage
-
-
       return [returnedContext, restOfMessage, receiver]
 
     # this eval requires that the whole list is consumed
@@ -262,9 +240,6 @@ class FLListClass extends FLClasses
 
             return [theContext, restOfMessage]
 
-          if restOfMessage.isEmpty()
-            break
-
           console.log "starting evaluation " + indentation() + "receiver: " + receiver?.flToString?()
           console.log "starting evaluation " + indentation() + "message: " + restOfMessage.flToString()
 
@@ -293,6 +268,9 @@ class FLListClass extends FLClasses
           console.log "starting 4 returnedContext.throwing: " + returnedContext.throwing
           console.log "starting restOfMessage: " + restOfMessage
 
+          if restOfMessage.isEmpty() and !(theContext.throwing or returnedContext.throwing)
+            console.log "starting breaking and moving on to next statement"
+            break
 
 
         console.log "evaluation " + indentation() + "list: nothing more to evaluate"

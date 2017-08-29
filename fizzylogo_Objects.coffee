@@ -52,11 +52,35 @@ class FLObjects
       soFarEverythingMatched = true
       originalMethodInvocationStart = methodInvocation.cursorStart
 
-      # simple way to get "match all" signature
-      # to work.
+      # here is the case of the "statement with one command" e.g.
+      #    1 print. singleCommand . 2 print
+      # in this case, "singleCommand" is a receiver (could be just a token that
+      # points to an object), so it's
+      # evaluated once as a receiver. Then, it's as if that receiver
+      # was sent the empty message. Typical case is the "done" token
+      # ponting to a Done object.
+      # So, in these cases you want "done" token to look up the
+      # done object AND THEN you want to send the done object the
+      # empty message, which properly throws the "done".
+      # So here we do that check and do the further message send.
+      if methodInvocation.isEmpty()
+        # donothing case
+        console.log "starting evaluation with doNothing case"
+        # yield from
+        [returnedContext, returnedMessage] = @findSignatureBindParamsAndMakeCall (flTokenize "$nothing$"), newContext
+        if returnedContext?
+          return [returnedContext, returnedMessage]
+        else
+          console.log "starting ...evaluation with doNothing case: NO donothing method definition"
+
+      # "match all" signature handling
       if eachSignature.isMatchAllSignature()
-        eachSignature = FLList.emptyMessage()            
         newContext.usingFallBackMatcher = true
+        theContext.unparsedMessage = null
+        console.log "theContext method invocation after: " + methodInvocation.flToString()
+        # yield from
+        contextToBeReturned = @methodCall (@flClass.methodBodies[eachSignatureIndex]), newContext
+        return [contextToBeReturned,methodInvocation]
 
       until eachSignature.isEmpty() or methodInvocation.isEmpty()
 
