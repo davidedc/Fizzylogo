@@ -82,9 +82,8 @@ addDefaultMethods = (classToAddThemTo) ->
       newContext = new FLContext context
       newContext.isTransparent = true
       flContexts.jsArrayPush newContext
-      #toBeReturned = @eval newContext, @
-      gen = @eval newContext, @; console.log "yielding" until (ret = gen.next()).done;
-      toBeReturned = ret.value
+      #catch yields
+      toBeReturned = @eval newContext, @
       flContexts.pop()
       return toBeReturned
 
@@ -163,9 +162,8 @@ addDefaultMethods = (classToAddThemTo) ->
 
       runThis = flTokenize "(self . evaluating variable) += value"
 
-      #toBeReturned = runThis.eval context, runThis
-      gen = runThis.eval context, runThis; console.log "yielding" until (ret = gen.next()).done;
-      toBeReturned = ret.value
+      #catch yields
+      toBeReturned = runThis.eval context, runThis
 
       @instanceVariablesDict[ValidIDfromString variable.value] = toBeReturned
       context.findAnotherReceiver = true
@@ -180,9 +178,8 @@ addDefaultMethods = (classToAddThemTo) ->
 
       runThis = flTokenize "(self . evaluating variable) ++"
 
-      #toBeReturned = runThis.eval context, runThis
-      gen = runThis.eval context, runThis; console.log "yielding" until (ret = gen.next()).done;
-      toBeReturned = ret.value
+      #catch yields
+      toBeReturned = runThis.eval context, runThis
 
       @instanceVariablesDict[ValidIDfromString variable.value] = toBeReturned
 
@@ -375,9 +372,8 @@ FLIn.addMethod \
 
     newContext = new FLContext context, object
 
-    #toBeReturned = code.eval newContext, code
-    gen = code.eval newContext, code; console.log "yielding" until (ret = gen.next()).done;
-    toBeReturned = ret.value
+    #catch yields
+    toBeReturned = code.eval newContext, code
     context.findAnotherReceiver = true
 
     return toBeReturned
@@ -435,9 +431,10 @@ FLClass.addMethod \
         # Passing parameters to whenNew (and consuming them) from in here
         # defies the whole architecture of the mechanism.
         console.log "invoking whenNew"
-        #returnedContext = (objectTBR.findSignatureBindParamsAndMakeCall (flTokenize "whenNew"), context)[0]
-        gen = objectTBR.findSignatureBindParamsAndMakeCall (flTokenize "whenNew"), context; console.log "yielding" until (ret = gen.next()).done
-        returnedContext = ret.value[0]
+        #catch yields
+        returnedContext = objectTBR.findSignatureBindParamsAndMakeCall (flTokenize "whenNew"), context
+        returnedContext = returnedContext[0]
+
 
         toBeReturned = returnedContext.returned
         return toBeReturned
@@ -468,9 +465,8 @@ FLException.addMethod \
     console.log "catch: being thrown? " + context.throwing
 
     console.log "catch: got right exception, catching it"
-    #toBeReturned = errorHandle.eval context, errorHandle
-    gen = errorHandle.eval context, errorHandle; console.log "yielding" until (ret = gen.next()).done;
-    toBeReturned = ret.value
+    #catch yields
+    toBeReturned = errorHandle.eval context, errorHandle
     context.findAnotherReceiver = true
 
     return toBeReturned
@@ -495,17 +491,15 @@ FLException.addMethod \
     # here.
     # theError here is a token, with this evaluation we get an
     # actual exception.
-    #theError = theError.eval context, theError
-    gen = theError.eval context, theError; console.log "yielding" until (ret = gen.next()).done;
-    theError = ret.value
+    #catch yields
+    theError = theError.eval context, theError
 
     console.log "catch: same as one to catch?" + (@ == theError) + " being thrown? " + context.throwing
 
     if @ == theError
       console.log "catch: got right exception, catching it"
-      #toBeReturned = errorHandle.eval context, errorHandle
-      gen = errorHandle.eval context, errorHandle; console.log "yielding" until (ret = gen.next()).done;
-      toBeReturned = ret.value
+      #catch yields
+      toBeReturned = errorHandle.eval context, errorHandle
 
       context.findAnotherReceiver = true
     else
@@ -649,9 +643,8 @@ FLNumber.addMethod \
 
 
     for i in [0...@value]
-      #toBeReturned = loopCode.eval context, loopCode
-      gen = loopCode.eval context, loopCode; console.log "yielding" until (ret = gen.next()).done;
-      toBeReturned = ret.value
+      #catch yields
+      toBeReturned = loopCode.eval context, loopCode
 
       flContexts.pop()
 
@@ -711,9 +704,8 @@ FLBoolean.addMethod \
     console.log "FLBoolean ⇒ , predicate value is: " + @value
 
     if @value
-      #toBeReturned = trueBranch.eval context, trueBranch
-      gen = trueBranch.eval context, trueBranch; console.log "yielding" until (ret = gen.next()).done;
-      toBeReturned = ret.value
+      #catch yields
+      toBeReturned = trueBranch.eval context, trueBranch
       flContexts.pop()
 
       console.log "FLBoolean ⇒ returning result of true branch: " + toBeReturned
@@ -805,9 +797,8 @@ FLList.addMethod \
 
     runThis = flTokenize "(self [indexValue]) += value"
 
-    #toBeReturned = runThis.eval context, runThis
-    gen = runThis.eval context, runThis; console.log "yielding" until (ret = gen.next()).done;
-    toBeReturned = ret.value
+    #catch yields
+    toBeReturned = runThis.eval context, runThis
 
     context.findAnotherReceiver = true
 
@@ -822,9 +813,8 @@ FLList.addMethod \
 
     runThis = flTokenize "(self [indexValue]) ++"
 
-    #toBeReturned = runThis.eval context, runThis
-    gen = runThis.eval context, runThis; console.log "yielding" until (ret = gen.next()).done;
-    toBeReturned = ret.value
+    #catch yields
+    toBeReturned = runThis.eval context, runThis
 
     @elementAtSetMutable indexValue.value, toBeReturned
 
@@ -852,9 +842,8 @@ FLList.addMethod \
     for i in [0...@value.length]
 
       newContext.tempVariablesDict[ValidIDfromString variable.value] = @elementAt i
-      #toBeReturned = code.eval newContext, code
-      gen = code.eval newContext, code; console.log "yielding" until (ret = gen.next()).done;
-      toBeReturned = ret.value
+      #catch yields
+      toBeReturned = code.eval newContext, code
 
       # catch any thrown "done" object, used to
       # exit from a loop.
@@ -950,9 +939,8 @@ FLRepeat1.addMethod \
     console.log "FLRepeat1 ⇒ loop code is: " + loopCode.flToString()
 
     loop
-      #toBeReturned = loopCode.eval context, loopCode
-      gen = loopCode.eval context, loopCode; console.log "yielding" until (ret = gen.next()).done;
-      toBeReturned = ret.value
+      #catch yields
+      toBeReturned = loopCode.eval context, loopCode
 
       flContexts.pop()
 
@@ -989,9 +977,10 @@ repeatFunctionContinuation = (context) ->
 
 
   for i in [0...limit]
-    yield "from repeatFunctionContinuation"
+    #yield "from repeatFunctionContinuation"
     console.log "Repeat2 ⇒ starting a(nother) cycle: "
-    toBeReturned = yield from loopCode.eval context, loopCode
+    # yield from
+    toBeReturned = loopCode.eval context, loopCode
 
     flContexts.pop()
 
@@ -1051,9 +1040,8 @@ FLIfThen.addMethod \
 
     if predicate.value
       console.log "IfThen ⇒ , evaling true branch at depth " + context.depth()
-      #toBeReturned = trueBranch.eval context, trueBranch
-      gen = trueBranch.eval context, trueBranch; console.log "yielding" until (ret = gen.next()).done;
-      toBeReturned = ret.value
+      #catch yields
+      toBeReturned = trueBranch.eval context, trueBranch
       flContexts.pop()
       context.findAnotherReceiver = true
     else
@@ -1072,9 +1060,8 @@ FLIfFallThrough.addMethod \
     console.log "IfThen ⇒ , predicate value is: " + predicate.value
 
     if predicate.value
-      #toBeReturned = trueBranch.eval context, trueBranch
-      gen = trueBranch.eval context, trueBranch; console.log "yielding" until (ret = gen.next()).done;
-      toBeReturned = ret.value
+      #catch yields
+      toBeReturned = trueBranch.eval context, trueBranch
       flContexts.pop()
       context.findAnotherReceiver = true
     else
@@ -1088,9 +1075,8 @@ FLIfFallThrough.addMethod \
     context.isTransparent = true
     trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
 
-    #toBeReturned = trueBranch.eval context, trueBranch
-    gen = trueBranch.eval context, trueBranch; console.log "yielding" until (ret = gen.next()).done;
-    toBeReturned = ret.value
+    #catch yields
+    toBeReturned = trueBranch.eval context, trueBranch
     flContexts.pop()
     context.findAnotherReceiver = true
     return toBeReturned
@@ -1131,9 +1117,8 @@ FLTry.addMethod \
   (flTokenize ": ( ' code )"),
   (context) ->
     code = context.tempVariablesDict[ValidIDfromString "code"]
-    #toBeReturned = code.eval context, code
-    gen = code.eval context, code; console.log "yielding" until (ret = gen.next()).done;
-    toBeReturned = ret.value
+    #catch yields
+    toBeReturned = code.eval context, code
 
     # if there _is_ somethig being thrown, then
     # we do not want another receiver, the thrown
@@ -1190,9 +1175,8 @@ FLFor.addMethod \
       # away when this for is done.
       forContext.tempVariablesDict[ValidIDfromString loopVarName] = FLNumber.createNew i
 
-      #toBeReturned = loopCode.eval forContext, loopCode
-      gen = loopCode.eval forContext, loopCode; console.log "yielding" until (ret = gen.next()).done;
-      toBeReturned = ret.value
+      #catch yields
+      toBeReturned = loopCode.eval forContext, loopCode
 
       flContexts.pop()
 
@@ -1239,10 +1223,8 @@ FLFor.addMethod \
 
       forContext.tempVariablesDict[ValidIDfromString variable.value] = theList.elementAt i
       console.log "FLEach do evaling...: " + code.flToString()
-      #toBeReturned = code.eval forContext, code
-      gen = code.eval forContext, code; console.log "yielding" until (ret = gen.next()).done;
-      toBeReturned = ret.value
-
+      #catch yields
+      toBeReturned = code.eval forContext, code
 
       # catch any thrown "done" object, used to
       # exit from a loop.

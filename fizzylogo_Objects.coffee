@@ -8,7 +8,7 @@ class FLObjects
     @instanceVariablesDict = {}
 
   eval: (theContext) ->
-    yield
+    #yield
     return @
 
   # Note that only part of the message might be consumed
@@ -116,7 +116,8 @@ class FLObjects
             # to the receiver, which we don't want
             # like in "7 * self" we don't want to bind self to 7
 
-            [returnedContext, methodInvocation] = yield from methodInvocation.partialEvalAsMessage theContext, methodInvocation
+            # yield from
+            [returnedContext, methodInvocation] = methodInvocation.partialEvalAsMessage theContext, methodInvocation
 
             valueToBeBound = returnedContext.returned
 
@@ -146,7 +147,8 @@ class FLObjects
         theContext.unparsedMessage = null
         console.log "theContext method invocation after: " + methodInvocation.flToString()
 
-        contextToBeReturned = yield from @methodCall (@flClass.methodBodies[eachSignatureIndex]), newContext
+        # yield from
+        contextToBeReturned = @methodCall (@flClass.methodBodies[eachSignatureIndex]), newContext
 
         return [contextToBeReturned,methodInvocation]
 
@@ -158,7 +160,8 @@ class FLObjects
     console.log "evaluation " + indentation() + "last chance - does it respond to $nothing$ message?"
     newContext = new FLContext theContext, @
     flContexts.jsArrayPush newContext
-    [returnedContext, returnedMessage] = yield from @findSignatureBindParamsAndMakeCall (flTokenize "$nothing$"), newContext
+    # yield from
+    [returnedContext, returnedMessage] = @findSignatureBindParamsAndMakeCall (flTokenize "$nothing$"), newContext
 
     # note that returnedContext here is always defined if there is
     # a fallback $nothing$ method, as there is now
@@ -172,7 +175,7 @@ class FLObjects
   # or non-native, in which case it will result into
   # evaluation of the message that makes up the body.
   methodCall: (methodBody, theContext, newSelf = @) ->
-    yield
+    #yield
     # note that this doesn't consume from the calling
     # context, because from the caller perspective it only matters
     # what we consume from the invocation, which we accounted
@@ -192,7 +195,8 @@ class FLObjects
       # the rest of the message is not used because all of the list should
       # be run, no remains from the message body should overspill
       # into the calling context.
-      theContext.returned = yield from methodBody.eval theContext, methodBody
+      # yield from
+      theContext.returned = methodBody.eval theContext, methodBody
 
       theContext.findAnotherReceiver = methodBody.mandatesNewReceiver()
       console.log "evaluation " + indentation() + "  method body mandates receiver2 ? " + methodBody.mandatesNewReceiver()
@@ -201,7 +205,8 @@ class FLObjects
 
       if methodBody == repeatFunctionContinuation
         console.log "obtained: " + "REPEAT FUNCTION"
-        theContext.returned = yield from methodBody.call newSelf, theContext
+        # yield from
+        theContext.returned = methodBody.call newSelf, theContext
       else
         # native method, i.e. coffeescript/javascript code
         theContext.returned = methodBody.call newSelf, theContext

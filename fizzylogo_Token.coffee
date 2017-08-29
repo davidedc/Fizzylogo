@@ -17,7 +17,7 @@ class FLTokenClass extends FLClasses
 
     toBeReturned.eval = (theContext, remainingMessage, ignoreUnassigned) ->
 
-      yield
+      #yield
       # shortcut: instead of using "@a←5"
       # one can now just use "a=5"
       if remainingMessage? and remainingMessage.flClass == FLList

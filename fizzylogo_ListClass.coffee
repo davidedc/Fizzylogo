@@ -107,10 +107,8 @@ class FLListClass extends FLClasses
           else
             # todo all the callers need to catch the yield so this one can yield too
             # and do the recursive yield from yield
-            #evalled = (@elementAt i).eval context, @, true
-            gen = (@elementAt i).eval context, @, true; console.log "yielding" until (ret = gen.next()).done;
-            evalled = ret.value
-
+            #catch yields
+            evalled = (@elementAt i).eval context, @, true
 
         newList = newList.flListImmutablePush evalled
 
@@ -134,13 +132,15 @@ class FLListClass extends FLClasses
     toBeReturned.evalFirstListElementAndTurnRestIntoMessage = (theContext) ->
       firstElement = @firstElement()
       console.log "           " + indentation() + "evaling element " + firstElement.value
-      theContext.returned = yield from firstElement.eval theContext, @
+      # yield from
+      theContext.returned = firstElement.eval theContext, @
 
       restOfMessage = @restOfMessage()
       return [theContext, restOfMessage]
 
     toBeReturned.findReceiver = (theContext) ->
-      [returnedContext, restOfMessage] = yield from @evalFirstListElementAndTurnRestIntoMessage theContext
+      # yield from
+      [returnedContext, restOfMessage] = @evalFirstListElementAndTurnRestIntoMessage theContext
 
       receiver = returnedContext.returned
 
@@ -159,7 +159,8 @@ class FLListClass extends FLClasses
       # So here we do that check and do the further message send.
       if restOfMessage.isEmpty()
         console.log "evaluation " + indentation() + "trying to send empty message to " + receiver.flToString()
-        [returnedContextFromEmptyMessage, ignored] = yield from receiver.findSignatureBindParamsAndMakeCall (flTokenize "$nothing$"), returnedContext
+        # yield from
+        [returnedContextFromEmptyMessage, ignored] = receiver.findSignatureBindParamsAndMakeCall (flTokenize "$nothing$"), returnedContext
 
         if returnedContextFromEmptyMessage?
           receiver = returnedContextFromEmptyMessage.returned
@@ -171,7 +172,8 @@ class FLListClass extends FLClasses
     # this eval requires that the whole list is consumed
     toBeReturned.eval = (theContext) ->
 
-      [returnedContext, returnedMessage] = yield from @partialEvalAsMessage theContext
+      # yield from
+      [returnedContext, returnedMessage] = @partialEvalAsMessage theContext
 
       if !returnedMessage.isEmpty()
         console.log "list couldn't be fully evaluated: " + @flToString() + " unexecutable: " + returnedMessage.flToString()
@@ -234,7 +236,8 @@ class FLListClass extends FLClasses
 
           if findAnotherReceiver
             findAnotherReceiver = false
-            [returnedContext, restOfMessage, receiver] = yield from restOfMessage.findReceiver returnedContext
+            # yield from
+            [returnedContext, restOfMessage, receiver] = restOfMessage.findReceiver returnedContext
 
             console.log "found next receiver and now message is: " + restOfMessage.flToString()
             #console.dir receiver
@@ -271,7 +274,8 @@ class FLListClass extends FLClasses
           # sent the remaining part to such reult. This is why
           # we have to keep iterating until the whole message is consumed
           
-          [returnedContext, returnedMessage] = yield from receiver.findSignatureBindParamsAndMakeCall restOfMessage, theContext
+          # yield from
+          [returnedContext, returnedMessage] = receiver.findSignatureBindParamsAndMakeCall restOfMessage, theContext
 
           if !returnedContext?
             returnedContext = theContext
