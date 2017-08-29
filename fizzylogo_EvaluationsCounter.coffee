@@ -10,13 +10,6 @@ class FLEvaluationsCounterClass extends FLClasses
 
     toBeReturned.flToStringForList = toBeReturned.flToString
 
-    toBeReturned.eval = (theContext) ->
-      yield
-      stringToPrint = "EvaluationsCounter running eval // "
-      console.log stringToPrint
-      environmentPrintout += stringToPrint
-      return @
-
 
     return toBeReturned
 
