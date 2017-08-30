@@ -7,7 +7,7 @@ class FLFakeElseClass extends FLClasses
 
 
     toBeReturned.flToString = ->
-      return "Done_object"
+      return "FakeElse_object"
 
     toBeReturned.flToStringForList = toBeReturned.flToString
 

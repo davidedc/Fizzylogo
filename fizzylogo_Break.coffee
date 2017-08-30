@@ -4,12 +4,9 @@ class FLBreakClass extends FLClasses
     toBeReturned.value = null
 
     toBeReturned.flToString = ->
-      return "Done_object"
+      return "Break_object"
 
     toBeReturned.flToStringForList = toBeReturned.flToString
-
-    toBeReturned.flToString = ->
-      return "Break_object"
 
     return toBeReturned
 

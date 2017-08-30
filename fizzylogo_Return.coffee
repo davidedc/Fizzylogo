@@ -8,9 +8,6 @@ class FLReturnClass extends FLClasses
 
     toBeReturned.flToStringForList = toBeReturned.flToString
 
-    toBeReturned.flToString = ->
-      return "Done_object"
-
     return toBeReturned
 
 FLReturn = new FLReturnClass()

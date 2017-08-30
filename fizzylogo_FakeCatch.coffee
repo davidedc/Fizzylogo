@@ -34,7 +34,7 @@ class FLFakeCatchClass extends FLClasses
     toBeReturned = super FLFakeCatch
 
     toBeReturned.flToString = ->
-      return "Try_object"
+      return "FakeCatch_object"
 
     toBeReturned.flToStringForList = toBeReturned.flToString
 
