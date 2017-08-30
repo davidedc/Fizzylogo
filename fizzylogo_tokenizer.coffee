@@ -117,8 +117,8 @@ injectStrings = (code) ->
       if val != stringsTable_TO_CHECK_CONVERTIONS[index]
         throw "ERROR cannot get back string from ID, got back: " + StringFromValidID index
 
-    console.log "INJECTING $STRING_TOKEN_" + index
-    console.log "INJECTING i.e. " +  val
+    #console.log "INJECTING $STRING_TOKEN_" + index
+    #console.log "INJECTING i.e. " +  val
     return val
   return code
 

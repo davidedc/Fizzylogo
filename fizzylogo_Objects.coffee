@@ -41,7 +41,7 @@ class FLObjects
       # remove the previous context because it was a
       # botched attempt to match a signature
       flContexts.pop()
-      console.log "evaluation " + indentation() + "  ////////////////////////////////////// CREATING NEW CONTEXT WITH NEW SELF " + @
+      #console.log "evaluation " + indentation() + "  ////////////////////////////////////// CREATING NEW CONTEXT WITH NEW SELF " + @
 
       # this is the ONLY place where we change self!
       newContext = new FLContext theContext, @
