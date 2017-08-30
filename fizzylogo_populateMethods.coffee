@@ -185,7 +185,6 @@ addDefaultMethods = (classToAddThemTo) ->
     commonPropertyAccessFunction
 
 
-  # TODO I think method body should NOT be quoted
   classToAddThemTo.addMethod \
     (flTokenize "answer: ( ' signature ) by ( methodBody )"),
     (context) ->
