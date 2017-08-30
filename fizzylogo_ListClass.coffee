@@ -259,7 +259,6 @@ class FLListClass extends FLClasses
           if (receiver.flClass == FLNumber or receiver.flClass == FLString or receiver.flClass == FLBoolean) and restOfMessage.isEmpty()
             returnedContext = theContext
             returnedMessage = restOfMessage
-            returnedContext.unparsedMessage = null
             returnedContext.returned = receiver
             console.log "skipping empty evaluation because basic type "
           else
