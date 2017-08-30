@@ -111,6 +111,8 @@ class FLListClass extends FLClasses
             evalled = (@elementAt i).eval context, @
             if (@elementAt i).flClass == FLToken and evalled.flClass == FLNil
               evalled = @elementAt i
+            else if (@elementAt i).flClass == FLToken and evalled.flClass == FLQuote
+              evalled = @elementAt i
 
         newList = newList.flListImmutablePush evalled
 
