@@ -549,20 +549,6 @@ FLNumber.addMethod \
   # object
   flTokenize "self ← self + 1"
 
-# although there are some good reasons to have this,
-# it can get confusing, consider for example
-# a++ ++
-# the first ++ does this: a = a+1 and returns a number
-# the second just increments the number without modifying
-# a.
-FLNumber.addMethod \
-  (flTokenize "++"),
-  flTokenize "self + 1"
-
-# see "++" regarding why this could be confusing
-FLNumber.addMethod \
-  (flTokenize "+= (value)"),
-  flTokenize "self + value"
 
 FLNumber.addMethod \
   (flTokenize "factorial"),
@@ -613,6 +599,21 @@ FLNumber.addMethod \
 FLNumber.addMethod \
   (flTokenize "+ ( operandum )"),
   (flTokenize "self $plus_binary operandum")
+
+# although there are some good reasons to have this,
+# it can get confusing, consider for example
+# a++ ++
+# the first ++ does this: a = a+1 and returns a number
+# the second just increments the number without modifying
+# a.
+FLNumber.addMethod \
+  (flTokenize "++"),
+  flTokenize "self + 1"
+
+# see "++" regarding why this could be confusing
+FLNumber.addMethod \
+  (flTokenize "+= (value)"),
+  flTokenize "self + value"
 
 # ---
 
