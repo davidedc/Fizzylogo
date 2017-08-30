@@ -600,7 +600,11 @@ FLNumber.addMethod \
 
 BasePlusFunction =  (context) ->
   operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
-  return FLNumber.createNew @value + operandum.value
+  # todo more type conversions needed, and also in the other operations
+  if operandum.flClass == FLString
+    return FLString.createNew @value + operandum.value
+  else
+    return FLNumber.createNew @value + operandum.value
 
 FLNumber.addMethod \
   (flTokenize "$plus_binary ( operandum )"),
@@ -609,6 +613,48 @@ FLNumber.addMethod \
 FLNumber.addMethod \
   (flTokenize "+ ( operandum )"),
   (flTokenize "self $plus_binary operandum")
+
+# ---
+
+BasePercentFunction =  (context) ->
+  operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+  return FLNumber.createNew @value % operandum.value
+
+FLNumber.addMethod \
+  (flTokenize "$percent_binary ( operandum )"),
+  BasePercentFunction
+
+FLNumber.addMethod \
+  (flTokenize "% ( operandum )"),
+  (flTokenize "self $percent_binary operandum")
+
+# ---
+
+BaseMinusFunction =  (context) ->
+  operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+  return FLNumber.createNew @value - operandum.value
+
+FLNumber.addMethod \
+  (flTokenize "$minus_binary ( operandum )"),
+  BaseMinusFunction
+
+FLNumber.addMethod \
+  (flTokenize "- ( operandum )"),
+  (flTokenize "self $minus_binary operandum")
+
+# ---
+
+BaseDivideFunction =  (context) ->
+  operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+  return FLNumber.createNew @value / operandum.value
+
+FLNumber.addMethod \
+  (flTokenize "$divide_binary ( operandum )"),
+  BaseDivideFunction
+
+FLNumber.addMethod \
+  (flTokenize "/ ( operandum )"),
+  (flTokenize "self $divide_binary operandum")
 
 # ---
 
