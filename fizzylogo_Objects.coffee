@@ -157,7 +157,7 @@ class FLObjects
   # this could be native, in which case it's a JS call,
   # or non-native, in which case it will result into
   # evaluation of the message that makes up the body.
-  methodCall: (methodBody, theContext, newSelf = @) ->
+  methodCall: (methodBody, theContext) ->
     #yield
     # note that this doesn't consume from the calling
     # context, because from the caller perspective it only matters
@@ -189,10 +189,10 @@ class FLObjects
       if methodBody == repeatFunctionContinuation
         console.log "REPEAT FUNCTION"
         # yield from
-        theContext.returned = methodBody.call newSelf, theContext
+        theContext.returned = methodBody.call @, theContext
       else
         # native method, i.e. coffeescript/javascript code
-        theContext.returned = methodBody.call newSelf, theContext
+        theContext.returned = methodBody.call @, theContext
 
     contextToBeReturned = theContext
     return contextToBeReturned
