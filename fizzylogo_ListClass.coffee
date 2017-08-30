@@ -200,17 +200,17 @@ class FLListClass extends FLClasses
         # are running the method body in.
 
         # we'll exit this loop in a number of ways:
-        #  - no more message to consume
-        #  - exceptions being thrown or done object
+        #  - no more messages to consume
+        #  - exceptions being thrown or done/return objects
         #  - the message is not understood
         loop
-          # this happens for example in the "if" statement
-          # (actually called ⇒ ). If the true branch is executed,
+
+          # this happens for example in the original if statement
+          # (called "⇒"" ). If the true branch is executed,
           # then everything that comes afterwards must be
           # skipped.
-          if returnedContext.exhaustPreviousContextMessage == true
-            restOfMessage.exhaust()
-
+          if returnedContext.exhaustPreviousContextMessage
+            restOfMessage = FLList.emptyMessage()
 
           if returnedContext.findAnotherReceiver and !returnedContext.throwing and !restOfMessage.isEmpty()
             returnedContext.findAnotherReceiver = false
@@ -231,21 +231,19 @@ class FLListClass extends FLClasses
           # where we detect an exception being thrown
           if theContext.throwing or returnedContext.throwing
             console.log "throw escape"
-            theContext.returned = receiver
-            restOfMessage.exhaust()
 
-            if theContext.returned.flClass == FLReturn
+            # the return is a special type of exception that
+            # we can catch before doing the next "method call"
+            # so we catch it here and pop up a level
+            if receiver.flClass == FLReturn
               console.log "got a return!"
-              theContext.throwing =false
-              if theContext.returned.value?
-                console.log "got a return with value!"
-                theContext.returned = theContext.returned.value
-              else
-                theContext.returned = FLNil.createNew()
+              theContext.throwing = false
+              theContext.returned = receiver.value
             else
               theContext.throwing = true
+              theContext.returned = receiver
 
-            return [theContext, restOfMessage]
+            return [theContext, FLList.emptyMessage()]
 
           console.log "evaluation " + indentation() + "receiver: " + receiver?.flToString?()
           console.log "evaluation " + indentation() + "message: " + restOfMessage.flToString()
@@ -296,10 +294,6 @@ class FLListClass extends FLClasses
       #console.dir theContext.returned
       flContexts.pop()
       return [theContext, restOfMessage]
-
-    toBeReturned.exhaust = ->
-      @cursorStart = @cursorEnd + 1
-      return @
 
     toBeReturned.length = ->
       return @cursorEnd - @cursorStart + 1

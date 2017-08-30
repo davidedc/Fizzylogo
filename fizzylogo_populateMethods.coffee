@@ -759,7 +759,6 @@ FLBoolean.addMethod \
       # in the context above
       context.exhaustPreviousContextMessage = true
 
-
       return toBeReturned
 
     context.findAnotherReceiver = true
@@ -967,6 +966,7 @@ FLReturn.addMethod \
   (context) ->
     console.log "Return_object running emptyMessage"
     context.throwing = true
+    @value = FLNil.createNew()
     return @
 
 
