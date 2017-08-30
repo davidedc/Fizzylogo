@@ -2789,6 +2789,27 @@ tests = [
   "start - ! exception: message was not understood: ( 1 + 1 )"
 
   """
+  to testingReturn:
+  ﹍repeat 2:
+  ﹍﹍console print 1
+  ﹍﹍console print 2
+  testingReturn
+  console print " the end."
+  """
+  "1212 the end."
+
+  """
+  to testingReturn:
+  ﹍repeat 2:
+  ﹍﹍console print 1
+  ﹍﹍return
+  ﹍﹍console print 2
+  testingReturn
+  console print " the end."
+  """
+  "1 the end."
+
+  """
   nil 1 + 1
   """
   "! exception: message was not understood: ( 1 + 1 )"

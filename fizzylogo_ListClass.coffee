@@ -236,12 +236,16 @@ class FLListClass extends FLClasses
 
             # the return is a special type of exception that
             # we can catch before doing the next "method call"
-            # so we catch it here and pop up a level
-            if receiver.flClass == FLReturn
+            # so we catch it here. We have to go up a level
+            # while the context is transparent, because "proper"
+            # method calls are done in a non-transparent context
+            console.log "context at depth " + theContext.depth()+ " with self: " + theContext.self.flToString?() + " is transparent: "  + theContext.isTransparent
+            if receiver.flClass == FLReturn and !theContext.isTransparent
               console.log "got a return!"
               theContext.throwing = false
               theContext.returned = receiver.value
             else
+              console.log " throwing the receiver up " + receiver.flToString()
               theContext.throwing = true
               theContext.returned = receiver
 

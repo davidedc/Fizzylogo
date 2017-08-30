@@ -696,7 +696,10 @@ FLNumber.addMethod \
           context.throwing = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
-          console.log "Do ⇒ the loop exited with Done "
+          console.log "times loop exited with Done "
+          break
+        if context.throwing and toBeReturned.flClass == FLReturn
+          console.log "times loop exited with Return "
           break
 
     context.findAnotherReceiver = true
@@ -892,7 +895,10 @@ FLList.addMethod \
           context.throwing = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
-          console.log "each... do loop exited with Done "
+          console.log "list-each-do loop exited with Done "
+          break
+        if context.throwing and toBeReturned.flClass == FLReturn
+          console.log "list-each-do loop exited with Return "
           break
 
     return toBeReturned
@@ -996,11 +1002,14 @@ FLRepeat1.addMethod \
       # catch any thrown "done" object, used to
       # exit from a loop.
       if toBeReturned?
-        if toBeReturned.flClass == FLDone
+        if context.throwing and (toBeReturned.flClass == FLDone or toBeReturned.flClass == FLBreak)
           context.throwing = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
-          console.log "Repeat1 ⇒ the loop exited with Done "
+          console.log "Repeat1 ⇒ the loop exited with Done at context depth " + context.depth()
+          break
+        if context.throwing and toBeReturned.flClass == FLReturn
+          console.log "Repeat1 ⇒ the loop exited with Return "
           break
 
     return toBeReturned
@@ -1042,6 +1051,9 @@ repeatFunctionContinuation = (context) ->
         if toBeReturned.value?
           toBeReturned = toBeReturned.value
         console.log "Repeat2 ⇒ the loop exited with Done at context depth " + context.depth()
+        break
+      if context.throwing and toBeReturned.flClass == FLReturn
+        console.log "Repeat2 ⇒ the loop exited with Return "
         break
 
   context.findAnotherReceiver = true
@@ -1233,6 +1245,9 @@ FLFor.addMethod \
             toBeReturned = toBeReturned.value
           console.log "For ⇒ the loop exited with Done "
           break
+        if context.throwing and toBeReturned.flClass == FLReturn
+          console.log "For ⇒ the loop exited with Return "
+          break
 
     flContexts.pop()
 
@@ -1277,7 +1292,10 @@ FLFor.addMethod \
           context.throwing = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
-          console.log "each... do loop exited with Done "
+          console.log "for-each-in-list loop exited with Done "
+          break
+        if context.throwing and toBeReturned.flClass == FLReturn
+          console.log "for-each-in-list loop exited with Return "
           break
 
     context.findAnotherReceiver = true
