@@ -253,7 +253,7 @@ class FLListClass extends FLClasses
           # now actually send the message to the receiver. Note that
           # only part of the message might be consumed, in which case
           # we'll have to find the result from what we can consume and then
-          # sent the remaining part to such reult. This is why
+          # send the remaining part to such result. This is why
           # we have to keep iterating until the whole message is consumed
 
           if (receiver.flClass == FLNumber or receiver.flClass == FLString or receiver.flClass == FLBoolean) and restOfMessage.isEmpty()
