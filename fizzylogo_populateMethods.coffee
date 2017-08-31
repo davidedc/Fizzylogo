@@ -166,6 +166,23 @@ addDefaultMethods = (classToAddThemTo) ->
       return toBeReturned
 
   classToAddThemTo.addMethod \
+    (flTokenize ". ('variable) *= (value)"),
+    (context) ->
+      # this is a token
+      variable = context.tempVariablesDict[ValidIDfromString "variable"]
+      value = context.tempVariablesDict[ValidIDfromString "value"]
+
+      runThis = flTokenize "(self . evaluating variable) *= value"
+
+      #catch yields
+      toBeReturned = runThis.eval context, runThis
+
+      @instanceVariablesDict[ValidIDfromString variable.value] = toBeReturned
+      context.findAnotherReceiver = true
+
+      return toBeReturned
+
+  classToAddThemTo.addMethod \
     (flTokenize ". ('variable) ++"),
     (context) ->
       # this is a token
@@ -339,6 +356,10 @@ FLToken.addMethod \
 FLToken.addMethod \
   (flTokenize "+= ( operandum )"),
   (flTokenize "self ← self eval + operandum")
+
+FLToken.addMethod \
+  (flTokenize "*= ( operandum )"),
+  (flTokenize "self ← self eval * operandum")
 
 FLToken.addMethod \
   (flTokenize "++"),
@@ -673,6 +694,25 @@ FLNumber.addMethod \
 
 # ---
 
+BaseMultiplyFunction =  (context) ->
+  operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+  return FLNumber.createNew @value * operandum.value
+
+FLNumber.addMethod \
+  (flTokenize "$multiply_binary ( operandum )"),
+  BaseMultiplyFunction
+
+FLNumber.addMethod \
+  (flTokenize "* ( operandum )"),
+  (flTokenize "self $multiply_binary operandum")
+
+# see "++" regarding why this could be confusing
+FLNumber.addMethod \
+  (flTokenize "*= (value)"),
+  flTokenize "self * value"
+
+# ---
+
 FLNumber.addMethod \
   (flTokenize "minus ( operandum )"),
   (context) ->
@@ -682,13 +722,6 @@ FLNumber.addMethod \
 FLNumber.addMethod \
   (flTokenize "selftimesminusone"),
   flTokenize "self * self minus 1"
-
-FLNumber.addMethod \
-  (flTokenize "* ( operandum )"),
-  (context) ->
-    operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
-    console.log "evaluation " + indentation() + "multiplying " + @value + " to " + operandum.value  
-    return FLNumber.createNew @value * operandum.value
 
 FLNumber.addMethod \
   (flTokenize "times ( ' loopCode )"),
@@ -729,6 +762,15 @@ FLNumber.addMethod \
 FLNumber.addMethod \
   (flTokenize "!= ( toCompare )"),
   commonSimpleValueInequalityFunction
+
+FLNumber.addMethod \
+  (flTokenize "< ( toCompare )"),
+  (context) ->
+    toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
+    if @value < toCompare.value
+      return FLBoolean.createNew true
+    else
+      return FLBoolean.createNew false
 
 # mutating the number
 FLNumber.addMethod \
@@ -853,6 +895,23 @@ FLList.addMethod \
     value = context.tempVariablesDict[ValidIDfromString "value"]
 
     runThis = flTokenize "(self [indexValue]) += value"
+
+    #catch yields
+    toBeReturned = runThis.eval context, runThis
+
+    context.findAnotherReceiver = true
+
+    @elementAtSetMutable indexValue.value, toBeReturned
+
+    return toBeReturned
+
+FLList.addMethod \
+  (flTokenize "[ (indexValue) ] *= (value)"),
+  (context) ->
+    indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
+    value = context.tempVariablesDict[ValidIDfromString "value"]
+
+    runThis = flTokenize "(self [indexValue]) *= value"
 
     #catch yields
     toBeReturned = runThis.eval context, runThis

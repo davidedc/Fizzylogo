@@ -317,7 +317,8 @@ class FLListClass extends FLClasses
     toBeReturned.startsWithCompoundAssignmentOperator =  ->
       if @length() >= 2
         if (@elementAt 1).flClass == FLToken
-          if (@elementAt 1).value == "+="
+          # test for things like "+=", "*=" etc.
+          if /([+\-^*/⇒%_]+=)/g.test (@elementAt 1).value
             console.log "startsWithCompoundAssignmentOperator: oh yes"
             return true
       console.log "startsWithCompoundAssignmentOperator: oh no"
