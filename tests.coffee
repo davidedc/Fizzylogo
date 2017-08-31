@@ -3014,6 +3014,32 @@ tests = [
 
 # ---------------------------------------------------------------------------
 
+  # floor division operator à la python
+  # (in python it's // but we use that for comments)
+
+  """
+  console print 9/_2
+  """
+  "4"
+
+  """
+  console print 9.0/_2.0
+  """
+  "4"
+
+  """
+  console print (0-11)/_3
+  """
+  "-4"
+
+  """
+  console print (0-11.0)/_3
+  """
+  "-4"
+
+
+# ---------------------------------------------------------------------------
+
   # Collatz
   """
   startingNumber = 97

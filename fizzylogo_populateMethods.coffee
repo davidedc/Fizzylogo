@@ -631,6 +631,20 @@ FLNumber.addMethod \
 
 # ---
 
+BaseFloorDivisionFunction =  (context) ->
+  operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+  return FLNumber.createNew Math.floor(@value / operandum.value)
+
+FLNumber.addMethod \
+  (flTokenize "$floordivision_binary ( operandum )"),
+  BaseFloorDivisionFunction
+
+FLNumber.addMethod \
+  (flTokenize "/_ ( operandum )"),
+  (flTokenize "self $floordivision_binary operandum")
+
+# ---
+
 BaseMinusFunction =  (context) ->
   operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
   return FLNumber.createNew @value - operandum.value
