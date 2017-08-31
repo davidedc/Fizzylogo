@@ -61,7 +61,7 @@ tokenizeCommand = (command) ->
 
   # things that are now a / _2 become a /_ 2
   # this is so we can have an "underscore" version of
-  # an operator
+  # an operator, in this case floor division
   command = command.replace /([+\-^*/=←⇒!%_])[ ]+_/g, "$1_ "
 
   command = command.replace /'/g, " ' "
