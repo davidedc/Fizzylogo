@@ -1396,14 +1396,56 @@ tests = [
 
   # ---------------------------------------------------------------------------
   """
-  for each word in '
-  ﹍"Hello " "Dave " "my " "dear " "friend"
+  for each word in:
+  ﹍
+  do:
+  ﹍console print word
+  console print "the end."
+  """
+  "the end."
+
+  """
+  for each word in: () do:
+  ﹍console print word
+  console print "the end."
+  """
+  "the end."
+
+  # ---------------------------------------------------------------------------
+  """
+  for each word in:
+  ﹍'(1 + 1)
+  do:
+  ﹍console print word
+  """
+  "1+1"
+
+  # ---------------------------------------------------------------------------
+  # since here 1+1 gives us a result that is a number, we throw
+  # an error. note that we could interpret it as a list, but it
+  # would become very confusing to understand where to use
+  # a list explicitly and when not.
+  """
+  for each word in:
+  ﹍1 + 1
+  do:
+  ﹍console print word
+  """
+  "! exception: for...each expects a list"
+
+  # ---------------------------------------------------------------------------
+  """
+  for each word in:
+  ﹍("Hello " "Dave " "my " "dear " "friend")
   do:
   ﹍console print word
   """
   "Hello Dave my dear friend"
 
   # ---------------------------------------------------------------------------
+  # we try to avaluate that list of strings but since
+  # it gives an error we revert to interpret it
+  # as the list of strings
   """
   for each word in:
   ﹍"Hello " "Dave " "my " "dear " "friend"
@@ -1412,7 +1454,36 @@ tests = [
   """
   "Hello Dave my dear friend"
 
+  """
+  for each word in: ('("Hello " "Dave " "my " "dear " "friend")) do:
+  ﹍console print word
+  """
+  "Hello Dave my dear friend"
+
+  # we try to avaluate that list of strings but since
+  # it gives an error we revert to interpret it
+  # as the list of strings
+  """
+  for each word in: ("Hello " "Dave " "my " "dear " "friend") do:
+  ﹍console print word
+  """
+  "Hello Dave my dear friend"
+
   # ---------------------------------------------------------------------------
+  """
+  for each word in:
+  ﹍(\\
+  ﹍"Hello "\\
+  ﹍"Dave "\\
+  ﹍"my "\\
+  ﹍"dear "\\
+  ﹍"friend"\\
+  ﹍)
+  do:
+  ﹍console print word
+  """
+  "Hello Dave my dear friend"
+
   """
   for each word in:
   ﹍"Hello "\\
@@ -1430,7 +1501,18 @@ tests = [
   codeToBeRun ='
   ﹍console print word
   for each word in:
-  ﹍"Hello " "Dave " "my " "dear " "friend"
+  ﹍("Hello " "Dave " "my " "dear " "friend")
+  do:
+  ﹍codeToBeRun eval
+  """
+  "Hello Dave my dear friend"
+
+  # ---------------------------------------------------------------------------
+  """
+  codeToBeRun ='
+  ﹍console print word
+  for each word in:
+  ﹍'("Hello " "Dave ") + "my " + "dear " + "friend"
   do:
   ﹍codeToBeRun eval
   """
@@ -1441,8 +1523,33 @@ tests = [
   codeToBeRun ='
   ﹍console print word
   myList =' ("Hello " "Dave " "my " "dear " "friend")
-  for each word in
+  for each word in:
   ﹍myList
+  do:
+  ﹍codeToBeRun eval
+  """
+  "Hello Dave my dear friend"
+
+  # ---------------------------------------------------------------------------
+  """
+  codeToBeRun ='
+  ﹍console print word
+  myList = '("Hello " "Dave ") + "my " + "dear " + "friend"
+  for each word in:
+  ﹍myList
+  do:
+  ﹍codeToBeRun eval
+  """
+  "Hello Dave my dear friend"
+
+  # ---------------------------------------------------------------------------
+  """
+  codeToBeRun ='
+  ﹍console print word
+  myList = '("Hello " "Dave ")
+  myString = "my dear friend"
+  for each word in:
+  ﹍myList + myString
   do:
   ﹍codeToBeRun eval
   """
@@ -1454,7 +1561,7 @@ tests = [
   ﹍console print word
   myList ='
   ﹍"Hello " "Dave " "my " "dear " "friend"
-  for each word in
+  for each word in:
   ﹍myList
   do:
   ﹍codeToBeRun eval
@@ -1467,7 +1574,7 @@ tests = [
   ﹍console print word
   myList =:
   ﹍"Hello " "Dave " "my " "dear " "friend"
-  for each word in
+  for each word in:
   ﹍myList
   do:
   ﹍codeToBeRun eval
@@ -1495,7 +1602,7 @@ tests = [
   ﹍console print word
   myList =
   ﹍'("Hello " "Dave " "my " "dear " "friend")
-  for each word in
+  for each word in:
   ﹍myList
   do:
   ﹍codeToBeRun eval
@@ -1511,7 +1618,7 @@ tests = [
   ﹍console print word
   myList = '
   ﹍"Hello " "Dave " "my " "dear " "friend"
-  for each word in
+  for each word in:
   ﹍myList
   do:
   ﹍codeToBeRun eval
@@ -1521,7 +1628,7 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   acc = 0
-  for each number in
+  for each number in:
   ﹍'(1 2 3 4)
   do:
   ﹍acc += number
@@ -1529,16 +1636,6 @@ tests = [
   """
   "10"
 
-  # ---------------------------------------------------------------------------
-  """
-  acc = 0
-  for each number in '
-  ﹍1 2 3 4
-  do:
-  ﹍acc += number
-  console print acc
-  """
-  "10"
 
   # ---------------------------------------------------------------------------
   """
@@ -1553,13 +1650,25 @@ tests = [
 
   # ---------------------------------------------------------------------------
   """
+  acc = 0
+  for each number in:
+  ﹍(1 2 3 4)
+  do:
+  ﹍acc += number
+  console print acc
+  """
+  "10"
+
+
+  # ---------------------------------------------------------------------------
+  """
   codeToBeRun ='
   ﹍console print word
   myList = 9
-  for each word in
+  for each word in:
   ﹍myList
   do:
-  ﹍codeToBeRun
+  ﹍codeToBeRun eval
   """
   "! exception: for...each expects a list"
 
@@ -2184,16 +2293,28 @@ tests = [
   """
   "0"
 
+  # ---------------------------------------------------------------------------
+  """
+  codeToBeRun ='
+  ﹍console print word
+  myList = '(1 2 3 4)
+  for each word in:
+  ﹍myList
+  do:
+  ﹍codeToBeRun eval
+  """
+  "1234"
+
 
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
   ﹍console print word
   myList = 9
-  for each word in
+  for each word in:
   ﹍﹍myList
   ﹍do:
-  ﹍﹍codeToBeRun
+  ﹍﹍codeToBeRun eval
   """
   "! exception: for...each expects a list"
 
@@ -2703,7 +2824,6 @@ tests = [
   ((((🚀))))
   """
   "launch!"
-
 
 
   # ---------------------------------------------------------------------------

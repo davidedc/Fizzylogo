@@ -278,45 +278,6 @@ FLToken.addMethod \
     return valueToAssign
 
 FLToken.addMethod \
-  (flTokenize "=' ( 'valueToAssign )"),
-  (context) ->
-    valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
-
-    if valueToAssign.flClass == FLList
-      valueToAssign = valueToAssign.evaluatedElementsList context
-
-    tokenString = @value
-
-    console.log "evaluation " + indentation() + "assignment to token " + tokenString
-    console.log "evaluation " + indentation() + "value to assign to token: " + tokenString + " : " + valueToAssign.value
-
-    context.isTransparent = true
-
-    # check if temp variable is visible from here.
-    # if not, create it.
-    dictToPutValueIn = context.whichDictionaryContainsToken @
-    if !dictToPutValueIn?
-      # no such variable, hence we create it as temp, but
-      # we can't create them in this very call context, that would
-      # be useless, we place it in the context of the _previous_ context
-      # note that this means that any construct that creates a new context
-      # will seal the temp variables in it. For example "for" loops. This
-      # is like the block scoping of C or Java. If you want function scoping, it
-      # could be achieved for example by marking in a special way contexts
-      # that have been created because of method calls and climbing back
-      # to the last one of those...
-      console.log "evaluation " + indentation() + "creating temp token: " + tokenString
-      dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict
-    else
-      console.log "evaluation " + indentation() + "found temp token: " + tokenString
-
-    dictToPutValueIn[ValidIDfromString tokenString] = valueToAssign
-
-    console.log "evaluation " + indentation() + "stored value in dictionary"
-    context.findAnotherReceiver = true
-    return valueToAssign
-
-FLToken.addMethod \
   (flTokenize "= ( valueToAssign )"),
   (context) ->
     valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
@@ -873,6 +834,7 @@ FLList.addMethod \
   (flTokenize "+ ( elementToBeAppended )"),
   (context) ->
     elementToBeAppended = context.tempVariablesDict[ValidIDfromString "elementToBeAppended"]
+    console.log "appending element to: " + @flToString() + " : " + elementToBeAppended.toString()
     return @flListImmutablePush elementToBeAppended
 
 FLList.addMethod \
@@ -1327,12 +1289,18 @@ FLFor.addMethod \
     context.findAnotherReceiver = true
     return toBeReturned
 
-# bacause a ((wrappedList)) evaluates to (wrappedList)
-# you can pass a ((list)) as second param, so you can
-# pass (list) when you are in indented form, which makes
-# more sense to the user.
+# there a few tricks that we performs on 'theList
+# FIRST OFF, we can't just pass theList as an evaluated
+# parameter because if you pass a list literal, then you
+# need the : to mean "quote", but at that point you can't
+# use the : when you pass statements that create a list
+# That does work, but it makes it tricky to understand when
+# to use the : and when not to.
+# So we make theList a quoted param instead, and we eval it.
+# If the evaluation returns a list, then we take that as
+# input. If not, we take the original list as input.
 FLFor.addMethod \
-  (flTokenize "each ( ' variable ) in ( theList ) do: ( 'code )"),
+  (flTokenize "each ( ' variable ) in: ( 'theList ) do: ( 'code )"),
   (context) ->
     context.isTransparent = true
     variable = context.tempVariablesDict[ValidIDfromString "variable"]
@@ -1345,6 +1313,40 @@ FLFor.addMethod \
       # from the workspace because someone might want to catch it.
       return FLException.createNew "for...each expects a list"
 
+    # trivial case
+    if theList.isEmpty()
+      context.findAnotherReceiver = true
+      return theList
+
+    # you could adjust the examples OK without these two
+    # lines, but why not give the chance for clarity
+    # to add an extra pair or parens to make sure that
+    # lists are clearly visible?
+    if theList.length() == 1
+      theList = theList.firstElement()
+
+    console.log "evalling list: " + theList.flToString()
+    #catch yields
+    evalledList = theList.eval context, theList
+    console.log "evalled list: " + evalledList.flToString()
+
+    if context.throwing
+      # the list doesn't run as a program, so we just
+      # consider the original list to be the input
+      theList = theList.evaluatedElementsList context
+      # remember to turn off the "throwing" flag as we
+      # do nothing with tha aborted evaluation.
+      context.throwing = false
+    else
+      # the list DOES run as a program, so we use
+      # the evaluation result as the input
+      theList = evalledList
+
+    if theList.flClass != FLList
+      context.throwing = true
+      # TODO this error should really be a stock error referanceable
+      # from the workspace because someone might want to catch it.
+      return FLException.createNew "for...each expects a list"
 
     console.log "FLEach do on the list: " + theList.flToString()
 
@@ -1353,6 +1355,7 @@ FLFor.addMethod \
 
     for i in [0...theList.value.length]
 
+      console.log "FLEach element at " + i + " : " + (theList.elementAt i).flToString()
       forContext.tempVariablesDict[ValidIDfromString variable.value] = theList.elementAt i
       console.log "FLEach do evaling...: " + code.flToString()
       #catch yields
