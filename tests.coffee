@@ -3229,6 +3229,34 @@ tests = [
   """
   "31415926535897932384"
 
+# ---------------------------------------------------------------------------
+# ranges
+
+  """
+  for each number in:
+  ﹍3...10
+  do:
+  ﹍console print number
+  """
+  "3456789"
+
+  """
+  for each number in:
+  ﹍10...3
+  do:
+  ﹍console print number
+  """
+  "10987654"
+
+  """
+  for each number in:
+  ﹍3...3
+  do:
+  ﹍console print number
+  console print "the end."
+  """
+  "the end."
+
 
 ]
 

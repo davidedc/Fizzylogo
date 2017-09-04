@@ -564,6 +564,17 @@ FLNumber.addMethod \
   (flTokenize "printAFromDeeperCall"),
   flTokenize "console print a"
 
+FLNumber.addMethod \
+  (flTokenize "...(endRange)"),
+  (context) ->
+    endRange = context.tempVariablesDict[ValidIDfromString "endRange"]
+    listToBeReturned = FLList.createNew()
+    for i in [@value...endRange.value]
+      listToBeReturned.value.jsArrayPush FLNumber.createNew i
+      listToBeReturned.cursorEnd++
+
+    return listToBeReturned
+
 # ---
 
 BasePlusFunction =  (context) ->
