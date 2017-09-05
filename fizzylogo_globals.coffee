@@ -112,5 +112,23 @@ StringFromValidID = (input) ->
     return utf8_decode output
 
 
+sortFirstArrayAccordingToSecond = (targetData, refData) ->
+  # create an array of indices [0, 1, ... targetData.length] and
+  # sort those specularly to refData
+
+  indices = [0...targetData.length]
+  # Sort array of indices according to the reference data.
+  indices.sort (indexA, indexB) ->
+    if refData[indexA] < refData[indexB]
+      #console.log "refData[indexA] < refData[indexB] " + refData[indexA]  + " " + refData[indexB]
+      return -1
+    else if refData[indexA] > refData[indexB]
+      #console.log "refData[indexA] > refData[indexB] " + refData[indexA]  + " " + refData[indexB]
+      return 1
+    #console.log "refData[indexA] = refData[indexB] " + refData[indexA]  + " " + refData[indexB]
+    0
+  # Map array of indices to corresponding values of the target array.
+  return indices.map (index) -> targetData[index]
+
 
 allClasses = []

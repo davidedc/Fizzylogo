@@ -1157,6 +1157,16 @@ FLIfThen.addMethod \
 
 # FLIfFallThrough -----------------------------------------------------------------------------
 
+# all these "emptyMessage" signatures are going to be examined
+# last because "addMethod" sorts all methods in order of increasing
+# genericity. (more generic matches will be done last)
+FLIfFallThrough.addMethod \
+  FLList.emptyMessage(),
+  (context) ->
+    console.log "no more cases for the if"
+    context.findAnotherReceiver = true
+    return @
+
 FLIfFallThrough.addMethod \
   (flTokenize "else if ( predicate ): ('trueBranch)"),
   (context) ->
@@ -1187,12 +1197,6 @@ FLIfFallThrough.addMethod \
     context.findAnotherReceiver = true
     return toBeReturned
 
-FLIfFallThrough.addMethod \
-  FLList.emptyMessage(),
-  (context) ->
-    console.log "no more cases for the if"
-    context.findAnotherReceiver = true
-    return @
 
 
 # FakeElse -----------------------------------------------------------------------------

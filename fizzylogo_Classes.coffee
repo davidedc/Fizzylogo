@@ -7,6 +7,9 @@ class FLClasses extends FLObjects
     return new FLObjects theClass
 
   addMethod: (signature, methodBody) ->
+    #console.log "adding method to class: " + @name
+    #console.log "adding method: " + signature.flToString()
+    #console.log "sort order: " + signature.sortOrderString()
     for i in [0...@msgPatterns.length]
       eachSignature = @msgPatterns[i]
       #console.dir eachSignature
@@ -19,6 +22,17 @@ class FLClasses extends FLObjects
     console.log "adding method  signature (appending): " + signature.flToString() + " body: " + methodBody.flToString?()
     @msgPatterns.jsArrayPush signature
     @methodBodies.jsArrayPush methodBody
+
+    # sort all signatures in order of increasing genericity i.e.
+    # more generic matches will be done last. See "sortOrderString"
+    # method for more details.
+    sortOrderStrings = @msgPatterns.map (elem) -> elem.sortOrderString()
+    @msgPatterns = sortFirstArrayAccordingToSecond @msgPatterns, sortOrderStrings
+    @methodBodies = sortFirstArrayAccordingToSecond @methodBodies, sortOrderStrings
+
+    #for i in [0...@msgPatterns.length]
+    #  console.log "msgPatterns ordered " + sortOrderStrings[i] + " : " + @msgPatterns[i].flToString()
+    #console.log "-------------------- "
 
   constructor: ->
     super @

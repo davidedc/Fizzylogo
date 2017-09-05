@@ -86,6 +86,38 @@ class FLListClass extends FLClasses
       @value[theElementNumber] = theValue
       return @
 
+    # creates a string for a matcher signature, such that
+    # when these strings are ordered alphabetically, the
+    # matchers are ordered from more specific to more
+    # generic.
+    #
+    # This is done like so:
+    #  a token generates an 'a'
+    #  a non-evaluating param generates 'b'
+    #  evaluating param generates 'c'
+    #  empty slot generates 'd'
+    #  the string is then padded with 'd' up to 10 places
+    #
+    # in this way, anything starting with a token will come
+    # first, and longer token matches will prevail.
+    # the empty signature will always go last, and more empty
+    # slots will generate more 'd', so shorter signatures will
+    # tend to be last.
+
+    toBeReturned.sortOrderString = ->
+      sortOrderString = ""
+      for i in [0...@length()]
+        element = @elementAt(i)
+        if element.flClass == FLToken
+          sortOrderString += "a"
+        if element.flClass == FLList
+          if element.isEvaluatingParam()
+            sortOrderString += "c"
+          else
+            sortOrderString += "b"
+      paddingLength = 10 - sortOrderString.length
+      sortOrderString += new Array(paddingLength).join('d')
+
     # TODO this can be done much cheaper
     # Permits something similar to closures:
     # code is just a list of tokens, and with the quote
