@@ -3257,6 +3257,49 @@ tests = [
   """
   "the end."
 
+# ---------------------------------------------------------------------------
+# homoiconicity
+
+  """
+  codeToBeRun ='
+  ﹍console print 1+2
+  codeToBeRun eval
+  """
+  "3"
+
+  """
+  codeToBeRun ='
+  ﹍console print 1+2
+  console print codeToBeRun[3]
+  """
+  "+"
+
+  """
+  codeToBeRun ='
+  ﹍console print 1+2
+  codeToBeRun[3] = '-
+  codeToBeRun eval
+  """
+  "-1"
+
+  """
+  codeToBeRun ='
+  ﹍console print 1+2
+
+  MyClass=Class new
+  MyClass.counter = nil
+  MyClass answer:
+  ﹍printOperation
+  by:
+  ﹍codeToBeRun eval
+  myObject=MyClass new
+  myObject printOperation
+  codeToBeRun[3] = '-
+  myObject printOperation
+  """
+
+  "3-1"
+
 
 ]
 
