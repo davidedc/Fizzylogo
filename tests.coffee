@@ -200,6 +200,24 @@ tests = [
   "2"
 
   # ---------------------------------------------------------------------------
+  # here is why we need eval to run a list,
+  # and we can't just drop the list without eval
+  # and hope that the "empty message" causes
+  # it to run: because we want these two
+  # statements to work the same.
+  # Another way of saying it is that if a list
+  # could run on its own without eval,
+  # any *quoted* list would run on its own too!
+  # *even if it's quoted*!
+  """
+  codeToBeRun = '(console print 1+2)
+  console print codeToBeRun
+  console print " - "
+  console print '(console print 1+2)
+  """
+  "( Console print 1 + 2 ) - ( Console print 1 + 2 )"
+
+  # ---------------------------------------------------------------------------
   "'a←5;'b←'a;console print b;console print a"
   "a5"
 
