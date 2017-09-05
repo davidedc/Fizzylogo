@@ -3300,6 +3300,67 @@ tests = [
 
   "3-1"
 
+  # ---------------------------------------------------------------------------
+  # signatures in "answer" are evaluated, so they can be closed too,
+  # tests the checks.
+
+  """
+  //withName = 2
+  name = "Flora"
+
+  MyClass = Class new
+  MyClass answer:
+  ﹍withName (name)
+  by:
+  ﹍console print "Hello "
+  ﹍console print name
+  myObject = MyClass new
+  myObject withName "Dave"
+  """
+
+  "Hello Flora"
+
+
+  """
+  withName = 2
+  name = "Flora"
+
+  MyClass = Class new
+  MyClass answer:
+  ﹍withName (name)
+  by:
+  ﹍console print "Hello "
+  ﹍console print name
+  myObject = MyClass new
+  myObject withName "Dave"
+  """
+
+  "! exception: signature of a method should only contain tokens or lists. Found instead: 2 . Perhaps some variable in the signature has been closed?"
+
+  """
+  //withName = 2
+  name = "Flora"
+  to sayHello:
+  ﹍﹍withName (name)
+  ﹍do:
+  ﹍﹍console print "Hello "
+  ﹍﹍console print name
+  sayHello withName "Dave"
+  """
+  "Hello Flora"
+
+  """
+  withName = 2
+  name = "Flora"
+  to sayHello:
+  ﹍﹍withName (name)
+  ﹍do:
+  ﹍﹍console print "Hello "
+  ﹍﹍console print name
+  sayHello withName "Dave"
+  """
+  "! exception: signature of a method should only contain tokens or lists. Found instead: 2 . Perhaps some variable in the signature has been closed?"
+
 
 ]
 

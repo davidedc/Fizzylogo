@@ -25,13 +25,7 @@
 # evaluated so it's actually closed (in read-only mode). This is
 # because in those cases one is less prone towards changing variables
 # from the outer scope. You can read them, but you can't write them.
-#
-# ----
-# all signatures are passed as unevaluated. This is for two reasons:
-# 1) we absolutely don't want to risk to close a parameter
-# 2) it would really never happen that one passes the signature
-#    from a parameter. That actually only happens in one place
-#    and in fact we need answerEvalParams for that case.
+
 
 commonSimpleValueEqualityFunction = (context) ->
   toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
@@ -202,8 +196,13 @@ addDefaultMethods = (classToAddThemTo) ->
     commonPropertyAccessFunction
 
 
+  # If you DON't want the signature to be "closed", then use
+  #  (flTokenize "answer : ( 'signature ) by ( methodBody )"),
+  # however then you need another variant of "answer" called "answerEvalSignature"
+  # that can take an evaluated parameter, because the implementation for
+  # "to" needs it.
   classToAddThemTo.addMethod \
-    (flTokenize "answer: ( ' signature ) by ( methodBody )"),
+    (flTokenize "answer ( signature ) by ( methodBody )"),
     (context) ->
       signature = context.tempVariablesDict[ValidIDfromString "signature"]
       methodBody = context.tempVariablesDict[ValidIDfromString "methodBody"]
@@ -212,18 +211,6 @@ addDefaultMethods = (classToAddThemTo) ->
 
       context.findAnotherReceiver = true
       return @
-
-  classToAddThemTo.addMethod \
-    (flTokenize "answerEvalParams ( signature ) by ( methodBody )"),
-    (context) ->
-      signature = context.tempVariablesDict[ValidIDfromString "signature"]
-      methodBody = context.tempVariablesDict[ValidIDfromString "methodBody"]
-
-      @flClass.addMethod signature, methodBody
-
-      context.findAnotherReceiver = true
-      return @
-
 
 # all native classes ---------------------------------------------------------------------------
 
@@ -356,12 +343,29 @@ FLIn.addMethod \
 
 # To -------------------------------------------------------------------------
 
-# TODO it's be nice if there was a way not to leak the TempClass
+# TODO it'd be nice if there was a way not to leak the TempClass
+# Note 1----
+# If you DON't want the signature to be "closed", then use
+#  (flTokenize "( ' functionObjectName ) : ( 'signature ) do ( functionBody )"),
+# hoewever at that point you'll have to also adjust the signature in
+# "answer" otherwise you
+# have a discrepancy, and "answer" will need both versions because it needs
+# a version where the signature is evalled exactly to implement the "to"
+# here below.
+#
+# Note 2----
+# the "functionObjectName" is not evalled to keep definitions more logo-like
+# otherwise if you want to eval it you need to have it on its own line
+# otherwise its evaluation might eat up the signature definition that
+# follows it.
+# The drawback is that you can't conditionally name a functionObjectName
+# but that's not that common in other languages either.
+
 FLTo.addMethod \
-  (flTokenize "( ' functionObjectName ) : ( 'signature ) do ( functionBody )"),
+  (flTokenize "( ' functionObjectName ) ( signature ) do ( functionBody )"),
   flTokenize \
     "accessUpperContext; 'TempClass ← Class new;\
-    TempClass answerEvalParams (signature) by (functionBody);\
+    TempClass answer (signature) by (functionBody);\
     functionObjectName ← TempClass new;"
 
 # TODO it's be nice if there was a way not to leak the TempClass
@@ -369,7 +373,7 @@ FLTo.addMethod \
   (flTokenize "( ' functionObjectName ) ( functionBody )"),
   flTokenize \
     "accessUpperContext; 'TempClass ← Class new;\
-    TempClass answerEvalParams '() by (functionBody);\
+    TempClass answer: () by (functionBody);\
     functionObjectName ← TempClass new;"
 
 # Class -------------------------------------------------------------------------

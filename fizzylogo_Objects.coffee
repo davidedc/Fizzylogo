@@ -63,6 +63,14 @@ class FLObjects
         # a token or an FLList containing one parameter (with
         # prepended "@" in case the parameter doesn't require
         # evaluation)
+
+        if eachElementOfSignature.flClass != FLList and eachElementOfSignature.flClass != FLToken
+          theContext.throwing = true
+          # TODO this error should really be a stock error referanceable
+          # from the workspace because someone might want to catch it.
+          theContext.returned = FLException.createNew "signature of a method should only contain tokens or lists. Found instead: " + eachElementOfSignature.flToString() + " . Perhaps some variable in the signature has been closed?"
+          return [theContext, methodInvocationToBeChecked]
+
         if eachElementOfSignature.flClass == FLToken
           # if the signature contains a token, the message
           # must contain the same token, otherwise we don't
