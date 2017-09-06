@@ -5,9 +5,19 @@ class FLClasses extends FLObjects
 
   # this is when you create a new class, e.g.
   # Number, String, or custom user-made classes.
-  constructor: ->
+  constructor: (@name) ->
     super @
+    @flClass = FLClass
     @instanceVariablesDict[ValidIDfromString "class"] = FLClass
+    
+    # this is useful because then we can compare classes
+    # (i.e. Number == String)
+    # using the usual value check
+    @value = @
+
+    if !@isClass()
+      @name = @constructor.name
+      @name = @name.substr 2, @name.length - 7
 
     @msgPatterns = []
     @methodBodies = []
@@ -18,19 +28,12 @@ class FLClasses extends FLObjects
     # are in the object, not here in the class
     allClasses.push @
 
-  # this is returned when you do a print on a class
-  # e.g. console print "a String object".class
-  flToString: ->
-    return @name
-
   # this is when you create a new instance of this class,
   # for example a new number or a new string or a new
   # object from custom user-made classes.
   # as you see, classes are objects.
   createNew: (theClass) ->
     # turn things like "flNumberClass" into "Number"
-    @name = @flClass.constructor.name
-    @name = @name.substr 2, @name.length - 7
     #console.log "class name: " + @name
 
     toBeReturned = new FLObjects theClass
@@ -66,25 +69,53 @@ class FLClasses extends FLObjects
     #console.log "-------------------- "
 
 
-# class "Class". We'll create exactly one object for
-# this class, which is going to be also called "Class".
-# Normally, classes create objects, but this one class will
-# create very special objects: classes, i.e. objects that can
+# class "Class". Like all classes, it's an object, and there
+# is only one of its kind, because this one Class object will be used to
+# create other classes, i.e. special objects that can
 # create further objects.
-# such object will allow users to create their classes.
 class FLClassClass extends FLClasses
 
-  # this is invoked only once at start, to
-  # create the object Class, which allows users
-  # to create new classes. This is *not*
-  # invoked when the user creates a new class, for
-  # that "new FLUserDefinedClass()" is used.
+  # create new classes e.g. myClass = Class new
   createNew: ->
-    toBeReturned = super FLClass
-    toBeReturned.msgPatterns = []
-    toBeReturned.methodBodies = []
+    newUserClass = new FLClasses ""
 
-    return toBeReturned
+    addDefaultMethods newUserClass
+
+    # the class we are creating has a "new"
+    # so user can create objects for it
+    newUserClass.addMethod \
+      (flTokenize "new"),
+      (context) ->
+        console.log "///////// creating a new object from a user class!"
+        objectTBR = newUserClass.createNew()
+        objectTBR.flClass = newUserClass
+
+        objectTBR.instanceVariablesDict[ValidIDfromString "class"] = newUserClass
+
+        console.log "///////// creating a new object from a user class - user class of object: " + objectTBR.flClass.value
+        console.log "///////// creating a new object from a user class - objectTBR.value: " + objectTBR.value
+        console.log "///////// creating a new object from a user class - making space for instanceVariables"
+
+        # we give the chance to automatically execute some initialisation code,
+        # but without any parameters. For example drawing a box, giving a message,
+        # initing some default values.
+        # However for initialisations that _requires_ parameters, the user
+        # will have to use a method call such as the "initWith" in FLException.
+        # The reasoning is that if the user is bothering with initing with
+        # parameters, then it might as well bother with sticking an
+        # "initWith" method call in front of them.
+        # Passing parameters to whenNew (and consuming them) from in here
+        # defies the whole architecture of the mechanism.
+        console.log "invoking whenNew"
+        #catch yields
+        returnedContext = objectTBR.findSignatureBindParamsAndMakeCall (flTokenize "whenNew"), context
+        returnedContext = returnedContext[0]
+
+
+        toBeReturned = returnedContext.returned
+        return toBeReturned
+
+    return newUserClass
     
 
 FLClass = new FLClassClass FLClass

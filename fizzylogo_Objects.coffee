@@ -3,18 +3,38 @@ class FLObjects
   flClass: null # the class it belongs to
   instanceVariablesDict: null # a JS dictionary
 
+  constructor: (@flClass) ->
+    @instanceVariablesDict = {}
+    @instanceVariablesDict[ValidIDfromString "class"] = @flClass
+
+  isClass: ->
+    @name?
+
+  # this is needed because you want, say, "6" to find its
+  # methods in its class Number, but you want Number to
+  # find its methods in Number, not in Class. That's
+  # a problem in the case of user classes, when you do
+  #
+  #   myClass = Class new; myObject = myClass new
+  #
+  # you really want the "new" of myClass to be found in
+  # myClass, not in Class.
+  methodsHolder: ->
+    if @isClass()
+      return @
+    else
+      return @flClass
+
   flToString: ->
-    if @flClass.name?
-      return "[object of class " + @flClass.flToString() + "]"
+    if @isClass()
+      return "[class " + @name + " (an object of class Class)]"
+    else if @flClass.name != ""
+      return "[object of class " + @flClass.name + "]"
     else
       return "[object of anonymous class]"
 
   flToStringForList: ->
     @flToString()
-
-  constructor: (@flClass) ->
-    @instanceVariablesDict = {}
-    @instanceVariablesDict[ValidIDfromString "class"] = @flClass
 
   eval: (theContext) ->
     #yield
@@ -32,8 +52,6 @@ class FLObjects
     console.log "evaluation " + indentation() + "  I am: " + @value
     console.log "evaluation " + indentation() + "  matching - my class patterns: "
 
-    #for eachClassPattern in @flClass.msgPatterns
-    #  console.log "evaluation - message patterns: " + indentation() + eachClassPattern.flToString()
 
     # fake context push so that we can make
     # the context stack handling easier
@@ -41,8 +59,15 @@ class FLObjects
     # TODO check that this is not left hanging
     flContexts.jsArrayPush null
 
-    for eachSignatureIndex in [0...@flClass.msgPatterns.length]
-      eachSignature = @flClass.msgPatterns[eachSignatureIndex]
+    classContainingMethods = @methodsHolder()
+
+    #console.log "evaluation - message patterns: -------------> "
+    #for eachClassPattern in classContainingMethods.msgPatterns
+    #  console.log "evaluation - message patterns: " + indentation() + eachClassPattern.flToString()
+    #console.log "evaluation - message patterns: <------------- "
+
+    for eachSignatureIndex in [0...classContainingMethods.msgPatterns.length]
+      eachSignature = classContainingMethods.msgPatterns[eachSignatureIndex]
 
       #console.log "evaluation " + indentation() + "  matching - checking if this signature matches: " + eachSignature.flToString()
       methodInvocation = methodInvocationToBeChecked
@@ -160,7 +185,7 @@ class FLObjects
         console.log "theContext method invocation after: " + methodInvocation.flToString()
 
         # yield from
-        contextToBeReturned = @methodCall (@flClass.methodBodies[eachSignatureIndex]), newContext
+        contextToBeReturned = @methodCall (classContainingMethods.methodBodies[eachSignatureIndex]), newContext
 
         return [contextToBeReturned,methodInvocation]
 

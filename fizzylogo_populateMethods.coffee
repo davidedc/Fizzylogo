@@ -123,13 +123,19 @@ addDefaultMethods = (classToAddThemTo) ->
     loop
       if objectsBeingChecked.instanceVariablesDict[ValidIDfromString variable.value]?
         console.log "yes it's an instance variable: "
-        console.dir objectsBeingChecked.instanceVariablesDict[ValidIDfromString variable.value]
+        #console.dir objectsBeingChecked.instanceVariablesDict[ValidIDfromString variable.value]
         return objectsBeingChecked.instanceVariablesDict[ValidIDfromString variable.value]
       if objectsBeingChecked == objectsBeingChecked.flClass
         break
       else objectsBeingChecked = objectsBeingChecked.flClass
 
     return FLNil.createNew()
+
+  classToAddThemTo.addMethod \
+    (flTokenize "new"),
+    (context) ->
+      console.log "///////// creating a new class for the user!"
+      @createNew()
 
   classToAddThemTo.addMethod \
     (flTokenize ". ('variable) = (value)"),
@@ -202,13 +208,20 @@ addDefaultMethods = (classToAddThemTo) ->
   # however then you need another variant of "answer" called "answerEvalSignature"
   # that can take an evaluated parameter, because the implementation for
   # "to" needs it.
+  #
+  # Note that you can call "answer" on both a Class or on any instance
+  # of any class. In the second case, you'll still have to add the method
+  # to the class, not to the instance.
   classToAddThemTo.addMethod \
     (flTokenize "answer ( signature ) by ( methodBody )"),
     (context) ->
       signature = context.tempVariablesDict[ValidIDfromString "signature"]
       methodBody = context.tempVariablesDict[ValidIDfromString "methodBody"]
 
-      @flClass.addMethod signature, methodBody
+      if @isClass()
+        @addMethod signature, methodBody
+      else
+        @flClass.addMethod signature, methodBody
 
       context.findAnotherReceiver = true
       return @
@@ -379,57 +392,17 @@ FLTo.addMethod \
 
 # Class -------------------------------------------------------------------------
 
-# Class. There is only one object in the system that belongs to this class
-# and it's also called "Class". We give this object the capacity to create
+# Class. Like all classes, it's also an object, but it's the only object
+# in the system that has the capacity to create
 # new classes, via the "new" message below.
 
-FLClass.addMethod \
-  (flTokenize "new"),
-  (context) ->
-    console.log "///////// creating a new class for the user!"
-
-    newUserClass = new FLUserDefinedClass()
-
-    # the class we are creating has a "new"
-    # so user can create objects for it
-    newUserClass.addMethod \
-      (flTokenize "new"),
-      (context) ->
-        console.log "///////// creating a new object from a user class!"
-        objectTBR = @createNew()
-        console.log "///////// creating a new object from a user class - user class of object: " + objectTBR.flClass.value
-        console.log "///////// creating a new object from a user class - objectTBR.value: " + objectTBR.value
-        console.log "///////// creating a new object from a user class - making space for instanceVariables"
-
-        # we give the chance to automatically execute some initialisation code,
-        # but without any parameters. For example drawing a box, giving a message,
-        # initing some default values.
-        # However for initialisations that _requires_ parameters, the user
-        # will have to use a method call such as the "initWith" in FLException.
-        # The reasoning is that if the user is bothering with initing with
-        # parameters, then it might as well bother with sticking an
-        # "initWith" method call in front of them.
-        # Passing parameters to whenNew (and consuming them) from in here
-        # defies the whole architecture of the mechanism.
-        console.log "invoking whenNew"
-        #catch yields
-        returnedContext = objectTBR.findSignatureBindParamsAndMakeCall (flTokenize "whenNew"), context
-        returnedContext = returnedContext[0]
-
-
-        toBeReturned = returnedContext.returned
-        return toBeReturned
-
-    addDefaultMethods newUserClass
-
-    return newUserClass
 
 # Exception -------------------------------------------------------------------------
 
 FLException.addMethod \
   (flTokenize "new"),
   (context) ->
-    @flClass.createNew ""
+    @createNew ""
 
 FLException.addMethod \
   (flTokenize "initWith ( errorMessage )"),
@@ -503,7 +476,7 @@ FLException.addMethod \
 FLString.addMethod \
   (flTokenize "new"),
   (context) ->
-    @flClass.createNew ""
+    @createNew ""
 
 FLString.addMethod \
   (flTokenize "+ ( stringToBeAppended )"),
@@ -520,6 +493,11 @@ FLString.addMethod \
   commonSimpleValueInequalityFunction
 
 # Number -------------------------------------------------------------------------
+
+FLNumber.addMethod \
+  (flTokenize "new"),
+  (context) ->
+    @createNew 0
 
 FLNumber.addMethod \
   (flTokenize "anotherPrint"),
@@ -844,7 +822,7 @@ FLNot.addMethod \
 FLList.addMethod \
   (flTokenize "new"),
   (context) ->
-    @flClass.createNew()
+    @createNew()
 
 FLList.addMethod \
   (flTokenize "+ ( elementToBeAppended )"),

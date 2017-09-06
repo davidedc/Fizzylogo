@@ -743,7 +743,7 @@ tests = [
 
   # ---------------------------------------------------------------------------
   "console print Class"
-  "[object of class Class]"
+  "[class Class (an object of class Class)]"
 
   # ---------------------------------------------------------------------------
   "'something←3;console print something"
@@ -3385,22 +3385,150 @@ tests = [
   """
   console print "a String object".class
   """
-  "String"
+  "[class String (an object of class Class)]"
 
   """
   console print "a String object".class.class
   """
-  "Class"
+  "[class Class (an object of class Class)]"
 
   """
   console print "a String object".class.class.class
   """
-  "Class"
+  "[class Class (an object of class Class)]"
 
   """
   console print "a String object".class.class.class.class.class.class.class.class
   """
-  "Class"
+  "[class Class (an object of class Class)]"
+
+  """
+  console print String == "a String object".class
+  """
+  "true"
+
+  """
+  console print Number == "a String object".class
+  """
+  "false"
+
+  """
+  console print String == 9.class
+  """
+  "false"
+
+  """
+  console print Number == 9.class
+  """
+  "true"
+
+  """
+  console print String == ('(some list items)).class
+  """
+  "false"
+
+  """
+  console print List == ('(some list items)).class
+  """
+  "true"
+
+  """
+  MyClass1 = Class new
+  MyClass2 = Class new
+
+  console print MyClass1 == MyClass2
+  """
+  "false"
+
+  """
+  MyClass1 = Class new
+  MyClass2 = Class new
+
+  console print MyClass1 == MyClass1
+  """
+  "true"
+
+  """
+  MyClass1 = Class new
+  MyClass2 = Class new
+
+  console print MyClass2 == MyClass2
+  """
+  "true"
+
+  """
+  MyClass1 = Class new
+  myObject1 = MyClass1 new
+
+  console print MyClass1 == myObject1.class
+  """
+  "true"
+
+  """
+  MyClass1 = Class new
+  myObject1 = MyClass1 new
+
+  MyClass2 = Class new
+  myObject2 = MyClass2 new
+
+  console print MyClass1 == myObject2.class
+  """
+  "false"
+
+  """
+  MyClass1 = Class new
+  myObject1 = MyClass1 new
+
+  MyClass2 = Class new
+  myObject2 = MyClass2 new
+
+  console print MyClass1 == myObject2.class
+  """
+  "false"
+
+  """
+  MyClass1 = Class new
+  myObject1 = MyClass1 new
+
+  console print myObject1.class == myObject1.class
+  """
+  "true"
+
+  """
+  MyClass1 = Class new
+  myObject1 = MyClass1 new
+
+  MyClass2 = Class new
+  myObject2 = MyClass2 new
+
+  console print myObject1.class == myObject2.class
+  """
+  "false"
+
+  """
+  console print Number.class
+  """
+  "[class Class (an object of class Class)]"
+
+  """
+  console print Number == "a String object".class
+  """
+  "false"
+
+  """
+  console print Number.class == "a String object".class.class
+  """
+  "true"
+
+  """
+  console print Number.class.class == "a String object".class.class.class
+  """
+  "true"
+
+  """
+  console print Number.class.class.class.class == "a String object".class.class.class.class.class
+  """
+  "true"
 
 ]
 
@@ -3464,7 +3592,6 @@ tests = [
 ]
 ###
 
-
 flContexts = []
 rWorkspace = null
 
@@ -3497,7 +3624,7 @@ for i in [0...tests.length] by 2
     
     keywordsAndTheirInit = [
       "WorkSpace", FLWorkspace # todo probably not needed?
-      "Class", FLClass.createNew()
+      "Class", FLClass
       "List", FLList
       "String", FLString
       "Exception", FLException
