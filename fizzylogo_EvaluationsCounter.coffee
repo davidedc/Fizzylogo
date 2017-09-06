@@ -4,14 +4,6 @@
 
 class FLEvaluationsCounterClass extends FLClasses
   createNew: ->
-    toBeReturned = super FLEvaluationsCounter
-
-    toBeReturned.flToString = ->
-      return "EvalutationsCounter"
-
-    toBeReturned.flToStringForList = toBeReturned.flToString
-
-
-    return toBeReturned
+    return super FLEvaluationsCounter
 
 FLEvaluationsCounter = new FLEvaluationsCounterClass()

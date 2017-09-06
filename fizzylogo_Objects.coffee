@@ -3,9 +3,18 @@ class FLObjects
   flClass: null # the class it belongs to
   instanceVariablesDict: null # a JS dictionary
 
+  flToString: ->
+    if @flClass.name?
+      return "[object of class " + @flClass.flToString() + "]"
+    else
+      return "[object of anonymous class]"
+
+  flToStringForList: ->
+    @flToString()
+
   constructor: (@flClass) ->
-    #console.log " instanceVariablesDict initiated "
     @instanceVariablesDict = {}
+    @instanceVariablesDict[ValidIDfromString "class"] = @flClass
 
   eval: (theContext) ->
     #yield

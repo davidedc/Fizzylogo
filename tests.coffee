@@ -215,7 +215,7 @@ tests = [
   console print " - "
   console print '(console print 1+2)
   """
-  "( Console print 1 + 2 ) - ( Console print 1 + 2 )"
+  "( [object of class Console] print 1 + 2 ) - ( [object of class Console] print 1 + 2 )"
 
   # ---------------------------------------------------------------------------
   "'a←5;'b←'a;console print b;console print a"
@@ -715,11 +715,11 @@ tests = [
 
   # ---------------------------------------------------------------------------
   "'a←5;console print repeat1((a==0)⇒(done)'a←a - 1)"
-  "Done_object"
+  "[object of class Done]"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
   "a=5;console print repeat1((a==0)⇒(done)a=a - 1)"
-  "Done_object"
+  "[object of class Done]"
 
   # ---------------------------------------------------------------------------
   # "done" stop the execution from within a loop,
@@ -743,7 +743,7 @@ tests = [
 
   # ---------------------------------------------------------------------------
   "console print Class"
-  "Class_object"
+  "[object of class Class]"
 
   # ---------------------------------------------------------------------------
   "'something←3;console print something"
@@ -770,17 +770,17 @@ tests = [
   "'MyClass←Class new;\
     MyClass answer:(printtwo)by'(console print self);\
     'myObject←MyClass new;myObject printtwo"
-  "object_from_a_user_class"
+  "[object of anonymous class]"
 
   "'MyClass←Class new;\
     MyClass answer:(printtwo)by:(console print self);\
     'myObject←MyClass new;myObject printtwo"
-  "object_from_a_user_class"
+  "[object of anonymous class]"
 
   "'MyClass←Class new;\
     MyClass answer:(printtwo)by:(console print @);\
     'myObject←MyClass new;myObject printtwo"
-  "object_from_a_user_class"
+  "[object of anonymous class]"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
   """
@@ -792,7 +792,7 @@ tests = [
   myObject = MyClass new
   myObject printtwo
   """
-  "object_from_a_user_class"
+  "[object of anonymous class]"
 
   """
   MyClass = Class new
@@ -803,7 +803,7 @@ tests = [
   myObject = MyClass new
   myObject printtwo
   """
-  "object_from_a_user_class"
+  "[object of anonymous class]"
 
   # ---------------------------------------------------------------------------
   "'false←true;false⇒(console print 1)console print 2"
@@ -2174,7 +2174,7 @@ tests = [
   myObject = MyClass new initWith " hello again! I am... "
   console print myObject
   """
-  "hey I'm new! hello again! I am... object_from_a_user_class"
+  "hey I'm new! hello again! I am... [object of anonymous class]"
 
   """
   MyClass = Class new
@@ -2191,7 +2191,7 @@ tests = [
   myObject = MyClass new initWith " hello again! I am... "
   console print myObject
   """
-  "hey I'm new! hello again! I am... object_from_a_user_class"
+  "hey I'm new! hello again! I am... [object of anonymous class]"
 
   # ---------------------------------------------------------------------------
   """
@@ -3127,7 +3127,7 @@ tests = [
   console print myLinkedList.head.item
   console print myLinkedList.head.next.item
   """
-  " adding item: Hello  0 node is: object_from_a_user_class 0 node has item: Hello  1 node is: object_from_a_user_class 1 node has item: Hello  2 node is: object_from_a_user_class 2 node has item: Hello  list is empty now? true 3 node is: object_from_a_user_class 3 node has item: Hello  list is empty now? false list is empty now? false adding item: World 0 node is: object_from_a_user_class 0 node has item: World 1 node is: object_from_a_user_class 1 node has item: World 2 node is: object_from_a_user_class 2 node has item: World list is empty now? false list is empty now? false list contents: Hello World"
+  " adding item: Hello  0 node is: [object of anonymous class] 0 node has item: Hello  1 node is: [object of anonymous class] 1 node has item: Hello  2 node is: [object of anonymous class] 2 node has item: Hello  list is empty now? true 3 node is: [object of anonymous class] 3 node has item: Hello  list is empty now? false list is empty now? false adding item: World 0 node is: [object of anonymous class] 0 node has item: World 1 node is: [object of anonymous class] 1 node has item: World 2 node is: [object of anonymous class] 2 node has item: World list is empty now? false list is empty now? false list contents: Hello World"
 
 # ---------------------------------------------------------------------------
   """
@@ -3379,6 +3379,28 @@ tests = [
   """
   "! exception: signature of a method should only contain tokens or lists. Found instead: 2 . Perhaps some variable in the signature has been closed?"
 
+  # ---------------------------------------------------------------------------
+  # class names
+
+  """
+  console print "a String object".class
+  """
+  "String"
+
+  """
+  console print "a String object".class.class
+  """
+  "Class"
+
+  """
+  console print "a String object".class.class.class
+  """
+  "Class"
+
+  """
+  console print "a String object".class.class.class.class.class.class.class.class
+  """
+  "Class"
 
 ]
 

@@ -13,7 +13,7 @@ class FLTokenClass extends FLClasses
     toBeReturned.isStatementSeparator = ->
       return @value == ";"
 
-    toBeReturned.flToStringForList = toBeReturned.flToString
+    
 
     toBeReturned.eval = (theContext, remainingMessage) ->
 

@@ -31,13 +31,6 @@
 
 class FLFakeCatchClass extends FLClasses
   createNew: ->
-    toBeReturned = super FLFakeCatch
-
-    toBeReturned.flToString = ->
-      return "FakeCatch_object"
-
-    toBeReturned.flToStringForList = toBeReturned.flToString
-
-    return toBeReturned
+    return FLFakeCatch
 
 FLFakeCatch = new FLFakeCatchClass()

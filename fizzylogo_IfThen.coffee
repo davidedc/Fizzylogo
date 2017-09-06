@@ -35,15 +35,6 @@
 
 class FLIfThenClass extends FLClasses
   createNew: ->
-    toBeReturned = super FLIfThen
-    toBeReturned.value = null
-
-
-    toBeReturned.flToString = ->
-      return "IfThen_object"
-
-    toBeReturned.flToStringForList = toBeReturned.flToString
-
-    return toBeReturned
+    return super FLIfThen
 
 FLIfThen = new FLIfThenClass()

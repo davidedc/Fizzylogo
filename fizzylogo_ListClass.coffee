@@ -163,7 +163,7 @@ class FLListClass extends FLClasses
       toBePrinted += " )"
       return toBePrinted
 
-    toBeReturned.flToStringForList = toBeReturned.flToString
+    
 
     toBeReturned.evalFirstListElementAndTurnRestIntoMessage = (theContext) ->
       firstElement = @firstElement()

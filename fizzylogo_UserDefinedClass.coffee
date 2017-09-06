@@ -21,12 +21,4 @@ class FLUserDefinedClass extends FLClasses
     # the @ here below is the class created by the
     # user, obviously the objects its creates must
     # belong to it.
-    toBeReturned = new FLObjects @
-    toBeReturned.value = "object_from_a_user_class"
-
-    toBeReturned.flToString = ->
-      return @value
-
-    toBeReturned.flToStringForList = toBeReturned.flToString
-
-    return toBeReturned
+    return new FLObjects @

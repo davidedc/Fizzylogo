@@ -1,12 +1,5 @@
 class FLRepeat1Class extends FLClasses
   createNew: ->
-    toBeReturned = super FLRepeat1
-
-    toBeReturned.flToString = ->
-      return "Repeat1_object"
-
-    toBeReturned.flToStringForList = toBeReturned.flToString
-
-    return toBeReturned
+    return super FLRepeat1
 
 FLRepeat1 = new FLRepeat1Class()

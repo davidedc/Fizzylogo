@@ -2,15 +2,6 @@
 
 class FLIfFallThroughClass extends FLClasses
   createNew: ->
-    toBeReturned = super FLIfFallThrough
-    toBeReturned.value = null
-
-
-    toBeReturned.flToString = ->
-      return "IfFallThrough_object"
-
-    toBeReturned.flToStringForList = toBeReturned.flToString
-
-    return toBeReturned
+    return super FLIfFallThrough
 
 FLIfFallThrough = new FLIfFallThroughClass()

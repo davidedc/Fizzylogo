@@ -1,12 +1,5 @@
 class FLNotClass extends FLClasses
   createNew: ->
-    toBeReturned = super FLNot
-
-    toBeReturned.flToString = ->
-      return "Not_object"
-
-    toBeReturned.flToStringForList = toBeReturned.flToString
-
-    return toBeReturned
+    return super FLNot
 
 FLNot = new FLNotClass()

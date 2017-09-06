@@ -122,7 +122,8 @@ addDefaultMethods = (classToAddThemTo) ->
     objectsBeingChecked = @
     loop
       if objectsBeingChecked.instanceVariablesDict[ValidIDfromString variable.value]?
-        console.log "yes it's an instance variable"
+        console.log "yes it's an instance variable: "
+        console.dir objectsBeingChecked.instanceVariablesDict[ValidIDfromString variable.value]
         return objectsBeingChecked.instanceVariablesDict[ValidIDfromString variable.value]
       if objectsBeingChecked == objectsBeingChecked.flClass
         break

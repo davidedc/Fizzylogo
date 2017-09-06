@@ -7,8 +7,6 @@ class FLNumberClass extends FLClasses
     toBeReturned.flToString = ->
       return @value
 
-    toBeReturned.flToStringForList = toBeReturned.flToString
-
     return toBeReturned
     
 
