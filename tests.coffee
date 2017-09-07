@@ -3648,6 +3648,7 @@ for i in [0...tests.length] by 2
       "String", FLString
       "Exception", FLException
       "Number", FLNumber
+      "Boolean", FLBoolean
       "Console", FLConsole
 
       "not", FLNot.createNew()
