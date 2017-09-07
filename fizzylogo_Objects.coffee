@@ -27,7 +27,10 @@ class FLObjects
 
   flToString: ->
     if @isClass()
-      return "[class " + @name + " (an object of class Class)]"
+      if @name == ""
+        return "[anonymous class (an object of class Class)]"
+      else
+        return "[class " + @name + " (an object of class Class)]"
     else if @flClass.name != ""
       return "[object of class " + @flClass.name + "]"
     else

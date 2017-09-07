@@ -41,8 +41,7 @@ class FLClasses extends FLObjects
     return toBeReturned
 
   addMethod: (signature, methodBody) ->
-    #console.log "adding method to class: " + @name
-    #console.log "adding method: " + signature.flToString()
+    #console.log "adding method " + signature.flToString() + " to: " + @flToString()
     #console.log "sort order: " + signature.sortOrderString()
     for i in [0...@msgPatterns.length]
       eachSignature = @msgPatterns[i]
@@ -92,8 +91,8 @@ class FLClassClass extends FLClasses
 
         objectTBR.instanceVariablesDict[ValidIDfromString "class"] = newUserClass
 
-        console.log "///////// creating a new object from a user class - user class of object: " + objectTBR.flClass.value
-        console.log "///////// creating a new object from a user class - objectTBR.value: " + objectTBR.value
+        console.log "///////// creating a new object from a user class - user class of object: " + objectTBR.flClass.flToString()
+        console.log "///////// creating a new object from a user class - objectTBR: " + objectTBR.flToString()
         console.log "///////// creating a new object from a user class - making space for instanceVariables"
 
         # we give the chance to automatically execute some initialisation code,

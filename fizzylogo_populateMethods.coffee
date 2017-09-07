@@ -382,7 +382,7 @@ FLTo.addMethod \
     TempClass answer (signature) by (functionBody);\
     functionObjectName ← TempClass new;"
 
-# TODO it's be nice if there was a way not to leak the TempClass
+# TODO it'd be nice if there was a way not to leak the TempClass
 FLTo.addMethod \
   (flTokenize "( ' functionObjectName ) ( functionBody )"),
   flTokenize \
