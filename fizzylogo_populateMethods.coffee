@@ -378,17 +378,25 @@ FLIn.addMethod \
 FLTo.addMethod \
   (flTokenize "( ' functionObjectName ) ( signature ) do ( functionBody )"),
   flTokenize \
+    # functionObjectName contains a token i.e.
+    # it's a pointer. So to put something inside the
+    # variable *it's pointing at*,
+    # you need to do "functionObjectName eval"
     "accessUpperContext; 'TempClass ← Class new;\
-    TempClass answer (signature) by (functionBody);\
-    functionObjectName ← TempClass new;"
+    functionObjectName ← TempClass new;\
+    functionObjectName eval answer (signature) by (functionBody);"
 
 # TODO it'd be nice if there was a way not to leak the TempClass
 FLTo.addMethod \
   (flTokenize "( ' functionObjectName ) ( functionBody )"),
   flTokenize \
+    # functionObjectName contains a token i.e.
+    # it's a pointer. So to put something inside the
+    # variable *it's pointing at*,
+    # you need to do "functionObjectName eval"
     "accessUpperContext; 'TempClass ← Class new;\
-    TempClass answer: () by (functionBody);\
-    functionObjectName ← TempClass new;"
+    functionObjectName ← TempClass new;\
+    functionObjectName eval answer: () by (functionBody);"
 
 # Class -------------------------------------------------------------------------
 
