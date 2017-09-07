@@ -1393,6 +1393,26 @@ tests = [
   "start"
 
   # ---------------------------------------------------------------------------
+  # FLTO you can add multiple methods to a class/object
+  # created with "to"
+  """
+  to anotherFunc:
+  ﹍withAParameter
+  do:
+  ﹍console print "running with a param."
+
+  anotherFunc withAParameter
+
+  to anotherFunc:
+  ﹍console print "running without params."
+
+  anotherFunc
+  anotherFunc withAParameter
+
+  """
+  "running with a param.running without params.running with a param."
+
+  # ---------------------------------------------------------------------------
   # lists that get evaluated but cannot be evaluated fully
   # ---------------------------------------------------------------------------
 
@@ -2855,15 +2875,27 @@ tests = [
   do:
   ﹍console print "launch!"
   "🚀"
+  
   """
   "launch!"
 
   """
   to "🚀":
-  ﹍console print "launch!"
+  ﹍withAParameter
+  do:
+  ﹍console print "running with a param."
+
+  "🚀" withAParameter
+
+  to "🚀":
+  ﹍console print "running without params."
+
   "🚀"
+  "🚀" withAParameter
+
   """
-  "launch!"
+  "running with a param.running without params.running with a param."
+
 
   # ---------------------------------------------------------------------------
   # string concatenation also with type conversion

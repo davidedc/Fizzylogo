@@ -390,9 +390,30 @@ FLTo.addMethod \
     # it's a pointer. So to put something inside the
     # variable *it's pointing at*,
     # you need to do "functionObjectName eval"
-    "accessUpperContext; 'TempClass ← Class new;\
-    functionObjectName ← TempClass new;\
-    functionObjectName eval answer (signature) by (functionBody);"
+
+    # we take the first branch:
+    # if the token is completely new, or if it's
+    # a string or a number for example, because it's clear that we don't
+    # want to add new methods to String or Number using "to" in
+    # that way. So we create a temp class and put a single instance
+    # of such class in the token.
+    #
+    # we take the second branch:
+    # if the token is bound to anything else other than
+    # a primitive type. In that case we just add/replace the
+    # method to whatever the token is bound to
+
+    """
+    accessUpperContext
+    if (nil == functionObjectName eval) or (functionObjectName eval isPrimitiveType):
+    ﹍'TempClass ← Class new
+    ﹍functionObjectName ← TempClass new
+    ﹍TempClass answer (signature) by (functionBody)
+    else:
+    ﹍functionObjectName eval answer (signature) by (functionBody)
+
+
+    """
 
 # TODO it'd be nice if there was a way not to leak the TempClass
 FLTo.addMethod \
@@ -402,9 +423,17 @@ FLTo.addMethod \
     # it's a pointer. So to put something inside the
     # variable *it's pointing at*,
     # you need to do "functionObjectName eval"
-    "accessUpperContext; 'TempClass ← Class new;\
-    functionObjectName ← TempClass new;\
-    functionObjectName eval answer: () by (functionBody);"
+    """
+    accessUpperContext
+    if (nil == functionObjectName eval) or (functionObjectName eval isPrimitiveType):
+    ﹍'TempClass ← Class new
+    ﹍functionObjectName ← TempClass new
+    ﹍TempClass answer: () by (functionBody)
+    else:
+    ﹍functionObjectName eval answer: () by (functionBody)
+
+    
+    """
 
 # Class -------------------------------------------------------------------------
 
