@@ -48,6 +48,16 @@ commonSimpleValueInequalityFunction = (context) ->
 addDefaultMethods = (classToAddThemTo) ->
 
   classToAddThemTo.addMethod \
+    (flTokenize "isPrimitiveType"),
+    flTokenize \
+      """
+      if (self.class == Class) or (self.class == String) or (self.class == Number) or (self.class == List) or (self.class == Boolean):
+      ﹍return true
+      else:
+      ﹍return false
+      """
+
+  classToAddThemTo.addMethod \
     (flTokenize "postfixPrint"),
     (context) ->
       console.log "///////// program printout: " + @flToString()

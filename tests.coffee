@@ -3530,6 +3530,26 @@ tests = [
   """
   "true"
 
+  # ---------------------------------------------------------------------------
+  # primitive types checks
+
+  """
+  MyClass = Class new
+  myObject = MyClass new
+
+  console print 6 isPrimitiveType
+  console print 6.class isPrimitiveType
+  console print true isPrimitiveType
+  console print true.class isPrimitiveType
+  console print "hey" isPrimitiveType
+  console print "hey".class isPrimitiveType
+  console print myObject isPrimitiveType
+  console print myObject.class isPrimitiveType
+  console print MyClass isPrimitiveType
+  console print MyClass.class isPrimitiveType
+  """
+  "truetruetruetruetruetruefalsetruetruetrue"
+
 ]
 
 ###
