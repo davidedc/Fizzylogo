@@ -419,12 +419,12 @@ FLTo.addMethod \
 FLTo.addMethod \
   (flTokenize "( ' functionObjectName ) ( functionBody )"),
   flTokenize \
-    # functionObjectName contains a token i.e.
-    # it's a pointer. So to put something inside the
-    # variable *it's pointing at*,
-    # you need to do "functionObjectName eval"
     """
     accessUpperContext
+    // functionObjectName contains a token i.e.
+    // it's a pointer. So to put something inside the
+    // variable *it's pointing at*,
+    // you need to do "functionObjectName eval"
     if (nil == functionObjectName eval) or (functionObjectName eval isPrimitiveType):
     ﹍'TempClass ← Class new
     ﹍functionObjectName ← TempClass new

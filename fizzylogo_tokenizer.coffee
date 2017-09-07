@@ -236,10 +236,12 @@ flTokenize = (command) ->
   # join the multi-line first before we do the strings
   command = command.replace /\\\n﹍*/g, " "
 
+  # remove comments first, so we can ignore
+  # any strings that might be in them
+  command = removeComments command
+
   command = removeStrings command
   console.log "codeWithoutStrings: " + command
-
-  command = removeComments command
 
   command = linearize command
   console.log "linearized command: " + command
