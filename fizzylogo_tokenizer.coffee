@@ -108,8 +108,7 @@ removeStrings = (code) ->
   codeWithoutStrings = code.replace(/"((?:[^"\\\n]|\\.)*)"/g, (all, quoted) ->
     if DEBUG_STRINGIFICATION_CHECKS
       stringsTable_TO_CHECK_CONVERTIONS[ValidIDfromString quoted] = quoted
-    console.log "$STRING_TOKEN_" + (ValidIDfromString quoted)
-    console.log "i.e." + quoted
+    #console.log "$STRING_TOKEN_" + (ValidIDfromString quoted) + " i.e." + quoted
     return "$STRING_TOKEN_" + (ValidIDfromString quoted)
   )
   return codeWithoutStrings
