@@ -30,9 +30,9 @@ class FLObjects
       if @name == ""
         return "[anonymous class (an object of class Class)]"
       else
-        return "[class " + @name + " (an object of class Class)]"
+        return "[class \"" + @name + "\" (an object of class Class)]"
     else if @flClass.name != ""
-      return "[object of class " + @flClass.name + "]"
+      return "[object of class \"" + @flClass.name + "\"]"
     else
       return "[object of anonymous class]"
 

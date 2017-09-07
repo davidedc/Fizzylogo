@@ -142,12 +142,6 @@ addDefaultMethods = (classToAddThemTo) ->
     return FLNil.createNew()
 
   classToAddThemTo.addMethod \
-    (flTokenize "new"),
-    (context) ->
-      console.log "///////// creating a new class for the user!"
-      @createNew()
-
-  classToAddThemTo.addMethod \
     (flTokenize ". ('variable) = (value)"),
     commonPropertyAssignmentFunction
 
@@ -212,7 +206,6 @@ addDefaultMethods = (classToAddThemTo) ->
     (flTokenize ". ('variable)"),
     commonPropertyAccessFunction
 
-
   # If you DON't want the signature to be "closed", then use
   #  (flTokenize "answer : ( 'signature ) by ( methodBody )"),
   # however then you need another variant of "answer" called "answerEvalSignature"
@@ -256,10 +249,10 @@ FLToken.addMethod \
   (context) ->
     valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
 
-    tokenString = @value
+    assigneeTokenString = @value
 
-    console.log "evaluation " + indentation() + "assignment to token " + tokenString
-    console.log "evaluation " + indentation() + "value to assign to token: " + tokenString + " : " + valueToAssign.value
+    console.log "evaluation " + indentation() + "assignment to token " + assigneeTokenString
+    console.log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
 
     context.isTransparent = true
 
@@ -276,12 +269,12 @@ FLToken.addMethod \
       # could be achieved for example by marking in a special way contexts
       # that have been created because of method calls and climbing back
       # to the last one of those...
-      console.log "evaluation " + indentation() + "creating temp token: " + tokenString + " at depth: " + context.firstNonTransparentContext().depth() + " with self: " + context.firstNonTransparentContext().self.flToString()
+      console.log "evaluation " + indentation() + "creating temp token: " + assigneeTokenString + " at depth: " + context.firstNonTransparentContext().depth() + " with self: " + context.firstNonTransparentContext().self.flToString()
       dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict
     else
-      console.log "evaluation " + indentation() + "found temp token: " + tokenString
+      console.log "evaluation " + indentation() + "found temp token: " + assigneeTokenString
 
-    dictToPutValueIn[ValidIDfromString tokenString] = valueToAssign
+    dictToPutValueIn[ValidIDfromString assigneeTokenString] = valueToAssign
 
     console.log "evaluation " + indentation() + "stored value in dictionary"
     return valueToAssign
@@ -291,10 +284,10 @@ FLToken.addMethod \
   (context) ->
     valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
 
-    tokenString = @value
+    assigneeTokenString = @value
 
-    console.log "evaluation " + indentation() + "assignment to token " + tokenString
-    console.log "evaluation " + indentation() + "value to assign to token: " + tokenString + " : " + valueToAssign.value
+    console.log "evaluation " + indentation() + "assignment to token " + assigneeTokenString
+    console.log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
 
     context.isTransparent = true
 
@@ -311,17 +304,59 @@ FLToken.addMethod \
       # could be achieved for example by marking in a special way contexts
       # that have been created because of method calls and climbing back
       # to the last one of those...
-      console.log "evaluation " + indentation() + "creating temp token: " + tokenString
+      console.log "evaluation " + indentation() + "creating temp token: " + assigneeTokenString
       dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict
     else
-      console.log "evaluation " + indentation() + "found temp token: " + tokenString
+      console.log "evaluation " + indentation() + "found temp token: " + assigneeTokenString
 
-    dictToPutValueIn[ValidIDfromString tokenString] = valueToAssign
+    dictToPutValueIn[ValidIDfromString assigneeTokenString] = valueToAssign
 
     console.log "evaluation " + indentation() + "stored value in dictionary"
     context.findAnotherReceiver = true
     return valueToAssign
 
+commonClassCreationFunction = (context, assigneeTokenString, className) ->
+  valueToAssign = FLClass.createNew className
+
+  console.log "evaluation " + indentation() + "assignment to token " + assigneeTokenString
+  console.log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
+
+  context.isTransparent = true
+
+  # check if temp variable is visible from here.
+  # if not, create it.
+  dictToPutValueIn = context.whichDictionaryContainsToken @
+  if !dictToPutValueIn?
+    # no such variable, hence we create it as temp, but
+    # we can't create them in this very call context, that would
+    # be useless, we place it in the context of the _previous_ context
+    # note that this means that any construct that creates a new context
+    # will seal the temp variables in it. For example "for" loops. This
+    # is like the block scoping of C or Java. If you want function scoping, it
+    # could be achieved for example by marking in a special way contexts
+    # that have been created because of method calls and climbing back
+    # to the last one of those...
+    console.log "evaluation " + indentation() + "creating temp token: " + assigneeTokenString
+    dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict
+  else
+    console.log "evaluation " + indentation() + "found temp token: " + assigneeTokenString
+
+  dictToPutValueIn[ValidIDfromString assigneeTokenString] = valueToAssign
+
+  console.log "evaluation " + indentation() + "stored value in dictionary"
+  context.findAnotherReceiver = true
+  return valueToAssign
+
+FLToken.addMethod \
+  (flTokenize "= Class new"),
+  (context) ->
+    return commonClassCreationFunction context, @value, @value
+
+FLToken.addMethod \
+  (flTokenize "= Class new named (theName)"),
+  (context) ->
+    theName = context.tempVariablesDict[ValidIDfromString "theName"]
+    return commonClassCreationFunction context, @value, theName.value
 
 FLToken.addMethod \
   (flTokenize "+= ( operandum )"),
@@ -407,6 +442,7 @@ FLTo.addMethod \
     accessUpperContext
     if (nil == functionObjectName eval) or (functionObjectName eval isPrimitiveType):
     ﹍'TempClass ← Class new
+    ﹍TempClass nameit "Class_of_" + functionObjectName
     ﹍functionObjectName ← TempClass new
     ﹍TempClass answer (signature) by (functionBody)
     else:
@@ -427,6 +463,7 @@ FLTo.addMethod \
     // you need to do "functionObjectName eval"
     if (nil == functionObjectName eval) or (functionObjectName eval isPrimitiveType):
     ﹍'TempClass ← Class new
+    ﹍TempClass nameit "Class_of_" + functionObjectName
     ﹍functionObjectName ← TempClass new
     ﹍TempClass answer: () by (functionBody)
     else:
@@ -441,6 +478,11 @@ FLTo.addMethod \
 # in the system that has the capacity to create
 # new classes, via the "new" message below.
 
+FLClass.addMethod \
+  (flTokenize "new"),
+  (context) ->
+    console.log "///////// creating a new class for the user!"
+    @createNew()
 
 # Exception -------------------------------------------------------------------------
 

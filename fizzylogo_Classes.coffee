@@ -28,6 +28,9 @@ class FLClasses extends FLObjects
     # are in the object, not here in the class
     allClasses.push @
 
+  rename: (newName) ->
+    @name = newName
+
   # this is when you create a new instance of this class,
   # for example a new number or a new string or a new
   # object from custom user-made classes.
@@ -75,8 +78,8 @@ class FLClasses extends FLObjects
 class FLClassClass extends FLClasses
 
   # create new classes e.g. myClass = Class new
-  createNew: ->
-    newUserClass = new FLClasses ""
+  createNew: (theName = "") ->
+    newUserClass = new FLClasses theName
 
     addDefaultMethods newUserClass
 
@@ -114,8 +117,17 @@ class FLClassClass extends FLClasses
         toBeReturned = returnedContext.returned
         return toBeReturned
 
+    # also all user classes can change their name
+    newUserClass.addMethod \
+      (flTokenize "nameit (newName)"),
+      (context) ->
+        newName = context.tempVariablesDict[ValidIDfromString "newName"]
+        @rename? newName.value
+        return @
+
+
     return newUserClass
-    
+
 
 FLClass = new FLClassClass FLClass
 FLClass.flClass = FLClass

@@ -5,7 +5,7 @@ outerMostContext = null
 DEBUG_STRINGIFICATION_CHECKS = true
 
 if DEBUG_STRINGIFICATION_CHECKS
-  stringsTable_TO_CHECK_CONVERTIONS = null
+  stringsTable_TO_CHECK_CONVERTIONS = {}
 
 indentation = ->
   #return " ".repeat(flContexts.length * 2)
