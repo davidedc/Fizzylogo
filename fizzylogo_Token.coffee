@@ -13,6 +13,13 @@ class FLTokenClass extends FLClasses
     toBeReturned.isStatementSeparator = ->
       return @value == ";"
 
+
+    toBeReturned.lookup = (theContext) ->
+      console.log "evaluation " + indentation() + "looking up temp token: " + @value
+      existingLookedUpValuePlace = theContext.whichDictionaryContainsToken @
+      if existingLookedUpValuePlace?
+        console.log "evaluation " + indentation() + "found temp token: " + @value
+        return theContext.lookUpTokenValue @, existingLookedUpValuePlace
     
 
     toBeReturned.eval = (theContext, remainingMessage) ->
@@ -30,11 +37,9 @@ class FLTokenClass extends FLClasses
       # if there is, that wins all the times, so you could
       # have an exotic value for "false", or "2" that is completely
       # different from what it would naturally be.
-      console.log "evaluation " + indentation() + "looking up temp token: " + @value
-      existingLookedUpValuePlace = theContext.whichDictionaryContainsToken @
-      if existingLookedUpValuePlace?
-        console.log "evaluation " + indentation() + "found temp token: " + @value
-        return theContext.lookUpTokenValue @, existingLookedUpValuePlace
+      lookup = @lookup theContext
+      if lookup? then return lookup
+
       # you could match the leading "+" or "-", however this would
       # be uneven with the general case of handling leading + and - 
       #else if /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/.test @value
