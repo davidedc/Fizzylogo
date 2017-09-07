@@ -3581,6 +3581,20 @@ tests = [
   """
   "truetruetruetruetruetruefalsetruetruetrue"
 
+  # ---------------------------------------------------------------------------
+  # calling an object with empty message, when the object doesn't respond to
+  # empty message: the following statements are executed
+  """
+  to 🚀:
+  ﹍withAParameter
+  do:
+  ﹍console print "running with a param."
+  🚀
+  console print 1+1
+  console print 🚀
+  """
+  "2[object of anonymous class]"
+
 ]
 
 ###

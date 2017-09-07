@@ -308,6 +308,13 @@ class FLListClass extends FLClasses
             console.log "receiver: " + receiver.flToString()
             returnedContext.unparsedMessage = returnedMessage
 
+            # if the object was sent the empty message and it wasn't
+            # understood, and there is nothing after the object,
+            # then we move on to the next statement rather than
+            # quitting altogether
+            if returnedMessage.isEmpty()
+              break
+
             return [returnedContext, returnedMessage]
 
           receiver = returnedContext.returned
