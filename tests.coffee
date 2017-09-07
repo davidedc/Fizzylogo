@@ -2843,10 +2843,9 @@ tests = [
   """
   "launch!"
 
-
   # ---------------------------------------------------------------------------
-  # you can assign arbitrary things to a string token, including
-  # objects which take the empty message
+  # you can assign arbitrary things to any token e.g. strings or numbers,
+  # including objects which take the empty message
   # FLTO
 
   # "nothing" signature

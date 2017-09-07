@@ -251,8 +251,6 @@ for eachClass in allClasses
 
 # Token ---------------------------------------------------------------------------
 
-
-
 FLToken.addMethod \
   (flTokenize "← ( valueToAssign )"),
   (context) ->

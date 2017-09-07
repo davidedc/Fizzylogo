@@ -46,6 +46,7 @@ class FLTokenClass extends FLClasses
       else if /^[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/.test @value
         return FLNumber.createNew @value
       else if /\$STRING_TOKEN_([\$a-zA-Z0-9_]+)/g.test @value
+        #console.log "token eval returning string: " + injectStrings @value 
         return FLString.createNew injectStrings @value
       else if /^true$/.test @value
         return FLBoolean.createNew true
@@ -61,6 +62,7 @@ class FLTokenClass extends FLClasses
       # We might even try to send a message to it, in which
       # case we'll report that too.
       rWorkspace.lastUndefinedArom = @
+      #console.log "token eval returning nil"
       return FLNil.createNew()
 
 
