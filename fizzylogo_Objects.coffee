@@ -231,7 +231,7 @@ class FLObjects
     else
       console.log "evaluation " + indentation() + "  matching - NATIVE method body: " + methodBody
 
-      if methodBody == repeatFunctionContinuation
+      if methodBody == repeatFunctionContinuation or methodBody == pauseFunctionContinuation
         console.log "REPEAT FUNCTION"
         # yield from
         theContext.returned = methodBody.call @, theContext

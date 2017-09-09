@@ -1324,6 +1324,23 @@ FLFakeCatch.addMethod \
     context.findAnotherReceiver = true
     return @
 
+# Pause -----------------------------------------------------------------------------
+
+pauseFunctionContinuation = (context) ->
+  seconds = context.tempVariablesDict[ValidIDfromString "seconds"]
+  startTime = new Date().getTime()
+  endTime = startTime + seconds.value * 1000
+  while (remainingTime = new Date().getTime() - endTime) < 0
+    #yield remainingTime
+    "do nothing"
+
+  context.findAnotherReceiver = true
+  return @
+
+FLPause.addMethod \
+  (flTokenize "( seconds )"),
+  pauseFunctionContinuation
+
 # For -----------------------------------------------------------------------------
 
 FLFor.addMethod \

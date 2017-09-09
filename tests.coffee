@@ -1,4 +1,13 @@
 tests = [
+
+  # ---------------------------------------------------------------------------
+  "console print \"start of tests\""
+  "start of tests"
+
+  # ---------------------------------------------------------------------------
+  "pause 2"
+  ""
+
   # ---------------------------------------------------------------------------
   # surprise! this language "chains" to the right
   # so "streams" of things are run right to left. 
@@ -3735,6 +3744,7 @@ for i in [0...tests.length] by 2
       "nil", FLNil.createNew()
 
       "console", FLConsole.createNew()
+      "pause", FLPause.createNew()
 
       "'", FLQuote.createNew()
       ":", FLQuote.createNew()
