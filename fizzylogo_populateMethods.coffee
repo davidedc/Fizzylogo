@@ -28,6 +28,7 @@
 
 
 commonSimpleValueEqualityFunction = (context) ->
+  #yield
   toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
   if @value == toCompare.value
     return FLBoolean.createNew true
@@ -35,6 +36,7 @@ commonSimpleValueEqualityFunction = (context) ->
     return FLBoolean.createNew false
 
 commonSimpleValueInequalityFunction = (context) ->
+  #yield
   toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
   if @value != toCompare.value
     return FLBoolean.createNew true
@@ -60,6 +62,7 @@ addDefaultMethods = (classToAddThemTo) ->
   classToAddThemTo.addMethod \
     (flTokenize "postfixPrint"),
     (context) ->
+      #yield
       console.log "///////// program printout: " + @flToString()
       environmentPrintout += @flToString()
       return @
@@ -67,11 +70,13 @@ addDefaultMethods = (classToAddThemTo) ->
   classToAddThemTo.addMethod \
     (flTokenize "toString"),
     (context) ->
+      #yield
       return FLString.createNew @flToString()
 
   classToAddThemTo.addMethod \
     (flTokenize "whenNew"),
     (context) ->
+      #yield
       return @
 
   classToAddThemTo.addMethod \
@@ -81,7 +86,7 @@ addDefaultMethods = (classToAddThemTo) ->
       newContext = new FLContext context
       newContext.isTransparent = true
       flContexts.jsArrayPush newContext
-      #catch yields
+      # yield from
       toBeReturned = @eval newContext, @
       flContexts.pop()
       return toBeReturned
@@ -93,6 +98,7 @@ addDefaultMethods = (classToAddThemTo) ->
   classToAddThemTo.addMethod \
     (flTokenize "== ( toCompare )"),
     (context) ->
+      #yield
       toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
       if @ == toCompare
         return FLBoolean.createNew true
@@ -105,6 +111,7 @@ addDefaultMethods = (classToAddThemTo) ->
   classToAddThemTo.addMethod \
     (flTokenize "!= ( toCompare )"),
     (context) ->
+      #yield
       toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
       if @ != toCompare
         return FLBoolean.createNew true
@@ -112,6 +119,7 @@ addDefaultMethods = (classToAddThemTo) ->
         return FLBoolean.createNew false
 
   commonPropertyAssignmentFunction = (context) ->
+    #yield
     context.isTransparent = true
     variable = context.tempVariablesDict[ValidIDfromString "variable"]
     value = context.tempVariablesDict[ValidIDfromString "value"]
@@ -122,6 +130,7 @@ addDefaultMethods = (classToAddThemTo) ->
     return @
 
   commonPropertyAccessFunction = (context) ->
+    #yield
     context.isTransparent = true
     variable = context.tempVariablesDict[ValidIDfromString "variable"]
 
@@ -162,7 +171,7 @@ addDefaultMethods = (classToAddThemTo) ->
 
       runThis = flTokenize "(self . evaluating variable) += value"
 
-      #catch yields
+      # yield from
       toBeReturned = runThis.eval context, runThis
 
       @instanceVariablesDict[ValidIDfromString variable.value] = toBeReturned
@@ -179,7 +188,7 @@ addDefaultMethods = (classToAddThemTo) ->
 
       runThis = flTokenize "(self . evaluating variable) *= value"
 
-      #catch yields
+      # yield from
       toBeReturned = runThis.eval context, runThis
 
       @instanceVariablesDict[ValidIDfromString variable.value] = toBeReturned
@@ -195,7 +204,7 @@ addDefaultMethods = (classToAddThemTo) ->
 
       runThis = flTokenize "(self . evaluating variable) ++"
 
-      #catch yields
+      # yield from
       toBeReturned = runThis.eval context, runThis
 
       @instanceVariablesDict[ValidIDfromString variable.value] = toBeReturned
@@ -218,6 +227,7 @@ addDefaultMethods = (classToAddThemTo) ->
   classToAddThemTo.addMethod \
     (flTokenize "answer ( signature ) by ( methodBody )"),
     (context) ->
+      #yield
       signature = context.tempVariablesDict[ValidIDfromString "signature"]
       methodBody = context.tempVariablesDict[ValidIDfromString "methodBody"]
 
@@ -247,6 +257,7 @@ for eachClass in allClasses
 FLToken.addMethod \
   (flTokenize "← ( valueToAssign )"),
   (context) ->
+    #yield
     valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
 
     assigneeTokenString = @value
@@ -282,6 +293,7 @@ FLToken.addMethod \
 FLToken.addMethod \
   (flTokenize "= ( valueToAssign )"),
   (context) ->
+    #yield
     valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
 
     assigneeTokenString = @value
@@ -316,6 +328,7 @@ FLToken.addMethod \
     return valueToAssign
 
 commonClassCreationFunction = (context, assigneeTokenString, className) ->
+  #yield
   valueToAssign = FLClass.createNew className
 
   console.log "evaluation " + indentation() + "assignment to token " + assigneeTokenString
@@ -350,13 +363,17 @@ commonClassCreationFunction = (context, assigneeTokenString, className) ->
 FLToken.addMethod \
   (flTokenize "= Class new"),
   (context) ->
-    return commonClassCreationFunction context, @value, @value
+    # yield from
+    toBeReturned = commonClassCreationFunction context, @value, @value
+    return toBeReturned
 
 FLToken.addMethod \
   (flTokenize "= Class new named (theName)"),
   (context) ->
     theName = context.tempVariablesDict[ValidIDfromString "theName"]
-    return commonClassCreationFunction context, @value, theName.value
+    # yield from
+    toBeReturned = commonClassCreationFunction context, @value, theName.value
+    return toBeReturned
 
 FLToken.addMethod \
   (flTokenize "+= ( operandum )"),
@@ -376,6 +393,7 @@ FLToken.addMethod \
 FLNil.addMethod \
   (flTokenize "== ( toCompare )"),
   (context) ->
+    #yield
     toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
     if toCompare.flClass == FLNil
       return FLBoolean.createNew true
@@ -392,7 +410,7 @@ FLIn.addMethod \
 
     newContext = new FLContext context, object
 
-    #catch yields
+    # yield from
     toBeReturned = code.eval newContext, code
     context.findAnotherReceiver = true
 
@@ -481,6 +499,7 @@ FLTo.addMethod \
 FLClass.addMethod \
   (flTokenize "new"),
   (context) ->
+    #yield
     console.log "///////// creating a new class for the user!"
     @createNew()
 
@@ -489,11 +508,13 @@ FLClass.addMethod \
 FLException.addMethod \
   (flTokenize "new"),
   (context) ->
+    #yield
     @createNew ""
 
 FLException.addMethod \
   (flTokenize "initWith ( errorMessage )"),
   (context) ->
+    #yield
     errorMessage = context.tempVariablesDict[ValidIDfromString "errorMessage"]
     @value = errorMessage.value
     return @
@@ -506,7 +527,7 @@ FLException.addMethod \
     console.log "catch: being thrown? " + context.throwing
 
     console.log "catch: got right exception, catching it"
-    #catch yields
+    # yield from
     toBeReturned = errorHandle.eval context, errorHandle
     context.findAnotherReceiver = true
 
@@ -516,6 +537,7 @@ FLException.addMethod \
   # theError here is a token!
   (flTokenize "catch ( 'theError ) : ( ' errorHandle )"),
   (context) ->
+    #yield
     theError = context.tempVariablesDict[ValidIDfromString "theError"]
     errorHandle = context.tempVariablesDict[ValidIDfromString "errorHandle"]
 
@@ -532,14 +554,14 @@ FLException.addMethod \
     # here.
     # theError here is a token, with this evaluation we get an
     # actual exception.
-    #catch yields
+    # yield from
     theError = theError.eval context, theError
 
     console.log "catch: same as one to catch?" + (@ == theError) + " being thrown? " + context.throwing
 
     if @ == theError
       console.log "catch: got right exception, catching it"
-      #catch yields
+      # yield from
       toBeReturned = errorHandle.eval context, errorHandle
 
       context.findAnotherReceiver = true
@@ -553,6 +575,7 @@ FLException.addMethod \
 FLException.addMethod \
   FLList.emptyMessage(),
   (context) ->
+    #yield
     if @thrown
       context.throwing = true
     return @
@@ -563,11 +586,13 @@ FLException.addMethod \
 FLString.addMethod \
   (flTokenize "new"),
   (context) ->
+    #yield
     @createNew ""
 
 FLString.addMethod \
   (flTokenize "+ ( stringToBeAppended )"),
   (context) ->
+    #yield
     stringToBeAppended = context.tempVariablesDict[ValidIDfromString "stringToBeAppended"]
     return FLString.createNew @value + stringToBeAppended.flToString()
 
@@ -584,6 +609,7 @@ FLString.addMethod \
 FLNumber.addMethod \
   (flTokenize "new"),
   (context) ->
+    #yield
     @createNew 0
 
 FLNumber.addMethod \
@@ -637,6 +663,7 @@ FLNumber.addMethod \
 FLNumber.addMethod \
   (flTokenize "...(endRange)"),
   (context) ->
+    #yield
     endRange = context.tempVariablesDict[ValidIDfromString "endRange"]
     listToBeReturned = FLList.createNew()
     for i in [@value...endRange.value]
@@ -648,6 +675,7 @@ FLNumber.addMethod \
 # ---
 
 BasePlusFunction =  (context) ->
+  #yield
   operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
   # todo more type conversions needed, and also in the other operations
   if operandum.flClass == FLString
@@ -681,6 +709,7 @@ FLNumber.addMethod \
 # ---
 
 BasePercentFunction =  (context) ->
+  #yield
   operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
   return FLNumber.createNew @value % operandum.value
 
@@ -695,6 +724,7 @@ FLNumber.addMethod \
 # ---
 
 BaseFloorDivisionFunction =  (context) ->
+  #yield
   operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
   return FLNumber.createNew Math.floor(@value / operandum.value)
 
@@ -709,6 +739,7 @@ FLNumber.addMethod \
 # ---
 
 BaseMinusFunction =  (context) ->
+  #yield
   operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
   return FLNumber.createNew @value - operandum.value
 
@@ -723,6 +754,7 @@ FLNumber.addMethod \
 # ---
 
 BaseDivideFunction =  (context) ->
+  #yield
   operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
   return FLNumber.createNew @value / operandum.value
 
@@ -737,6 +769,7 @@ FLNumber.addMethod \
 # ---
 
 BaseMultiplyFunction =  (context) ->
+  #yield
   operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
   return FLNumber.createNew @value * operandum.value
 
@@ -758,6 +791,7 @@ FLNumber.addMethod \
 FLNumber.addMethod \
   (flTokenize "minus ( operandum )"),
   (context) ->
+    #yield
     operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
     return FLNumber.createNew @value - operandum.value
 
@@ -773,7 +807,7 @@ FLNumber.addMethod \
 
 
     for i in [0...@value]
-      #catch yields
+      # yield from
       toBeReturned = loopCode.eval context, loopCode
 
       flContexts.pop()
@@ -808,6 +842,7 @@ FLNumber.addMethod \
 FLNumber.addMethod \
   (flTokenize "< ( toCompare )"),
   (context) ->
+    #yield
     toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
     if @value < toCompare.value
       return FLBoolean.createNew true
@@ -818,6 +853,7 @@ FLNumber.addMethod \
 FLNumber.addMethod \
   (flTokenize "← ( valueToAssign )"),
   (context) ->
+    #yield
     console.log "evaluation " + indentation() + "assigning to number! "
     valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
     @value = valueToAssign.value
@@ -830,11 +866,13 @@ FLNumber.addMethod \
 FLBoolean.addMethod \
   (flTokenize "negate"),
   (context) ->
+    #yield
     return FLBoolean.createNew !@value
 
 FLBoolean.addMethod \
   (flTokenize "and ( operandum )"),
   (context) ->
+    #yield
     operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
     return FLBoolean.createNew @value and operandum.value
 
@@ -846,7 +884,7 @@ FLBoolean.addMethod \
     console.log "FLBoolean ⇒ , predicate value is: " + @value
 
     if @value
-      #catch yields
+      # yield from
       toBeReturned = trueBranch.eval context, trueBranch
       flContexts.pop()
 
@@ -869,6 +907,7 @@ FLBoolean.addMethod \
 FLBoolean.addMethod \
   (flTokenize "or ( operandum )"),
   (context) ->
+    #yield
     console.log "executing an or! "
     operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
     return FLBoolean.createNew @value or operandum.value
@@ -887,6 +926,7 @@ FLBoolean.addMethod \
 FLQuote.addMethod \
   (flTokenize "( ' operandum )"),
   (context) ->
+    #yield
     operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
 
     if operandum.flClass == FLList
@@ -909,11 +949,13 @@ FLNot.addMethod \
 FLList.addMethod \
   (flTokenize "new"),
   (context) ->
+    #yield
     @createNew()
 
 FLList.addMethod \
   (flTokenize "+ ( elementToBeAppended )"),
   (context) ->
+    #yield
     elementToBeAppended = context.tempVariablesDict[ValidIDfromString "elementToBeAppended"]
     console.log "appending element to: " + @flToString() + " : " + elementToBeAppended.toString()
     return @flListImmutablePush elementToBeAppended
@@ -921,11 +963,13 @@ FLList.addMethod \
 FLList.addMethod \
   (flTokenize "length"),
   (context) ->
+    #yield
     return FLNumber.createNew @length()
 
 FLList.addMethod \
   (flTokenize "[ (indexValue) ] = (value)"),
   (context) ->
+    #yield
     indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
     value = context.tempVariablesDict[ValidIDfromString "value"]
     context.findAnotherReceiver = true
@@ -939,7 +983,7 @@ FLList.addMethod \
 
     runThis = flTokenize "(self [indexValue]) += value"
 
-    #catch yields
+    # yield from
     toBeReturned = runThis.eval context, runThis
 
     context.findAnotherReceiver = true
@@ -956,7 +1000,7 @@ FLList.addMethod \
 
     runThis = flTokenize "(self [indexValue]) *= value"
 
-    #catch yields
+    # yield from
     toBeReturned = runThis.eval context, runThis
 
     context.findAnotherReceiver = true
@@ -972,7 +1016,7 @@ FLList.addMethod \
 
     runThis = flTokenize "(self [indexValue]) ++"
 
-    #catch yields
+    # yield from
     toBeReturned = runThis.eval context, runThis
 
     @elementAtSetMutable indexValue.value, toBeReturned
@@ -983,6 +1027,7 @@ FLList.addMethod \
 FLList.addMethod \
   (flTokenize "[ (indexValue) ]"),
   (context) ->
+    #yield
     indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
     return @elementAt indexValue.value
 
@@ -1001,7 +1046,7 @@ FLList.addMethod \
     for i in [0...@value.length]
 
       newContext.tempVariablesDict[ValidIDfromString variable.value] = @elementAt i
-      #catch yields
+      # yield from
       toBeReturned = code.eval newContext, code
 
       # catch any thrown "done" object, used to
@@ -1025,6 +1070,7 @@ FLList.addMethod \
 FLAccessUpperContext.addMethod \
   FLList.emptyMessage(),
   (context) ->
+    #yield
     console.log "FLAccessUpperContext running emptyMessage"
     context.previousContext.isTransparent = true
     return @
@@ -1034,6 +1080,7 @@ FLAccessUpperContext.addMethod \
 FLConsole.addMethod \
   (flTokenize "print ( thingToPrint )"),
   (context) ->
+    #yield
     thingToPrint = context.tempVariablesDict[ValidIDfromString "thingToPrint"]
     stringToPrint = thingToPrint.flToString()
     console.log "///////// program printout: " + stringToPrint
@@ -1046,6 +1093,7 @@ FLConsole.addMethod \
 FLDone.addMethod \
   (flTokenize "with ( valueToReturn )"),
   (context) ->
+    #yield
     valueToReturn = context.tempVariablesDict[ValidIDfromString "valueToReturn"]
     console.log "Done_object thrown with return value: " + valueToReturn.flToString()
     @value = valueToReturn
@@ -1056,6 +1104,7 @@ FLDone.addMethod \
 FLDone.addMethod \
   FLList.emptyMessage(),
   (context) ->
+    #yield
     console.log "Done_object running emptyMessage"
     context.throwing = true
     @thrown = true
@@ -1066,6 +1115,7 @@ FLDone.addMethod \
 FLBreak.addMethod \
   FLList.emptyMessage(),
   (context) ->
+    #yield
     console.log "Break_object"
     context.throwing = true
     return @
@@ -1075,6 +1125,7 @@ FLBreak.addMethod \
 FLReturn.addMethod \
   (flTokenize "( valueToReturn )"),
   (context) ->
+    #yield
     valueToReturn = context.tempVariablesDict[ValidIDfromString "valueToReturn"]
 
     console.log "Return_object running a value"
@@ -1086,6 +1137,7 @@ FLReturn.addMethod \
 FLReturn.addMethod \
   FLList.emptyMessage(),
   (context) ->
+    #yield
     console.log "Return_object running emptyMessage"
     context.throwing = true
     @value = FLNil.createNew()
@@ -1104,7 +1156,7 @@ FLRepeat1.addMethod \
     console.log "FLRepeat1 ⇒ loop code is: " + loopCode.flToString()
 
     loop
-      #catch yields
+      # yield from
       toBeReturned = loopCode.eval context, loopCode
 
       flContexts.pop()
@@ -1184,6 +1236,7 @@ FLRepeat2.addMethod \
 FLEvaluationsCounter.addMethod \
   FLList.emptyMessage(),
   (context) ->
+    #yield
     stringToPrint = "EvaluationsCounter running the \"empty\" method // "
     console.log stringToPrint
     environmentPrintout += stringToPrint
@@ -1194,6 +1247,7 @@ FLEvaluationsCounter.addMethod \
 FLThrow.addMethod \
   (flTokenize "( theError )"),
   (context) ->
+    #yield
     theError = context.tempVariablesDict[ValidIDfromString "theError"]
     theError.thrown = true
     console.log "throwing an error: " + theError.value
@@ -1205,6 +1259,7 @@ FLThrow.addMethod \
 FLIfThen.addMethod \
   (flTokenize "( predicate ) : ('trueBranch)"),
   (context) ->
+    #yield
     context.isTransparent = true
     predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
     trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
@@ -1212,7 +1267,7 @@ FLIfThen.addMethod \
 
     if predicate.value
       console.log "IfThen ⇒ , evaling true branch at depth " + context.depth()
-      #catch yields
+      # yield from
       toBeReturned = trueBranch.eval context, trueBranch
       flContexts.pop()
       context.findAnotherReceiver = true
@@ -1229,6 +1284,7 @@ FLIfThen.addMethod \
 FLIfFallThrough.addMethod \
   FLList.emptyMessage(),
   (context) ->
+    #yield
     console.log "no more cases for the if"
     context.findAnotherReceiver = true
     return @
@@ -1236,13 +1292,14 @@ FLIfFallThrough.addMethod \
 FLIfFallThrough.addMethod \
   (flTokenize "else if ( predicate ): ('trueBranch)"),
   (context) ->
+    #yield
     context.isTransparent = true
     predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
     trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
     console.log "IfThen ⇒ , predicate value is: " + predicate.value
 
     if predicate.value
-      #catch yields
+      # yield from
       toBeReturned = trueBranch.eval context, trueBranch
       flContexts.pop()
       context.findAnotherReceiver = true
@@ -1257,7 +1314,7 @@ FLIfFallThrough.addMethod \
     context.isTransparent = true
     trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
 
-    #catch yields
+    # yield from
     toBeReturned = trueBranch.eval context, trueBranch
     flContexts.pop()
     context.findAnotherReceiver = true
@@ -1273,6 +1330,7 @@ FLFakeElse.addMethod \
   # up tokens
   (flTokenize "if ( 'predicate ) : ('trueBranch)"),
   (context) ->
+    #yield
     context.findAnotherReceiver = true
     return @
 
@@ -1282,6 +1340,7 @@ FLFakeElse.addMethod \
   # up tokens
   (flTokenize ": ('trueBranch)"),
   (context) ->
+    #yield
     context.findAnotherReceiver = true
     return @
 
@@ -1293,7 +1352,7 @@ FLTry.addMethod \
   (flTokenize ": ( ' code )"),
   (context) ->
     code = context.tempVariablesDict[ValidIDfromString "code"]
-    #catch yields
+    # yield from
     toBeReturned = code.eval context, code
 
     # if there _is_ somethig being thrown, then
@@ -1315,18 +1374,21 @@ FLTry.addMethod \
 FLFakeCatch.addMethod \
   (flTokenize "all : ( ' errorHandle )"),
   (context) ->
+    #yield
     context.findAnotherReceiver = true
     return @
 
 FLFakeCatch.addMethod \
   (flTokenize "( 'theError ) : ( ' errorHandle )"),
   (context) ->
+    #yield
     context.findAnotherReceiver = true
     return @
 
 # Pause -----------------------------------------------------------------------------
 
 pauseFunctionContinuation = (context) ->
+  #yield
   seconds = context.tempVariablesDict[ValidIDfromString "seconds"]
   startTime = new Date().getTime()
   endTime = startTime + seconds.value * 1000
@@ -1368,7 +1430,7 @@ FLFor.addMethod \
       # away when this for is done.
       forContext.tempVariablesDict[ValidIDfromString loopVarName] = FLNumber.createNew i
 
-      #catch yields
+      # yield from
       toBeReturned = loopCode.eval forContext, loopCode
 
       flContexts.pop()
@@ -1404,6 +1466,7 @@ FLFor.addMethod \
 FLFor.addMethod \
   (flTokenize "each ( ' variable ) in: ( 'theList ) do: ( 'code )"),
   (context) ->
+    #yield
     context.isTransparent = true
     variable = context.tempVariablesDict[ValidIDfromString "variable"]
     theList = context.tempVariablesDict[ValidIDfromString "theList"]
@@ -1428,7 +1491,7 @@ FLFor.addMethod \
       theList = theList.firstElement()
 
     console.log "evalling list: " + theList.flToString()
-    #catch yields
+    # yield from
     evalledList = theList.eval context, theList
     console.log "evalled list: " + evalledList.flToString()
 
@@ -1460,7 +1523,7 @@ FLFor.addMethod \
       console.log "FLEach element at " + i + " : " + (theList.elementAt i).flToString()
       forContext.tempVariablesDict[ValidIDfromString variable.value] = theList.elementAt i
       console.log "FLEach do evaling...: " + code.flToString()
-      #catch yields
+      # yield from
       toBeReturned = code.eval forContext, code
 
       # catch any thrown "done" object, used to

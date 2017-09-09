@@ -15,6 +15,7 @@ class FLClassClass extends FLClasses
     newUserClass.addMethod \
       (flTokenize "new"),
       (context) ->
+        #yield
         console.log "///////// creating a new object from a user class!"
         objectTBR = newUserClass.createNew()
         objectTBR.flClass = newUserClass
@@ -36,7 +37,7 @@ class FLClassClass extends FLClasses
         # Passing parameters to whenNew (and consuming them) from in here
         # defies the whole architecture of the mechanism.
         console.log "invoking whenNew"
-        #catch yields
+        # yield from
         returnedContext = objectTBR.findSignatureBindParamsAndMakeCall (flTokenize "whenNew"), context
         returnedContext = returnedContext[0]
 
@@ -48,6 +49,7 @@ class FLClassClass extends FLClasses
     newUserClass.addMethod \
       (flTokenize "nameit (newName)"),
       (context) ->
+        #yield
         newName = context.tempVariablesDict[ValidIDfromString "newName"]
         @rename? newName.value
         return @

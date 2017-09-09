@@ -231,13 +231,11 @@ class FLObjects
     else
       console.log "evaluation " + indentation() + "  matching - NATIVE method body: " + methodBody
 
-      if methodBody == repeatFunctionContinuation or methodBody == pauseFunctionContinuation
-        console.log "REPEAT FUNCTION"
-        # yield from
-        theContext.returned = methodBody.call @, theContext
-      else
-        # native method, i.e. coffeescript/javascript code
-        theContext.returned = methodBody.call @, theContext
+      # native method, i.e. coffeescript/javascript code
+      # note that in the yielding version, these must all
+      # be generator functions
+      # yield from
+      theContext.returned = methodBody.call @, theContext
 
     contextToBeReturned = theContext
     return contextToBeReturned
