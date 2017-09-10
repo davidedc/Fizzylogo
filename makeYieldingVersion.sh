@@ -16,6 +16,7 @@
 mkdir -p yielding-version
 rm -rf ./yielding-version/*
 cp *.coffee ./yielding-version/
+cp *.txt ./yielding-version/
 
 # before:
 #
