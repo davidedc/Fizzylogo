@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Fizzylogo sandbox</title>
+
+  <link rel="stylesheet" href="./CodeMirror_files/docs.css">
+
+  <link rel="stylesheet" href="./CodeMirror_files/codemirror.css">
+  <script src="./CodeMirror_files/codemirror.js"></script>
+  <script src="./CodeMirror_files/matchbrackets.js"></script>
+  <script src="./CodeMirror_files/python.js"></script>
+  <style type="text/css">.CodeMirror {border-top: 1px solid black; border-bottom: 1px solid black;}</style>
+</head>
+
+<body style="">
+<div id="nav">
+  <a href="http://google.com/"><h1>Fizzylogo</h1><img id="logo" src="./CodeMirror_files/logo.png"></a>
+
+  <ul>
+    <li><a href="http://google.com/">Link 1</a>
+    </li><li><a href="http://google.com/">Link 2</a>
+    </li><li><a href="http://google.com/">Link 3</a>
+  </li></ul>
+  <ul>
+    <li><a href="http://google.com/">Link 4</a>
+    </li><li><a class="active" href="http://google.com/">Link 5</a>
+  </li></ul>
+</div>
+
+<article>
+<h2>Fizzylogo</h2>
+
+<div>
+<textarea id="code" name="code" style="display: none;">
+# Literals
+1234
+0.0e101
+.123
+0b01010011100
+0o01234567
+0x0987654321abcdef
+7
+2147483647
+3L
+79228162514264337593543950336L
+0x100000000L
+79228162514264337593543950336
+0xdeadbeef
+3.14j
+10.j
+10j
+.001j
+1e100j
+3.14e-10j
+
+
+# String Literals
+'For\''
+"God\""
+"""so loved
+the world"""
+'''that he gave
+his only begotten\' '''
+'that whosoever believeth \
+in him'
+''
+
+# Identifiers
+__a__
+a.b
+a.b.c
+
+#Unicode identifiers on Python3
+# a = x\ddot
+a⃗ = ẍ
+# a = v\dot
+a⃗ = v̇
+
+#F\vec = m \cdot a\vec
+F⃗ = m•a⃗ 
+
+# Operators
++ - * / % &amp; | ^ ~ &lt; &gt;
+== != &lt;= &gt;= &lt;&gt; &lt;&lt; &gt;&gt; // **
+and or not in is
+
+#infix matrix multiplication operator (PEP 465)
+A @ B
+
+# Delimiters
+() [] {} , : ` = ; @ .  # Note that @ and . require the proper context on Python 2.
++= -= *= /= %= &amp;= |= ^=
+//= &gt;&gt;= &lt;&lt;= **=
+
+# Keywords
+as assert break class continue def del elif else except
+finally for from global if import lambda pass raise
+return try while with yield
+
+# Python 2 Keywords (otherwise Identifiers)
+exec print
+
+# Python 3 Keywords (otherwise Identifiers)
+nonlocal
+
+# Types
+bool classmethod complex dict enumerate float frozenset int list object
+property reversed set slice staticmethod str super tuple type
+
+# Python 2 Types (otherwise Identifiers)
+basestring buffer file long unicode xrange
+
+# Python 3 Types (otherwise Identifiers)
+bytearray bytes filter map memoryview open range zip
+
+# Some Example code
+import os
+from package import ParentClass
+
+@nonsenseDecorator
+def doesNothing():
+    pass
+
+class ExampleClass(ParentClass):
+    @staticmethod
+    def example(inputStr):
+        a = list(inputStr)
+        a.reverse()
+        return ''.join(a)
+
+    def __init__(self, mixin = 'Hello'):
+        self.mixin = mixin
+
+</textarea>
+</div>
+
+
+    <script>
+      var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+        mode: {name: "python",
+               version: 3,
+               singleLineStringErrors: false},
+        lineNumbers: true,
+        indentUnit: 4,
+        matchBrackets: true
+    });
+
+    </script>
+  </article>
+</body>
+</html>
