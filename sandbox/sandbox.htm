@@ -38,34 +38,25 @@
   <!-- left part, with code input and control buttons -->
   <div style="width: 49%; float: left;" >
     <textarea id="code" name="code" style="display: none;">console print 1+1</textarea>
-    <button id="runAll"       onclick="return runAll();"        > run all        </button>
-    <button id="runSelection" onclick="return runSelection();"  > run selection  </button>
-    <button id="pause"        onclick="return runAll();"        > pause          </button>
-    <button id="stop"         onclick="return runSelection();"  > stop           </button>
+    <button id="runAll"         onclick="return runAll();"        > run            </button>
+    <button id="runSelection"   onclick="return runSelection();"  > run selection  </button>
+    <button id="pauseOrRestart" onclick="return pauseOrRestart();"> pause          </button>
+    <button id="stop"           onclick="return stop();"          > stop           </button>
   </div>
 
-  <script>
-    var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-      mode: {name: "python",
-             version: 3,
-             singleLineStringErrors: false},
-      lineNumbers: true,
-      indentUnit: 4,
-      matchBrackets: true
-    });
-    
-  </script>
 
   <!-- right part, with the canvas and text output -->
   <div style="width: 49%; float: right;">
 
+    <!--
     <div>
       <canvas id="myCanvas" width="330" height="326"></canvas>
     </div>
-
+    -->
     <div>
-      <textarea id="output" name="output" rows="2" cols="80" style="width:100%;margin-bottom:-5px;">code output</textarea>
+      <textarea id="output" name="output" rows="23" cols="80" style="width:100%;margin-bottom:-5px;"></textarea>
     </div>
+    <button id="clearOutput"           onclick="return clearOutput();"          > clear           </button>
 
 
   </div>
@@ -74,33 +65,104 @@
 
 <script>
 
+clearOutput = function(){
+  document.getElementById("output").value = "code output ------------\n";
+}
+
+var paused = false;
+var gen = null;
+var timeoutNextStep = null;
+
+pauseOrRestart = function(){
+  if (!paused){
+    paused = true;
+    document.getElementById("pauseOrRestart").textContent = "restart";
+    clearTimeout(timeoutNextStep);
+    timeoutNextStep = null;
+  }
+  else {
+    paused = false
+    document.getElementById("pauseOrRestart").textContent = "pause";
+    runFollowingSteps(gen);
+  }
+}
+
+stop = function(){
+  paused = false;
+  document.getElementById("pauseOrRestart").textContent = "pause";
+  disablePauseAndStopButtons();
+  clearTimeout(timeoutNextStep);
+  timeoutNextStep = null;
+}
+
+checkIfEmptySelection = function(){
+  console.log("checking selection");
+  if (editor.getSelection() == "") {
+    document.getElementById("runSelection").disabled = true;
+  }
+  else {
+    document.getElementById("runSelection").disabled = false;
+  }
+}
+
+// have to givi it some time to get the proper content
+// of the selection
+checkInAMomentIfEmptySelection = function(){
+  setTimeout(function(){ checkIfEmptySelection(); }, 10);
+}
+
+var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+  mode: {name: "python",
+         version: 3,
+         singleLineStringErrors: false},
+  lineNumbers: true,
+  indentUnit: 2,
+  matchBrackets: true
+});
+editor.on("beforeSelectionChange", checkInAMomentIfEmptySelection);
+
 disablePauseAndStopButtons = function(){
-  document.getElementById("pause").disabled = true;
+  document.getElementById("pauseOrRestart").disabled = true;
   document.getElementById("stop").disabled = true;
 }
 
 enablePauseAndStopButtons = function(){
-  document.getElementById("pause").disabled = false;
+  document.getElementById("pauseOrRestart").disabled = false;
   document.getElementById("stop").disabled = false;
 }
 
+
 disablePauseAndStopButtons();
-
+document.getElementById("runSelection").disabled = true;
 Fizzylogo.init(document.getElementById("output"));
+clearOutput()
 
-runOneMoreStep = function(gen){
+runAll = function(){
+  stop();
+
+  gen = Fizzylogo.runOneStep(editor.getValue());
+  runFollowingSteps(gen);
+}
+
+runSelection= function(){
+  stop();
+
+  gen = Fizzylogo.runOneStep(editor.getSelection());
+  runFollowingSteps(gen);
+}
+
+runFollowingSteps = function(gen){
   done = gen.next().done;
   if (done) {
     disablePauseAndStopButtons();
   }
   else {
     enablePauseAndStopButtons();
-    setTimeout(function(){ runOneMoreStep(gen); }, 0); }
+    if (!paused) {
+      timeoutNextStep = setTimeout(function(){ runFollowingSteps(gen); }, 0); }
+    }
   }
 
-//gen = Fizzylogo.runOneStep("repeat forever:\n﹍console print \"running\"");
-gen = Fizzylogo.runOneStep("console print 1+1");
-runOneMoreStep(gen);
 
 </script>
 

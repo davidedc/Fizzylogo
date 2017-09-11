@@ -194,6 +194,7 @@
 
   linearize = function(code) {
     var actualLineTabs, correctedIndentationDifference, correctedLineTabs, eachLine, j, k, l, leftOrRightOrAligned, line, linesWithBlockStart, match, outputSource, ref, ref1, rx, sourceByLine, startOfPreviousLine, startOfThisLine, unclosedParens;
+    code = code.replace(/﹍/g, " ");
     sourceByLine = code.split("\n");
     startOfPreviousLine = "";
     linesWithBlockStart = [];
@@ -203,7 +204,7 @@
     correctedLineTabs = [];
     for (eachLine = j = 0, ref = sourceByLine.length; 0 <= ref ? j < ref : j > ref; eachLine = 0 <= ref ? ++j : --j) {
       line = sourceByLine[eachLine];
-      rx = RegExp("^(﹍*)", 'gm');
+      rx = RegExp("^([ ]*)", 'gm');
       match = rx.exec(line);
       if (eachLine === 0) {
         outputSource += " " + line;
@@ -238,14 +239,14 @@
       correctedLineTabs.push(unclosedParens);
     }
     outputSource += Array(unclosedParens + 1).join(")");
-    return outputSource.replace(/﹍/g, "");
+    return outputSource.replace(/^[ ]*/g, "");
   };
 
   flTokenize = function(command) {
     var eachToken, j, len, listsStack, nestedList, simpleTokenization;
     listsStack = [];
     listsStack.jsArrayPush(FLList.createNew());
-    command = command.replace(/\\\n﹍*/g, " ");
+    command = command.replace(/\\\n[ ]*/g, " ");
     command = removeComments(command);
     command = removeStrings(command);
     console.log("codeWithoutStrings: " + command);
