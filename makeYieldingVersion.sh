@@ -36,10 +36,10 @@ $(npm bin)/replace '^\s*# yield from$\n^(\s*[^=]*)=(.*)$' '$1 = yield from $2' .
 #
 # after:
 #
-#  gen = (@elementAt i).eval context, @, true; console.log "yielding" until (ret = gen.next()).done;
+#  gen = (@elementAt i).eval context, @, true; log "yielding" until (ret = gen.next()).done;
 #  evalled = ret.value
 #
-$(npm bin)/replace '($\n^\s*)#catch yields$\n^\s*([^=]*) =\s*(.*)$' '$1gen = $3; console.log "yielding" until (ret = gen.next()).done;$1$2 = ret.value' ./yielding-version/*.coffee
+$(npm bin)/replace '($\n^\s*)#catch yields$\n^\s*([^=]*) =\s*(.*)$' '$1gen = $3; log "yielding" until (ret = gen.next()).done;$1$2 = ret.value' ./yielding-version/*.coffee
 
 # before:
 #

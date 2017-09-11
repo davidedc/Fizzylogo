@@ -40,25 +40,25 @@ class FLClasses extends FLObjects
   # as you see, classes are objects.
   createNew: (theClass) ->
     # turn things like "flNumberClass" into "Number"
-    #console.log "class name: " + @name
+    #log "class name: " + @name
 
     toBeReturned = new FLObjects theClass
 
     return toBeReturned
 
   addMethod: (signature, methodBody) ->
-    #console.log "adding method " + signature.flToString() + " to: " + @flToString()
-    #console.log "sort order: " + signature.sortOrderString()
+    #log "adding method " + signature.flToString() + " to: " + @flToString()
+    #log "sort order: " + signature.sortOrderString()
     for i in [0...@msgPatterns.length]
       eachSignature = @msgPatterns[i]
-      #console.dir eachSignature
+      #dir eachSignature
       if eachSignature.flToString() == signature.flToString()
         @msgPatterns[i] = signature
         @methodBodies[i] = methodBody
-        console.log "adding method  signature (replacing): " + signature.flToString() + " body: " + methodBody.flToString?()
+        log "adding method  signature (replacing): " + signature.flToString() + " body: " + methodBody.flToString?()
         return
 
-    console.log "adding method  signature (appending): " + signature.flToString() + " body: " + methodBody.flToString?()
+    log "adding method  signature (appending): " + signature.flToString() + " body: " + methodBody.flToString?()
     @msgPatterns.jsArrayPush signature
     @methodBodies.jsArrayPush methodBody
 
@@ -70,8 +70,8 @@ class FLClasses extends FLObjects
     @methodBodies = sortFirstArrayAccordingToSecond @methodBodies, sortOrderStrings
 
     #for i in [0...@msgPatterns.length]
-    #  console.log "msgPatterns ordered " + sortOrderStrings[i] + " : " + @msgPatterns[i].flToString()
-    #console.log "-------------------- "
+    #  log "msgPatterns ordered " + sortOrderStrings[i] + " : " + @msgPatterns[i].flToString()
+    #log "-------------------- "
 
 
 

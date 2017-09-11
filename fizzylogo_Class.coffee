@@ -16,15 +16,15 @@ class FLClassClass extends FLClasses
       (flTokenize "new"),
       (context) ->
         #yield
-        console.log "///////// creating a new object from a user class!"
+        log "///////// creating a new object from a user class!"
         objectTBR = newUserClass.createNew()
         objectTBR.flClass = newUserClass
 
         objectTBR.instanceVariablesDict[ValidIDfromString "class"] = newUserClass
 
-        console.log "///////// creating a new object from a user class - user class of object: " + objectTBR.flClass.flToString()
-        console.log "///////// creating a new object from a user class - objectTBR: " + objectTBR.flToString()
-        console.log "///////// creating a new object from a user class - making space for instanceVariables"
+        log "///////// creating a new object from a user class - user class of object: " + objectTBR.flClass.flToString()
+        log "///////// creating a new object from a user class - objectTBR: " + objectTBR.flToString()
+        log "///////// creating a new object from a user class - making space for instanceVariables"
 
         # we give the chance to automatically execute some initialisation code,
         # but without any parameters. For example drawing a box, giving a message,
@@ -36,7 +36,7 @@ class FLClassClass extends FLClasses
         # "initWith" method call in front of them.
         # Passing parameters to whenNew (and consuming them) from in here
         # defies the whole architecture of the mechanism.
-        console.log "invoking whenNew"
+        log "invoking whenNew"
         # yield from
         returnedContext = objectTBR.findSignatureBindParamsAndMakeCall (flTokenize "whenNew"), context
         returnedContext = returnedContext[0]

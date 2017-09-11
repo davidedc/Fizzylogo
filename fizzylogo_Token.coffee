@@ -15,10 +15,10 @@ class FLTokenClass extends FLClasses
 
 
     toBeReturned.lookup = (theContext) ->
-      console.log "evaluation " + indentation() + "looking up temp token: " + @value
+      log "evaluation " + indentation() + "looking up temp token: " + @value
       existingLookedUpValuePlace = theContext.whichDictionaryContainsToken @
       if existingLookedUpValuePlace?
-        console.log "evaluation " + indentation() + "found temp token: " + @value
+        log "evaluation " + indentation() + "found temp token: " + @value
         return theContext.lookUpTokenValue @, existingLookedUpValuePlace
     
 
@@ -28,8 +28,8 @@ class FLTokenClass extends FLClasses
       # shortcut: instead of using "@a←5"
       # one can now just use "a=5"
       if remainingMessage? and remainingMessage.flClass == FLList
-        console.log "remainingMessage: " + remainingMessage.flToString()
-        console.log "secondElementIsEqual: " + remainingMessage.secondElementIsEqual()
+        log "remainingMessage: " + remainingMessage.flToString()
+        log "secondElementIsEqual: " + remainingMessage.secondElementIsEqual()
         if remainingMessage.startsWithIncrementOrDecrementOperator() or remainingMessage.startsWithCompoundAssignmentOperator() or remainingMessage.secondElementIsEqual()
           return @
 
@@ -46,15 +46,15 @@ class FLTokenClass extends FLClasses
       else if /^[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/.test @value
         return FLNumber.createNew @value
       else if /\$STRING_TOKEN_([\$a-zA-Z0-9_]+)/g.test @value
-        #console.log "token eval returning string: " + injectStrings @value 
+        #log "token eval returning string: " + injectStrings @value 
         return FLString.createNew injectStrings @value
       else if /^true$/.test @value
         return FLBoolean.createNew true
       else if /^false$/.test @value
         return FLBoolean.createNew false
 
-      console.log "evaluation " + indentation() + "token " + @value + " contents: " + theContext.returned?.value
-      console.log "evaluation " + indentation() + "not found temp token: " + @value
+      log "evaluation " + indentation() + "token " + @value + " contents: " + theContext.returned?.value
+      log "evaluation " + indentation() + "not found temp token: " + @value
 
       # if we are here it means that we can't find any
       # meaning for this token,
@@ -62,7 +62,7 @@ class FLTokenClass extends FLClasses
       # We might even try to send a message to it, in which
       # case we'll report that too.
       rWorkspace.lastUndefinedArom = @
-      #console.log "token eval returning nil"
+      #log "token eval returning nil"
       return FLNil.createNew()
 
 

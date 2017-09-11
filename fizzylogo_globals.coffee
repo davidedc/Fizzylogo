@@ -2,6 +2,9 @@ Fizzylogo = {}
 # export as a global, whether it's in node or in the browser
 (exports ? this).Fizzylogo = Fizzylogo
 
+log = console.log
+dir = console.dir
+
 repeatFunctionContinuation = null
 
 outerMostContext = null
@@ -28,10 +31,10 @@ Array::jsArrayPush = (element) ->
 keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789Γಠ_'
 ValidIDfromString = (input) ->
 
-    #console.log "ValidIDfromString encoding: " + input
+    #log "ValidIDfromString encoding: " + input
 
     if /^([A-Z_][0-9A-Z_$]*)$/gi.test input
-      #console.log "ValidIDfromString encoded as: " + input
+      #log "ValidIDfromString encoded as: " + input
       return input
 
     utf8_encode = (string) ->
@@ -69,7 +72,7 @@ ValidIDfromString = (input) ->
       else if isNaN(chr3)
         enc4 = 64
       output = output + keyStr.charAt(enc1) + keyStr.charAt(enc2) + keyStr.charAt(enc3) + keyStr.charAt(enc4)
-    #console.log "ValidIDfromString encoded as: " + "$" + output
+    #log "ValidIDfromString encoded as: " + "$" + output
     return "$" + output
 
 StringFromValidID = (input) ->
@@ -97,7 +100,7 @@ StringFromValidID = (input) ->
 
     input = input.replace(/[^ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789Γಠ_]/g, '')
     input = input.replace(/^\$/, '')
-    #console.log "StringFromValidID decoding: " + input
+    #log "StringFromValidID decoding: " + input
     output = ''
     i = 0
     while i < input.length
@@ -124,12 +127,12 @@ sortFirstArrayAccordingToSecond = (targetData, refData) ->
   # Sort array of indices according to the reference data.
   indices.sort (indexA, indexB) ->
     if refData[indexA] < refData[indexB]
-      #console.log "refData[indexA] < refData[indexB] " + refData[indexA]  + " " + refData[indexB]
+      #log "refData[indexA] < refData[indexB] " + refData[indexA]  + " " + refData[indexB]
       return -1
     else if refData[indexA] > refData[indexB]
-      #console.log "refData[indexA] > refData[indexB] " + refData[indexA]  + " " + refData[indexB]
+      #log "refData[indexA] > refData[indexB] " + refData[indexA]  + " " + refData[indexB]
       return 1
-    #console.log "refData[indexA] = refData[indexB] " + refData[indexA]  + " " + refData[indexB]
+    #log "refData[indexA] = refData[indexB] " + refData[indexA]  + " " + refData[indexB]
     0
   # Map array of indices to corresponding values of the target array.
   return indices.map (index) -> targetData[index]

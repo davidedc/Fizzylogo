@@ -75,7 +75,13 @@ reset = ->
 
 textOutputElement = null
 
+# this is called from the browser
 Fizzylogo.init = (textOutElem) ->
+  if textOutElem?
+    # don't do any logging when used in
+    # the browser
+    log = ->
+    dir = ->
   textOutputElement = textOutElem
   reset()
 
@@ -85,16 +91,16 @@ Fizzylogo.init = (textOutElem) ->
 Fizzylogo.runOneStep = (code) ->
   quickReset()
   parsed = flTokenize code
-  console.log "evaluation " + indentation() + "messaging workspace with " + parsed.flToString()
+  log "evaluation " + indentation() + "messaging workspace with " + parsed.flToString()
 
   # yield from
   returned = parsed.eval outerMostContext, parsed
   outerMostContext.returned = returned.value
 
-  console.log "evaluation " + indentation() + "end of workspace evaluation"
+  log "evaluation " + indentation() + "end of workspace evaluation"
 
   if outerMostContext.throwing and outerMostContext.returned.flClass == FLException
-    console.log "evaluation " + indentation() + "exception: " + outerMostContext.returned.value
+    log "evaluation " + indentation() + "exception: " + outerMostContext.returned.value
     environmentErrors += "! exception: " + outerMostContext.returned.value
     if textOutputElement?
       textOutputElement.value += environmentErrors + "\n"
@@ -105,7 +111,7 @@ Fizzylogo.runOneStep = (code) ->
 run = (code) ->
   quickReset()
   parsed = flTokenize code
-  console.log "evaluation " + indentation() + "messaging workspace with " + parsed.flToString()
+  log "evaluation " + indentation() + "messaging workspace with " + parsed.flToString()
 
   yieldMode = false
   #yieldMode = true
@@ -113,16 +119,16 @@ run = (code) ->
     gen = parsed.eval outerMostContext, parsed
     until (ret = gen.next()).done
       if ret.value?
-        console.log "obtained: " + ret.value
-      console.log "obtained: yieldingfromtoplevel"
+        log "obtained: " + ret.value
+      log "obtained: yieldingfromtoplevel"
     outerMostContext.returned = ret.value
   else
     outerMostContext.returned = parsed.eval outerMostContext, parsed
 
-  console.log "evaluation " + indentation() + "end of workspace evaluation"
+  log "evaluation " + indentation() + "end of workspace evaluation"
 
   if outerMostContext.throwing and outerMostContext.returned.flClass == FLException
-    console.log "evaluation " + indentation() + "exception: " + outerMostContext.returned.value
+    log "evaluation " + indentation() + "exception: " + outerMostContext.returned.value
     environmentErrors += "! exception: " + outerMostContext.returned.value
 
   return null

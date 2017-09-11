@@ -129,7 +129,7 @@ class FLListClass extends FLClasses
     toBeReturned.evaluatedElementsList = (context) ->
       newList = FLList.createNew()
       for i in [0...@length()]
-        console.log "toBeReturned.evaluatedElementsList evaluating " + (@elementAt i).flToString()
+        log "toBeReturned.evaluatedElementsList evaluating " + (@elementAt i).flToString()
         
         if (@elementAt i).flClass == FLList
           evalled = (@elementAt i).evaluatedElementsList context
@@ -151,14 +151,14 @@ class FLListClass extends FLClasses
       return newList
 
     toBeReturned.flToString = ->
-      #console.log "@value:" + @value
-      #console.log "list print: length: " + @length()
+      #log "@value:" + @value
+      #log "list print: length: " + @length()
       if @length() <= 0
         return "empty message"
       toBePrinted = "("
       for i in [0...@length()]
-        #console.log "@value element " + i + " : " + @value[i]
-        #console.log "@value element " + i + " content: " + @value[i].value
+        #log "@value element " + i + " : " + @value[i]
+        #log "@value element " + i + " content: " + @value[i].value
         toBePrinted += " " + @elementAt(i).flToStringForList()
       toBePrinted += " )"
       return toBePrinted
@@ -167,7 +167,7 @@ class FLListClass extends FLClasses
 
     toBeReturned.evalFirstListElementAndTurnRestIntoMessage = (theContext) ->
       firstElement = @firstElement()
-      console.log "           " + indentation() + "evaling element " + firstElement.value
+      log "           " + indentation() + "evaling element " + firstElement.value
       # yield from
       theContext.returned = firstElement.eval theContext, @
 
@@ -180,7 +180,7 @@ class FLListClass extends FLClasses
 
       receiver = returnedContext.returned
 
-      console.log "evaluation " + indentation() + "remaining part of list to be sent as message is: " + restOfMessage.flToString()
+      log "evaluation " + indentation() + "remaining part of list to be sent as message is: " + restOfMessage.flToString()
       return [returnedContext, restOfMessage, receiver]
 
     # this eval requires that the whole list is consumed
@@ -189,13 +189,13 @@ class FLListClass extends FLClasses
       # yield from
       [returnedContext, returnedMessage] = @partialEvalAsMessage theContext
 
-      console.log "list eval - returned message: " + returnedMessage.flToString()
-      console.log "list eval - returned context: " + returnedContext?.flToString?()
-      console.log "list eval - returnedcontext.returned: " + returnedContext.returned?.flToString?()
-      console.log "list eval - returnedcontext.unparsedMessage: " + returnedContext.unparsedMessage?.flToString?()
+      log "list eval - returned message: " + returnedMessage.flToString()
+      log "list eval - returned context: " + returnedContext?.flToString?()
+      log "list eval - returnedcontext.returned: " + returnedContext.returned?.flToString?()
+      log "list eval - returnedcontext.unparsedMessage: " + returnedContext.unparsedMessage?.flToString?()
 
       if !returnedMessage.isEmpty()
-        console.log "list couldn't be fully evaluated: " + @flToString() + " unexecutable: " + returnedMessage.flToString()
+        log "list couldn't be fully evaluated: " + @flToString() + " unexecutable: " + returnedMessage.flToString()
         theContext.throwing = true
         return FLException.createNew "message was not understood: " + returnedMessage.flToString()
 
@@ -210,8 +210,8 @@ class FLListClass extends FLClasses
       #  b) for each statement, evaluate its first element as the receiver
       #  c) send to the receiver the remaining part of the statement, as the message
 
-      console.log "evaluation " + indentation() + "list received empty message, evaluating content of list"
-      console.log "evaluation " + indentation() + "  i.e. " + @flToString()
+      log "evaluation " + indentation() + "list received empty message, evaluating content of list"
+      log "evaluation " + indentation() + "  i.e. " + @flToString()
 
       # todo this doesn't seem to be needed
       @toList()
@@ -219,8 +219,8 @@ class FLListClass extends FLClasses
       statements = @separateStatements()
 
       for eachStatement in statements
-        console.log "evaluation " + indentation() + "evaluating single statement"
-        console.log "evaluation " + indentation() + "  i.e. " + eachStatement.flToString()
+        log "evaluation " + indentation() + "evaluating single statement"
+        log "evaluation " + indentation() + "  i.e. " + eachStatement.flToString()
 
         returnedContext = theContext
         restOfMessage = eachStatement
@@ -250,7 +250,7 @@ class FLListClass extends FLClasses
             returnedContext.findAnotherReceiver = false
             returnedContext = returnedContext.previousContext
             findAnotherReceiver = true
-            console.log "finding next receiver from:  " + restOfMessage.flToString()
+            log "finding next receiver from:  " + restOfMessage.flToString()
 
 
           if findAnotherReceiver
@@ -258,33 +258,33 @@ class FLListClass extends FLClasses
             # yield from
             [returnedContext, restOfMessage, receiver] = restOfMessage.findReceiver returnedContext
 
-            console.log "found next receiver and now message is: " + restOfMessage.flToString()
-            #console.dir receiver
-            console.log "3 returnedContext.throwing: " + returnedContext.throwing
+            log "found next receiver and now message is: " + restOfMessage.flToString()
+            #dir receiver
+            log "3 returnedContext.throwing: " + returnedContext.throwing
 
           # where we detect an exception being thrown
           if theContext.throwing or returnedContext.throwing
-            console.log "throw escape"
+            log "throw escape"
 
             # the return is a special type of exception that
             # we can catch before doing the next "method call"
             # so we catch it here. We have to go up a level
             # while the context is transparent, because "proper"
             # method calls are done in a non-transparent context
-            console.log "context at depth " + theContext.depth()+ " with self: " + theContext.self.flToString?() + " is transparent: "  + theContext.isTransparent
+            log "context at depth " + theContext.depth()+ " with self: " + theContext.self.flToString?() + " is transparent: "  + theContext.isTransparent
             if receiver.flClass == FLReturn and !theContext.isTransparent
-              console.log "got a return!"
+              log "got a return!"
               theContext.throwing = false
               theContext.returned = receiver.value
             else
-              console.log " throwing the receiver up " + receiver.flToString()
+              log " throwing the receiver up " + receiver.flToString()
               theContext.throwing = true
               theContext.returned = receiver
 
             return [theContext, FLList.emptyMessage()]
 
-          console.log "evaluation " + indentation() + "receiver: " + receiver?.flToString?()
-          console.log "evaluation " + indentation() + "message: " + restOfMessage.flToString()
+          log "evaluation " + indentation() + "receiver: " + receiver?.flToString?()
+          log "evaluation " + indentation() + "message: " + restOfMessage.flToString()
 
           # now actually send the message to the receiver. Note that
           # only part of the message might be consumed, in which case
@@ -296,7 +296,7 @@ class FLListClass extends FLClasses
             returnedContext = theContext
             returnedMessage = restOfMessage
             returnedContext.returned = receiver
-            console.log "skipping empty evaluation because basic type "
+            log "skipping empty evaluation because basic type "
           else
             # yield from
             [returnedContext, returnedMessage] = receiver.findSignatureBindParamsAndMakeCall restOfMessage, theContext
@@ -304,8 +304,8 @@ class FLListClass extends FLClasses
           if !returnedContext?
             returnedContext = theContext
             returnedContext.returned = receiver
-            console.log "restOfMessage: " + restOfMessage.flToString()
-            console.log "receiver: " + receiver.flToString()
+            log "restOfMessage: " + restOfMessage.flToString()
+            log "receiver: " + receiver.flToString()
             returnedContext.unparsedMessage = returnedMessage
 
             # if the object was sent the empty message and it wasn't
@@ -320,23 +320,23 @@ class FLListClass extends FLClasses
           receiver = returnedContext.returned
           restOfMessage = returnedMessage
 
-          console.log "evaluation " + indentation() + "list evaluation returned: " + receiver?.flToString?()
-          console.log "theContext.throwing: " + theContext.throwing
-          console.log "returnedContext.throwing: " + returnedContext.throwing
-          console.log "restOfMessage: " + restOfMessage
-          console.log "returnedContext.findAnotherReceiver: " + returnedContext.findAnotherReceiver
+          log "evaluation " + indentation() + "list evaluation returned: " + receiver?.flToString?()
+          log "theContext.throwing: " + theContext.throwing
+          log "returnedContext.throwing: " + returnedContext.throwing
+          log "restOfMessage: " + restOfMessage
+          log "returnedContext.findAnotherReceiver: " + returnedContext.findAnotherReceiver
 
           if restOfMessage.isEmpty() and !(theContext.throwing or returnedContext.throwing)
-            console.log "breaking and moving on to next statement"
+            log "breaking and moving on to next statement"
             break
 
 
-        console.log "evaluation " + indentation() + "list: nothing more to evaluate"
+        log "evaluation " + indentation() + "list: nothing more to evaluate"
         theContext.returned = receiver
 
 
-      console.log "evaluation " + indentation() + "list: theContext.returned: " + theContext.returned
-      #console.dir theContext.returned
+      log "evaluation " + indentation() + "list: theContext.returned: " + theContext.returned
+      #dir theContext.returned
       flContexts.pop()
       return [theContext, restOfMessage]
 
@@ -358,18 +358,18 @@ class FLListClass extends FLClasses
         if (@elementAt 1).flClass == FLToken
           # test for things like "+=", "*=" etc.
           if /([+\-^*/⇒%_]+=)/g.test (@elementAt 1).value
-            console.log "startsWithCompoundAssignmentOperator: oh yes"
+            log "startsWithCompoundAssignmentOperator: oh yes"
             return true
-      console.log "startsWithCompoundAssignmentOperator: oh no"
+      log "startsWithCompoundAssignmentOperator: oh no"
       return false
 
     toBeReturned.startsWithIncrementOrDecrementOperator =  ->
       if @length() >= 2
         if (@elementAt 1).flClass == FLToken
           if (@elementAt 1).value == "++" or (@elementAt 1).value == "--"
-            console.log "startsWithIncrementOrDecrementOperator: oh yes"
+            log "startsWithIncrementOrDecrementOperator: oh yes"
             return true
-      console.log "startsWithIncrementOrDecrementOperator: oh no"
+      log "startsWithIncrementOrDecrementOperator: oh no"
       return false
 
     toBeReturned.secondElementIsEqual =  ->
@@ -419,23 +419,23 @@ class FLListClass extends FLClasses
         return @elementAt(1)
 
     toBeReturned.separateStatements = ->
-      console.log "evaluation " + indentation() + "separating statements   start: " + @flToString()
+      log "evaluation " + indentation() + "separating statements   start: " + @flToString()
       arrayOfStatements = []
       lastStatementEnd = @cursorStart - 1
       for i in [@cursorStart..@cursorEnd]
-        console.log "evaluation " + indentation() + "separating statements   examining element " + @value[i].flToString()
+        log "evaluation " + indentation() + "separating statements   examining element " + @value[i].flToString()
         if (@value[i].isStatementSeparator?()) or (i == @cursorEnd)
           statementToBeAdded = @copy().toList()
           statementToBeAdded.cursorStart = lastStatementEnd + 1
           statementToBeAdded.cursorEnd = i - 1
           if i == @cursorEnd and !@value[@cursorEnd].isStatementSeparator?()
-            console.log " last char: " + @value[@cursorEnd].flToString()
+            log " last char: " + @value[@cursorEnd].flToString()
             statementToBeAdded.cursorEnd++
           lastStatementEnd = i
           if !statementToBeAdded.isEmpty() and !statementToBeAdded.firstElement().isStatementSeparator?()
-            console.log " adding: " + statementToBeAdded.flToString()
+            log " adding: " + statementToBeAdded.flToString()
             arrayOfStatements.jsArrayPush statementToBeAdded
-          console.log "evaluation " + indentation() + "separating statements isolated new statement " + statementToBeAdded.flToString()
+          log "evaluation " + indentation() + "separating statements isolated new statement " + statementToBeAdded.flToString()
 
 
       return arrayOfStatements

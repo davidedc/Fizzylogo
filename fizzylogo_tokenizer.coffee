@@ -108,7 +108,7 @@ removeStrings = (code) ->
   codeWithoutStrings = code.replace(/"((?:[^"\\\n]|\\.)*)"/g, (all, quoted) ->
     if DEBUG_STRINGIFICATION_CHECKS
       stringsTable_TO_CHECK_CONVERTIONS[ValidIDfromString quoted] = quoted
-    #console.log "$STRING_TOKEN_" + (ValidIDfromString quoted) + " i.e." + quoted
+    #log "$STRING_TOKEN_" + (ValidIDfromString quoted) + " i.e." + quoted
     return "$STRING_TOKEN_" + (ValidIDfromString quoted)
   )
   return codeWithoutStrings
@@ -122,8 +122,8 @@ injectStrings = (code) ->
       if val != stringsTable_TO_CHECK_CONVERTIONS[index]
         throw "ERROR cannot get back string from ID, got back: " + StringFromValidID index
 
-    #console.log "INJECTING $STRING_TOKEN_" + index
-    #console.log "INJECTING i.e. " +  val
+    #log "INJECTING $STRING_TOKEN_" + index
+    #log "INJECTING i.e. " +  val
     return val
   return code
 
@@ -184,7 +184,7 @@ linearize = (code) ->
   
   for eachLine in [0...sourceByLine.length]
     line = sourceByLine[eachLine]
-    #console.log "checking " + line
+    #log "checking " + line
     rx = RegExp("^([ ]*)",'gm')
     match = rx.exec line
     if eachLine == 0
@@ -193,7 +193,7 @@ linearize = (code) ->
       correctedLineTabs.push 0
       continue
     startOfThisLine = match[1]
-    #console.log "start of line: >" + startOfThisLine + "<"
+    #log "start of line: >" + startOfThisLine + "<"
 
     # leftOrRightOrAligned is only used to understand if the current
     # line if to the left, to the right or aligned. The actual
@@ -201,24 +201,24 @@ linearize = (code) ->
     leftOrRightOrAligned = startOfThisLine.length - actualLineTabs[actualLineTabs.length - 1]
     actualLineTabs.push startOfThisLine.length
 
-    console.log "linearize startOfThisLine: " + startOfThisLine + " " + startOfThisLine.length + " difference in alignment: " + leftOrRightOrAligned + " content: " + line
+    log "linearize startOfThisLine: " + startOfThisLine + " " + startOfThisLine.length + " difference in alignment: " + leftOrRightOrAligned + " content: " + line
     if leftOrRightOrAligned == 0
       correctedIndentationDifference = 0
       # this is the statement separator
       outputSource += " ; " + line
     else if leftOrRightOrAligned > 0
       correctedIndentationDifference = 1
-      console.log "linearize adding a ( "
+      log "linearize adding a ( "
       outputSource += (Array(correctedIndentationDifference+1).join "(") + line
     else # leftOrRightOrAligned < 0
       for k in [(actualLineTabs.length - 2)..0]
-        console.log " k: " + k + " checking line " + sourceByLine[k] + " for alignment "
+        log " k: " + k + " checking line " + sourceByLine[k] + " for alignment "
         if actualLineTabs[k] <= startOfThisLine.length
-          console.log "line " + sourceByLine[k] + " is aligned with me and the corrected tabs for that were: " + correctedLineTabs[k]
+          log "line " + sourceByLine[k] + " is aligned with me and the corrected tabs for that were: " + correctedLineTabs[k]
           correctedIndentationDifference = correctedLineTabs[k] - correctedLineTabs[correctedLineTabs.length - 1]
           break
 
-      console.log "linearize adding " + (-correctedIndentationDifference) + " ) "
+      log "linearize adding " + (-correctedIndentationDifference) + " ) "
       outputSource += (Array(-correctedIndentationDifference+1).join ")") + line
 
     unclosedParens += correctedIndentationDifference
@@ -227,7 +227,7 @@ linearize = (code) ->
   # final close-off of pending parens
   outputSource += (Array(unclosedParens+1).join ")")
 
-  #console.log "code length at identifyBlockStarts: " + code.split("\n").length
+  #log "code length at identifyBlockStarts: " + code.split("\n").length
   return outputSource.replace /^[ ]*/g, ""
 
 
@@ -244,25 +244,25 @@ flTokenize = (command) ->
   command = removeComments command
 
   command = removeStrings command
-  console.log "codeWithoutStrings: " + command
+  log "codeWithoutStrings: " + command
 
   command = linearize command
-  console.log "linearized command: " + command
+  log "linearized command: " + command
 
   # let's normalise the input string so we can
   # tokenise it just by looking at the spaces.
-  console.log "command before replacements: " + command
+  log "command before replacements: " + command
   command = tokenizeCommand command  
-  console.log "command after replacements: " + command
-  #console.log "obtained: command after replacements: " + command
+  log "command after replacements: " + command
+  #log "obtained: command after replacements: " + command
 
 
   simpleTokenization = command.split(" ")
   for eachToken in simpleTokenization
-    console.log "eachToken: " + eachToken
+    log "eachToken: " + eachToken
 
     if /\$STRING_TOKEN_([\$a-zA-Z0-9_]+)/g.test(eachToken)
-      console.log eachToken + " is a string literal"
+      log eachToken + " is a string literal"
       listsStack[listsStack.length-1] = listsStack[listsStack.length-1].flListImmutablePush FLToken.createNew eachToken
     else if /^\($/.test(eachToken)
       nestedList = FLList.createNew()
@@ -271,7 +271,7 @@ flTokenize = (command) ->
       nestedList = listsStack.pop()
       listsStack[listsStack.length-1] = listsStack[listsStack.length-1].flListImmutablePush nestedList
     else
-      console.log eachToken + " is something else"
+      log eachToken + " is something else"
       listsStack[listsStack.length-1] = listsStack[listsStack.length-1].flListImmutablePush FLToken.createNew eachToken
 
   return listsStack[listsStack.length-1]

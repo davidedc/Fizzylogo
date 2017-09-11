@@ -35,7 +35,7 @@ class FLContext
       @self = @previousContext.self
 
     @tempVariablesDict = {}
-    #console.log "evaluation " + indentation() + "######### constructing new context at depth: " + @depth() + " with message: " + @message.flToString()
+    #log "evaluation " + indentation() + "######### constructing new context at depth: " + @depth() + " with message: " + @message.flToString()
 
   depth: ->
     depthCount = 0
@@ -54,7 +54,7 @@ class FLContext
     while ascendingTheContext.isTransparent
       ascendingTheContext = ascendingTheContext.previousContext
 
-    console.log "first non-transparent context is the one at depth: " + ascendingTheContext.depth()
+    log "first non-transparent context is the one at depth: " + ascendingTheContext.depth()
 
     ascendingTheContext
 
@@ -70,22 +70,22 @@ class FLContext
       return @firstNonTransparentContext()
 
     loop
-      #console.log "evaluation " + indentation() + "context temps: " 
+      #log "evaluation " + indentation() + "context temps: " 
       #for keys of contextBeingSearched.tempVariablesDict
-      #  console.log keys
+      #  log keys
 
       # check if temp variable is in current context.
       if contextBeingSearched.tempVariablesDict[ValidIDfromString tokenString]?
-        console.log "evaluation " + indentation() + "lookup: found in context at depth " + contextBeingSearched.depth() + " with self: " + contextBeingSearched.self.flToString?()
+        log "evaluation " + indentation() + "lookup: found in context at depth " + contextBeingSearched.depth() + " with self: " + contextBeingSearched.self.flToString?()
         return contextBeingSearched.tempVariablesDict
 
       # nothing found from this context, move up
       # to the sender (i.e. the callee)
-      console.log "evaluation " + indentation() + "lookup: not found in context at depth " + contextBeingSearched.depth() + " with self: " + contextBeingSearched.self.flToString?()
+      log "evaluation " + indentation() + "lookup: not found in context at depth " + contextBeingSearched.depth() + " with self: " + contextBeingSearched.self.flToString?()
 
 
       if contextBeingSearched.isTransparent
-        console.log "evaluation " + indentation() + "lookup: ... this context is transparent so I can go up"
+        log "evaluation " + indentation() + "lookup: ... this context is transparent so I can go up"
         contextBeingSearched = contextBeingSearched.previousContext
       else
         break
@@ -95,7 +95,7 @@ class FLContext
       return outerMostContext.tempVariablesDict
 
 
-    console.log "evaluation " + indentation() + "lookup: " + tokenString + " not found!"
+    log "evaluation " + indentation() + "lookup: " + tokenString + " not found!"
     return null
 
   lookUpTokenValue: (theToken, alreadyKnowWhichDict) ->
@@ -110,12 +110,12 @@ class FLContext
     if !dictWhereValueIs?
       dictWhereValueIs = @firstNonTransparentContext().tempVariablesDict
 
-    #console.log "evaluation " + indentation() + "lookup: " + theToken.value + " found dictionary and it contains:"
-    #console.dir dictWhereValueIs
-    console.log "evaluation " + indentation() + "lookup: " + theToken.value + " also known as " + (ValidIDfromString theToken.value)
+    #log "evaluation " + indentation() + "lookup: " + theToken.value + " found dictionary and it contains:"
+    #dir dictWhereValueIs
+    log "evaluation " + indentation() + "lookup: " + theToken.value + " also known as " + (ValidIDfromString theToken.value)
 
-    console.log "evaluation " + indentation() + "lookup: value looked up: "
-    #console.dir dictWhereValueIs[ValidIDfromString theToken.value]
+    log "evaluation " + indentation() + "lookup: value looked up: "
+    #dir dictWhereValueIs[ValidIDfromString theToken.value]
 
     return dictWhereValueIs[ValidIDfromString theToken.value]
 

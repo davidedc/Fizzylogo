@@ -63,7 +63,7 @@ addDefaultMethods = (classToAddThemTo) ->
     (flTokenize "postfixPrint"),
     (context) ->
       #yield
-      console.log "///////// program printout: " + @flToString()
+      log "///////// program printout: " + @flToString()
       environmentPrintout += @flToString()
       return @
 
@@ -134,15 +134,15 @@ addDefaultMethods = (classToAddThemTo) ->
     context.isTransparent = true
     variable = context.tempVariablesDict[ValidIDfromString "variable"]
 
-    console.log ". ('variable) : checking instance variables"
+    log ". ('variable) : checking instance variables"
 
     # somewhat similar to Javascript, the lookup starts at the object
     # and climbs up to its class.
     objectsBeingChecked = @
     loop
       if objectsBeingChecked.instanceVariablesDict[ValidIDfromString variable.value]?
-        console.log "yes it's an instance variable: "
-        #console.dir objectsBeingChecked.instanceVariablesDict[ValidIDfromString variable.value]
+        log "yes it's an instance variable: "
+        #dir objectsBeingChecked.instanceVariablesDict[ValidIDfromString variable.value]
         return objectsBeingChecked.instanceVariablesDict[ValidIDfromString variable.value]
       if objectsBeingChecked == objectsBeingChecked.flClass
         break
@@ -276,8 +276,8 @@ initBootClasses = ->
 
       assigneeTokenString = @value
 
-      console.log "evaluation " + indentation() + "assignment to token " + assigneeTokenString
-      console.log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
+      log "evaluation " + indentation() + "assignment to token " + assigneeTokenString
+      log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
 
       context.isTransparent = true
 
@@ -294,14 +294,14 @@ initBootClasses = ->
         # could be achieved for example by marking in a special way contexts
         # that have been created because of method calls and climbing back
         # to the last one of those...
-        console.log "evaluation " + indentation() + "creating temp token: " + assigneeTokenString + " at depth: " + context.firstNonTransparentContext().depth() + " with self: " + context.firstNonTransparentContext().self.flToString()
+        log "evaluation " + indentation() + "creating temp token: " + assigneeTokenString + " at depth: " + context.firstNonTransparentContext().depth() + " with self: " + context.firstNonTransparentContext().self.flToString()
         dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict
       else
-        console.log "evaluation " + indentation() + "found temp token: " + assigneeTokenString
+        log "evaluation " + indentation() + "found temp token: " + assigneeTokenString
 
       dictToPutValueIn[ValidIDfromString assigneeTokenString] = valueToAssign
 
-      console.log "evaluation " + indentation() + "stored value in dictionary"
+      log "evaluation " + indentation() + "stored value in dictionary"
       return valueToAssign
 
   FLToken.addMethod \
@@ -312,8 +312,8 @@ initBootClasses = ->
 
       assigneeTokenString = @value
 
-      console.log "evaluation " + indentation() + "assignment to token " + assigneeTokenString
-      console.log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
+      log "evaluation " + indentation() + "assignment to token " + assigneeTokenString
+      log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
 
       context.isTransparent = true
 
@@ -330,14 +330,14 @@ initBootClasses = ->
         # could be achieved for example by marking in a special way contexts
         # that have been created because of method calls and climbing back
         # to the last one of those...
-        console.log "evaluation " + indentation() + "creating temp token: " + assigneeTokenString
+        log "evaluation " + indentation() + "creating temp token: " + assigneeTokenString
         dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict
       else
-        console.log "evaluation " + indentation() + "found temp token: " + assigneeTokenString
+        log "evaluation " + indentation() + "found temp token: " + assigneeTokenString
 
       dictToPutValueIn[ValidIDfromString assigneeTokenString] = valueToAssign
 
-      console.log "evaluation " + indentation() + "stored value in dictionary"
+      log "evaluation " + indentation() + "stored value in dictionary"
       context.findAnotherReceiver = true
       return valueToAssign
 
@@ -345,8 +345,8 @@ initBootClasses = ->
     #yield
     valueToAssign = FLClass.createNew className
 
-    console.log "evaluation " + indentation() + "assignment to token " + assigneeTokenString
-    console.log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
+    log "evaluation " + indentation() + "assignment to token " + assigneeTokenString
+    log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
 
     context.isTransparent = true
 
@@ -363,14 +363,14 @@ initBootClasses = ->
       # could be achieved for example by marking in a special way contexts
       # that have been created because of method calls and climbing back
       # to the last one of those...
-      console.log "evaluation " + indentation() + "creating temp token: " + assigneeTokenString
+      log "evaluation " + indentation() + "creating temp token: " + assigneeTokenString
       dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict
     else
-      console.log "evaluation " + indentation() + "found temp token: " + assigneeTokenString
+      log "evaluation " + indentation() + "found temp token: " + assigneeTokenString
 
     dictToPutValueIn[ValidIDfromString assigneeTokenString] = valueToAssign
 
-    console.log "evaluation " + indentation() + "stored value in dictionary"
+    log "evaluation " + indentation() + "stored value in dictionary"
     context.findAnotherReceiver = true
     return valueToAssign
 
@@ -514,7 +514,7 @@ initBootClasses = ->
     (flTokenize "new"),
     (context) ->
       #yield
-      console.log "///////// creating a new class for the user!"
+      log "///////// creating a new class for the user!"
       @createNew()
 
   # Exception -------------------------------------------------------------------------
@@ -538,9 +538,9 @@ initBootClasses = ->
     (context) ->
       errorHandle = context.tempVariablesDict[ValidIDfromString "errorHandle"]
 
-      console.log "catch: being thrown? " + context.throwing
+      log "catch: being thrown? " + context.throwing
 
-      console.log "catch: got right exception, catching it"
+      log "catch: got right exception, catching it"
       # yield from
       toBeReturned = errorHandle.eval context, errorHandle
       context.findAnotherReceiver = true
@@ -571,16 +571,16 @@ initBootClasses = ->
       # yield from
       theError = theError.eval context, theError
 
-      console.log "catch: same as one to catch?" + (@ == theError) + " being thrown? " + context.throwing
+      log "catch: same as one to catch?" + (@ == theError) + " being thrown? " + context.throwing
 
       if @ == theError
-        console.log "catch: got right exception, catching it"
+        log "catch: got right exception, catching it"
         # yield from
         toBeReturned = errorHandle.eval context, errorHandle
 
         context.findAnotherReceiver = true
       else
-        console.log "catch: got wrong exception, propagating it"
+        log "catch: got wrong exception, propagating it"
         toBeReturned = @
         context.findAnotherReceiver = false
 
@@ -817,7 +817,7 @@ initBootClasses = ->
     (flTokenize "times ( ' loopCode )"),
     (context) ->
       loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
-      console.log "FLNumber ⇒ DO loop code is: " + loopCode.flToString()
+      log "FLNumber ⇒ DO loop code is: " + loopCode.flToString()
 
 
       for i in [0...@value]
@@ -833,10 +833,10 @@ initBootClasses = ->
             context.throwing = false
             if toBeReturned.value?
               toBeReturned = toBeReturned.value
-            console.log "times loop exited with Done "
+            log "times loop exited with Done "
             break
           if context.throwing and toBeReturned.flClass == FLReturn
-            console.log "times loop exited with Return "
+            log "times loop exited with Return "
             break
 
       context.findAnotherReceiver = true
@@ -868,7 +868,7 @@ initBootClasses = ->
     (flTokenize "← ( valueToAssign )"),
     (context) ->
       #yield
-      console.log "evaluation " + indentation() + "assigning to number! "
+      log "evaluation " + indentation() + "assigning to number! "
       valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
       @value = valueToAssign.value
       return @
@@ -895,16 +895,16 @@ initBootClasses = ->
     (context) ->
       context.isTransparent = true
       trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
-      console.log "FLBoolean ⇒ , predicate value is: " + @value
+      log "FLBoolean ⇒ , predicate value is: " + @value
 
       if @value
         # yield from
         toBeReturned = trueBranch.eval context, trueBranch
         flContexts.pop()
 
-        console.log "FLBoolean ⇒ returning result of true branch: " + toBeReturned
-        console.log "FLBoolean ⇒ remaining message after true branch: "
-        console.log "FLBoolean ⇒ message length:  "
+        log "FLBoolean ⇒ returning result of true branch: " + toBeReturned
+        log "FLBoolean ⇒ remaining message after true branch: "
+        log "FLBoolean ⇒ message length:  "
 
         # in this context we only have visibility of the true branch
         # but we have to make sure that in the context above, the false
@@ -922,7 +922,7 @@ initBootClasses = ->
     (flTokenize "or ( operandum )"),
     (context) ->
       #yield
-      console.log "executing an or! "
+      log "executing an or! "
       operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
       return FLBoolean.createNew @value or operandum.value
 
@@ -971,7 +971,7 @@ initBootClasses = ->
     (context) ->
       #yield
       elementToBeAppended = context.tempVariablesDict[ValidIDfromString "elementToBeAppended"]
-      console.log "appending element to: " + @flToString() + " : " + elementToBeAppended.toString()
+      log "appending element to: " + @flToString() + " : " + elementToBeAppended.toString()
       return @flListImmutablePush elementToBeAppended
 
   FLList.addMethod \
@@ -1053,7 +1053,7 @@ initBootClasses = ->
       variable = context.tempVariablesDict[ValidIDfromString "variable"]
       code = context.tempVariablesDict[ValidIDfromString "code"]
 
-      console.log "FLList each do "
+      log "FLList each do "
 
       newContext = new FLContext context
 
@@ -1070,10 +1070,10 @@ initBootClasses = ->
             context.throwing = false
             if toBeReturned.value?
               toBeReturned = toBeReturned.value
-            console.log "list-each-do loop exited with Done "
+            log "list-each-do loop exited with Done "
             break
           if context.throwing and toBeReturned.flClass == FLReturn
-            console.log "list-each-do loop exited with Return "
+            log "list-each-do loop exited with Return "
             break
 
       return toBeReturned
@@ -1085,7 +1085,7 @@ initBootClasses = ->
     FLList.emptyMessage(),
     (context) ->
       #yield
-      console.log "FLAccessUpperContext running emptyMessage"
+      log "FLAccessUpperContext running emptyMessage"
       context.previousContext.isTransparent = true
       return @
 
@@ -1097,7 +1097,7 @@ initBootClasses = ->
       #yield
       thingToPrint = context.tempVariablesDict[ValidIDfromString "thingToPrint"]
       stringToPrint = thingToPrint.flToString()
-      console.log "///////// program printout: " + stringToPrint
+      log "///////// program printout: " + stringToPrint
       if textOutputElement?
         textOutputElement.value += stringToPrint
 
@@ -1112,7 +1112,7 @@ initBootClasses = ->
     (context) ->
       #yield
       valueToReturn = context.tempVariablesDict[ValidIDfromString "valueToReturn"]
-      console.log "Done_object thrown with return value: " + valueToReturn.flToString()
+      log "Done_object thrown with return value: " + valueToReturn.flToString()
       @value = valueToReturn
       context.throwing = true
       @thrown = true
@@ -1122,7 +1122,7 @@ initBootClasses = ->
     FLList.emptyMessage(),
     (context) ->
       #yield
-      console.log "Done_object running emptyMessage"
+      log "Done_object running emptyMessage"
       context.throwing = true
       @thrown = true
       return @
@@ -1133,7 +1133,7 @@ initBootClasses = ->
     FLList.emptyMessage(),
     (context) ->
       #yield
-      console.log "Break_object"
+      log "Break_object"
       context.throwing = true
       return @
 
@@ -1145,7 +1145,7 @@ initBootClasses = ->
       #yield
       valueToReturn = context.tempVariablesDict[ValidIDfromString "valueToReturn"]
 
-      console.log "Return_object running a value"
+      log "Return_object running a value"
 
       @value = valueToReturn
       context.throwing = true
@@ -1155,7 +1155,7 @@ initBootClasses = ->
     FLList.emptyMessage(),
     (context) ->
       #yield
-      console.log "Return_object running emptyMessage"
+      log "Return_object running emptyMessage"
       context.throwing = true
       @value = FLNil.createNew()
       return @
@@ -1170,7 +1170,7 @@ initBootClasses = ->
     (context) ->
       context.isTransparent = true
       loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
-      console.log "FLRepeat1 ⇒ loop code is: " + loopCode.flToString()
+      log "FLRepeat1 ⇒ loop code is: " + loopCode.flToString()
 
       loop
         # yield from
@@ -1178,11 +1178,11 @@ initBootClasses = ->
 
         flContexts.pop()
 
-        console.log "Repeat1 ⇒ returning result after loop cycle: " + toBeReturned
-        console.log "Repeat1 ⇒ returning result CLASS after loop cycle: "
-        console.log "Repeat1 ⇒ remaining message after loop cycle: "
-        console.log "Repeat1 ⇒ message length:  "
-        console.log "Repeat1 ⇒ did I receive a Done? " + (if toBeReturned?.flClass == FLDone then "yes" else "no")
+        log "Repeat1 ⇒ returning result after loop cycle: " + toBeReturned
+        log "Repeat1 ⇒ returning result CLASS after loop cycle: "
+        log "Repeat1 ⇒ remaining message after loop cycle: "
+        log "Repeat1 ⇒ message length:  "
+        log "Repeat1 ⇒ did I receive a Done? " + (if toBeReturned?.flClass == FLDone then "yes" else "no")
 
         # catch any thrown "done" object, used to
         # exit from a loop.
@@ -1191,10 +1191,10 @@ initBootClasses = ->
             context.throwing = false
             if toBeReturned.value?
               toBeReturned = toBeReturned.value
-            console.log "Repeat1 ⇒ the loop exited with Done at context depth " + context.depth()
+            log "Repeat1 ⇒ the loop exited with Done at context depth " + context.depth()
             break
           if context.throwing and toBeReturned.flClass == FLReturn
-            console.log "Repeat1 ⇒ the loop exited with Return "
+            log "Repeat1 ⇒ the loop exited with Return "
             break
 
       return toBeReturned
@@ -1205,7 +1205,7 @@ initBootClasses = ->
     context.isTransparent = true
     howManyTimes = context.tempVariablesDict[ValidIDfromString "howManyTimes"]
     loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
-    console.log "FLRepeat2 ⇒ loop code is: " + loopCode.flToString()
+    log "FLRepeat2 ⇒ loop code is: " + loopCode.flToString()
 
     if howManyTimes.flClass == FLForever
       limit = Number.MAX_SAFE_INTEGER
@@ -1215,18 +1215,18 @@ initBootClasses = ->
 
     for i in [0...limit]
       #yield "from repeatFunctionContinuation"
-      console.log "Repeat2 ⇒ starting a(nother) cycle: "
+      log "Repeat2 ⇒ starting a(nother) cycle: "
       # yield from
       toBeReturned = loopCode.eval context, loopCode
 
       flContexts.pop()
 
-      console.log "Repeat2 ⇒ returning result after loop cycle: " + toBeReturned
-      console.log "Repeat2 ⇒ returning result CLASS after loop cycle: "
-      console.log "Repeat2 ⇒ remaining message after loop cycle: "
-      console.log "Repeat2 ⇒ message length:  "
-      console.log "Repeat2 ⇒ did I receive a Done? " + (if toBeReturned?.flClass == FLDone then "yes" else "no")
-      console.log "Repeat2 ⇒ did I receive a thrown object? " + (if context.throwing then "yes" else "no")
+      log "Repeat2 ⇒ returning result after loop cycle: " + toBeReturned
+      log "Repeat2 ⇒ returning result CLASS after loop cycle: "
+      log "Repeat2 ⇒ remaining message after loop cycle: "
+      log "Repeat2 ⇒ message length:  "
+      log "Repeat2 ⇒ did I receive a Done? " + (if toBeReturned?.flClass == FLDone then "yes" else "no")
+      log "Repeat2 ⇒ did I receive a thrown object? " + (if context.throwing then "yes" else "no")
 
       # catch any thrown "done" object, used to
       # exit from a loop.
@@ -1235,10 +1235,10 @@ initBootClasses = ->
           context.throwing = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
-          console.log "Repeat2 ⇒ the loop exited with Done at context depth " + context.depth()
+          log "Repeat2 ⇒ the loop exited with Done at context depth " + context.depth()
           break
         if context.throwing and toBeReturned.flClass == FLReturn
-          console.log "Repeat2 ⇒ the loop exited with Return "
+          log "Repeat2 ⇒ the loop exited with Return "
           break
 
     context.findAnotherReceiver = true
@@ -1255,7 +1255,7 @@ initBootClasses = ->
     (context) ->
       #yield
       stringToPrint = "EvaluationsCounter running the \"empty\" method // "
-      console.log stringToPrint
+      log stringToPrint
       environmentPrintout += stringToPrint
       return @
 
@@ -1267,7 +1267,7 @@ initBootClasses = ->
       #yield
       theError = context.tempVariablesDict[ValidIDfromString "theError"]
       theError.thrown = true
-      console.log "throwing an error: " + theError.value
+      log "throwing an error: " + theError.value
       context.throwing = true
       return theError
 
@@ -1280,10 +1280,10 @@ initBootClasses = ->
       context.isTransparent = true
       predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
       trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
-      console.log "IfThen ⇒ , predicate value is: " + predicate.value
+      log "IfThen ⇒ , predicate value is: " + predicate.value
 
       if predicate.value
-        console.log "IfThen ⇒ , evaling true branch at depth " + context.depth()
+        log "IfThen ⇒ , evaling true branch at depth " + context.depth()
         # yield from
         toBeReturned = trueBranch.eval context, trueBranch
         flContexts.pop()
@@ -1302,7 +1302,7 @@ initBootClasses = ->
     FLList.emptyMessage(),
     (context) ->
       #yield
-      console.log "no more cases for the if"
+      log "no more cases for the if"
       context.findAnotherReceiver = true
       return @
 
@@ -1313,7 +1313,7 @@ initBootClasses = ->
       context.isTransparent = true
       predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
       trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
-      console.log "IfThen ⇒ , predicate value is: " + predicate.value
+      log "IfThen ⇒ , predicate value is: " + predicate.value
 
       if predicate.value
         # yield from
@@ -1437,10 +1437,10 @@ initBootClasses = ->
       forContext.isTransparent = true
       flContexts.jsArrayPush forContext
 
-      console.log "FLFor ⇒ loop code is: " + loopCode.flToString()
+      log "FLFor ⇒ loop code is: " + loopCode.flToString()
 
       for i in [startIndex.value..endIndex.value]
-        console.log "FLFor ⇒ loop iterating variable to " + i
+        log "FLFor ⇒ loop iterating variable to " + i
 
         # the looping var is always in the new local for context
         # so it keeps any previous instance safe, and goes
@@ -1459,10 +1459,10 @@ initBootClasses = ->
             context.throwing = false
             if toBeReturned.value?
               toBeReturned = toBeReturned.value
-            console.log "For ⇒ the loop exited with Done "
+            log "For ⇒ the loop exited with Done "
             break
           if context.throwing and toBeReturned.flClass == FLReturn
-            console.log "For ⇒ the loop exited with Return "
+            log "For ⇒ the loop exited with Return "
             break
 
       flContexts.pop()
@@ -1507,10 +1507,10 @@ initBootClasses = ->
       if theList.length() == 1
         theList = theList.firstElement()
 
-      console.log "evalling list: " + theList.flToString()
+      log "evalling list: " + theList.flToString()
       # yield from
       evalledList = theList.eval context, theList
-      console.log "evalled list: " + evalledList.flToString()
+      log "evalled list: " + evalledList.flToString()
 
       if context.throwing
         # the list doesn't run as a program, so we just
@@ -1530,16 +1530,16 @@ initBootClasses = ->
         # from the workspace because someone might want to catch it.
         return FLException.createNew "for...each expects a list"
 
-      console.log "FLEach do on the list: " + theList.flToString()
+      log "FLEach do on the list: " + theList.flToString()
 
       forContext = new FLContext context
       forContext.isTransparent = true
 
       for i in [0...theList.value.length]
 
-        console.log "FLEach element at " + i + " : " + (theList.elementAt i).flToString()
+        log "FLEach element at " + i + " : " + (theList.elementAt i).flToString()
         forContext.tempVariablesDict[ValidIDfromString variable.value] = theList.elementAt i
-        console.log "FLEach do evaling...: " + code.flToString()
+        log "FLEach do evaling...: " + code.flToString()
         # yield from
         toBeReturned = code.eval forContext, code
 
@@ -1550,10 +1550,10 @@ initBootClasses = ->
             context.throwing = false
             if toBeReturned.value?
               toBeReturned = toBeReturned.value
-            console.log "for-each-in-list loop exited with Done "
+            log "for-each-in-list loop exited with Done "
             break
           if context.throwing and toBeReturned.flClass == FLReturn
-            console.log "for-each-in-list loop exited with Return "
+            log "for-each-in-list loop exited with Return "
             break
 
       context.findAnotherReceiver = true
