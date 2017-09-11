@@ -33,11 +33,16 @@
 <article>
 <h2>Fizzylogo</h2>
 
+<select id="examplesList" onchange="loadExample()">
+  <option value="helloWorld">hello world</option>
+  <option value="printForever">print forever</option>
+  <option value="20DigitsOfPi">20 digits of pi</option>
+</select>
 <div>
 
   <!-- left part, with code input and control buttons -->
   <div style="width: 49%; float: left;" >
-    <textarea id="code" name="code" style="display: none;">console print 1+1</textarea>
+    <textarea id="code" name="code" style="display: none;"></textarea>
     <button id="runAll"         onclick="return runAll();"        > run            </button>
     <button id="runSelection"   onclick="return runSelection();"  > run selection  </button>
     <button id="pauseOrRestart" onclick="return pauseOrRestart();"> pause          </button>
@@ -64,6 +69,20 @@
 </div>
 
 <script>
+
+loadExample = function(){
+  var selected = document.getElementById("examplesList").selectedIndex;
+  if (selected == 0) {
+    editor.setValue('console print "hello world"');
+  }
+  else if (selected == 1) {
+    editor.setValue('repeat forever:\n  console print "running"');
+  }
+  else if (selected == 2) {
+    editor.setValue('// 20 digits of pi using Jeremy Gibbons\'s unbounded spigot\n// streaming algorithm. Can\'t go beyond 20 because\n// Javascript\'s Number precision. (only a bigint\n// representation could go on "forever")\n\nq = 1\nr = 0\nt = 1\nk = 1\nn = 3\nl = 3\nrepeat 82:\n  if ((r-t)+4*q) < (n*t):\n    console print n\n    nr = 10*(r-n*t)\n    n = ((10*(r+3*q)) /_ t) - 10*n\n    q *= 10\n    r = nr\n  else:\n    nr = (r+2*q) * l\n    nn = ((q*(2+7*k))+r*l) /_ (t*l)\n    q *= k\n    t *= l\n    l += 2\n    k += 1\n    n = nn\n    r = nr\nconsole print " done!"');
+  }
+
+}
 
 clearOutput = function(){
   document.getElementById("output").value = "code output ------------\n";
@@ -135,7 +154,8 @@ enablePauseAndStopButtons = function(){
 disablePauseAndStopButtons();
 document.getElementById("runSelection").disabled = true;
 Fizzylogo.init(document.getElementById("output"));
-clearOutput()
+clearOutput();
+loadExample();
 
 runAll = function(){
   stop();
