@@ -12,7 +12,7 @@
   <script src="./CodeMirror_files/matchbrackets.js"></script>
   <script src="./CodeMirror_files/python.js"></script>
   <script src="./fizzylogo.js"></script>
-  <style type="text/css">.CodeMirror {border-top: 1px solid black; border-bottom: 1px solid black;}</style>
+  <style type="text/css">.CodeMirror {border: 1px solid black;}</style>
 </head>
 
 <body style="">
@@ -34,24 +34,47 @@
 <h2>Fizzylogo</h2>
 
 <div>
-<textarea id="code" name="code" style="display: none;">
-console print 1+1</textarea>
-<button onclick="return runAll();">run all</button>
-<button onclick="return runSelection();">run selection</button>
+
+  <!-- left part, with code input and control buttons -->
+  <div style="width: 49%; float: left;" >
+    <textarea id="code" name="code" style="display: none;">console print 1+1</textarea>
+    <button id="runAll"       onclick="return runAll();"        > run all        </button>
+    <button id="runSelection" onclick="return runSelection();"  > run selection  </button>
+    <button id="pause"        onclick="return runAll();"        > pause          </button>
+    <button id="stop"         onclick="return runSelection();"  > stop           </button>
+  </div>
+
+  <script>
+    var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+      mode: {name: "python",
+             version: 3,
+             singleLineStringErrors: false},
+      lineNumbers: true,
+      indentUnit: 4,
+      matchBrackets: true
+    });
+    
+    document.getElementById("pause").disabled = true;
+  </script>
+
+  <!-- right part, with the canvas and text output -->
+  <div style="width: 49%; float: right;">
+
+    <div>
+      <canvas id="myCanvas" width="330" height="326"></canvas>
+    </div>
+
+    <div>
+      <textarea id="terminal121" name="terminal" rows="2" cols="80" style="width:100%;margin-bottom:-5px;">code output</textarea>
+    </div>
+
+
+  </div>
+
 </div>
 
 
-    <script>
-      var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-        mode: {name: "python",
-               version: 3,
-               singleLineStringErrors: false},
-        lineNumbers: true,
-        indentUnit: 4,
-        matchBrackets: true
-    });
 
-    </script>
   </article>
 </body>
 </html>
