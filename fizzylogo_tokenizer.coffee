@@ -170,6 +170,9 @@ injectStrings = (code) ->
 #      tab numbers.
 
 linearize = (code) ->
+
+  code = code.replace /﹍/g, " "
+
   sourceByLine = code.split("\n")
   startOfPreviousLine = ""
   linesWithBlockStart = []
@@ -182,7 +185,7 @@ linearize = (code) ->
   for eachLine in [0...sourceByLine.length]
     line = sourceByLine[eachLine]
     #console.log "checking " + line
-    rx = RegExp("^(﹍*)",'gm')
+    rx = RegExp("^([ ]*)",'gm')
     match = rx.exec line
     if eachLine == 0
       outputSource += " " + line
@@ -225,7 +228,7 @@ linearize = (code) ->
   outputSource += (Array(unclosedParens+1).join ")")
 
   #console.log "code length at identifyBlockStarts: " + code.split("\n").length
-  return outputSource.replace /﹍/g, ""
+  return outputSource.replace /^[ ]*/g, ""
 
 
 
@@ -234,7 +237,7 @@ flTokenize = (command) ->
   listsStack.jsArrayPush FLList.createNew()
 
   # join the multi-line first before we do the strings
-  command = command.replace /\\\n﹍*/g, " "
+  command = command.replace /\\\n[ ]*/g, " "
 
   # remove comments first, so we can ignore
   # any strings that might be in them
