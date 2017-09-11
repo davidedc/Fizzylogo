@@ -3696,7 +3696,7 @@ for i in [0...tests.length] by 2
     testBodyMultiline = testBody.replace /\n/g, ' ⏎ '
     console.log "starting test: " + (i/2+1) + ": " + testBodyMultiline
     
-    Fizzylogo.runInOneStep testBody
+    run testBody
 
     console.log "final return: " + outerMostContext.returned?.value
     if environmentPrintout + environmentErrors == testResult

@@ -15,7 +15,7 @@ to run the tests using node:
 ```clear; cat $(cat sourceFilesOrder.txt) | coffee --stdio | grep obtained && say done```
 
 to generate the JS source (e.g. to use in the browser):
-```cat $(grep -v '^tests' sourceFilesOrder.txt) | coffee --stdio -c > dist/fizzylogo.js; cp dist/fizzylogo.js sandbox/fizzylogo.js```
+```sh makeYieldingVersion.sh; cd yielding-version; cat $(grep -v '^tests' sourceFilesOrder.txt) | coffee --stdio -c > ../dist/fizzylogo.js; cd ..; cp dist/fizzylogo.js sandbox/fizzylogo.js```
 
 you can also generate the sources for a "yielding" version of the interpreter by running:
 ```sh makeYieldingVersion.sh```

@@ -79,7 +79,30 @@ Fizzylogo.init = (textOutElem) ->
   textOutputElement = textOutElem
   reset()
 
-Fizzylogo.runInOneStep = (code) ->
+# this one is for the browser, and the yielding is always
+# enabled for the browser build, so this is always used
+# as a generator.
+Fizzylogo.runOneStep = (code) ->
+  quickReset()
+  parsed = flTokenize code
+  console.log "evaluation " + indentation() + "messaging workspace with " + parsed.flToString()
+
+  # yield from
+  returned = parsed.eval outerMostContext, parsed
+  outerMostContext.returned = returned.value
+
+  console.log "evaluation " + indentation() + "end of workspace evaluation"
+
+  if outerMostContext.throwing and outerMostContext.returned.flClass == FLException
+    console.log "evaluation " + indentation() + "exception: " + outerMostContext.returned.value
+    environmentErrors += "! exception: " + outerMostContext.returned.value
+    if textOutputElement?
+      textOutputElement.value += environmentErrors + "\n"
+
+  return null
+  
+
+run = (code) ->
   quickReset()
   parsed = flTokenize code
   console.log "evaluation " + indentation() + "messaging workspace with " + parsed.flToString()
@@ -96,16 +119,10 @@ Fizzylogo.runInOneStep = (code) ->
   else
     outerMostContext.returned = parsed.eval outerMostContext, parsed
 
-  console.log "aaa"
-
   console.log "evaluation " + indentation() + "end of workspace evaluation"
 
   if outerMostContext.throwing and outerMostContext.returned.flClass == FLException
     console.log "evaluation " + indentation() + "exception: " + outerMostContext.returned.value
     environmentErrors += "! exception: " + outerMostContext.returned.value
 
-  if textOutputElement?
-    textOutputElement.value += environmentPrintout + environmentErrors + "\n"
-
   return null
-  

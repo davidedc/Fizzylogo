@@ -1098,6 +1098,9 @@ initBootClasses = ->
       thingToPrint = context.tempVariablesDict[ValidIDfromString "thingToPrint"]
       stringToPrint = thingToPrint.flToString()
       console.log "///////// program printout: " + stringToPrint
+      if textOutputElement?
+        textOutputElement.value += stringToPrint
+
       environmentPrintout += stringToPrint
       return thingToPrint
 

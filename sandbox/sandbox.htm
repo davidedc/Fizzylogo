@@ -54,7 +54,6 @@
       matchBrackets: true
     });
     
-    document.getElementById("pause").disabled = true;
   </script>
 
   <!-- right part, with the canvas and text output -->
@@ -74,8 +73,34 @@
 </div>
 
 <script>
+
+disablePauseAndStopButtons = function(){
+  document.getElementById("pause").disabled = true;
+  document.getElementById("stop").disabled = true;
+}
+
+enablePauseAndStopButtons = function(){
+  document.getElementById("pause").disabled = false;
+  document.getElementById("stop").disabled = false;
+}
+
+disablePauseAndStopButtons();
+
 Fizzylogo.init(document.getElementById("output"));
-Fizzylogo.runInOneStep("console print 1+1");
+
+runOneMoreStep = function(gen){
+  done = gen.next().done;
+  if (done) {
+    disablePauseAndStopButtons();
+  }
+  else {
+    enablePauseAndStopButtons();
+    setTimeout(function(){ runOneMoreStep(gen); }, 0); }
+  }
+
+//gen = Fizzylogo.runOneStep("repeat forever:\n﹍console print \"running\"");
+gen = Fizzylogo.runOneStep("console print 1+1");
+runOneMoreStep(gen);
 
 </script>
 
