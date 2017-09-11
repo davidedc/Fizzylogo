@@ -92,6 +92,13 @@ var paused = false;
 var gen = null;
 var timeoutNextStep = null;
 
+// mechanism to batch a certain number of
+// instructions to be run consecutively,
+// otherwise we spend most of the browser's
+// time doing nothing.
+var instructionsCount = 0;
+var instructionsBatch = 100;
+
 pauseOrRestart = function(){
   if (!paused){
     paused = true;
@@ -172,16 +179,29 @@ runSelection= function(){
 }
 
 runFollowingSteps = function(gen){
-  done = gen.next().done;
-  if (done) {
-    disablePauseAndStopButtons();
-  }
-  else {
-    enablePauseAndStopButtons();
-    if (!paused) {
-      timeoutNextStep = setTimeout(function(){ runFollowingSteps(gen); }, 0); }
+  // keep immediately running instructions until either
+  // a) we are done or b) we reached the batch size of
+  // the instructions to run, in which case we keep
+  // running more after a timeout.
+  while (true) {
+    done = gen.next().done;
+    instructionsCount++;
+    if (done) {
+      disablePauseAndStopButtons();
+      break;
+    }
+    else {
+      enablePauseAndStopButtons();
+      if (!paused) {
+        if (instructionsCount % instructionsBatch == 0) {
+          //console.log("instructionsCount " + instructionsCount + " waiting");
+          timeoutNextStep = setTimeout(function(){ runFollowingSteps(gen); }, 0);
+          break;
+        }
+      }
     }
   }
+}
 
 
 </script>
