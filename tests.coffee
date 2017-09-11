@@ -3679,90 +3679,104 @@ tests = [
 
 flContexts = []
 rWorkspace = null
+environmentPrintout = ""
+environmentErrors = ""
+
+initContext = (context) ->
+  keywordsAndTheirInit = [
+    "WorkSpace", FLWorkspace # todo probably not needed?
+    "Class", FLClass
+    "List", FLList
+    "String", FLString
+    "Exception", FLException
+    "Number", FLNumber
+    "Boolean", FLBoolean
+    "Console", FLConsole
+
+    "not", FLNot.createNew()
+    "true", FLBoolean.createNew true
+    "false", FLBoolean.createNew false
+
+    "for", FLFor.createNew()
+    "repeat1", FLRepeat1.createNew()
+    "done", FLDone.createNew()
+    "break", FLBreak.createNew()
+    "return", FLReturn.createNew()
+
+    "if", FLIfThen.createNew()
+    "else", FLFakeElse.createNew()
+    "forever", FLForever.createNew()
+    "repeat", FLRepeat2.createNew()
+
+    "try", FLTry.createNew()
+    "throw", FLThrow.createNew()
+    "catch", FLFakeCatch.createNew()
+
+    "to", FLTo.createNew()
+
+    "in", FLIn.createNew()
+    "accessUpperContext", FLAccessUpperContext.createNew()
+
+    "evaluationsCounter", FLEvaluationsCounter.createNew()
+
+    "nil", FLNil.createNew()
+
+    "console", FLConsole.createNew()
+    "pause", FLPause.createNew()
+
+    "'", FLQuote.createNew()
+    ":", FLQuote.createNew()
+  ]
+
+  for keywords in [0...keywordsAndTheirInit.length] by 2
+    [keyword, itsInitialisation] = keywordsAndTheirInit[keywords .. keywords + 1]
+    context.tempVariablesDict[ValidIDfromString keyword] = itsInitialisation
+
+
+quickReset = ->
+  environmentPrintout = ""
+  environmentErrors = ""
+  rWorkspace = FLWorkspace.createNew()
+  outerMostContext = new FLContext null, rWorkspace
+  flContexts.jsArrayPush outerMostContext
+  initContext outerMostContext
+
+reset = ->
+  # resetting the classes and initing them
+  # adds quite a bit more time to the tests
+  # but it's worth checking once in a while
+  # that the tests behave well when the state
+  # is reset more deeply.
+  clearClasses()
+  initBootClasses()
+
+  quickReset()
+
+
+clearClasses()
+initBootClasses()
 
 OKs = 0
 FAILs = 0
 
 for i in [0...tests.length] by 2
+
+    # use reset() instead of quickReset()
+    # every now and then to
+    # check that the tests still work when
+    # there is a deeper clean of the
+    # environment
+    #reset()
+    quickReset()
+
     [testBody, testResult] = tests[i .. i + 1]
-    environmentPrintout = ""
-    environmentErrors = ""
 
     testBodyMultiline = testBody.replace /\n/g, ' ⏎ '
     console.log "starting test: " + (i/2+1) + ": " + testBodyMultiline
     
     parsed = flTokenize testBody
-
-    console.log parsed.value.length
-    for eachParsedItem in parsed.value
-      console.log eachParsedItem.value
-
-    rWorkspace = FLWorkspace.createNew()
-
-
-    # outer-most context
-    parsed.isMessage = true
-    outerMostContext = new FLContext null, rWorkspace
-    flContexts.jsArrayPush outerMostContext
-    
-    keywordsAndTheirInit = [
-      "WorkSpace", FLWorkspace # todo probably not needed?
-      "Class", FLClass
-      "List", FLList
-      "String", FLString
-      "Exception", FLException
-      "Number", FLNumber
-      "Boolean", FLBoolean
-      "Console", FLConsole
-
-      "not", FLNot.createNew()
-      "true", FLBoolean.createNew true
-      "false", FLBoolean.createNew false
-
-      "for", FLFor.createNew()
-      "repeat1", FLRepeat1.createNew()
-      "done", FLDone.createNew()
-      "break", FLBreak.createNew()
-      "return", FLReturn.createNew()
-
-      "if", FLIfThen.createNew()
-      "else", FLFakeElse.createNew()
-      "forever", FLForever.createNew()
-      "repeat", FLRepeat2.createNew()
-
-      "try", FLTry.createNew()
-      "throw", FLThrow.createNew()
-      "catch", FLFakeCatch.createNew()
-
-      "to", FLTo.createNew()
-
-      "in", FLIn.createNew()
-      "accessUpperContext", FLAccessUpperContext.createNew()
-
-      "evaluationsCounter", FLEvaluationsCounter.createNew()
-
-      "nil", FLNil.createNew()
-
-      "console", FLConsole.createNew()
-      "pause", FLPause.createNew()
-
-      "'", FLQuote.createNew()
-      ":", FLQuote.createNew()
-    ]
-
-    for keywords in [0...keywordsAndTheirInit.length] by 2
-      [keyword, itsInitialisation] = keywordsAndTheirInit[keywords .. keywords + 1]
-      outerMostContext.tempVariablesDict[ValidIDfromString keyword] = itsInitialisation
-
-    messageLength = parsed.length()
     console.log "evaluation " + indentation() + "messaging workspace with " + parsed.flToString()
 
-    # now we are using the message as a list because we have to evaluate it.
-    # to evaluate it, we treat it as a list and we send it the empty message
-    # note that "self" will remain the current one, since anything that
-    # is in here will still refer to "self" as the current self in the
-    # overall message.
-    
     yieldMode = false
     #yieldMode = true
     if yieldMode
@@ -3777,18 +3791,9 @@ for i in [0...tests.length] by 2
 
     console.log "evaluation " + indentation() + "end of workspace evaluation"
 
-    if !outerMostContext.returned?
-      if outerMostContext.unparsedMessage?
-        unparsedPartOfMessage = " was sent message: " + outerMostContext.unparsedMessage.flToString()
-      else
-        unparsedPartOfMessage = ""
-      console.log "evaluation " + indentation() + "no meaning found for: " + rWorkspace.lastUndefinedArom.value + unparsedPartOfMessage
-      environmentErrors += "! no meaning found for: " + rWorkspace.lastUndefinedArom.value + unparsedPartOfMessage
-      rWorkspace.lastUndefinedArom
-    else
-      if outerMostContext.throwing and outerMostContext.returned.flClass == FLException
-        console.log "evaluation " + indentation() + "exception: " + outerMostContext.returned.value
-        environmentErrors += "! exception: " + outerMostContext.returned.value
+    if outerMostContext.throwing and outerMostContext.returned.flClass == FLException
+      console.log "evaluation " + indentation() + "exception: " + outerMostContext.returned.value
+      environmentErrors += "! exception: " + outerMostContext.returned.value
 
 
     console.log "final return: " + outerMostContext.returned?.value

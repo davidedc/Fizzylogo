@@ -19,8 +19,7 @@ class FLClasses extends FLObjects
       @name = @constructor.name
       @name = @name.substr 2, @name.length - 7
 
-    @msgPatterns = []
-    @methodBodies = []
+    @resetMethods()
 
     # the temp variables contents
     # are in the context, not here in the class
@@ -30,6 +29,10 @@ class FLClasses extends FLObjects
 
   rename: (newName) ->
     @name = newName
+
+  resetMethods: ->
+    @msgPatterns = []
+    @methodBodies = []
 
   # this is when you create a new instance of this class,
   # for example a new number or a new string or a new

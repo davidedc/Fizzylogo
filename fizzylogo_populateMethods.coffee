@@ -239,64 +239,111 @@ addDefaultMethods = (classToAddThemTo) ->
       context.findAnotherReceiver = true
       return @
 
-# all native classes ---------------------------------------------------------------------------
-
 # with time, allClasses contains all the classes
-# (native classes and user-defined classes), but right
-# now only the "native" classes have been defined
-# so we add the default methods to those.
-for eachClass in allClasses
-  addDefaultMethods eachClass
+# (boot classes and user-defined classes), but right
+# now only the boot classes (i.e. primitive classes +
+# helper classes such as FLForClass, etc.) have been defined
+# We call this set the "bootClasses"
+bootClasses = allClasses.slice()
+
+clearClasses = ->
+  # user might have modified some methods in the boot
+  # classes.
+  for eachClass in bootClasses
+    eachClass.resetMethods()
+
+  allClasses = []
+
+initBootClasses = ->
+  # Common to all -------------------------------------------------------------------
+  # first, add the methods common to them all
+  # then we'll proceed to add the class-specific classes
+
+  for eachClass in bootClasses
+    addDefaultMethods eachClass
 
 
-# WorkSpace ---------------------------------------------------------------------------
+  # WorkSpace -----------------------------------------------------------------------
 
 
-# Token ---------------------------------------------------------------------------
+  # Token ---------------------------------------------------------------------------
 
-FLToken.addMethod \
-  (flTokenize "← ( valueToAssign )"),
-  (context) ->
+  FLToken.addMethod \
+    (flTokenize "← ( valueToAssign )"),
+    (context) ->
+      #yield
+      valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
+
+      assigneeTokenString = @value
+
+      console.log "evaluation " + indentation() + "assignment to token " + assigneeTokenString
+      console.log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
+
+      context.isTransparent = true
+
+      # check if temp variable is visible from here.
+      # if not, create it.
+      dictToPutValueIn = context.whichDictionaryContainsToken @
+      if !dictToPutValueIn?
+        # no such variable, hence we create it as temp, but
+        # we can't create them in this very call context, that would
+        # be useless, we place it in the context of the _previous_ context
+        # note that this means that any construct that creates a new context
+        # will seal the temp variables in it. For example "for" loops. This
+        # is like the block scoping of C or Java. If you want function scoping, it
+        # could be achieved for example by marking in a special way contexts
+        # that have been created because of method calls and climbing back
+        # to the last one of those...
+        console.log "evaluation " + indentation() + "creating temp token: " + assigneeTokenString + " at depth: " + context.firstNonTransparentContext().depth() + " with self: " + context.firstNonTransparentContext().self.flToString()
+        dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict
+      else
+        console.log "evaluation " + indentation() + "found temp token: " + assigneeTokenString
+
+      dictToPutValueIn[ValidIDfromString assigneeTokenString] = valueToAssign
+
+      console.log "evaluation " + indentation() + "stored value in dictionary"
+      return valueToAssign
+
+  FLToken.addMethod \
+    (flTokenize "= ( valueToAssign )"),
+    (context) ->
+      #yield
+      valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
+
+      assigneeTokenString = @value
+
+      console.log "evaluation " + indentation() + "assignment to token " + assigneeTokenString
+      console.log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
+
+      context.isTransparent = true
+
+      # check if temp variable is visible from here.
+      # if not, create it.
+      dictToPutValueIn = context.whichDictionaryContainsToken @
+      if !dictToPutValueIn?
+        # no such variable, hence we create it as temp, but
+        # we can't create them in this very call context, that would
+        # be useless, we place it in the context of the _previous_ context
+        # note that this means that any construct that creates a new context
+        # will seal the temp variables in it. For example "for" loops. This
+        # is like the block scoping of C or Java. If you want function scoping, it
+        # could be achieved for example by marking in a special way contexts
+        # that have been created because of method calls and climbing back
+        # to the last one of those...
+        console.log "evaluation " + indentation() + "creating temp token: " + assigneeTokenString
+        dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict
+      else
+        console.log "evaluation " + indentation() + "found temp token: " + assigneeTokenString
+
+      dictToPutValueIn[ValidIDfromString assigneeTokenString] = valueToAssign
+
+      console.log "evaluation " + indentation() + "stored value in dictionary"
+      context.findAnotherReceiver = true
+      return valueToAssign
+
+  commonClassCreationFunction = (context, assigneeTokenString, className) ->
     #yield
-    valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
-
-    assigneeTokenString = @value
-
-    console.log "evaluation " + indentation() + "assignment to token " + assigneeTokenString
-    console.log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
-
-    context.isTransparent = true
-
-    # check if temp variable is visible from here.
-    # if not, create it.
-    dictToPutValueIn = context.whichDictionaryContainsToken @
-    if !dictToPutValueIn?
-      # no such variable, hence we create it as temp, but
-      # we can't create them in this very call context, that would
-      # be useless, we place it in the context of the _previous_ context
-      # note that this means that any construct that creates a new context
-      # will seal the temp variables in it. For example "for" loops. This
-      # is like the block scoping of C or Java. If you want function scoping, it
-      # could be achieved for example by marking in a special way contexts
-      # that have been created because of method calls and climbing back
-      # to the last one of those...
-      console.log "evaluation " + indentation() + "creating temp token: " + assigneeTokenString + " at depth: " + context.firstNonTransparentContext().depth() + " with self: " + context.firstNonTransparentContext().self.flToString()
-      dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict
-    else
-      console.log "evaluation " + indentation() + "found temp token: " + assigneeTokenString
-
-    dictToPutValueIn[ValidIDfromString assigneeTokenString] = valueToAssign
-
-    console.log "evaluation " + indentation() + "stored value in dictionary"
-    return valueToAssign
-
-FLToken.addMethod \
-  (flTokenize "= ( valueToAssign )"),
-  (context) ->
-    #yield
-    valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
-
-    assigneeTokenString = @value
+    valueToAssign = FLClass.createNew className
 
     console.log "evaluation " + indentation() + "assignment to token " + assigneeTokenString
     console.log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
@@ -327,845 +374,856 @@ FLToken.addMethod \
     context.findAnotherReceiver = true
     return valueToAssign
 
-commonClassCreationFunction = (context, assigneeTokenString, className) ->
-  #yield
-  valueToAssign = FLClass.createNew className
+  FLToken.addMethod \
+    (flTokenize "= Class new"),
+    (context) ->
+      # yield from
+      toBeReturned = commonClassCreationFunction context, @value, @value
+      return toBeReturned
 
-  console.log "evaluation " + indentation() + "assignment to token " + assigneeTokenString
-  console.log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
+  FLToken.addMethod \
+    (flTokenize "= Class new named (theName)"),
+    (context) ->
+      theName = context.tempVariablesDict[ValidIDfromString "theName"]
+      # yield from
+      toBeReturned = commonClassCreationFunction context, @value, theName.value
+      return toBeReturned
 
-  context.isTransparent = true
+  FLToken.addMethod \
+    (flTokenize "+= ( operandum )"),
+    (flTokenize "self ← self eval + operandum")
 
-  # check if temp variable is visible from here.
-  # if not, create it.
-  dictToPutValueIn = context.whichDictionaryContainsToken @
-  if !dictToPutValueIn?
-    # no such variable, hence we create it as temp, but
-    # we can't create them in this very call context, that would
-    # be useless, we place it in the context of the _previous_ context
-    # note that this means that any construct that creates a new context
-    # will seal the temp variables in it. For example "for" loops. This
-    # is like the block scoping of C or Java. If you want function scoping, it
-    # could be achieved for example by marking in a special way contexts
-    # that have been created because of method calls and climbing back
-    # to the last one of those...
-    console.log "evaluation " + indentation() + "creating temp token: " + assigneeTokenString
-    dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict
-  else
-    console.log "evaluation " + indentation() + "found temp token: " + assigneeTokenString
+  FLToken.addMethod \
+    (flTokenize "*= ( operandum )"),
+    (flTokenize "self ← self eval * operandum")
 
-  dictToPutValueIn[ValidIDfromString assigneeTokenString] = valueToAssign
-
-  console.log "evaluation " + indentation() + "stored value in dictionary"
-  context.findAnotherReceiver = true
-  return valueToAssign
-
-FLToken.addMethod \
-  (flTokenize "= Class new"),
-  (context) ->
-    # yield from
-    toBeReturned = commonClassCreationFunction context, @value, @value
-    return toBeReturned
-
-FLToken.addMethod \
-  (flTokenize "= Class new named (theName)"),
-  (context) ->
-    theName = context.tempVariablesDict[ValidIDfromString "theName"]
-    # yield from
-    toBeReturned = commonClassCreationFunction context, @value, theName.value
-    return toBeReturned
-
-FLToken.addMethod \
-  (flTokenize "+= ( operandum )"),
-  (flTokenize "self ← self eval + operandum")
-
-FLToken.addMethod \
-  (flTokenize "*= ( operandum )"),
-  (flTokenize "self ← self eval * operandum")
-
-FLToken.addMethod \
-  (flTokenize "++"),
-  (flTokenize "self ← self eval + 1")
+  FLToken.addMethod \
+    (flTokenize "++"),
+    (flTokenize "self ← self eval + 1")
 
 
-# Nil ---------------------------------------------------------------------------
+  # Nil ---------------------------------------------------------------------------
 
-FLNil.addMethod \
-  (flTokenize "== ( toCompare )"),
-  (context) ->
-    #yield
-    toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
-    if toCompare.flClass == FLNil
-      return FLBoolean.createNew true
-    else
-      return FLBoolean.createNew false
+  FLNil.addMethod \
+    (flTokenize "== ( toCompare )"),
+    (context) ->
+      #yield
+      toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
+      if toCompare.flClass == FLNil
+        return FLBoolean.createNew true
+      else
+        return FLBoolean.createNew false
 
-# In ---------------------------------------------------------------------------
+  # In ---------------------------------------------------------------------------
 
-FLIn.addMethod \
-  (flTokenize "(object) do ('code)"),
-  (context) ->
-    object = context.tempVariablesDict[ValidIDfromString "object"]
-    code = context.tempVariablesDict[ValidIDfromString "code"]
+  FLIn.addMethod \
+    (flTokenize "(object) do ('code)"),
+    (context) ->
+      object = context.tempVariablesDict[ValidIDfromString "object"]
+      code = context.tempVariablesDict[ValidIDfromString "code"]
 
-    newContext = new FLContext context, object
+      newContext = new FLContext context, object
 
-    # yield from
-    toBeReturned = code.eval newContext, code
-    context.findAnotherReceiver = true
+      # yield from
+      toBeReturned = code.eval newContext, code
+      context.findAnotherReceiver = true
 
-    return toBeReturned
+      return toBeReturned
 
-# To -------------------------------------------------------------------------
+  # To -------------------------------------------------------------------------
 
-# TODO it'd be nice if there was a way not to leak the TempClass
-# Note 1----
-# If you DON't want the signature to be "closed", then use
-#  (flTokenize "( ' functionObjectName ) : ( 'signature ) do ( functionBody )"),
-# hoewever at that point you'll have to also adjust the signature in
-# "answer" otherwise you
-# have a discrepancy, and "answer" will need both versions because it needs
-# a version where the signature is evalled exactly to implement the "to"
-# here below.
-#
-# Note 2----
-# the "functionObjectName" is not evalled to keep definitions more logo-like
-# otherwise if you want to eval it you need to have it on its own line
-# otherwise its evaluation might eat up the signature definition that
-# follows it.
-# The drawback is that you can't conditionally name a functionObjectName
-# but that's not that common in other languages either.
+  # TODO it'd be nice if there was a way not to leak the TempClass
+  # Note 1----
+  # If you DON't want the signature to be "closed", then use
+  #  (flTokenize "( ' functionObjectName ) : ( 'signature ) do ( functionBody )"),
+  # hoewever at that point you'll have to also adjust the signature in
+  # "answer" otherwise you
+  # have a discrepancy, and "answer" will need both versions because it needs
+  # a version where the signature is evalled exactly to implement the "to"
+  # here below.
+  #
+  # Note 2----
+  # the "functionObjectName" is not evalled to keep definitions more logo-like
+  # otherwise if you want to eval it you need to have it on its own line
+  # otherwise its evaluation might eat up the signature definition that
+  # follows it.
+  # The drawback is that you can't conditionally name a functionObjectName
+  # but that's not that common in other languages either.
 
-FLTo.addMethod \
-  (flTokenize "( ' functionObjectName ) ( signature ) do ( functionBody )"),
-  flTokenize \
-    # functionObjectName contains a token i.e.
-    # it's a pointer. So to put something inside the
-    # variable *it's pointing at*,
-    # you need to do "functionObjectName eval"
+  FLTo.addMethod \
+    (flTokenize "( ' functionObjectName ) ( signature ) do ( functionBody )"),
+    flTokenize \
+      # functionObjectName contains a token i.e.
+      # it's a pointer. So to put something inside the
+      # variable *it's pointing at*,
+      # you need to do "functionObjectName eval"
 
-    # we take the first branch:
-    # if the token is completely new, or if it's
-    # a string or a number for example, because it's clear that we don't
-    # want to add new methods to String or Number using "to" in
-    # that way. So we create a temp class and put a single instance
-    # of such class in the token.
-    #
-    # we take the second branch:
-    # if the token is bound to anything else other than
-    # a primitive type. In that case we just add/replace the
-    # method to whatever the token is bound to
+      # we take the first branch:
+      # if the token is completely new, or if it's
+      # a string or a number for example, because it's clear that we don't
+      # want to add new methods to String or Number using "to" in
+      # that way. So we create a temp class and put a single instance
+      # of such class in the token.
+      #
+      # we take the second branch:
+      # if the token is bound to anything else other than
+      # a primitive type. In that case we just add/replace the
+      # method to whatever the token is bound to
 
-    """
-    accessUpperContext
-    if (nil == functionObjectName eval) or (functionObjectName eval isPrimitiveType):
-    ﹍'TempClass ← Class new
-    ﹍TempClass nameit "Class_of_" + functionObjectName
-    ﹍functionObjectName ← TempClass new
-    ﹍TempClass answer (signature) by (functionBody)
-    else:
-    ﹍functionObjectName eval answer (signature) by (functionBody)
+      """
+      accessUpperContext
+      if (nil == functionObjectName eval) or (functionObjectName eval isPrimitiveType):
+      ﹍'TempClass ← Class new
+      ﹍TempClass nameit "Class_of_" + functionObjectName
+      ﹍functionObjectName ← TempClass new
+      ﹍TempClass answer (signature) by (functionBody)
+      else:
+      ﹍functionObjectName eval answer (signature) by (functionBody)
 
 
-    """
+      """
 
-# TODO it'd be nice if there was a way not to leak the TempClass
-FLTo.addMethod \
-  (flTokenize "( ' functionObjectName ) ( functionBody )"),
-  flTokenize \
-    """
-    accessUpperContext
-    // functionObjectName contains a token i.e.
-    // it's a pointer. So to put something inside the
-    // variable *it's pointing at*,
-    // you need to do "functionObjectName eval"
-    if (nil == functionObjectName eval) or (functionObjectName eval isPrimitiveType):
-    ﹍'TempClass ← Class new
-    ﹍TempClass nameit "Class_of_" + functionObjectName
-    ﹍functionObjectName ← TempClass new
-    ﹍TempClass answer: () by (functionBody)
-    else:
-    ﹍functionObjectName eval answer: () by (functionBody)
+  # TODO it'd be nice if there was a way not to leak the TempClass
+  FLTo.addMethod \
+    (flTokenize "( ' functionObjectName ) ( functionBody )"),
+    flTokenize \
+      """
+      accessUpperContext
+      // functionObjectName contains a token i.e.
+      // it's a pointer. So to put something inside the
+      // variable *it's pointing at*,
+      // you need to do "functionObjectName eval"
+      if (nil == functionObjectName eval) or (functionObjectName eval isPrimitiveType):
+      ﹍'TempClass ← Class new
+      ﹍TempClass nameit "Class_of_" + functionObjectName
+      ﹍functionObjectName ← TempClass new
+      ﹍TempClass answer: () by (functionBody)
+      else:
+      ﹍functionObjectName eval answer: () by (functionBody)
 
-    
-    """
+      
+      """
 
-# Class -------------------------------------------------------------------------
+  # Class -------------------------------------------------------------------------
 
-# Class. Like all classes, it's also an object, but it's the only object
-# in the system that has the capacity to create
-# new classes, via the "new" message below.
+  # Class. Like all classes, it's also an object, but it's the only object
+  # in the system that has the capacity to create
+  # new classes, via the "new" message below.
 
-FLClass.addMethod \
-  (flTokenize "new"),
-  (context) ->
-    #yield
-    console.log "///////// creating a new class for the user!"
-    @createNew()
+  FLClass.addMethod \
+    (flTokenize "new"),
+    (context) ->
+      #yield
+      console.log "///////// creating a new class for the user!"
+      @createNew()
 
-# Exception -------------------------------------------------------------------------
+  # Exception -------------------------------------------------------------------------
 
-FLException.addMethod \
-  (flTokenize "new"),
-  (context) ->
-    #yield
-    @createNew ""
+  FLException.addMethod \
+    (flTokenize "new"),
+    (context) ->
+      #yield
+      @createNew ""
 
-FLException.addMethod \
-  (flTokenize "initWith ( errorMessage )"),
-  (context) ->
-    #yield
-    errorMessage = context.tempVariablesDict[ValidIDfromString "errorMessage"]
-    @value = errorMessage.value
-    return @
+  FLException.addMethod \
+    (flTokenize "initWith ( errorMessage )"),
+    (context) ->
+      #yield
+      errorMessage = context.tempVariablesDict[ValidIDfromString "errorMessage"]
+      @value = errorMessage.value
+      return @
 
-FLException.addMethod \
-  (flTokenize "catch all : ( ' errorHandle )"),
-  (context) ->
-    errorHandle = context.tempVariablesDict[ValidIDfromString "errorHandle"]
+  FLException.addMethod \
+    (flTokenize "catch all : ( ' errorHandle )"),
+    (context) ->
+      errorHandle = context.tempVariablesDict[ValidIDfromString "errorHandle"]
 
-    console.log "catch: being thrown? " + context.throwing
+      console.log "catch: being thrown? " + context.throwing
 
-    console.log "catch: got right exception, catching it"
-    # yield from
-    toBeReturned = errorHandle.eval context, errorHandle
-    context.findAnotherReceiver = true
-
-    return toBeReturned
-
-FLException.addMethod \
-  # theError here is a token!
-  (flTokenize "catch ( 'theError ) : ( ' errorHandle )"),
-  (context) ->
-    #yield
-    theError = context.tempVariablesDict[ValidIDfromString "theError"]
-    errorHandle = context.tempVariablesDict[ValidIDfromString "errorHandle"]
-
-    # OK this is tricky: we'd normally just evaluate this from the
-    # signature BUT we can't, because it's going to be in this form:
-    # WITHOUT parens
-    #    catch someError :
-    # so it's going to try to match the ":" token, and
-    # whenever an exception touches
-    # anything else other than a catch, it ALWAYS matches and
-    # re-throws itself, because this
-    # is how we get exceptions to bubble up when they are not
-    # caught. So, we get the token instead, and we look it up
-    # here.
-    # theError here is a token, with this evaluation we get an
-    # actual exception.
-    # yield from
-    theError = theError.eval context, theError
-
-    console.log "catch: same as one to catch?" + (@ == theError) + " being thrown? " + context.throwing
-
-    if @ == theError
       console.log "catch: got right exception, catching it"
       # yield from
       toBeReturned = errorHandle.eval context, errorHandle
-
       context.findAnotherReceiver = true
+
+      return toBeReturned
+
+  FLException.addMethod \
+    # theError here is a token!
+    (flTokenize "catch ( 'theError ) : ( ' errorHandle )"),
+    (context) ->
+      #yield
+      theError = context.tempVariablesDict[ValidIDfromString "theError"]
+      errorHandle = context.tempVariablesDict[ValidIDfromString "errorHandle"]
+
+      # OK this is tricky: we'd normally just evaluate this from the
+      # signature BUT we can't, because it's going to be in this form:
+      # WITHOUT parens
+      #    catch someError :
+      # so it's going to try to match the ":" token, and
+      # whenever an exception touches
+      # anything else other than a catch, it ALWAYS matches and
+      # re-throws itself, because this
+      # is how we get exceptions to bubble up when they are not
+      # caught. So, we get the token instead, and we look it up
+      # here.
+      # theError here is a token, with this evaluation we get an
+      # actual exception.
+      # yield from
+      theError = theError.eval context, theError
+
+      console.log "catch: same as one to catch?" + (@ == theError) + " being thrown? " + context.throwing
+
+      if @ == theError
+        console.log "catch: got right exception, catching it"
+        # yield from
+        toBeReturned = errorHandle.eval context, errorHandle
+
+        context.findAnotherReceiver = true
+      else
+        console.log "catch: got wrong exception, propagating it"
+        toBeReturned = @
+        context.findAnotherReceiver = false
+
+      return toBeReturned
+
+  FLException.addMethod \
+    FLList.emptyMessage(),
+    (context) ->
+      #yield
+      if @thrown
+        context.throwing = true
+      return @
+
+
+  # String -------------------------------------------------------------------------
+
+  FLString.addMethod \
+    (flTokenize "new"),
+    (context) ->
+      #yield
+      @createNew ""
+
+  FLString.addMethod \
+    (flTokenize "+ ( stringToBeAppended )"),
+    (context) ->
+      #yield
+      stringToBeAppended = context.tempVariablesDict[ValidIDfromString "stringToBeAppended"]
+      return FLString.createNew @value + stringToBeAppended.flToString()
+
+  FLString.addMethod \
+    (flTokenize "== ( toCompare )"),
+    commonSimpleValueEqualityFunction
+
+  FLString.addMethod \
+    (flTokenize "!= ( toCompare )"),
+    commonSimpleValueInequalityFunction
+
+  # Number -------------------------------------------------------------------------
+
+  FLNumber.addMethod \
+    (flTokenize "new"),
+    (context) ->
+      #yield
+      @createNew 0
+
+  FLNumber.addMethod \
+    (flTokenize "anotherPrint"),
+    flTokenize "console print self"
+
+  FLNumber.addMethod \
+    (flTokenize "doublePrint"),
+    flTokenize "console print(console print self)"
+
+  # mutates the very object
+  FLNumber.addMethod \
+    (flTokenize "incrementInPlace"),
+    # this one below actually mutates the number
+    # object
+    flTokenize "self ← self + 1"
+
+
+  FLNumber.addMethod \
+    (flTokenize "factorial"),
+    flTokenize "( self == 0 ) ⇒ ( 1 ) ( self minus 1 ) factorial * self"
+
+  FLNumber.addMethod \
+    (flTokenize "factorialtwo"),
+    flTokenize "( self == 0 ) ⇒ ( 1 ) self * ( ( self minus 1 ) factorialtwo )"
+
+  FLNumber.addMethod \
+    (flTokenize "factorialthree"),
+    flTokenize "( self == 0 ) ⇒ ( 1 ) ('temp ← self;console print temp; ( self minus 1 ) factorialthree * temp )"
+
+  FLNumber.addMethod \
+    (flTokenize "factorialfour"),
+    flTokenize \
+      "( self == 0 ) ⇒ ( 1 ) ('temp ← self;\
+      ( self minus 1 ) factorialfour * temp )"
+
+  FLNumber.addMethod \
+    (flTokenize "factorialfive"),
+    flTokenize \
+      "( self == 0 ) ⇒ ( 1 ) (1 + 1;'temp ← self;\
+      ( self minus 1 ) factorialfive * temp )"
+
+  FLNumber.addMethod \
+    (flTokenize "amIZero"),
+    flTokenize "self == 0"
+
+  FLNumber.addMethod \
+    (flTokenize "printAFromDeeperCall"),
+    flTokenize "console print a"
+
+  FLNumber.addMethod \
+    (flTokenize "...(endRange)"),
+    (context) ->
+      #yield
+      endRange = context.tempVariablesDict[ValidIDfromString "endRange"]
+      listToBeReturned = FLList.createNew()
+      for i in [@value...endRange.value]
+        listToBeReturned.value.jsArrayPush FLNumber.createNew i
+        listToBeReturned.cursorEnd++
+
+      return listToBeReturned
+
+  # ---
+
+  BasePlusFunction =  (context) ->
+    #yield
+    operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+    # todo more type conversions needed, and also in the other operations
+    if operandum.flClass == FLString
+      return FLString.createNew @value + operandum.value
     else
-      console.log "catch: got wrong exception, propagating it"
-      toBeReturned = @
-      context.findAnotherReceiver = false
+      return FLNumber.createNew @value + operandum.value
 
-    return toBeReturned
+  FLNumber.addMethod \
+    (flTokenize "$plus_binary ( operandum )"),
+    BasePlusFunction
 
-FLException.addMethod \
-  FLList.emptyMessage(),
-  (context) ->
+  FLNumber.addMethod \
+    (flTokenize "+ ( operandum )"),
+    (flTokenize "self $plus_binary operandum")
+
+  # although there are some good reasons to have this,
+  # it can get confusing, consider for example
+  # a++ ++
+  # the first ++ does this: a = a+1 and returns a number
+  # the second just increments the number without modifying
+  # a.
+  FLNumber.addMethod \
+    (flTokenize "++"),
+    flTokenize "self + 1"
+
+  # see "++" regarding why this could be confusing
+  FLNumber.addMethod \
+    (flTokenize "+= (value)"),
+    flTokenize "self + value"
+
+  # ---
+
+  BasePercentFunction =  (context) ->
     #yield
-    if @thrown
-      context.throwing = true
-    return @
+    operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+    return FLNumber.createNew @value % operandum.value
 
+  FLNumber.addMethod \
+    (flTokenize "$percent_binary ( operandum )"),
+    BasePercentFunction
 
-# String -------------------------------------------------------------------------
+  FLNumber.addMethod \
+    (flTokenize "% ( operandum )"),
+    (flTokenize "self $percent_binary operandum")
 
-FLString.addMethod \
-  (flTokenize "new"),
-  (context) ->
+  # ---
+
+  BaseFloorDivisionFunction =  (context) ->
     #yield
-    @createNew ""
+    operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+    return FLNumber.createNew Math.floor(@value / operandum.value)
 
-FLString.addMethod \
-  (flTokenize "+ ( stringToBeAppended )"),
-  (context) ->
-    #yield
-    stringToBeAppended = context.tempVariablesDict[ValidIDfromString "stringToBeAppended"]
-    return FLString.createNew @value + stringToBeAppended.flToString()
+  FLNumber.addMethod \
+    (flTokenize "$floordivision_binary ( operandum )"),
+    BaseFloorDivisionFunction
 
-FLString.addMethod \
-  (flTokenize "== ( toCompare )"),
-  commonSimpleValueEqualityFunction
+  FLNumber.addMethod \
+    (flTokenize "/_ ( operandum )"),
+    (flTokenize "self $floordivision_binary operandum")
 
-FLString.addMethod \
-  (flTokenize "!= ( toCompare )"),
-  commonSimpleValueInequalityFunction
+  # ---
 
-# Number -------------------------------------------------------------------------
-
-FLNumber.addMethod \
-  (flTokenize "new"),
-  (context) ->
-    #yield
-    @createNew 0
-
-FLNumber.addMethod \
-  (flTokenize "anotherPrint"),
-  flTokenize "console print self"
-
-FLNumber.addMethod \
-  (flTokenize "doublePrint"),
-  flTokenize "console print(console print self)"
-
-# mutates the very object
-FLNumber.addMethod \
-  (flTokenize "incrementInPlace"),
-  # this one below actually mutates the number
-  # object
-  flTokenize "self ← self + 1"
-
-
-FLNumber.addMethod \
-  (flTokenize "factorial"),
-  flTokenize "( self == 0 ) ⇒ ( 1 ) ( self minus 1 ) factorial * self"
-
-FLNumber.addMethod \
-  (flTokenize "factorialtwo"),
-  flTokenize "( self == 0 ) ⇒ ( 1 ) self * ( ( self minus 1 ) factorialtwo )"
-
-FLNumber.addMethod \
-  (flTokenize "factorialthree"),
-  flTokenize "( self == 0 ) ⇒ ( 1 ) ('temp ← self;console print temp; ( self minus 1 ) factorialthree * temp )"
-
-FLNumber.addMethod \
-  (flTokenize "factorialfour"),
-  flTokenize \
-    "( self == 0 ) ⇒ ( 1 ) ('temp ← self;\
-    ( self minus 1 ) factorialfour * temp )"
-
-FLNumber.addMethod \
-  (flTokenize "factorialfive"),
-  flTokenize \
-    "( self == 0 ) ⇒ ( 1 ) (1 + 1;'temp ← self;\
-    ( self minus 1 ) factorialfive * temp )"
-
-FLNumber.addMethod \
-  (flTokenize "amIZero"),
-  flTokenize "self == 0"
-
-FLNumber.addMethod \
-  (flTokenize "printAFromDeeperCall"),
-  flTokenize "console print a"
-
-FLNumber.addMethod \
-  (flTokenize "...(endRange)"),
-  (context) ->
-    #yield
-    endRange = context.tempVariablesDict[ValidIDfromString "endRange"]
-    listToBeReturned = FLList.createNew()
-    for i in [@value...endRange.value]
-      listToBeReturned.value.jsArrayPush FLNumber.createNew i
-      listToBeReturned.cursorEnd++
-
-    return listToBeReturned
-
-# ---
-
-BasePlusFunction =  (context) ->
-  #yield
-  operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
-  # todo more type conversions needed, and also in the other operations
-  if operandum.flClass == FLString
-    return FLString.createNew @value + operandum.value
-  else
-    return FLNumber.createNew @value + operandum.value
-
-FLNumber.addMethod \
-  (flTokenize "$plus_binary ( operandum )"),
-  BasePlusFunction
-
-FLNumber.addMethod \
-  (flTokenize "+ ( operandum )"),
-  (flTokenize "self $plus_binary operandum")
-
-# although there are some good reasons to have this,
-# it can get confusing, consider for example
-# a++ ++
-# the first ++ does this: a = a+1 and returns a number
-# the second just increments the number without modifying
-# a.
-FLNumber.addMethod \
-  (flTokenize "++"),
-  flTokenize "self + 1"
-
-# see "++" regarding why this could be confusing
-FLNumber.addMethod \
-  (flTokenize "+= (value)"),
-  flTokenize "self + value"
-
-# ---
-
-BasePercentFunction =  (context) ->
-  #yield
-  operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
-  return FLNumber.createNew @value % operandum.value
-
-FLNumber.addMethod \
-  (flTokenize "$percent_binary ( operandum )"),
-  BasePercentFunction
-
-FLNumber.addMethod \
-  (flTokenize "% ( operandum )"),
-  (flTokenize "self $percent_binary operandum")
-
-# ---
-
-BaseFloorDivisionFunction =  (context) ->
-  #yield
-  operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
-  return FLNumber.createNew Math.floor(@value / operandum.value)
-
-FLNumber.addMethod \
-  (flTokenize "$floordivision_binary ( operandum )"),
-  BaseFloorDivisionFunction
-
-FLNumber.addMethod \
-  (flTokenize "/_ ( operandum )"),
-  (flTokenize "self $floordivision_binary operandum")
-
-# ---
-
-BaseMinusFunction =  (context) ->
-  #yield
-  operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
-  return FLNumber.createNew @value - operandum.value
-
-FLNumber.addMethod \
-  (flTokenize "$minus_binary ( operandum )"),
-  BaseMinusFunction
-
-FLNumber.addMethod \
-  (flTokenize "- ( operandum )"),
-  (flTokenize "self $minus_binary operandum")
-
-# ---
-
-BaseDivideFunction =  (context) ->
-  #yield
-  operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
-  return FLNumber.createNew @value / operandum.value
-
-FLNumber.addMethod \
-  (flTokenize "$divide_binary ( operandum )"),
-  BaseDivideFunction
-
-FLNumber.addMethod \
-  (flTokenize "/ ( operandum )"),
-  (flTokenize "self $divide_binary operandum")
-
-# ---
-
-BaseMultiplyFunction =  (context) ->
-  #yield
-  operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
-  return FLNumber.createNew @value * operandum.value
-
-FLNumber.addMethod \
-  (flTokenize "$multiply_binary ( operandum )"),
-  BaseMultiplyFunction
-
-FLNumber.addMethod \
-  (flTokenize "* ( operandum )"),
-  (flTokenize "self $multiply_binary operandum")
-
-# see "++" regarding why this could be confusing
-FLNumber.addMethod \
-  (flTokenize "*= (value)"),
-  flTokenize "self * value"
-
-# ---
-
-FLNumber.addMethod \
-  (flTokenize "minus ( operandum )"),
-  (context) ->
+  BaseMinusFunction =  (context) ->
     #yield
     operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
     return FLNumber.createNew @value - operandum.value
 
-FLNumber.addMethod \
-  (flTokenize "selftimesminusone"),
-  flTokenize "self * self minus 1"
+  FLNumber.addMethod \
+    (flTokenize "$minus_binary ( operandum )"),
+    BaseMinusFunction
 
-FLNumber.addMethod \
-  (flTokenize "times ( ' loopCode )"),
-  (context) ->
-    loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
-    console.log "FLNumber ⇒ DO loop code is: " + loopCode.flToString()
+  FLNumber.addMethod \
+    (flTokenize "- ( operandum )"),
+    (flTokenize "self $minus_binary operandum")
 
+  # ---
 
-    for i in [0...@value]
-      # yield from
-      toBeReturned = loopCode.eval context, loopCode
-
-      flContexts.pop()
-
-      # catch any thrown "done" object, used to
-      # exit from a loop.
-      if toBeReturned?
-        if context.throwing and (toBeReturned.flClass == FLDone or toBeReturned.flClass == FLBreak)
-          context.throwing = false
-          if toBeReturned.value?
-            toBeReturned = toBeReturned.value
-          console.log "times loop exited with Done "
-          break
-        if context.throwing and toBeReturned.flClass == FLReturn
-          console.log "times loop exited with Return "
-          break
-
-    context.findAnotherReceiver = true
-    return toBeReturned
-
-
-
-
-FLNumber.addMethod \
-  (flTokenize "== ( toCompare )"),
-  commonSimpleValueEqualityFunction
-
-FLNumber.addMethod \
-  (flTokenize "!= ( toCompare )"),
-  commonSimpleValueInequalityFunction
-
-FLNumber.addMethod \
-  (flTokenize "< ( toCompare )"),
-  (context) ->
-    #yield
-    toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
-    if @value < toCompare.value
-      return FLBoolean.createNew true
-    else
-      return FLBoolean.createNew false
-
-# mutating the number
-FLNumber.addMethod \
-  (flTokenize "← ( valueToAssign )"),
-  (context) ->
-    #yield
-    console.log "evaluation " + indentation() + "assigning to number! "
-    valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
-    @value = valueToAssign.value
-    return @
-
-
-
-# Boolean -------------------------------------------------------------------------
-
-FLBoolean.addMethod \
-  (flTokenize "negate"),
-  (context) ->
-    #yield
-    return FLBoolean.createNew !@value
-
-FLBoolean.addMethod \
-  (flTokenize "and ( operandum )"),
-  (context) ->
+  BaseDivideFunction =  (context) ->
     #yield
     operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
-    return FLBoolean.createNew @value and operandum.value
+    return FLNumber.createNew @value / operandum.value
 
-FLBoolean.addMethod \
-  (flTokenize "⇒ ( ' trueBranch )"),
-  (context) ->
-    context.isTransparent = true
-    trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
-    console.log "FLBoolean ⇒ , predicate value is: " + @value
+  FLNumber.addMethod \
+    (flTokenize "$divide_binary ( operandum )"),
+    BaseDivideFunction
 
-    if @value
+  FLNumber.addMethod \
+    (flTokenize "/ ( operandum )"),
+    (flTokenize "self $divide_binary operandum")
+
+  # ---
+
+  BaseMultiplyFunction =  (context) ->
+    #yield
+    operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+    return FLNumber.createNew @value * operandum.value
+
+  FLNumber.addMethod \
+    (flTokenize "$multiply_binary ( operandum )"),
+    BaseMultiplyFunction
+
+  FLNumber.addMethod \
+    (flTokenize "* ( operandum )"),
+    (flTokenize "self $multiply_binary operandum")
+
+  # see "++" regarding why this could be confusing
+  FLNumber.addMethod \
+    (flTokenize "*= (value)"),
+    flTokenize "self * value"
+
+  # ---
+
+  FLNumber.addMethod \
+    (flTokenize "minus ( operandum )"),
+    (context) ->
+      #yield
+      operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+      return FLNumber.createNew @value - operandum.value
+
+  FLNumber.addMethod \
+    (flTokenize "selftimesminusone"),
+    flTokenize "self * self minus 1"
+
+  FLNumber.addMethod \
+    (flTokenize "times ( ' loopCode )"),
+    (context) ->
+      loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
+      console.log "FLNumber ⇒ DO loop code is: " + loopCode.flToString()
+
+
+      for i in [0...@value]
+        # yield from
+        toBeReturned = loopCode.eval context, loopCode
+
+        flContexts.pop()
+
+        # catch any thrown "done" object, used to
+        # exit from a loop.
+        if toBeReturned?
+          if context.throwing and (toBeReturned.flClass == FLDone or toBeReturned.flClass == FLBreak)
+            context.throwing = false
+            if toBeReturned.value?
+              toBeReturned = toBeReturned.value
+            console.log "times loop exited with Done "
+            break
+          if context.throwing and toBeReturned.flClass == FLReturn
+            console.log "times loop exited with Return "
+            break
+
+      context.findAnotherReceiver = true
+      return toBeReturned
+
+
+
+
+  FLNumber.addMethod \
+    (flTokenize "== ( toCompare )"),
+    commonSimpleValueEqualityFunction
+
+  FLNumber.addMethod \
+    (flTokenize "!= ( toCompare )"),
+    commonSimpleValueInequalityFunction
+
+  FLNumber.addMethod \
+    (flTokenize "< ( toCompare )"),
+    (context) ->
+      #yield
+      toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
+      if @value < toCompare.value
+        return FLBoolean.createNew true
+      else
+        return FLBoolean.createNew false
+
+  # mutating the number
+  FLNumber.addMethod \
+    (flTokenize "← ( valueToAssign )"),
+    (context) ->
+      #yield
+      console.log "evaluation " + indentation() + "assigning to number! "
+      valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
+      @value = valueToAssign.value
+      return @
+
+
+
+  # Boolean -------------------------------------------------------------------------
+
+  FLBoolean.addMethod \
+    (flTokenize "negate"),
+    (context) ->
+      #yield
+      return FLBoolean.createNew !@value
+
+  FLBoolean.addMethod \
+    (flTokenize "and ( operandum )"),
+    (context) ->
+      #yield
+      operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+      return FLBoolean.createNew @value and operandum.value
+
+  FLBoolean.addMethod \
+    (flTokenize "⇒ ( ' trueBranch )"),
+    (context) ->
+      context.isTransparent = true
+      trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
+      console.log "FLBoolean ⇒ , predicate value is: " + @value
+
+      if @value
+        # yield from
+        toBeReturned = trueBranch.eval context, trueBranch
+        flContexts.pop()
+
+        console.log "FLBoolean ⇒ returning result of true branch: " + toBeReturned
+        console.log "FLBoolean ⇒ remaining message after true branch: "
+        console.log "FLBoolean ⇒ message length:  "
+
+        # in this context we only have visibility of the true branch
+        # but we have to make sure that in the context above, the false
+        # branch is never executed. So we set a flag to "exhaust" the message
+        # in the context above
+        context.exhaustPreviousContextMessage = true
+
+        return toBeReturned
+
+      context.findAnotherReceiver = true
+      return @
+
+
+  FLBoolean.addMethod \
+    (flTokenize "or ( operandum )"),
+    (context) ->
+      #yield
+      console.log "executing an or! "
+      operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+      return FLBoolean.createNew @value or operandum.value
+
+  FLBoolean.addMethod \
+    (flTokenize "== ( toCompare )"),
+    commonSimpleValueEqualityFunction
+
+  FLBoolean.addMethod \
+    (flTokenize "!= ( toCompare )"),
+    commonSimpleValueInequalityFunction
+
+
+  # FLQuote --------------------------------------------------------------------------
+
+  FLQuote.addMethod \
+    (flTokenize "( ' operandum )"),
+    (context) ->
+      #yield
+      operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+
+      if operandum.flClass == FLList
+        # in the unfortunate case that the list contains the element
+        # "operandum" - we can't bind that to the "operandum" RIGHT IN THIS
+        # CONTEXT! Hence we need to evaluate the list elements in the
+        # previous context!
+        operandum = operandum.evaluatedElementsList context.previousContext
+
+      return operandum
+
+
+  # Not --------------------------------------------------------------------------
+  FLNot.addMethod \
+    (flTokenize "( operandum )"),
+    flTokenize "operandum negate"
+
+  # List -------------------------------------------------------------------------
+
+  FLList.addMethod \
+    (flTokenize "new"),
+    (context) ->
+      #yield
+      @createNew()
+
+  FLList.addMethod \
+    (flTokenize "+ ( elementToBeAppended )"),
+    (context) ->
+      #yield
+      elementToBeAppended = context.tempVariablesDict[ValidIDfromString "elementToBeAppended"]
+      console.log "appending element to: " + @flToString() + " : " + elementToBeAppended.toString()
+      return @flListImmutablePush elementToBeAppended
+
+  FLList.addMethod \
+    (flTokenize "length"),
+    (context) ->
+      #yield
+      return FLNumber.createNew @length()
+
+  FLList.addMethod \
+    (flTokenize "[ (indexValue) ] = (value)"),
+    (context) ->
+      #yield
+      indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
+      value = context.tempVariablesDict[ValidIDfromString "value"]
+      context.findAnotherReceiver = true
+      return @elementAtSetMutable indexValue.value, value
+
+  FLList.addMethod \
+    (flTokenize "[ (indexValue) ] += (value)"),
+    (context) ->
+      indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
+      value = context.tempVariablesDict[ValidIDfromString "value"]
+
+      runThis = flTokenize "(self [indexValue]) += value"
+
       # yield from
-      toBeReturned = trueBranch.eval context, trueBranch
-      flContexts.pop()
+      toBeReturned = runThis.eval context, runThis
 
-      console.log "FLBoolean ⇒ returning result of true branch: " + toBeReturned
-      console.log "FLBoolean ⇒ remaining message after true branch: "
-      console.log "FLBoolean ⇒ message length:  "
+      context.findAnotherReceiver = true
 
-      # in this context we only have visibility of the true branch
-      # but we have to make sure that in the context above, the false
-      # branch is never executed. So we set a flag to "exhaust" the message
-      # in the context above
-      context.exhaustPreviousContextMessage = true
+      @elementAtSetMutable indexValue.value, toBeReturned
 
       return toBeReturned
 
-    context.findAnotherReceiver = true
-    return @
+  FLList.addMethod \
+    (flTokenize "[ (indexValue) ] *= (value)"),
+    (context) ->
+      indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
+      value = context.tempVariablesDict[ValidIDfromString "value"]
 
+      runThis = flTokenize "(self [indexValue]) *= value"
 
-FLBoolean.addMethod \
-  (flTokenize "or ( operandum )"),
-  (context) ->
-    #yield
-    console.log "executing an or! "
-    operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
-    return FLBoolean.createNew @value or operandum.value
-
-FLBoolean.addMethod \
-  (flTokenize "== ( toCompare )"),
-  commonSimpleValueEqualityFunction
-
-FLBoolean.addMethod \
-  (flTokenize "!= ( toCompare )"),
-  commonSimpleValueInequalityFunction
-
-
-# FLQuote --------------------------------------------------------------------------
-
-FLQuote.addMethod \
-  (flTokenize "( ' operandum )"),
-  (context) ->
-    #yield
-    operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
-
-    if operandum.flClass == FLList
-      # in the unfortunate case that the list contains the element
-      # "operandum" - we can't bind that to the "operandum" RIGHT IN THIS
-      # CONTEXT! Hence we need to evaluate the list elements in the
-      # previous context!
-      operandum = operandum.evaluatedElementsList context.previousContext
-
-    return operandum
-
-
-# Not --------------------------------------------------------------------------
-FLNot.addMethod \
-  (flTokenize "( operandum )"),
-  flTokenize "operandum negate"
-
-# List -------------------------------------------------------------------------
-
-FLList.addMethod \
-  (flTokenize "new"),
-  (context) ->
-    #yield
-    @createNew()
-
-FLList.addMethod \
-  (flTokenize "+ ( elementToBeAppended )"),
-  (context) ->
-    #yield
-    elementToBeAppended = context.tempVariablesDict[ValidIDfromString "elementToBeAppended"]
-    console.log "appending element to: " + @flToString() + " : " + elementToBeAppended.toString()
-    return @flListImmutablePush elementToBeAppended
-
-FLList.addMethod \
-  (flTokenize "length"),
-  (context) ->
-    #yield
-    return FLNumber.createNew @length()
-
-FLList.addMethod \
-  (flTokenize "[ (indexValue) ] = (value)"),
-  (context) ->
-    #yield
-    indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
-    value = context.tempVariablesDict[ValidIDfromString "value"]
-    context.findAnotherReceiver = true
-    return @elementAtSetMutable indexValue.value, value
-
-FLList.addMethod \
-  (flTokenize "[ (indexValue) ] += (value)"),
-  (context) ->
-    indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
-    value = context.tempVariablesDict[ValidIDfromString "value"]
-
-    runThis = flTokenize "(self [indexValue]) += value"
-
-    # yield from
-    toBeReturned = runThis.eval context, runThis
-
-    context.findAnotherReceiver = true
-
-    @elementAtSetMutable indexValue.value, toBeReturned
-
-    return toBeReturned
-
-FLList.addMethod \
-  (flTokenize "[ (indexValue) ] *= (value)"),
-  (context) ->
-    indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
-    value = context.tempVariablesDict[ValidIDfromString "value"]
-
-    runThis = flTokenize "(self [indexValue]) *= value"
-
-    # yield from
-    toBeReturned = runThis.eval context, runThis
-
-    context.findAnotherReceiver = true
-
-    @elementAtSetMutable indexValue.value, toBeReturned
-
-    return toBeReturned
-
-FLList.addMethod \
-  (flTokenize "[ (indexValue) ] ++"),
-  (context) ->
-    indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
-
-    runThis = flTokenize "(self [indexValue]) ++"
-
-    # yield from
-    toBeReturned = runThis.eval context, runThis
-
-    @elementAtSetMutable indexValue.value, toBeReturned
-
-    return toBeReturned
-
-
-FLList.addMethod \
-  (flTokenize "[ (indexValue) ]"),
-  (context) ->
-    #yield
-    indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
-    return @elementAt indexValue.value
-
-
-FLList.addMethod \
-  (flTokenize "each ( ' variable ) do ( ' code )"),
-  (context) ->
-
-    variable = context.tempVariablesDict[ValidIDfromString "variable"]
-    code = context.tempVariablesDict[ValidIDfromString "code"]
-
-    console.log "FLList each do "
-
-    newContext = new FLContext context
-
-    for i in [0...@value.length]
-
-      newContext.tempVariablesDict[ValidIDfromString variable.value] = @elementAt i
       # yield from
-      toBeReturned = code.eval newContext, code
+      toBeReturned = runThis.eval context, runThis
 
-      # catch any thrown "done" object, used to
-      # exit from a loop.
-      if toBeReturned?
-        if context.throwing and (toBeReturned.flClass == FLDone or toBeReturned.flClass == FLBreak)
-          context.throwing = false
-          if toBeReturned.value?
-            toBeReturned = toBeReturned.value
-          console.log "list-each-do loop exited with Done "
-          break
-        if context.throwing and toBeReturned.flClass == FLReturn
-          console.log "list-each-do loop exited with Return "
-          break
+      context.findAnotherReceiver = true
 
-    return toBeReturned
+      @elementAtSetMutable indexValue.value, toBeReturned
 
+      return toBeReturned
 
-# AccessUpperContextClass -------------------------------------------------------------------------
+  FLList.addMethod \
+    (flTokenize "[ (indexValue) ] ++"),
+    (context) ->
+      indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
 
-FLAccessUpperContext.addMethod \
-  FLList.emptyMessage(),
-  (context) ->
-    #yield
-    console.log "FLAccessUpperContext running emptyMessage"
-    context.previousContext.isTransparent = true
-    return @
+      runThis = flTokenize "(self [indexValue]) ++"
 
-# Console -----------------------------------------------------------------------------
+      # yield from
+      toBeReturned = runThis.eval context, runThis
 
-FLConsole.addMethod \
-  (flTokenize "print ( thingToPrint )"),
-  (context) ->
-    #yield
-    thingToPrint = context.tempVariablesDict[ValidIDfromString "thingToPrint"]
-    stringToPrint = thingToPrint.flToString()
-    console.log "///////// program printout: " + stringToPrint
-    environmentPrintout += stringToPrint
-    return thingToPrint
+      @elementAtSetMutable indexValue.value, toBeReturned
+
+      return toBeReturned
 
 
-# Done -------------------------------------------------------------------------
-
-FLDone.addMethod \
-  (flTokenize "with ( valueToReturn )"),
-  (context) ->
-    #yield
-    valueToReturn = context.tempVariablesDict[ValidIDfromString "valueToReturn"]
-    console.log "Done_object thrown with return value: " + valueToReturn.flToString()
-    @value = valueToReturn
-    context.throwing = true
-    @thrown = true
-    return @
-
-FLDone.addMethod \
-  FLList.emptyMessage(),
-  (context) ->
-    #yield
-    console.log "Done_object running emptyMessage"
-    context.throwing = true
-    @thrown = true
-    return @
-
-# Break -------------------------------------------------------------------------
-
-FLBreak.addMethod \
-  FLList.emptyMessage(),
-  (context) ->
-    #yield
-    console.log "Break_object"
-    context.throwing = true
-    return @
-
-# Return -------------------------------------------------------------------------
-
-FLReturn.addMethod \
-  (flTokenize "( valueToReturn )"),
-  (context) ->
-    #yield
-    valueToReturn = context.tempVariablesDict[ValidIDfromString "valueToReturn"]
-
-    console.log "Return_object running a value"
-
-    @value = valueToReturn
-    context.throwing = true
-    return @
-
-FLReturn.addMethod \
-  FLList.emptyMessage(),
-  (context) ->
-    #yield
-    console.log "Return_object running emptyMessage"
-    context.throwing = true
-    @value = FLNil.createNew()
-    return @
+  FLList.addMethod \
+    (flTokenize "[ (indexValue) ]"),
+    (context) ->
+      #yield
+      indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
+      return @elementAt indexValue.value
 
 
+  FLList.addMethod \
+    (flTokenize "each ( ' variable ) do ( ' code )"),
+    (context) ->
+
+      variable = context.tempVariablesDict[ValidIDfromString "variable"]
+      code = context.tempVariablesDict[ValidIDfromString "code"]
+
+      console.log "FLList each do "
+
+      newContext = new FLContext context
+
+      for i in [0...@value.length]
+
+        newContext.tempVariablesDict[ValidIDfromString variable.value] = @elementAt i
+        # yield from
+        toBeReturned = code.eval newContext, code
+
+        # catch any thrown "done" object, used to
+        # exit from a loop.
+        if toBeReturned?
+          if context.throwing and (toBeReturned.flClass == FLDone or toBeReturned.flClass == FLBreak)
+            context.throwing = false
+            if toBeReturned.value?
+              toBeReturned = toBeReturned.value
+            console.log "list-each-do loop exited with Done "
+            break
+          if context.throwing and toBeReturned.flClass == FLReturn
+            console.log "list-each-do loop exited with Return "
+            break
+
+      return toBeReturned
 
 
-# Repeat1 -------------------------------------------------------------------------
+  # AccessUpperContextClass -------------------------------------------------------------------------
 
-FLRepeat1.addMethod \
-  (flTokenize "( ' loopCode )"),
-  (context) ->
+  FLAccessUpperContext.addMethod \
+    FLList.emptyMessage(),
+    (context) ->
+      #yield
+      console.log "FLAccessUpperContext running emptyMessage"
+      context.previousContext.isTransparent = true
+      return @
+
+  # Console -----------------------------------------------------------------------------
+
+  FLConsole.addMethod \
+    (flTokenize "print ( thingToPrint )"),
+    (context) ->
+      #yield
+      thingToPrint = context.tempVariablesDict[ValidIDfromString "thingToPrint"]
+      stringToPrint = thingToPrint.flToString()
+      console.log "///////// program printout: " + stringToPrint
+      environmentPrintout += stringToPrint
+      return thingToPrint
+
+
+  # Done -------------------------------------------------------------------------
+
+  FLDone.addMethod \
+    (flTokenize "with ( valueToReturn )"),
+    (context) ->
+      #yield
+      valueToReturn = context.tempVariablesDict[ValidIDfromString "valueToReturn"]
+      console.log "Done_object thrown with return value: " + valueToReturn.flToString()
+      @value = valueToReturn
+      context.throwing = true
+      @thrown = true
+      return @
+
+  FLDone.addMethod \
+    FLList.emptyMessage(),
+    (context) ->
+      #yield
+      console.log "Done_object running emptyMessage"
+      context.throwing = true
+      @thrown = true
+      return @
+
+  # Break -------------------------------------------------------------------------
+
+  FLBreak.addMethod \
+    FLList.emptyMessage(),
+    (context) ->
+      #yield
+      console.log "Break_object"
+      context.throwing = true
+      return @
+
+  # Return -------------------------------------------------------------------------
+
+  FLReturn.addMethod \
+    (flTokenize "( valueToReturn )"),
+    (context) ->
+      #yield
+      valueToReturn = context.tempVariablesDict[ValidIDfromString "valueToReturn"]
+
+      console.log "Return_object running a value"
+
+      @value = valueToReturn
+      context.throwing = true
+      return @
+
+  FLReturn.addMethod \
+    FLList.emptyMessage(),
+    (context) ->
+      #yield
+      console.log "Return_object running emptyMessage"
+      context.throwing = true
+      @value = FLNil.createNew()
+      return @
+
+
+
+
+  # Repeat1 -------------------------------------------------------------------------
+
+  FLRepeat1.addMethod \
+    (flTokenize "( ' loopCode )"),
+    (context) ->
+      context.isTransparent = true
+      loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
+      console.log "FLRepeat1 ⇒ loop code is: " + loopCode.flToString()
+
+      loop
+        # yield from
+        toBeReturned = loopCode.eval context, loopCode
+
+        flContexts.pop()
+
+        console.log "Repeat1 ⇒ returning result after loop cycle: " + toBeReturned
+        console.log "Repeat1 ⇒ returning result CLASS after loop cycle: "
+        console.log "Repeat1 ⇒ remaining message after loop cycle: "
+        console.log "Repeat1 ⇒ message length:  "
+        console.log "Repeat1 ⇒ did I receive a Done? " + (if toBeReturned?.flClass == FLDone then "yes" else "no")
+
+        # catch any thrown "done" object, used to
+        # exit from a loop.
+        if toBeReturned?
+          if context.throwing and (toBeReturned.flClass == FLDone or toBeReturned.flClass == FLBreak)
+            context.throwing = false
+            if toBeReturned.value?
+              toBeReturned = toBeReturned.value
+            console.log "Repeat1 ⇒ the loop exited with Done at context depth " + context.depth()
+            break
+          if context.throwing and toBeReturned.flClass == FLReturn
+            console.log "Repeat1 ⇒ the loop exited with Return "
+            break
+
+      return toBeReturned
+
+  # Repeat2 -------------------------------------------------------------------------
+
+  repeatFunctionContinuation = (context) ->
     context.isTransparent = true
+    howManyTimes = context.tempVariablesDict[ValidIDfromString "howManyTimes"]
     loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
-    console.log "FLRepeat1 ⇒ loop code is: " + loopCode.flToString()
+    console.log "FLRepeat2 ⇒ loop code is: " + loopCode.flToString()
 
-    loop
+    if howManyTimes.flClass == FLForever
+      limit = Number.MAX_SAFE_INTEGER
+    else
+      limit = howManyTimes.value
+
+
+    for i in [0...limit]
+      #yield "from repeatFunctionContinuation"
+      console.log "Repeat2 ⇒ starting a(nother) cycle: "
       # yield from
       toBeReturned = loopCode.eval context, loopCode
 
       flContexts.pop()
 
-      console.log "Repeat1 ⇒ returning result after loop cycle: " + toBeReturned
-      console.log "Repeat1 ⇒ returning result CLASS after loop cycle: "
-      console.log "Repeat1 ⇒ remaining message after loop cycle: "
-      console.log "Repeat1 ⇒ message length:  "
-      console.log "Repeat1 ⇒ did I receive a Done? " + (if toBeReturned?.flClass == FLDone then "yes" else "no")
+      console.log "Repeat2 ⇒ returning result after loop cycle: " + toBeReturned
+      console.log "Repeat2 ⇒ returning result CLASS after loop cycle: "
+      console.log "Repeat2 ⇒ remaining message after loop cycle: "
+      console.log "Repeat2 ⇒ message length:  "
+      console.log "Repeat2 ⇒ did I receive a Done? " + (if toBeReturned?.flClass == FLDone then "yes" else "no")
+      console.log "Repeat2 ⇒ did I receive a thrown object? " + (if context.throwing then "yes" else "no")
 
       # catch any thrown "done" object, used to
       # exit from a loop.
@@ -1174,370 +1232,326 @@ FLRepeat1.addMethod \
           context.throwing = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
-          console.log "Repeat1 ⇒ the loop exited with Done at context depth " + context.depth()
+          console.log "Repeat2 ⇒ the loop exited with Done at context depth " + context.depth()
           break
         if context.throwing and toBeReturned.flClass == FLReturn
-          console.log "Repeat1 ⇒ the loop exited with Return "
+          console.log "Repeat2 ⇒ the loop exited with Return "
           break
 
-    return toBeReturned
-
-# Repeat2 -------------------------------------------------------------------------
-
-repeatFunctionContinuation = (context) ->
-  context.isTransparent = true
-  howManyTimes = context.tempVariablesDict[ValidIDfromString "howManyTimes"]
-  loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
-  console.log "FLRepeat2 ⇒ loop code is: " + loopCode.flToString()
-
-  if howManyTimes.flClass == FLForever
-    limit = Number.MAX_SAFE_INTEGER
-  else
-    limit = howManyTimes.value
-
-
-  for i in [0...limit]
-    #yield "from repeatFunctionContinuation"
-    console.log "Repeat2 ⇒ starting a(nother) cycle: "
-    # yield from
-    toBeReturned = loopCode.eval context, loopCode
-
-    flContexts.pop()
-
-    console.log "Repeat2 ⇒ returning result after loop cycle: " + toBeReturned
-    console.log "Repeat2 ⇒ returning result CLASS after loop cycle: "
-    console.log "Repeat2 ⇒ remaining message after loop cycle: "
-    console.log "Repeat2 ⇒ message length:  "
-    console.log "Repeat2 ⇒ did I receive a Done? " + (if toBeReturned?.flClass == FLDone then "yes" else "no")
-    console.log "Repeat2 ⇒ did I receive a thrown object? " + (if context.throwing then "yes" else "no")
-
-    # catch any thrown "done" object, used to
-    # exit from a loop.
-    if toBeReturned?
-      if context.throwing and (toBeReturned.flClass == FLDone or toBeReturned.flClass == FLBreak)
-        context.throwing = false
-        if toBeReturned.value?
-          toBeReturned = toBeReturned.value
-        console.log "Repeat2 ⇒ the loop exited with Done at context depth " + context.depth()
-        break
-      if context.throwing and toBeReturned.flClass == FLReturn
-        console.log "Repeat2 ⇒ the loop exited with Return "
-        break
-
-  context.findAnotherReceiver = true
-  return toBeReturned
-
-FLRepeat2.addMethod \
-  (flTokenize "(howManyTimes) :( ' loopCode )"),
-  repeatFunctionContinuation
-
-# FLEvaluationsCounter -----------------------------------------------------------------------------
-
-FLEvaluationsCounter.addMethod \
-  FLList.emptyMessage(),
-  (context) ->
-    #yield
-    stringToPrint = "EvaluationsCounter running the \"empty\" method // "
-    console.log stringToPrint
-    environmentPrintout += stringToPrint
-    return @
-
-# Throw -----------------------------------------------------------------------------
-
-FLThrow.addMethod \
-  (flTokenize "( theError )"),
-  (context) ->
-    #yield
-    theError = context.tempVariablesDict[ValidIDfromString "theError"]
-    theError.thrown = true
-    console.log "throwing an error: " + theError.value
-    context.throwing = true
-    return theError
-
-# IfThen -----------------------------------------------------------------------------
-
-FLIfThen.addMethod \
-  (flTokenize "( predicate ) : ('trueBranch)"),
-  (context) ->
-    #yield
-    context.isTransparent = true
-    predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
-    trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
-    console.log "IfThen ⇒ , predicate value is: " + predicate.value
-
-    if predicate.value
-      console.log "IfThen ⇒ , evaling true branch at depth " + context.depth()
-      # yield from
-      toBeReturned = trueBranch.eval context, trueBranch
-      flContexts.pop()
-      context.findAnotherReceiver = true
-    else
-      toBeReturned = FLIfFallThrough.createNew()
-
-    return toBeReturned
-
-# FLIfFallThrough -----------------------------------------------------------------------------
-
-# all these "emptyMessage" signatures are going to be examined
-# last because "addMethod" sorts all methods in order of increasing
-# genericity. (more generic matches will be done last)
-FLIfFallThrough.addMethod \
-  FLList.emptyMessage(),
-  (context) ->
-    #yield
-    console.log "no more cases for the if"
-    context.findAnotherReceiver = true
-    return @
-
-FLIfFallThrough.addMethod \
-  (flTokenize "else if ( predicate ): ('trueBranch)"),
-  (context) ->
-    #yield
-    context.isTransparent = true
-    predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
-    trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
-    console.log "IfThen ⇒ , predicate value is: " + predicate.value
-
-    if predicate.value
-      # yield from
-      toBeReturned = trueBranch.eval context, trueBranch
-      flContexts.pop()
-      context.findAnotherReceiver = true
-    else
-      toBeReturned = FLIfFallThrough.createNew()
-
-    return toBeReturned
-
-FLIfFallThrough.addMethod \
-  (flTokenize "else: ('trueBranch)"),
-  (context) ->
-    context.isTransparent = true
-    trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
-
-    # yield from
-    toBeReturned = trueBranch.eval context, trueBranch
-    flContexts.pop()
     context.findAnotherReceiver = true
     return toBeReturned
 
+  FLRepeat2.addMethod \
+    (flTokenize "(howManyTimes) :( ' loopCode )"),
+    repeatFunctionContinuation
 
+  # FLEvaluationsCounter -----------------------------------------------------------------------------
 
-# FakeElse -----------------------------------------------------------------------------
+  FLEvaluationsCounter.addMethod \
+    FLList.emptyMessage(),
+    (context) ->
+      #yield
+      stringToPrint = "EvaluationsCounter running the \"empty\" method // "
+      console.log stringToPrint
+      environmentPrintout += stringToPrint
+      return @
 
-FLFakeElse.addMethod \
-  # note that we make all the parameters as literals because we
-  # are not interested in any evaluation, we are just eating
-  # up tokens
-  (flTokenize "if ( 'predicate ) : ('trueBranch)"),
-  (context) ->
-    #yield
-    context.findAnotherReceiver = true
-    return @
+  # Throw -----------------------------------------------------------------------------
 
-FLFakeElse.addMethod \
-  # note that we make all the parameters as literals because we
-  # are not interested in any evaluation, we are just eating
-  # up tokens
-  (flTokenize ": ('trueBranch)"),
-  (context) ->
-    #yield
-    context.findAnotherReceiver = true
-    return @
-
-
-
-# Try -----------------------------------------------------------------------------
-
-FLTry.addMethod \
-  (flTokenize ": ( ' code )"),
-  (context) ->
-    code = context.tempVariablesDict[ValidIDfromString "code"]
-    # yield from
-    toBeReturned = code.eval context, code
-
-    # if there _is_ somethig being thrown, then
-    # we do not want another receiver, the thrown
-    # exception has to go through some catches
-    # hopefully.
-    if !context.throwing
-      context.findAnotherReceiver = true
-
-    context.throwing = false
-    return toBeReturned
-
-# Fake Catch -----------------------------------------------------------------------------
-# the catch object doesn't do the real catch, that's done
-# by the catch "as message". This one just consumes all the
-# catches after a real catch has happened. See the class
-# definition for explained example.
-
-FLFakeCatch.addMethod \
-  (flTokenize "all : ( ' errorHandle )"),
-  (context) ->
-    #yield
-    context.findAnotherReceiver = true
-    return @
-
-FLFakeCatch.addMethod \
-  (flTokenize "( 'theError ) : ( ' errorHandle )"),
-  (context) ->
-    #yield
-    context.findAnotherReceiver = true
-    return @
-
-# Pause -----------------------------------------------------------------------------
-
-pauseFunctionContinuation = (context) ->
-  #yield
-  seconds = context.tempVariablesDict[ValidIDfromString "seconds"]
-  startTime = new Date().getTime()
-  endTime = startTime + seconds.value * 1000
-  while (remainingTime = new Date().getTime() - endTime) < 0
-    #yield remainingTime
-    "do nothing"
-
-  context.findAnotherReceiver = true
-  return @
-
-FLPause.addMethod \
-  (flTokenize "( seconds )"),
-  pauseFunctionContinuation
-
-# For -----------------------------------------------------------------------------
-
-FLFor.addMethod \
-  (flTokenize "( ' loopVar ) from ( startIndex ) to ( endIndex ) : ( 'loopCode )"),
-  (context) ->
-    context.isTransparent = true
-    loopVar = context.tempVariablesDict[ValidIDfromString "loopVar"]
-    startIndex = context.tempVariablesDict[ValidIDfromString "startIndex"]
-    endIndex = context.tempVariablesDict[ValidIDfromString "endIndex"]
-    loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
-
-    loopVarName = loopVar.value
-
-    forContext = new FLContext context
-    forContext.isTransparent = true
-    flContexts.jsArrayPush forContext
-
-    console.log "FLFor ⇒ loop code is: " + loopCode.flToString()
-
-    for i in [startIndex.value..endIndex.value]
-      console.log "FLFor ⇒ loop iterating variable to " + i
-
-      # the looping var is always in the new local for context
-      # so it keeps any previous instance safe, and goes
-      # away when this for is done.
-      forContext.tempVariablesDict[ValidIDfromString loopVarName] = FLNumber.createNew i
-
-      # yield from
-      toBeReturned = loopCode.eval forContext, loopCode
-
-      flContexts.pop()
-
-      # catch any thrown "done" object, used to
-      # exit from a loop.
-      if toBeReturned?
-        if context.throwing and (toBeReturned.flClass == FLDone or toBeReturned.flClass == FLBreak)
-          context.throwing = false
-          if toBeReturned.value?
-            toBeReturned = toBeReturned.value
-          console.log "For ⇒ the loop exited with Done "
-          break
-        if context.throwing and toBeReturned.flClass == FLReturn
-          console.log "For ⇒ the loop exited with Return "
-          break
-
-    flContexts.pop()
-
-    context.findAnotherReceiver = true
-    return toBeReturned
-
-# there a few tricks that we performs on 'theList
-# FIRST OFF, we can't just pass theList as an evaluated
-# parameter because if you pass a list literal, then you
-# need the : to mean "quote", but at that point you can't
-# use the : when you pass statements that create a list
-# That does work, but it makes it tricky to understand when
-# to use the : and when not to.
-# So we make theList a quoted param instead, and we eval it.
-# If the evaluation returns a list, then we take that as
-# input. If not, we take the original list as input.
-FLFor.addMethod \
-  (flTokenize "each ( ' variable ) in: ( 'theList ) do: ( 'code )"),
-  (context) ->
-    #yield
-    context.isTransparent = true
-    variable = context.tempVariablesDict[ValidIDfromString "variable"]
-    theList = context.tempVariablesDict[ValidIDfromString "theList"]
-    code = context.tempVariablesDict[ValidIDfromString "code"]
-
-    if theList.flClass != FLList
+  FLThrow.addMethod \
+    (flTokenize "( theError )"),
+    (context) ->
+      #yield
+      theError = context.tempVariablesDict[ValidIDfromString "theError"]
+      theError.thrown = true
+      console.log "throwing an error: " + theError.value
       context.throwing = true
-      # TODO this error should really be a stock error referanceable
-      # from the workspace because someone might want to catch it.
-      return FLException.createNew "for...each expects a list"
+      return theError
 
-    # trivial case
-    if theList.isEmpty()
+  # IfThen -----------------------------------------------------------------------------
+
+  FLIfThen.addMethod \
+    (flTokenize "( predicate ) : ('trueBranch)"),
+    (context) ->
+      #yield
+      context.isTransparent = true
+      predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
+      trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
+      console.log "IfThen ⇒ , predicate value is: " + predicate.value
+
+      if predicate.value
+        console.log "IfThen ⇒ , evaling true branch at depth " + context.depth()
+        # yield from
+        toBeReturned = trueBranch.eval context, trueBranch
+        flContexts.pop()
+        context.findAnotherReceiver = true
+      else
+        toBeReturned = FLIfFallThrough.createNew()
+
+      return toBeReturned
+
+  # FLIfFallThrough -----------------------------------------------------------------------------
+
+  # all these "emptyMessage" signatures are going to be examined
+  # last because "addMethod" sorts all methods in order of increasing
+  # genericity. (more generic matches will be done last)
+  FLIfFallThrough.addMethod \
+    FLList.emptyMessage(),
+    (context) ->
+      #yield
+      console.log "no more cases for the if"
       context.findAnotherReceiver = true
-      return theList
+      return @
 
-    # you could adjust the examples OK without these two
-    # lines, but why not give the chance for clarity
-    # to add an extra pair or parens to make sure that
-    # lists are clearly visible?
-    if theList.length() == 1
-      theList = theList.firstElement()
+  FLIfFallThrough.addMethod \
+    (flTokenize "else if ( predicate ): ('trueBranch)"),
+    (context) ->
+      #yield
+      context.isTransparent = true
+      predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
+      trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
+      console.log "IfThen ⇒ , predicate value is: " + predicate.value
 
-    console.log "evalling list: " + theList.flToString()
-    # yield from
-    evalledList = theList.eval context, theList
-    console.log "evalled list: " + evalledList.flToString()
+      if predicate.value
+        # yield from
+        toBeReturned = trueBranch.eval context, trueBranch
+        flContexts.pop()
+        context.findAnotherReceiver = true
+      else
+        toBeReturned = FLIfFallThrough.createNew()
 
-    if context.throwing
-      # the list doesn't run as a program, so we just
-      # consider the original list to be the input
-      theList = theList.evaluatedElementsList context
-      # remember to turn off the "throwing" flag as we
-      # do nothing with tha aborted evaluation.
+      return toBeReturned
+
+  FLIfFallThrough.addMethod \
+    (flTokenize "else: ('trueBranch)"),
+    (context) ->
+      context.isTransparent = true
+      trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
+
+      # yield from
+      toBeReturned = trueBranch.eval context, trueBranch
+      flContexts.pop()
+      context.findAnotherReceiver = true
+      return toBeReturned
+
+
+
+  # FakeElse -----------------------------------------------------------------------------
+
+  FLFakeElse.addMethod \
+    # note that we make all the parameters as literals because we
+    # are not interested in any evaluation, we are just eating
+    # up tokens
+    (flTokenize "if ( 'predicate ) : ('trueBranch)"),
+    (context) ->
+      #yield
+      context.findAnotherReceiver = true
+      return @
+
+  FLFakeElse.addMethod \
+    # note that we make all the parameters as literals because we
+    # are not interested in any evaluation, we are just eating
+    # up tokens
+    (flTokenize ": ('trueBranch)"),
+    (context) ->
+      #yield
+      context.findAnotherReceiver = true
+      return @
+
+
+
+  # Try -----------------------------------------------------------------------------
+
+  FLTry.addMethod \
+    (flTokenize ": ( ' code )"),
+    (context) ->
+      code = context.tempVariablesDict[ValidIDfromString "code"]
+      # yield from
+      toBeReturned = code.eval context, code
+
+      # if there _is_ somethig being thrown, then
+      # we do not want another receiver, the thrown
+      # exception has to go through some catches
+      # hopefully.
+      if !context.throwing
+        context.findAnotherReceiver = true
+
       context.throwing = false
-    else
-      # the list DOES run as a program, so we use
-      # the evaluation result as the input
-      theList = evalledList
+      return toBeReturned
 
-    if theList.flClass != FLList
-      context.throwing = true
-      # TODO this error should really be a stock error referanceable
-      # from the workspace because someone might want to catch it.
-      return FLException.createNew "for...each expects a list"
+  # Fake Catch -----------------------------------------------------------------------------
+  # the catch object doesn't do the real catch, that's done
+  # by the catch "as message". This one just consumes all the
+  # catches after a real catch has happened. See the class
+  # definition for explained example.
 
-    console.log "FLEach do on the list: " + theList.flToString()
+  FLFakeCatch.addMethod \
+    (flTokenize "all : ( ' errorHandle )"),
+    (context) ->
+      #yield
+      context.findAnotherReceiver = true
+      return @
 
-    forContext = new FLContext context
-    forContext.isTransparent = true
+  FLFakeCatch.addMethod \
+    (flTokenize "( 'theError ) : ( ' errorHandle )"),
+    (context) ->
+      #yield
+      context.findAnotherReceiver = true
+      return @
 
-    for i in [0...theList.value.length]
+  # Pause -----------------------------------------------------------------------------
 
-      console.log "FLEach element at " + i + " : " + (theList.elementAt i).flToString()
-      forContext.tempVariablesDict[ValidIDfromString variable.value] = theList.elementAt i
-      console.log "FLEach do evaling...: " + code.flToString()
-      # yield from
-      toBeReturned = code.eval forContext, code
-
-      # catch any thrown "done" object, used to
-      # exit from a loop.
-      if toBeReturned?
-        if context.throwing and (toBeReturned.flClass == FLDone or toBeReturned.flClass == FLBreak)
-          context.throwing = false
-          if toBeReturned.value?
-            toBeReturned = toBeReturned.value
-          console.log "for-each-in-list loop exited with Done "
-          break
-        if context.throwing and toBeReturned.flClass == FLReturn
-          console.log "for-each-in-list loop exited with Return "
-          break
+  pauseFunctionContinuation = (context) ->
+    #yield
+    seconds = context.tempVariablesDict[ValidIDfromString "seconds"]
+    startTime = new Date().getTime()
+    endTime = startTime + seconds.value * 1000
+    while (remainingTime = new Date().getTime() - endTime) < 0
+      #yield remainingTime
+      "do nothing"
 
     context.findAnotherReceiver = true
-    return toBeReturned
+    return @
+
+  FLPause.addMethod \
+    (flTokenize "( seconds )"),
+    pauseFunctionContinuation
+
+  # For -----------------------------------------------------------------------------
+
+  FLFor.addMethod \
+    (flTokenize "( ' loopVar ) from ( startIndex ) to ( endIndex ) : ( 'loopCode )"),
+    (context) ->
+      context.isTransparent = true
+      loopVar = context.tempVariablesDict[ValidIDfromString "loopVar"]
+      startIndex = context.tempVariablesDict[ValidIDfromString "startIndex"]
+      endIndex = context.tempVariablesDict[ValidIDfromString "endIndex"]
+      loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
+
+      loopVarName = loopVar.value
+
+      forContext = new FLContext context
+      forContext.isTransparent = true
+      flContexts.jsArrayPush forContext
+
+      console.log "FLFor ⇒ loop code is: " + loopCode.flToString()
+
+      for i in [startIndex.value..endIndex.value]
+        console.log "FLFor ⇒ loop iterating variable to " + i
+
+        # the looping var is always in the new local for context
+        # so it keeps any previous instance safe, and goes
+        # away when this for is done.
+        forContext.tempVariablesDict[ValidIDfromString loopVarName] = FLNumber.createNew i
+
+        # yield from
+        toBeReturned = loopCode.eval forContext, loopCode
+
+        flContexts.pop()
+
+        # catch any thrown "done" object, used to
+        # exit from a loop.
+        if toBeReturned?
+          if context.throwing and (toBeReturned.flClass == FLDone or toBeReturned.flClass == FLBreak)
+            context.throwing = false
+            if toBeReturned.value?
+              toBeReturned = toBeReturned.value
+            console.log "For ⇒ the loop exited with Done "
+            break
+          if context.throwing and toBeReturned.flClass == FLReturn
+            console.log "For ⇒ the loop exited with Return "
+            break
+
+      flContexts.pop()
+
+      context.findAnotherReceiver = true
+      return toBeReturned
+
+  # there a few tricks that we performs on 'theList
+  # FIRST OFF, we can't just pass theList as an evaluated
+  # parameter because if you pass a list literal, then you
+  # need the : to mean "quote", but at that point you can't
+  # use the : when you pass statements that create a list
+  # That does work, but it makes it tricky to understand when
+  # to use the : and when not to.
+  # So we make theList a quoted param instead, and we eval it.
+  # If the evaluation returns a list, then we take that as
+  # input. If not, we take the original list as input.
+  FLFor.addMethod \
+    (flTokenize "each ( ' variable ) in: ( 'theList ) do: ( 'code )"),
+    (context) ->
+      #yield
+      context.isTransparent = true
+      variable = context.tempVariablesDict[ValidIDfromString "variable"]
+      theList = context.tempVariablesDict[ValidIDfromString "theList"]
+      code = context.tempVariablesDict[ValidIDfromString "code"]
+
+      if theList.flClass != FLList
+        context.throwing = true
+        # TODO this error should really be a stock error referanceable
+        # from the workspace because someone might want to catch it.
+        return FLException.createNew "for...each expects a list"
+
+      # trivial case
+      if theList.isEmpty()
+        context.findAnotherReceiver = true
+        return theList
+
+      # you could adjust the examples OK without these two
+      # lines, but why not give the chance for clarity
+      # to add an extra pair or parens to make sure that
+      # lists are clearly visible?
+      if theList.length() == 1
+        theList = theList.firstElement()
+
+      console.log "evalling list: " + theList.flToString()
+      # yield from
+      evalledList = theList.eval context, theList
+      console.log "evalled list: " + evalledList.flToString()
+
+      if context.throwing
+        # the list doesn't run as a program, so we just
+        # consider the original list to be the input
+        theList = theList.evaluatedElementsList context
+        # remember to turn off the "throwing" flag as we
+        # do nothing with tha aborted evaluation.
+        context.throwing = false
+      else
+        # the list DOES run as a program, so we use
+        # the evaluation result as the input
+        theList = evalledList
+
+      if theList.flClass != FLList
+        context.throwing = true
+        # TODO this error should really be a stock error referanceable
+        # from the workspace because someone might want to catch it.
+        return FLException.createNew "for...each expects a list"
+
+      console.log "FLEach do on the list: " + theList.flToString()
+
+      forContext = new FLContext context
+      forContext.isTransparent = true
+
+      for i in [0...theList.value.length]
+
+        console.log "FLEach element at " + i + " : " + (theList.elementAt i).flToString()
+        forContext.tempVariablesDict[ValidIDfromString variable.value] = theList.elementAt i
+        console.log "FLEach do evaling...: " + code.flToString()
+        # yield from
+        toBeReturned = code.eval forContext, code
+
+        # catch any thrown "done" object, used to
+        # exit from a loop.
+        if toBeReturned?
+          if context.throwing and (toBeReturned.flClass == FLDone or toBeReturned.flClass == FLBreak)
+            context.throwing = false
+            if toBeReturned.value?
+              toBeReturned = toBeReturned.value
+            console.log "for-each-in-list loop exited with Done "
+            break
+          if context.throwing and toBeReturned.flClass == FLReturn
+            console.log "for-each-in-list loop exited with Return "
+            break
+
+      context.findAnotherReceiver = true
+      return toBeReturned
