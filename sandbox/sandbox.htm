@@ -65,13 +65,19 @@
     </div>
 
     <div>
-      <textarea id="terminal121" name="terminal" rows="2" cols="80" style="width:100%;margin-bottom:-5px;">code output</textarea>
+      <textarea id="output" name="output" rows="2" cols="80" style="width:100%;margin-bottom:-5px;">code output</textarea>
     </div>
 
 
   </div>
 
 </div>
+
+<script>
+Fizzylogo.init(document.getElementById("output"));
+Fizzylogo.runInOneStep("console print 1+1");
+
+</script>
 
 
 

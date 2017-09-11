@@ -446,6 +446,3 @@ class FLListClass extends FLClasses
 
     
 FLList = new FLListClass()
-
-# export as a global, whether it's in node or in the browser
-(exports ? this).FLList = FLList

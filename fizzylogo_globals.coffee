@@ -1,3 +1,7 @@
+Fizzylogo = {}
+# export as a global, whether it's in node or in the browser
+(exports ? this).Fizzylogo = Fizzylogo
+
 repeatFunctionContinuation = null
 
 outerMostContext = null

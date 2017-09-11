@@ -34,4 +34,5 @@ fizzylogo_String.coffee
 fizzylogo_Workspace.coffee
 fizzylogo_Console.coffee
 fizzylogo_populateMethods.coffee
+fizzylogo_coda.coffee
 tests.coffee

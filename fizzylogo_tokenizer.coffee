@@ -272,6 +272,3 @@ flTokenize = (command) ->
       listsStack[listsStack.length-1] = listsStack[listsStack.length-1].flListImmutablePush FLToken.createNew eachToken
 
   return listsStack[listsStack.length-1]
-
-# export as a global, whether it's in node or in the browser
-(exports ? this).flTokenize = flTokenize
