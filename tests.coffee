@@ -27,6 +27,23 @@ tests = [
   "console print 1+1;Number answer:(+(operandum))by:(console print self;console print \"+\";console print operandum);2+3;Number answer:(+(operandum))by:(self $plus_binary operandum);"
   "22+3"
 
+  """
+  console print 1+1
+  Number answer:
+  ﹍+ (operandum)
+  by:
+  ﹍console print self
+  ﹍console print \"+\"
+  ﹍console print operandum
+  2+3
+
+  Number answer:
+  ﹍+ (operandum)
+  by:
+  ﹍self $plus_binary operandum
+  """
+  "22+3"
+
   # ---------------------------------------------------------------------------
   # here "print" takes "print" and does
   # nothing with it, so first (1+1) is
