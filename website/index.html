@@ -14,32 +14,66 @@
       <p class="subtitle">an object-oriented Logo</p>
 
       <section>
-        <p>Fizzylogo is a minimal, object-oriented version of Logo. It's heavily inspired by Smalltalk-72 and Rosetta Smalltalk, with further influences from Ruby.</p>
+        <p>Fizzylogo is a minimal, object-oriented version of Logo. It's heavily inspired by Smalltalk-72 and Rosetta Smalltalk, with further influences from Python, Ruby and Coffeescript.</p>
       </section>
 
       <section>
+
         <h2 id="fundamentals--text">Fundamentals</h2>
+
         <h3 id="fundamentals--sections-and-headers">Basic types</h3>
-        <p>In Fizzylogo everything is an object. The most fundamental types of objects are Numbers, Strings Booleans and Lists. Control statements are also objects, so for example "repeat" and "for" and "if" are also objects. Also all the words in a program start their life as Tokens, which are also objects.</p>
+        <p>The most fundamental types are Numbers, Strings Booleans and Lists. Every number, string, boolean, list is an object. In fact everything is an object. Control statements are also objects, so for example "repeat" and "for" and "if" are also objects. Also all the words in a program start their life as Tokens, which are also objects.</p>
+
         <h3 id="fundamentals--sections-and-headers">Everything starts as a token</h3>
-        <p>In Fizzylogo everything starts as a Token. All words that constitute the program are Tokens. "Hello" is a token. 3.14 is also a Token. When evalled, Tokens normally become strings, numbers and booleans according to the usual parsing rules of all languages. But Tokens can also be assigned to, so for example:</p>
+        <p>There is one more important class of objects that deserves a section on its own: tokens (which are objects of the class Token). All words that constitute the program are tokens. "Hello" is a Token. Also "Hello" <i>inclusive of the quotes</i> is a Token. + is a Token. 3.14 is also a Token.</p>
+
+        <p>When evalled, tokens normally become strings, numbers and booleans according to the usual parsing rules of most languages. But un-evalled tokens remain just tokens and can be assigned to, so for example:</p>
+        <pre class="code">Hello = 3.14</pre>
+        <p>is a valid assignment. Like any assignment in most languages, the right part is evaluated while the right part is not. Hence, the token "Hello" on the left remains a Token, and the Token on the right is evalled (and the Token 3.14 evaluates to the Number 3.14). Hence from now on any token Hello will actually be looked-up onto its value: the Number 3.14.</p>
+
+        <p>that's all as expected but let's see a more mind-bending example:</p>
         <pre class="code">"Hello" = 3.14</pre>
-        <p>is a valid assignment. Like any assignment in most languages, the left part is not evaluated while the right part. Hence, the token "Hello" on the left remains a Token, and the Token on the right is evalled (and the token 3.14 evaluates to the Number 3.14). Hence from now on any token "Hello" will actually be looked-up onto its value 3.14:</p>
-        <pre class="code">console print "Hello" // prints 3.14</pre>
+        <p>is also a valid assignment! The Token "Hello" on the left remains a Token, and the Token on the right is evalled to the Number 3.14. Hence from now on any token "Hello" will actually be looked-up onto its value: the Number 3.14.</p>
+        <pre class="code">console print "Hello" // prints 3.14 too!</pre>
         <p>similarly, all numbers can be assigned to, and all boolans too!</p>
-        <h3 id="fundamentals--sections-and-headers">Dynamically parsed</h3>
-        <p>Just like Smalltalk-72 and Rosetta Smalltalk, parsing in Fizzylogo is not done at compile time but at runtime, i.e. the objects themselves look ahead at the list of tokens that follows them to determine what to do. This means for example that a Fizzylogo program can dynamically change the meaning of control statements, or whether a "function" will take 1, 2 or 0 arguments. </p>
-        <h3 id="fundamentals--sections-and-headers">How a program actually runs</h3>
-        <p>Like in Rosetta Smalltalk and Ometa, each object matches the following tokens based on a number of matches. For example, all Numbers can match a + and another Number. So in this case:</p>
+
+        <h3 id="fundamentals--sections-and-headers">Dynamic parsing i.e. objects matching the tokens that follow them</h3>
+        <p>Just like Smalltalk-72, Rosetta Smalltalk, and contrarily to most other languages, parsing in Fizzylogo is <i><b>not</b></i> done at compile time but at runtime, i.e. the objects themselves (potentially resulting from token evaluation, or potentially resulting from evaluating methods) look ahead at the list of tokens that follows them to determine what to do. This means for example that a Fizzylogo program can dynamically change the structure or meaning of control statements (e.g. a new if statement where the test predicate is <i>after</i> the "body"), which is a form of <i>meta</i>-programming.</p>
+
+        <h3 id="fundamentals--sections-and-headers">A simple matching example</h3>
+        <p>Like in Rosetta Smalltalk and Ometa, each object matches the following tokens based on a list of possible "matchers" that their Class makes available. For example, all Numbers have a matcher to match a "+" followed by something else. Let's see how one would add/specify such "+" method to the Number class:</p>
 
         <pre class="code">
-         FLNumber.addMethod
-          (flTokenize "+ ( operandum )"),
-          (flTokenize "self $plus_binary operandum")
+          Number answer:
+            + (operandum)
+          by:
+            self $plus_binary_default operandum
         </pre>
 
+        <p>In the second line we have specified the matcher: items outside of parentheses are matched literally (i.e. a "+" must be found) and "(operandum)" means "evaluate whatever comes next and pass it as a parameter called operandum". In the 4th line we just specify the implementation: this same object that received the "+" (indicated here by "self") should use the system's default binary plus operation passing its argument. (This "+" definition in terms of the common default addition between Numbers is obviously given by default, but it's explicitly defined so one could replace it with another implementation).</p>
+
+        <h3 id="fundamentals--sections-and-headers">Native methods</h3>
+
+        <p>It's all very nice that "+" is defined in terms of some native "$plus_binary_default" function, but let's get right away to the bottom of how native functions are defined, so that there is no mistery left there. Native functions are defined in the "outer language", this is an example of how the Console class would implement "print" in Coffeescript:</p>
+
+        <pre class="code">
+          FLConsole.addMethod \
+            (flTokenize "print ( thingToPrint )"),
+            (context) ->
+              thingToPrint = context.tempVariablesDict[ValidIDfromString "thingToPrint"]
+              stringToPrint = thingToPrint.flToString()
+              environmentPrintout += stringToPrint
+              return thingToPrint
+        </pre>
+
+        <p>The matcher is still visible and clear: "print" must be there, and then what follows is evaluated and put into a parameter "thingToPrint". The implementation fetches the parameter from the environment and puts it into a special string that collects all the prints. It's worth pausing for a second to realise that eventually all "things" that a program does are done by some native implementation: native implementations are where the bucket stops (as far as the top level language is concerned), otherwise nothing would ever get done in the end.</p>
+
+        <h3 id="fundamentals--sections-and-headers">How a program runs: a simple example</h3>
+        <p>We've enstablished that everything is an object, that programs start as lists of tokens, and that objects match tokens to "do things". Here is an example on how this "match and run" makes programs work:</p>
         <pre class="code">console print 1+1</pre>
-        <p>the number 1 looks ahead and finds the + and another Number. It knows how to respond to such match: by doing a sum.</p>
+        <p>the program starts as a list of Tokens, the first one here is "console". The "console" token is evalled: when tokens are evalled they first look up whether there is a definition of their value in their environment. Indeed the "console" contains an object of the class "Console", which as we saw before has a matcher for "print". So the matcher matches "print" and evaluates what follows to put it in the "thingToPrint" parameter. The "what follows" here is "1+1". Again, these are tokens. The first token "1" is looked up just in case someone assigned a value to it (one could assign anything to the token "1", including any other Number!). If the token "1" has no value, then the Token evals itself to the "natural interpretation" of itself, in this case the Number 1. The Number 1 then has a matcher for "+", which evaluates what follows to be put as the "operandum" parameter. The "1" after the "+" is again still a Token, and evaluates itself to the Number "1" objext. The sum happens via the $plus_binary_default method (which is just the native implementaiton of sums) and returns the Numbe 2 object. The Number 2 object is then printed.</p>
+
+        <p>To any LISPer, this informal "match and run" description will look like the analogous to the "eval and apply" cycle ("match" roughly corresponding to "apply" and "run" corresponding to "eval")</p>
 
         <h3 id="fundamentals--sections-and-headers">Object Oriented</h3>
         <p>Fizzylogo is object oriented, i.e. it allows users to create Classes, define behaviours for such classes, and create objects from them.</p>
