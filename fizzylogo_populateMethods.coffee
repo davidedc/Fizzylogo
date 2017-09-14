@@ -698,12 +698,12 @@ initBootClasses = ->
       return FLNumber.createNew @value + operandum.value
 
   FLNumber.addMethod \
-    (flTokenize "$plus_binary ( operandum )"),
+    (flTokenize "$plus_binary_default ( operandum )"),
     BasePlusFunction
 
   FLNumber.addMethod \
     (flTokenize "+ ( operandum )"),
-    (flTokenize "self $plus_binary operandum")
+    (flTokenize "self $plus_binary_default operandum")
 
   # although there are some good reasons to have this,
   # it can get confusing, consider for example
@@ -728,12 +728,12 @@ initBootClasses = ->
     return FLNumber.createNew @value % operandum.value
 
   FLNumber.addMethod \
-    (flTokenize "$percent_binary ( operandum )"),
+    (flTokenize "$percent_binary_default ( operandum )"),
     BasePercentFunction
 
   FLNumber.addMethod \
     (flTokenize "% ( operandum )"),
-    (flTokenize "self $percent_binary operandum")
+    (flTokenize "self $percent_binary_default operandum")
 
   # ---
 
@@ -743,12 +743,12 @@ initBootClasses = ->
     return FLNumber.createNew Math.floor(@value / operandum.value)
 
   FLNumber.addMethod \
-    (flTokenize "$floordivision_binary ( operandum )"),
+    (flTokenize "$floordivision_binary_default ( operandum )"),
     BaseFloorDivisionFunction
 
   FLNumber.addMethod \
     (flTokenize "/_ ( operandum )"),
-    (flTokenize "self $floordivision_binary operandum")
+    (flTokenize "self $floordivision_binary_default operandum")
 
   # ---
 
@@ -758,12 +758,12 @@ initBootClasses = ->
     return FLNumber.createNew @value - operandum.value
 
   FLNumber.addMethod \
-    (flTokenize "$minus_binary ( operandum )"),
+    (flTokenize "$minus_binary_default ( operandum )"),
     BaseMinusFunction
 
   FLNumber.addMethod \
     (flTokenize "- ( operandum )"),
-    (flTokenize "self $minus_binary operandum")
+    (flTokenize "self $minus_binary_default operandum")
 
   # ---
 
@@ -773,12 +773,12 @@ initBootClasses = ->
     return FLNumber.createNew @value / operandum.value
 
   FLNumber.addMethod \
-    (flTokenize "$divide_binary ( operandum )"),
+    (flTokenize "$divide_binary_default ( operandum )"),
     BaseDivideFunction
 
   FLNumber.addMethod \
     (flTokenize "/ ( operandum )"),
-    (flTokenize "self $divide_binary operandum")
+    (flTokenize "self $divide_binary_default operandum")
 
   # ---
 
@@ -788,12 +788,12 @@ initBootClasses = ->
     return FLNumber.createNew @value * operandum.value
 
   FLNumber.addMethod \
-    (flTokenize "$multiply_binary ( operandum )"),
+    (flTokenize "$multiply_binary_default ( operandum )"),
     BaseMultiplyFunction
 
   FLNumber.addMethod \
     (flTokenize "* ( operandum )"),
-    (flTokenize "self $multiply_binary operandum")
+    (flTokenize "self $multiply_binary_default operandum")
 
   # see "++" regarding why this could be confusing
   FLNumber.addMethod \

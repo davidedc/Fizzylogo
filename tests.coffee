@@ -24,7 +24,7 @@ tests = [
 
   # ---------------------------------------------------------------------------
 
-  "console print 1+1;Number answer:(+(operandum))by:(console print self;console print \"+\";console print operandum);2+3;Number answer:(+(operandum))by:(self $plus_binary operandum);"
+  "console print 1+1;Number answer:(+(operandum))by:(console print self;console print \"+\";console print operandum);2+3;Number answer:(+(operandum))by:(self $plus_binary_default operandum);"
   "22+3"
 
   """
@@ -40,7 +40,7 @@ tests = [
   Number answer:
   ﹍+ (operandum)
   by:
-  ﹍self $plus_binary operandum
+  ﹍self $plus_binary_default operandum
   """
   "22+3"
 
