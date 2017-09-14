@@ -1890,8 +1890,8 @@
         return FLNumber.createNew(this.value + operandum.value);
       }
     };
-    FLNumber.addMethod(flTokenize("$plus_binary ( operandum )"), BasePlusFunction);
-    FLNumber.addMethod(flTokenize("+ ( operandum )"), flTokenize("self $plus_binary operandum"));
+    FLNumber.addMethod(flTokenize("$plus_binary_default ( operandum )"), BasePlusFunction);
+    FLNumber.addMethod(flTokenize("+ ( operandum )"), flTokenize("self $plus_binary_default operandum"));
     FLNumber.addMethod(flTokenize("++"), flTokenize("self + 1"));
     FLNumber.addMethod(flTokenize("+= (value)"), flTokenize("self + value"));
     BasePercentFunction = function*(context) {
@@ -1900,40 +1900,40 @@
       operandum = context.tempVariablesDict[ValidIDfromString("operandum")];
       return FLNumber.createNew(this.value % operandum.value);
     };
-    FLNumber.addMethod(flTokenize("$percent_binary ( operandum )"), BasePercentFunction);
-    FLNumber.addMethod(flTokenize("% ( operandum )"), flTokenize("self $percent_binary operandum"));
+    FLNumber.addMethod(flTokenize("$percent_binary_default ( operandum )"), BasePercentFunction);
+    FLNumber.addMethod(flTokenize("% ( operandum )"), flTokenize("self $percent_binary_default operandum"));
     BaseFloorDivisionFunction = function*(context) {
       var operandum;
       yield;
       operandum = context.tempVariablesDict[ValidIDfromString("operandum")];
       return FLNumber.createNew(Math.floor(this.value / operandum.value));
     };
-    FLNumber.addMethod(flTokenize("$floordivision_binary ( operandum )"), BaseFloorDivisionFunction);
-    FLNumber.addMethod(flTokenize("/_ ( operandum )"), flTokenize("self $floordivision_binary operandum"));
+    FLNumber.addMethod(flTokenize("$floordivision_binary_default ( operandum )"), BaseFloorDivisionFunction);
+    FLNumber.addMethod(flTokenize("/_ ( operandum )"), flTokenize("self $floordivision_binary_default operandum"));
     BaseMinusFunction = function*(context) {
       var operandum;
       yield;
       operandum = context.tempVariablesDict[ValidIDfromString("operandum")];
       return FLNumber.createNew(this.value - operandum.value);
     };
-    FLNumber.addMethod(flTokenize("$minus_binary ( operandum )"), BaseMinusFunction);
-    FLNumber.addMethod(flTokenize("- ( operandum )"), flTokenize("self $minus_binary operandum"));
+    FLNumber.addMethod(flTokenize("$minus_binary_default ( operandum )"), BaseMinusFunction);
+    FLNumber.addMethod(flTokenize("- ( operandum )"), flTokenize("self $minus_binary_default operandum"));
     BaseDivideFunction = function*(context) {
       var operandum;
       yield;
       operandum = context.tempVariablesDict[ValidIDfromString("operandum")];
       return FLNumber.createNew(this.value / operandum.value);
     };
-    FLNumber.addMethod(flTokenize("$divide_binary ( operandum )"), BaseDivideFunction);
-    FLNumber.addMethod(flTokenize("/ ( operandum )"), flTokenize("self $divide_binary operandum"));
+    FLNumber.addMethod(flTokenize("$divide_binary_default ( operandum )"), BaseDivideFunction);
+    FLNumber.addMethod(flTokenize("/ ( operandum )"), flTokenize("self $divide_binary_default operandum"));
     BaseMultiplyFunction = function*(context) {
       var operandum;
       yield;
       operandum = context.tempVariablesDict[ValidIDfromString("operandum")];
       return FLNumber.createNew(this.value * operandum.value);
     };
-    FLNumber.addMethod(flTokenize("$multiply_binary ( operandum )"), BaseMultiplyFunction);
-    FLNumber.addMethod(flTokenize("* ( operandum )"), flTokenize("self $multiply_binary operandum"));
+    FLNumber.addMethod(flTokenize("$multiply_binary_default ( operandum )"), BaseMultiplyFunction);
+    FLNumber.addMethod(flTokenize("* ( operandum )"), flTokenize("self $multiply_binary_default operandum"));
     FLNumber.addMethod(flTokenize("*= (value)"), flTokenize("self * value"));
     FLNumber.addMethod(flTokenize("minus ( operandum )"), function*(context) {
       var operandum;
