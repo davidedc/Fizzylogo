@@ -352,14 +352,10 @@
           }
           if (eachElementOfSignature.flClass === FLToken) {
             ref2 = methodInvocation.nextElement(), eachElementOfInvocation = ref2[0], methodInvocation = ref2[1];
-            if (eachElementOfInvocation.flClass === FLToken) {
-              if (eachElementOfSignature.value === eachElementOfInvocation.value) {
-                log("evaluation " + indentation() + "  matching - token matched: " + eachElementOfSignature.flToString());
-                continue;
-              } else {
-                soFarEverythingMatched = false;
-                break;
-              }
+            log("******* evaluation " + indentation() + "  matching tokens: - next signature piece: " + eachElementOfSignature.flToString() + " is token: " + (eachElementOfSignature.flClass === FLToken) + " with: " + eachElementOfInvocation.flToString());
+            if (eachElementOfSignature.value === eachElementOfInvocation.value) {
+              log("evaluation " + indentation() + "  matching - token matched: " + eachElementOfSignature.flToString());
+              continue;
             } else {
               soFarEverythingMatched = false;
               break;
@@ -1119,7 +1115,10 @@
     }
 
     FLFakeElseClass.prototype.createNew = function() {
-      return FLFakeElseClass.__super__.createNew.call(this, FLFakeElse);
+      var toBeReturned;
+      toBeReturned = FLFakeElseClass.__super__.createNew.call(this, FLFakeElse);
+      toBeReturned.value = "else";
+      return toBeReturned;
     };
 
     return FLFakeElseClass;
@@ -1862,11 +1861,11 @@
     FLNumber.addMethod(flTokenize("anotherPrint"), flTokenize("console print self"));
     FLNumber.addMethod(flTokenize("doublePrint"), flTokenize("console print(console print self)"));
     FLNumber.addMethod(flTokenize("incrementInPlace"), flTokenize("self ← self + 1"));
-    FLNumber.addMethod(flTokenize("factorial"), flTokenize("( self == 0 ) ⇒ ( 1 ) ( self minus 1 ) factorial * self"));
     FLNumber.addMethod(flTokenize("factorialtwo"), flTokenize("( self == 0 ) ⇒ ( 1 ) self * ( ( self minus 1 ) factorialtwo )"));
     FLNumber.addMethod(flTokenize("factorialthree"), flTokenize("( self == 0 ) ⇒ ( 1 ) ('temp ← self;console print temp; ( self minus 1 ) factorialthree * temp )"));
     FLNumber.addMethod(flTokenize("factorialfour"), flTokenize("( self == 0 ) ⇒ ( 1 ) ('temp ← self;( self minus 1 ) factorialfour * temp )"));
     FLNumber.addMethod(flTokenize("factorialfive"), flTokenize("( self == 0 ) ⇒ ( 1 ) (1 + 1;'temp ← self;( self minus 1 ) factorialfive * temp )"));
+    FLNumber.addMethod(flTokenize("factorialsix"), flTokenize("( self == 0 ) ⇒ ( 1 ) ( self minus 1 ) factorialsix * self"));
     FLNumber.addMethod(flTokenize("amIZero"), flTokenize("self == 0"));
     FLNumber.addMethod(flTokenize("printAFromDeeperCall"), flTokenize("console print a"));
     FLNumber.addMethod(flTokenize("...(endRange)"), function*(context) {
@@ -2267,9 +2266,9 @@
       context.isTransparent = true;
       predicate = context.tempVariablesDict[ValidIDfromString("predicate")];
       trueBranch = context.tempVariablesDict[ValidIDfromString("trueBranch")];
-      log("IfThen ⇒ , predicate value is: " + predicate.value);
+      log("FLIfThen: predicate value is: " + predicate.value);
       if (predicate.value) {
-        log("IfThen ⇒ , evaling true branch at depth " + context.depth());
+        log("FLIfThen: evaling true branch at depth " + context.depth());
         toBeReturned = (yield* trueBranch["eval"](context, trueBranch));
         flContexts.pop();
         context.findAnotherReceiver = true;
@@ -2290,7 +2289,7 @@
       context.isTransparent = true;
       predicate = context.tempVariablesDict[ValidIDfromString("predicate")];
       trueBranch = context.tempVariablesDict[ValidIDfromString("trueBranch")];
-      log("IfThen ⇒ , predicate value is: " + predicate.value);
+      log("FLIfFallThrough: predicate value is: " + predicate.value);
       if (predicate.value) {
         toBeReturned = (yield* trueBranch["eval"](context, trueBranch));
         flContexts.pop();
@@ -2302,8 +2301,10 @@
     });
     FLIfFallThrough.addMethod(flTokenize("else: ('trueBranch)"), function*(context) {
       var toBeReturned, trueBranch;
+      log("FLIfFallThrough else: case ");
       context.isTransparent = true;
       trueBranch = context.tempVariablesDict[ValidIDfromString("trueBranch")];
+      log("FLIfFallThrough else: evalling code ");
       toBeReturned = (yield* trueBranch["eval"](context, trueBranch));
       flContexts.pop();
       context.findAnotherReceiver = true;
