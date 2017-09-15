@@ -643,10 +643,6 @@ initBootClasses = ->
 
 
   FLNumber.addMethod \
-    (flTokenize "factorial"),
-    flTokenize "( self == 0 ) ⇒ ( 1 ) ( self minus 1 ) factorial * self"
-
-  FLNumber.addMethod \
     (flTokenize "factorialtwo"),
     flTokenize "( self == 0 ) ⇒ ( 1 ) self * ( ( self minus 1 ) factorialtwo )"
 
@@ -665,6 +661,11 @@ initBootClasses = ->
     flTokenize \
       "( self == 0 ) ⇒ ( 1 ) (1 + 1;'temp ← self;\
       ( self minus 1 ) factorialfive * temp )"
+
+  FLNumber.addMethod \
+    (flTokenize "factorialsix"),
+    flTokenize "( self == 0 ) ⇒ ( 1 ) ( self minus 1 ) factorialsix * self"
+
 
   FLNumber.addMethod \
     (flTokenize "amIZero"),

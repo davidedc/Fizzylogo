@@ -2,6 +2,9 @@
 
 class FLFakeElseClass extends FLClasses
   createNew: ->
-    return super FLFakeElse
+    toBeReturned = super FLFakeElse
+    toBeReturned.value = "else"
+    return toBeReturned
+
 
 FLFakeElse = new FLFakeElseClass()

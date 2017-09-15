@@ -115,27 +115,23 @@ class FLObjects
 
           [eachElementOfInvocation, methodInvocation] = methodInvocation.nextElement()
 
-          if eachElementOfInvocation.flClass == FLToken
 
-            #log "evaluation " + indentation() + "  matching tokens: - next signature piece: " + eachElementOfSignature.flToString() + " is token: " + (eachElementOfSignature.flClass == FLToken) + " with: " + eachElementOfInvocation.flToString()
+          #log "evaluation " + indentation() + "  matching tokens: - next signature piece: " + eachElementOfSignature.flToString() + " is token: " + (eachElementOfSignature.flClass == FLToken) + " with: " + eachElementOfInvocation.flToString()
 
-            # ok at least the message contains a token, but
-            # now we have to check that they spell the same
-            if eachElementOfSignature.value == eachElementOfInvocation.value
-              log "evaluation " + indentation() + "  matching - token matched: " + eachElementOfSignature.flToString()
-              # OK good match of tokens,
-              # check the next token in the signature
-              continue
-            else
-              # no match between the tokens, check next signature
-              soFarEverythingMatched = false
-              break
+          # ok at least the message contains a token, but
+          # now we have to check that they spell the same
+          log "******* evaluation " + indentation() +
+            "  matching tokens: - next signature piece: " +
+            eachElementOfSignature.flToString() +
+            " is token: " + (eachElementOfSignature.flClass == FLToken) +
+            " with: " + eachElementOfInvocation.flToString()
+          if eachElementOfSignature.value == eachElementOfInvocation.value
+            log "evaluation " + indentation() + "  matching - token matched: " + eachElementOfSignature.flToString()
+            # OK good match of tokens,
+            # check the next token in the signature
+            continue
           else
-            # the signature says "token" but the message contains
-            # something else: no match, check the next
-            # signature
-            #log "evaluation " + indentation() + "  matching - no match: " + eachElementOfSignature.flToString() + " vs. " + eachElementOfInvocation.flToString()
-            # this signature doesn't match check the next one
+            # no match between the tokens, check next signature
             soFarEverythingMatched = false
             break
 

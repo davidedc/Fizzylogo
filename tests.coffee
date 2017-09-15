@@ -474,19 +474,19 @@ tests = [
   "the end."
 
   # ---------------------------------------------------------------------------
-  "console print 0 factorial"
+  "console print 0 factorialsix"
   "1"
 
   # ---------------------------------------------------------------------------
-  "console print 1 factorial"
+  "console print 1 factorialsix"
   "1"
 
   # ---------------------------------------------------------------------------
-  "console print 2 factorial"
+  "console print 2 factorialsix"
   "2"
 
   # ---------------------------------------------------------------------------
-  "console print 7 factorial"
+  "console print 7 factorialsix"
   "5040"
 
   # ---------------------------------------------------------------------------
@@ -3620,6 +3620,54 @@ tests = [
   console print 🚀
   """
   "2[object of class \"Class_of_🚀\"]"
+
+  # ---------------------------------------------------------------------------
+  """
+  Number answer:
+  ﹍factorial
+  by:
+  ﹍if self == 0:
+  ﹍﹍return 1
+  ﹍else:
+  ﹍﹍(self - 1) factorial * self
+  console print 3 factorial
+  """
+  "6"
+
+  """
+  Number answer:
+  ﹍factorial
+  by:
+  ﹍if self == 0:
+  ﹍﹍return 1
+  ﹍else:
+  ﹍﹍return (self - 1) factorial * self
+  console print 3 factorial
+  """
+  "6"
+
+  # if you don't explicitely use the return, then
+  # when the true branch of the if is run,
+  # findAnotherReceiver is turned on,
+  # so the "else" runs (fakeElse) so that's
+  # what is returned.
+  # that said, we could do better, we could
+  # detect when a method invokation returns
+  # a fakeElse and raise an error on that.
+  # on top of that, since "factorial" returns an error
+  # we also print it, so the result is "duplicating" the
+  # error message. Not a big deal but could be better.
+  """
+  Number answer:
+  ﹍factorial
+  by:
+  ﹍if self == 0:
+  ﹍﹍1
+  ﹍else:
+  ﹍﹍(self - 1) factorial * self
+  console print 3 factorial
+  """
+  "message was not understood: ( * self )! exception: message was not understood: ( * self )"
 
   # ---------------------------------------------------------------------------
   # override class default name. class names are really just for more
