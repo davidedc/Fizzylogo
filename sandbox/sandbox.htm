@@ -38,6 +38,7 @@
   <option value="printForever">print forever</option>
   <option value="20DigitsOfPi">20 digits of pi</option>
   <option value="factorial">factorial</option>
+  <option value="PythagoreanTriplets">Pythagorean Triplets</option>
 </select>
 <div>
 
@@ -85,6 +86,10 @@ loadExample = function(){
   else if (selected == 3) {
     editor.setValue("Number answer:\n﹍factorial\nby:\n﹍if self == 0:\n﹍﹍return 1\n﹍else:\n﹍﹍return (self - 1) factorial * self\nconsole print 3 factorial");
   }
+  else if (selected == 4) {
+    editor.setValue("for each c in: (1...10) do:\n  for each b in: (1...c) do:\n    for each a in: (1...b) do:\n      if ((a * a) + (b * b)) == (c * c):\n        console print \"a: \" + a + \" b: \" + b + \" c: \" + c");
+  }
+
 }
 
 clearOutput = function(){

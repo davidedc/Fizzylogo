@@ -3680,6 +3680,17 @@ tests = [
   """
   "[class \"My Class\" (an object of class Class)][object of class \"My Class\"]"
 
+  # ---------------------------------------------------------------------------
+  # pythagorean triplets
+  """
+  for each c in: (1...10) do:
+  ﹍for each b in: (1...c) do:
+  ﹍﹍for each a in: (1...b) do:
+  ﹍﹍﹍if ((a * a) + (b * b)) == (c * c):
+  ﹍﹍﹍﹍console print "a: " + a + " b: " + b + " c: " + c
+  """
+  "a: 3 b: 4 c: 5"
+
 ]
 
 ###
