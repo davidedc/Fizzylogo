@@ -1280,10 +1280,10 @@ initBootClasses = ->
       context.isTransparent = true
       predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
       trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
-      log "IfThen ⇒ , predicate value is: " + predicate.value
+      log "FLIfThen: predicate value is: " + predicate.value
 
       if predicate.value
-        log "IfThen ⇒ , evaling true branch at depth " + context.depth()
+        log "FLIfThen: evaling true branch at depth " + context.depth()
         # yield from
         toBeReturned = trueBranch.eval context, trueBranch
         flContexts.pop()
@@ -1313,7 +1313,7 @@ initBootClasses = ->
       context.isTransparent = true
       predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
       trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
-      log "IfThen ⇒ , predicate value is: " + predicate.value
+      log "FLIfFallThrough: predicate value is: " + predicate.value
 
       if predicate.value
         # yield from
@@ -1328,10 +1328,12 @@ initBootClasses = ->
   FLIfFallThrough.addMethod \
     (flTokenize "else: ('trueBranch)"),
     (context) ->
+      log "FLIfFallThrough else: case "
       context.isTransparent = true
       trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
 
       # yield from
+      log "FLIfFallThrough else: evalling code "
       toBeReturned = trueBranch.eval context, trueBranch
       flContexts.pop()
       context.findAnotherReceiver = true

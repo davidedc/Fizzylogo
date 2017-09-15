@@ -138,6 +138,7 @@ class FLObjects
             # this signature doesn't match check the next one
             soFarEverythingMatched = false
             break
+
         else
           # the signature has a param. we have to check if
           # it requires an evaluation or not
