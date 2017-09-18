@@ -1174,6 +1174,9 @@ initBootClasses = ->
       log "FLRepeat1 ⇒ loop code is: " + loopCode.flToString()
 
       loop
+        context.findAnotherReceiver = true
+        context.throwing = false
+
         # yield from
         toBeReturned = loopCode.eval context, loopCode
 
@@ -1540,6 +1543,8 @@ initBootClasses = ->
       forContext.isTransparent = true
 
       for i in [0...theList.value.length]
+        forContext.findAnotherReceiver = true
+        forContext.throwing = false
 
         log "FLEach element at " + i + " : " + (theList.elementAt i).flToString()
         forContext.tempVariablesDict[ValidIDfromString variable.value] = theList.elementAt i
