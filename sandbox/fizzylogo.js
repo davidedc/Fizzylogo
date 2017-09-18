@@ -1001,17 +1001,14 @@
       };
       toBeReturned.separateStatements = function() {
         var arrayOfStatements, base, base1, base2, i, j, lastStatementEnd, ref, ref1, statementToBeAdded;
-        log("evaluation " + indentation() + "separating statements   start: " + this.flToString());
         arrayOfStatements = [];
         lastStatementEnd = this.cursorStart - 1;
         for (i = j = ref = this.cursorStart, ref1 = this.cursorEnd; ref <= ref1 ? j <= ref1 : j >= ref1; i = ref <= ref1 ? ++j : --j) {
-          log("evaluation " + indentation() + "separating statements   examining element " + this.value[i].flToString());
           if ((typeof (base = this.value[i]).isStatementSeparator === "function" ? base.isStatementSeparator() : void 0) || (i === this.cursorEnd)) {
             statementToBeAdded = this.copy().toList();
             statementToBeAdded.cursorStart = lastStatementEnd + 1;
             statementToBeAdded.cursorEnd = i - 1;
             if (i === this.cursorEnd && !(typeof (base1 = this.value[this.cursorEnd]).isStatementSeparator === "function" ? base1.isStatementSeparator() : void 0)) {
-              log(" last char: " + this.value[this.cursorEnd].flToString());
               statementToBeAdded.cursorEnd++;
             }
             lastStatementEnd = i;
@@ -1019,7 +1016,6 @@
               log(" adding: " + statementToBeAdded.flToString());
               arrayOfStatements.jsArrayPush(statementToBeAdded);
             }
-            log("evaluation " + indentation() + "separating statements isolated new statement " + statementToBeAdded.flToString());
           }
         }
         return arrayOfStatements;
@@ -2178,6 +2174,8 @@
       loopCode = context.tempVariablesDict[ValidIDfromString("loopCode")];
       log("FLRepeat1 ⇒ loop code is: " + loopCode.flToString());
       while (true) {
+        context.findAnotherReceiver = true;
+        context.throwing = false;
         toBeReturned = (yield* loopCode["eval"](context, loopCode));
         flContexts.pop();
         log("Repeat1 ⇒ returning result after loop cycle: " + toBeReturned);
@@ -2290,6 +2288,7 @@
       predicate = context.tempVariablesDict[ValidIDfromString("predicate")];
       trueBranch = context.tempVariablesDict[ValidIDfromString("trueBranch")];
       log("FLIfFallThrough: predicate value is: " + predicate.value);
+      log("FLIfFallThrough: true branch is: " + trueBranch.flToString());
       if (predicate.value) {
         toBeReturned = (yield* trueBranch["eval"](context, trueBranch));
         flContexts.pop();
@@ -2425,6 +2424,8 @@
       forContext = new FLContext(context);
       forContext.isTransparent = true;
       for (i = l = 0, ref = theList.value.length; 0 <= ref ? l < ref : l > ref; i = 0 <= ref ? ++l : --l) {
+        forContext.findAnotherReceiver = true;
+        forContext.throwing = false;
         log("FLEach element at " + i + " : " + (theList.elementAt(i)).flToString());
         forContext.tempVariablesDict[ValidIDfromString(variable.value)] = theList.elementAt(i);
         log("FLEach do evaling...: " + code.flToString());
