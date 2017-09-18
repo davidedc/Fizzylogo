@@ -2787,6 +2787,13 @@ tests = [
   """
   "32"
 
+  """
+  a = '()
+  a[4] = 1
+  console print a
+  """
+  "( nil nil nil nil 1 )"
+
   # this shows how the ++ operator
   # CREATES a new object, so it creates
   # an entry in the object if it wasn't there

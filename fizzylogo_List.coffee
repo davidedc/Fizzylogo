@@ -69,7 +69,10 @@ class FLListClass extends FLClasses
       copy
 
     toBeReturned.elementAt = (theElementNumber) ->
-      @value[@cursorStart + theElementNumber]
+      if @value[@cursorStart + theElementNumber]?
+        @value[@cursorStart + theElementNumber]
+      else
+        FLNil.createNew()
 
     toBeReturned.mandatesNewReceiver = ->
       if @isEmpty()
@@ -84,6 +87,7 @@ class FLListClass extends FLClasses
       if @isMessage or @cursorStart != 0
         throw "elementAtSetMutable: you can't set an element of a message"
       @value[theElementNumber] = theValue
+      @cursorEnd = @value.length - 1
       return @
 
     # creates a string for a matcher signature, such that
