@@ -1315,6 +1315,7 @@ initBootClasses = ->
       predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
       trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
       log "FLIfFallThrough: predicate value is: " + predicate.value
+      log "FLIfFallThrough: true branch is: " + trueBranch.flToString()
 
       if predicate.value
         # yield from

@@ -419,23 +419,23 @@ class FLListClass extends FLClasses
         return @elementAt(1)
 
     toBeReturned.separateStatements = ->
-      log "evaluation " + indentation() + "separating statements   start: " + @flToString()
+      #log "evaluation " + indentation() + "separating statements   start: " + @flToString()
       arrayOfStatements = []
       lastStatementEnd = @cursorStart - 1
       for i in [@cursorStart..@cursorEnd]
-        log "evaluation " + indentation() + "separating statements   examining element " + @value[i].flToString()
+        #log "evaluation " + indentation() + "separating statements   examining element " + @value[i].flToString()
         if (@value[i].isStatementSeparator?()) or (i == @cursorEnd)
           statementToBeAdded = @copy().toList()
           statementToBeAdded.cursorStart = lastStatementEnd + 1
           statementToBeAdded.cursorEnd = i - 1
           if i == @cursorEnd and !@value[@cursorEnd].isStatementSeparator?()
-            log " last char: " + @value[@cursorEnd].flToString()
+            #log " last char: " + @value[@cursorEnd].flToString()
             statementToBeAdded.cursorEnd++
           lastStatementEnd = i
           if !statementToBeAdded.isEmpty() and !statementToBeAdded.firstElement().isStatementSeparator?()
             log " adding: " + statementToBeAdded.flToString()
             arrayOfStatements.jsArrayPush statementToBeAdded
-          log "evaluation " + indentation() + "separating statements isolated new statement " + statementToBeAdded.flToString()
+          #log "evaluation " + indentation() + "separating statements isolated new statement " + statementToBeAdded.flToString()
 
 
       return arrayOfStatements
