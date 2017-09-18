@@ -39,6 +39,7 @@
   <option value="20DigitsOfPi">20 digits of pi</option>
   <option value="factorial">factorial</option>
   <option value="PythagoreanTriplets">Pythagorean Triplets</option>
+  <option value="FizzBuzz">FizzBuzz</option>
 </select>
 <div>
 
@@ -88,6 +89,9 @@ loadExample = function(){
   }
   else if (selected == 4) {
     editor.setValue("for each c in: (1...10) do:\n  for each b in: (1...c) do:\n    for each a in: (1...b) do:\n      if ((a * a) + (b * b)) == (c * c):\n        console print \"a: \" + a + \" b: \" + b + \" c: \" + c");
+  }
+  else if (selected == 5) {
+    editor.setValue("for each i in: (1...100) do:\n  if 0 == i % 15:\n    console print \"FizzBuzz \"\n  else if 0 == i % 3:\n    console print \"Fizz \"\n  else if 0 == i % 5:\n    console print \"Buzz \"\n  else:\n    console print i + \" \"");
   }
 
 }
