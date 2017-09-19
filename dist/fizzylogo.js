@@ -724,7 +724,11 @@
         return copy;
       };
       toBeReturned.elementAt = function(theElementNumber) {
-        return this.value[this.cursorStart + theElementNumber];
+        if (this.value[this.cursorStart + theElementNumber] != null) {
+          return this.value[this.cursorStart + theElementNumber];
+        } else {
+          return FLNil.createNew();
+        }
       };
       toBeReturned.mandatesNewReceiver = function() {
         var base;
@@ -741,6 +745,7 @@
           throw "elementAtSetMutable: you can't set an element of a message";
         }
         this.value[theElementNumber] = theValue;
+        this.cursorEnd = this.value.length - 1;
         return this;
       };
       toBeReturned.sortOrderString = function() {
@@ -1205,7 +1210,10 @@
     }
 
     FLInClass.prototype.createNew = function() {
-      return FLInClass.__super__.createNew.call(this, FLIn);
+      var toBeReturned;
+      toBeReturned = FLInClass.__super__.createNew.call(this, FLIn);
+      toBeReturned.value = "in";
+      return toBeReturned;
     };
 
     return FLInClass;
