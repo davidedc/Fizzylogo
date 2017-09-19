@@ -3731,8 +3731,80 @@ tests = [
   "1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz 16 17 Fizz 19 Buzz Fizz 22 23 Fizz Buzz 26 Fizz 28 29 FizzBuzz 31 32 Fizz 34 Buzz Fizz 37 38 Fizz Buzz 41 Fizz 43 44 FizzBuzz 46 47 Fizz 49 Buzz Fizz 52 53 Fizz Buzz 56 Fizz 58 59 FizzBuzz 61 62 Fizz 64 Buzz Fizz 67 68 Fizz Buzz 71 Fizz 73 74 FizzBuzz 76 77 Fizz 79 Buzz Fizz 82 83 Fizz Buzz 86 Fizz 88 89 FizzBuzz 91 92 Fizz 94 Buzz Fizz 97 98 Fizz "
 
   # ---------------------------------------------------------------------------
+  # a macro
+  """
+  a = '( (1...3) (console print x + y + z) x y z)
+  console print a length
+  numParams = a length - 2
+  console print numParams
+
+  bodies = '()
+
+  for each number in:
+  ﹍﹍0...numParams
+  ﹍do:
+  ﹍﹍bodies[number] = '()
+  ﹍﹍bodies[number] = bodies[number] + 'for + 'each + a[2+number] + 'in + ': + a[0]
+  ﹍﹍bodies[number] = bodies[number] + 'do + ':
+
+  bodies[numParams-1] = bodies[numParams-1] + a[1]
+  console print bodies
+
+  console print " ---------- "
+  for each number in:
+  ﹍﹍numParams...1
+  ﹍do:
+  ﹍﹍bodies[number-2] = bodies[number-2] + bodies[number-1]
+
+  console print " ---- "
+  console print bodies
+
+  toRun = bodies[0]
+  console print " ---- "
+  console print toRun
+
+  toRun eval
+  """
+  '53( ( for each x in : ( 1 ... 3 ) do : ) ( for each y in : ( 1 ... 3 ) do : ) ( for each z in : ( 1 ... 3 ) do : ( [object of class "Console"] print x + y + z ) ) ) ----------  ---- ( ( for each x in : ( 1 ... 3 ) do : ( for each y in : ( 1 ... 3 ) do : ( for each z in : ( 1 ... 3 ) do : ( [object of class "Console"] print x + y + z ) ) ) ) ( for each y in : ( 1 ... 3 ) do : ( for each z in : ( 1 ... 3 ) do : ( [object of class "Console"] print x + y + z ) ) ) ( for each z in : ( 1 ... 3 ) do : ( [object of class "Console"] print x + y + z ) ) ) ---- ( for each x in : ( 1 ... 3 ) do : ( for each y in : ( 1 ... 3 ) do : ( for each z in : ( 1 ... 3 ) do : ( [object of class "Console"] print x + y + z ) ) ) )34454556'
+
+  # ---------------------------------------------------------------------------
+  # same macro, used more cleanly as a keyword
+
   """
   to nestedRepeat:
+  ﹍(rangeBodyAndVars)
+  do:
+  ﹍accessUpperContext
+  ﹍numParams = rangeBodyAndVars length - 2
+  ﹍body = rangeBodyAndVars[1]
+  ﹍range =  rangeBodyAndVars[0]
+  ﹍
+  ﹍bodies = '()
+  ﹍
+  ﹍for each number in:
+  ﹍﹍﹍0...numParams
+  ﹍﹍do:
+  ﹍﹍﹍bodies[number] = '()
+  ﹍﹍﹍bodies[number] = bodies[number] + 'for + 'each + rangeBodyAndVars[2+number] + 'in + ': + range
+  ﹍﹍﹍bodies[number] = bodies[number] + 'do + ':
+  ﹍
+  ﹍bodies[numParams-1] = bodies[numParams-1] + body
+  ﹍
+  ﹍for each number in:
+  ﹍﹍﹍(numParams-1)...0
+  ﹍﹍do:
+  ﹍﹍﹍bodies[number-1] = bodies[number-1] + bodies[number]
+  ﹍
+  ﹍bodies[0] eval
+
+  nestedRepeat '( (1...3) (console print x + y + z) x y z)
+  """
+  "34454556"
+
+
+  # ---------------------------------------------------------------------------
+  """
+  to aToObjectFunction:
   ﹍
   do:
   ﹍for each word in:
@@ -3740,7 +3812,7 @@ tests = [
   ﹍do:
   ﹍﹍console print word
 
-  nestedRepeat
+  aToObjectFunction
   """
   "1+1"
 
