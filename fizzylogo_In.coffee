@@ -1,5 +1,7 @@
 class FLInClass extends FLClasses
   createNew: ->
-    return super FLIn
+    toBeReturned = super FLIn
+    toBeReturned.value = "in"
+    return toBeReturned
 
 FLIn = new FLInClass()
