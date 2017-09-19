@@ -3629,6 +3629,23 @@ tests = [
   "2[object of class \"Class_of_🚀\"]"
 
   # ---------------------------------------------------------------------------
+  # factorial using FLTo
+
+  """
+  to factorial:
+  ﹍(n)
+  do:
+  ﹍if n == 0:
+  ﹍﹍return 1
+  ﹍else:
+  ﹍﹍return n * factorial (n - 1)
+
+  console print factorial 3
+  """
+  "6"
+
+
+  # ---------------------------------------------------------------------------
   """
   Number answer:
   ﹍factorial
