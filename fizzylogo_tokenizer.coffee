@@ -268,6 +268,32 @@ linearize = (code) ->
 
   return outputSource.replace /^[ ]*/g, ""
 
+# since we separate with ";" all aligned lines, we need
+# a way to make the program "flow" again in some cases,
+# so here we go. Note that this is not strictly necessary,
+# you can always indent in non-aligned way, for example
+# in the case of the "do" one could write:
+#
+#    for each word in
+#    ﹍﹍myList
+#    ﹍do
+#    ﹍﹍codeToBeRun eval
+#    something else
+#
+# and that needs no fixing by this function. However,
+# it's rather unconventional to have that second line
+# to have TWO tabs, expecially in some cases such as
+# if/else-if/else , where you'd have to write:
+#
+#   if a==5:
+#   ﹍﹍console print "yes a is 5"
+#   ﹍else:
+#   ﹍﹍console print "no a is not 5"
+#   console print ". the end."
+#
+# which is somewhat unconventional.
+# Hence, we apply this trick here.
+
 removeStatementSeparatorsBeforeAlignedConstructs = (command) ->
   command = command.replace /[; ]*(do[ \n])/g, " $1"
   command = command.replace /[; ]*(by[ \n])/g, " $1"
