@@ -1403,20 +1403,16 @@ tests = [
   ﹍﹍codeToBeRun eval
   myObject=MyClass new
   myObject setCounterToTwo
-  console print myObject.counter
-  in
-  ﹍﹍myObject
-  ﹍do
-  ﹍﹍self.counter = 3
-  console print myObject.counter
-  console print myObject.counter+myObject.counter
+  console print myObject's counter
+  myObject's counter = 3
+  console print myObject's counter
   """
 
-  "236"
+  "23"
 
   """
   codeToBeRun ='
-  ﹍self.counter=2
+  ﹍self's counter=2
 
   MyClass=Class new
   MyClass.counter = nil
@@ -1446,20 +1442,16 @@ tests = [
   ﹍﹍codeToBeRun eval
   myObject=MyClass new
   myObject setCounterToTwo
-  console print myObject's counter
-  in
-  ﹍﹍myObject
-  ﹍do
-  ﹍﹍self's counter = 3
-  console print myObject's counter
-  console print myObject's counter+myObject's counter
+  console print myObject.counter
+  myObject.counter = 3
+  console print myObject.counter
   """
 
-  "236"
+  "23"
 
   """
   codeToBeRun ='
-  ﹍self's counter=2
+  ﹍self.counter=2
 
   MyClass=Class new
   MyClass.counter = nil
@@ -1489,20 +1481,20 @@ tests = [
   ﹍﹍codeToBeRun eval
   myObject=MyClass new
   myObject setCounterToTwo
-  console print myObject.counter
+  console print myObject's counter
   in
   ﹍﹍myObject
   ﹍do
-  ﹍﹍@counter = 3
-  console print myObject.counter
-  console print myObject.counter+myObject.counter
+  ﹍﹍self's counter = 3
+  console print myObject's counter
+  console print myObject's counter+myObject's counter
   """
 
   "236"
 
   """
   codeToBeRun ='
-  ﹍@counter=2
+  ﹍self's counter=2
 
   MyClass=Class new
   MyClass.counter = nil
@@ -1536,16 +1528,20 @@ tests = [
   ﹍﹍codeToBeRun eval
   myObject=MyClass new
   myObject setCounterToTwo
-  console print myObject's counter
-  myObject's counter = 3
-  console print myObject's counter
+  console print myObject.counter
+  in
+  ﹍﹍myObject
+  ﹍do
+  ﹍﹍self.counter = 3
+  console print myObject.counter
+  console print myObject.counter+myObject.counter
   """
 
-  "23"
+  "236"
 
   """
   codeToBeRun ='
-  ﹍self's counter=2
+  ﹍self.counter=2
 
   MyClass=Class new
   MyClass.counter = nil
@@ -1580,15 +1576,19 @@ tests = [
   myObject=MyClass new
   myObject setCounterToTwo
   console print myObject.counter
-  myObject.counter = 3
+  in
+  ﹍﹍myObject
+  ﹍do
+  ﹍﹍@counter = 3
   console print myObject.counter
+  console print myObject.counter+myObject.counter
   """
 
-  "23"
+  "236"
 
   """
   codeToBeRun ='
-  ﹍self.counter=2
+  ﹍@counter=2
 
   MyClass=Class new
   MyClass.counter = nil
@@ -2782,16 +2782,11 @@ tests = [
   ﹍﹍whenNew
   ﹍by:
   ﹍﹍console print "hey I'm new!"
-  ﹍﹍@
-  MyClass answer:
-  ﹍﹍initWith (param)
-  ﹍by:
-  ﹍﹍console print param
-  ﹍﹍@
-  myObject = MyClass new initWith " hello again! I am... "
-  console print myObject
+  ﹍﹍self
+  myObject = MyClass new
+  console print " ...done!"
   """
-  "hey I'm new! hello again! I am... [object of class \"MyClass\"]"
+  "hey I'm new! ...done!"
 
   """
   MyClass = Class new
@@ -2811,7 +2806,7 @@ tests = [
   ﹍﹍whenNew
   ﹍by:
   ﹍﹍console print "hey I'm new!"
-  ﹍﹍self
+  ﹍﹍@
   myObject = MyClass new
   console print " ...done!"
   """
@@ -2841,10 +2836,10 @@ tests = [
   ﹍﹍whenNew
   ﹍by:
   ﹍﹍2
-  myObject = MyClass new
-  console print myObject
+  ﹍﹍self
+  myObject = MyClass new console print 1
   """
-  "2"
+  "1"
 
   """
   MyClass = Class new
@@ -2863,7 +2858,7 @@ tests = [
   ﹍﹍whenNew
   ﹍by:
   ﹍﹍2
-  ﹍﹍self
+  ﹍﹍@
   myObject = MyClass new console print 1
   """
   "1"
@@ -2890,10 +2885,10 @@ tests = [
   ﹍﹍whenNew
   ﹍by:
   ﹍﹍2
-  ﹍﹍@
-  myObject = MyClass new console print 1
+  myObject = MyClass new
+  console print myObject
   """
-  "1"
+  "2"
 
   """
   MyClass = Class new
@@ -2948,10 +2943,15 @@ tests = [
   ﹍by:
   ﹍﹍console print "hey I'm new!"
   ﹍﹍@
-  myObject = MyClass new
-  console print " ...done!"
+  MyClass answer:
+  ﹍﹍initWith (param)
+  ﹍by:
+  ﹍﹍console print param
+  ﹍﹍@
+  myObject = MyClass new initWith " hello again! I am... "
+  console print myObject
   """
-  "hey I'm new! ...done!"
+  "hey I'm new! hello again! I am... [object of class \"MyClass\"]"
 
   """
   MyClass = Class new
@@ -3037,7 +3037,7 @@ tests = [
   """
   MyClass = Class new
   MyClass answer:
-  ﹍﹍﹍﹍﹍﹍﹍﹍printthree (argument)
+  ﹍﹍﹍printthree (argument)
   by:
   ﹍﹍﹍console print argument
   myObject = MyClass new
@@ -3061,7 +3061,7 @@ tests = [
   """
   MyClass = Class new
   MyClass answer:
-  ﹍﹍﹍printthree (argument)
+  ﹍﹍﹍﹍﹍﹍﹍﹍printthree (argument)
   by:
   ﹍﹍﹍console print argument
   myObject = MyClass new
@@ -4518,10 +4518,10 @@ tests = [
   myObject withName "Dave"
   """
 
-  "! exception: signature of a method should only contain tokens or lists. Found instead: 2 . Perhaps some variable in the signature has been closed?"
+  "Hello Flora"
 
   """
-  withName = 2
+  //withName = 2
   name = "Flora"
 
   MyClass = Class new
@@ -4551,10 +4551,10 @@ tests = [
   myObject withName "Dave"
   """
 
-  "Hello Flora"
+  "! exception: signature of a method should only contain tokens or lists. Found instead: 2 . Perhaps some variable in the signature has been closed?"
 
   """
-  //withName = 2
+  withName = 2
   name = "Flora"
 
   MyClass = Class new
