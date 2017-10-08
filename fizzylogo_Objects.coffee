@@ -214,7 +214,6 @@ class FLObjects
     
     if methodBody.flClass == FLList
       log "evaluation " + indentation() + "  matching - method body: " + methodBody.flToString()
-      log "evaluation " + indentation() + "  method body mandates receiver? " + methodBody.mandatesNewReceiver()
       # non-native method, i.e. further fizzylogo code
       # creates a context and evals the message in it
       # the rest of the message is not used because all of the list should
@@ -223,8 +222,6 @@ class FLObjects
       # yield from
       theContext.returned = methodBody.eval theContext, methodBody
 
-      theContext.findAnotherReceiver = methodBody.mandatesNewReceiver()
-      log "evaluation " + indentation() + "  method body mandates receiver2 ? " + methodBody.mandatesNewReceiver()
     else
       log "evaluation " + indentation() + "  matching - NATIVE method body: " + methodBody
 

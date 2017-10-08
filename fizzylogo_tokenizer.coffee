@@ -173,6 +173,16 @@ linearize = (code) ->
 
   code = code.replace /﹍/g, " "
 
+  # remove all empty lines,
+  # because we really don't want
+  # to have the length of empty lines to
+  # be meaningful. That would be really cruel,
+  # since they are invisible,
+  # so to avoid any such situation we just remove empty
+  # lines here so that we are forced to give the user
+  # alternative ways.
+  code = code.replace /^\s*[\r\n]/gm, ""
+
   sourceByLine = code.split("\n")
   startOfPreviousLine = ""
   linesWithBlockStart = []
@@ -219,7 +229,32 @@ linearize = (code) ->
           break
 
       log "linearize adding " + (-correctedIndentationDifference) + " ) "
-      outputSource += (Array(-correctedIndentationDifference+1).join ")") + line
+      
+      # if a line is aligned exactly with a line above,
+      # then we add a ";" as well. So for example in
+      #
+      #   if a==5:
+      #   ﹍console print "yes a is 5"
+      #   else:
+      #   ﹍console print "no a is not 5"
+      #   console print ". the end."
+      #
+      # the if, the else and the last line are all separated by
+      # ";"
+      # However, we make some tokens "eat up" the previous ";" in
+      # via the "removeStatementSeparatorsBeforeAlignedConstructs"
+      # function, in this case the "else" eats up the ";" separator
+      # before it, so the if/else construction can work
+      # properly.
+      # This is the best way I found to have the "if/else-if/else"
+      # construct to behave like an expression, and in the process
+      # I could also get rid of the fakeCatch and fakeElse
+      # tricks.
+
+      if actualLineTabs[k] == startOfThisLine.length
+        outputSource += (Array(-correctedIndentationDifference+1).join ")") + " ; " + line
+      else
+        outputSource += (Array(-correctedIndentationDifference+1).join ")") + line
 
     unclosedParens += correctedIndentationDifference
     correctedLineTabs.push unclosedParens
@@ -228,8 +263,19 @@ linearize = (code) ->
   outputSource += (Array(unclosedParens+1).join ")")
 
   #log "code length at identifyBlockStarts: " + code.split("\n").length
+
+  log "linearized program: " + outputSource.replace /^[ ]*/g, ""
+
   return outputSource.replace /^[ ]*/g, ""
 
+removeStatementSeparatorsBeforeAlignedConstructs = (command) ->
+  command = command.replace /[; ]*(do[ \n])/g, " $1"
+  command = command.replace /[; ]*(by[ \n])/g, " $1"
+  command = command.replace /[; ]*(else[ \n])/g, " $1"
+  command = command.replace /[; ]*(catch[ \n])/g, " $1"
+  command = command.replace /[ ]+/g, " "
+  command = command.trim()
+  return command
 
 
 flTokenize = (command) ->
@@ -249,13 +295,16 @@ flTokenize = (command) ->
   command = linearize command
   log "linearized command: " + command
 
+
   # let's normalise the input string so we can
   # tokenise it just by looking at the spaces.
   log "command before replacements: " + command
-  command = tokenizeCommand command  
+  command = tokenizeCommand command
   log "command after replacements: " + command
   #log "obtained: command after replacements: " + command
 
+  command = removeStatementSeparatorsBeforeAlignedConstructs command
+  log "removed statement separators before aligned constructs: " + command
 
   simpleTokenization = command.split(" ")
   for eachToken in simpleTokenization

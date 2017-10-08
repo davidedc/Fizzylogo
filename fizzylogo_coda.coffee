@@ -25,13 +25,11 @@ initContext = (context) ->
     "return", FLReturn.createNew()
 
     "if", FLIfThen.createNew()
-    "else", FLFakeElse.createNew()
     "forever", FLForever.createNew()
     "repeat", FLRepeat2.createNew()
 
     "try", FLTry.createNew()
     "throw", FLThrow.createNew()
-    "catch", FLFakeCatch.createNew()
 
     "to", FLTo.createNew()
 

@@ -74,14 +74,6 @@ class FLListClass extends FLClasses
       else
         FLNil.createNew()
 
-    toBeReturned.mandatesNewReceiver = ->
-      if @isEmpty()
-        return false
-
-      if @elementAt(@length()-1).isStatementSeparator?()
-        return true
-
-      return false
 
     toBeReturned.elementAtSetMutable = (theElementNumber, theValue) ->
       if @isMessage or @cursorStart != 0
@@ -266,6 +258,7 @@ class FLListClass extends FLClasses
             #dir receiver
             log "3 returnedContext.throwing: " + returnedContext.throwing
 
+
           # where we detect an exception being thrown
           if theContext.throwing or returnedContext.throwing
             log "throw escape"
@@ -330,9 +323,12 @@ class FLListClass extends FLClasses
           log "restOfMessage: " + restOfMessage
           log "returnedContext.findAnotherReceiver: " + returnedContext.findAnotherReceiver
 
-          if restOfMessage.isEmpty() and !(theContext.throwing or returnedContext.throwing)
-            log "breaking and moving on to next statement"
-            break
+          if restOfMessage.isEmpty() and !(theContext.throwing or returnedContext.throwing) and
+            # "remaining" thrown exceptions cause us to keep going with the
+            # current statement, which causes an exception to be thrown.
+            !(receiver?.flClass == FLException and receiver?.thrown)
+              log "breaking and moving on to next statement"
+              break
 
 
         log "evaluation " + indentation() + "list: nothing more to evaluate"

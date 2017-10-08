@@ -118,6 +118,31 @@ addDefaultMethods = (classToAddThemTo) ->
       else
         return FLBoolean.createNew false
 
+  classToAddThemTo.addMethod \
+    (flTokenize "else if ( predicate ): ('trueBranch)"),
+    (context) ->
+      #yield
+      return @
+
+  classToAddThemTo.addMethod \
+    (flTokenize "else: ('trueBranch)"),
+    (context) ->
+      #yield
+      return @
+
+  classToAddThemTo.addMethod \
+    (flTokenize "catch all : ( ' errorHandle )"),
+    (context) ->
+      #yield
+      return @
+
+  classToAddThemTo.addMethod \
+    (flTokenize "catch ( 'theError ) : ( ' errorHandle )"),
+    (context) ->
+      #yield
+      return @
+
+
   commonPropertyAssignmentFunction = (context) ->
     #yield
     context.isTransparent = true
@@ -541,9 +566,12 @@ initBootClasses = ->
       log "catch: being thrown? " + context.throwing
 
       log "catch: got right exception, catching it"
-      # yield from
-      toBeReturned = errorHandle.eval context, errorHandle
-      context.findAnotherReceiver = true
+      if @thrown
+        # yield from
+        toBeReturned = errorHandle.eval context, errorHandle
+      else
+        toBeReturned = @
+      context.findAnotherReceiver = false
 
       return toBeReturned
 
@@ -575,10 +603,13 @@ initBootClasses = ->
 
       if @ == theError
         log "catch: got right exception, catching it"
-        # yield from
-        toBeReturned = errorHandle.eval context, errorHandle
+        if @thrown
+          # yield from
+          toBeReturned = errorHandle.eval context, errorHandle
+        else
+          toBeReturned = @
 
-        context.findAnotherReceiver = true
+        context.findAnotherReceiver = false
       else
         log "catch: got wrong exception, propagating it"
         toBeReturned = @
@@ -1291,7 +1322,7 @@ initBootClasses = ->
         # yield from
         toBeReturned = trueBranch.eval context, trueBranch
         flContexts.pop()
-        context.findAnotherReceiver = true
+        context.findAnotherReceiver = false
       else
         toBeReturned = FLIfFallThrough.createNew()
 
@@ -1346,29 +1377,6 @@ initBootClasses = ->
 
 
 
-  # FakeElse -----------------------------------------------------------------------------
-
-  FLFakeElse.addMethod \
-    # note that we make all the parameters as literals because we
-    # are not interested in any evaluation, we are just eating
-    # up tokens
-    (flTokenize "if ( 'predicate ) : ('trueBranch)"),
-    (context) ->
-      #yield
-      context.findAnotherReceiver = true
-      return @
-
-  FLFakeElse.addMethod \
-    # note that we make all the parameters as literals because we
-    # are not interested in any evaluation, we are just eating
-    # up tokens
-    (flTokenize ": ('trueBranch)"),
-    (context) ->
-      #yield
-      context.findAnotherReceiver = true
-      return @
-
-
 
   # Try -----------------------------------------------------------------------------
 
@@ -1383,31 +1391,10 @@ initBootClasses = ->
       # we do not want another receiver, the thrown
       # exception has to go through some catches
       # hopefully.
-      if !context.throwing
-        context.findAnotherReceiver = true
+      context.findAnotherReceiver = false
 
       context.throwing = false
       return toBeReturned
-
-  # Fake Catch -----------------------------------------------------------------------------
-  # the catch object doesn't do the real catch, that's done
-  # by the catch "as message". This one just consumes all the
-  # catches after a real catch has happened. See the class
-  # definition for explained example.
-
-  FLFakeCatch.addMethod \
-    (flTokenize "all : ( ' errorHandle )"),
-    (context) ->
-      #yield
-      context.findAnotherReceiver = true
-      return @
-
-  FLFakeCatch.addMethod \
-    (flTokenize "( 'theError ) : ( ' errorHandle )"),
-    (context) ->
-      #yield
-      context.findAnotherReceiver = true
-      return @
 
   # Pause -----------------------------------------------------------------------------
 
