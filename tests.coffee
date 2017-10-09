@@ -290,6 +290,10 @@ tests = [
   ""
 
   # ---------------------------------------------------------------------------
+  "2 nonExistingMessage"
+  "! exception: message was not understood: ( nonExistingMessage )"
+
+  # ---------------------------------------------------------------------------
   "1 == 1 negate; console print 2"
   "2"
 
