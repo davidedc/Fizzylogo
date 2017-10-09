@@ -85,7 +85,7 @@ loadExample = function(){
     editor.setValue('// 20 digits of pi using Jeremy Gibbons\'s unbounded spigot\n// streaming algorithm. Can\'t go beyond 20 because\n// Javascript\'s Number precision. (only a bigint\n// representation could go on "forever")\n\nq = 1\nr = 0\nt = 1\nk = 1\nn = 3\nl = 3\nrepeat 82:\n  if ((r-t)+4*q) < (n*t):\n    console print n\n    nr = 10*(r-n*t)\n    n = ((10*(r+3*q)) /_ t) - 10*n\n    q *= 10\n    r = nr\n  else:\n    nr = (r+2*q) * l\n    nn = ((q*(2+7*k))+r*l) /_ (t*l)\n    q *= k\n    t *= l\n    l += 2\n    k += 1\n    n = nn\n    r = nr\nconsole print " done!"');
   }
   else if (selected == 3) {
-    editor.setValue("Number answer:\n﹍factorial\nby:\n﹍if self == 0:\n﹍﹍return 1\n﹍else:\n﹍﹍return (self - 1) factorial * self\nconsole print 3 factorial");
+    editor.setValue("Number answer:\n    factorial\n  by:\n    if self == 0:\n      return 1\n    else:\n      return (self - 1) factorial * self\nconsole print 3 factorial");
   }
   else if (selected == 4) {
     editor.setValue("for each c in: (1...10) do:\n  for each b in: (1...c) do:\n    for each a in: (1...b) do:\n      if ((a * a) + (b * b)) == (c * c):\n        console print \"a: \" + a + \" b: \" + b + \" c: \" + c");
