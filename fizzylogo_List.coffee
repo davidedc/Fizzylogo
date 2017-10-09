@@ -220,7 +220,12 @@ class FLListClass extends FLClasses
 
         returnedContext = theContext
         restOfMessage = eachStatement
-        findAnotherReceiver = true
+
+        # yield from
+        [returnedContext, restOfMessage, receiver] = restOfMessage.findReceiver returnedContext
+        log "found next receiver and now message is: " + restOfMessage.flToString()
+        #dir receiver
+        log "3 returnedContext.throwing: " + returnedContext.throwing
 
         # works as follows: we find a receiver, we send it the rest
         # of the original message hence getting a new receiver,
@@ -234,23 +239,6 @@ class FLListClass extends FLClasses
         #  - exceptions being thrown or done/return objects
         #  - the message is not understood
         loop
-
-          if returnedContext.findAnotherReceiver and !returnedContext.throwing and !restOfMessage.isEmpty()
-            returnedContext.findAnotherReceiver = false
-            returnedContext = returnedContext.previousContext
-            findAnotherReceiver = true
-            log "finding next receiver from:  " + restOfMessage.flToString()
-
-
-          if findAnotherReceiver
-            findAnotherReceiver = false
-            # yield from
-            [returnedContext, restOfMessage, receiver] = restOfMessage.findReceiver returnedContext
-
-            log "found next receiver and now message is: " + restOfMessage.flToString()
-            #dir receiver
-            log "3 returnedContext.throwing: " + returnedContext.throwing
-
 
           # where we detect an exception being thrown
           if theContext.throwing or returnedContext.throwing
@@ -314,7 +302,6 @@ class FLListClass extends FLClasses
           log "theContext.throwing: " + theContext.throwing
           log "returnedContext.throwing: " + returnedContext.throwing
           log "restOfMessage: " + restOfMessage
-          log "returnedContext.findAnotherReceiver: " + returnedContext.findAnotherReceiver
 
           if restOfMessage.isEmpty() and !(theContext.throwing or returnedContext.throwing) and
             # "remaining" thrown exceptions cause us to keep going with the

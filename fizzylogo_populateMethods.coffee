@@ -150,7 +150,7 @@ addDefaultMethods = (classToAddThemTo) ->
     value = context.tempVariablesDict[ValidIDfromString "value"]
 
     @instanceVariablesDict[ValidIDfromString variable.value] = value
-    context.findAnotherReceiver = true
+    
 
     return @
 
@@ -200,7 +200,7 @@ addDefaultMethods = (classToAddThemTo) ->
       toBeReturned = runThis.eval context, runThis
 
       @instanceVariablesDict[ValidIDfromString variable.value] = toBeReturned
-      context.findAnotherReceiver = true
+      
 
       return toBeReturned
 
@@ -217,7 +217,7 @@ addDefaultMethods = (classToAddThemTo) ->
       toBeReturned = runThis.eval context, runThis
 
       @instanceVariablesDict[ValidIDfromString variable.value] = toBeReturned
-      context.findAnotherReceiver = true
+      
 
       return toBeReturned
 
@@ -261,7 +261,7 @@ addDefaultMethods = (classToAddThemTo) ->
       else
         @flClass.addMethod signature, methodBody
 
-      context.findAnotherReceiver = true
+      
       return @
 
 # with time, allClasses contains all the classes
@@ -363,7 +363,7 @@ initBootClasses = ->
       dictToPutValueIn[ValidIDfromString assigneeTokenString] = valueToAssign
 
       log "evaluation " + indentation() + "stored value in dictionary"
-      context.findAnotherReceiver = true
+      
       return valueToAssign
 
   commonClassCreationFunction = (context, assigneeTokenString, className) ->
@@ -396,7 +396,7 @@ initBootClasses = ->
     dictToPutValueIn[ValidIDfromString assigneeTokenString] = valueToAssign
 
     log "evaluation " + indentation() + "stored value in dictionary"
-    context.findAnotherReceiver = true
+    
     return valueToAssign
 
   FLToken.addMethod \
@@ -451,7 +451,7 @@ initBootClasses = ->
 
       # yield from
       toBeReturned = code.eval newContext, code
-      context.findAnotherReceiver = true
+      
 
       return toBeReturned
 
@@ -571,7 +571,7 @@ initBootClasses = ->
         toBeReturned = errorHandle.eval context, errorHandle
       else
         toBeReturned = @
-      context.findAnotherReceiver = false
+      
 
       return toBeReturned
 
@@ -609,11 +609,11 @@ initBootClasses = ->
         else
           toBeReturned = @
 
-        context.findAnotherReceiver = false
+        
       else
         log "catch: got wrong exception, propagating it"
         toBeReturned = @
-        context.findAnotherReceiver = false
+        
 
       return toBeReturned
 
@@ -871,7 +871,7 @@ initBootClasses = ->
             log "times loop exited with Return "
             break
 
-      context.findAnotherReceiver = true
+      
       return toBeReturned
 
 
@@ -990,7 +990,7 @@ initBootClasses = ->
       #yield
       indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
       value = context.tempVariablesDict[ValidIDfromString "value"]
-      context.findAnotherReceiver = true
+      
       return @elementAtSetMutable indexValue.value, value
 
   FLList.addMethod \
@@ -1004,7 +1004,7 @@ initBootClasses = ->
       # yield from
       toBeReturned = runThis.eval context, runThis
 
-      context.findAnotherReceiver = true
+      
 
       @elementAtSetMutable indexValue.value, toBeReturned
 
@@ -1021,7 +1021,7 @@ initBootClasses = ->
       # yield from
       toBeReturned = runThis.eval context, runThis
 
-      context.findAnotherReceiver = true
+      
 
       @elementAtSetMutable indexValue.value, toBeReturned
 
@@ -1177,7 +1177,7 @@ initBootClasses = ->
       log "FLRepeat1 ⇒ loop code is: " + loopCode.flToString()
 
       loop
-        context.findAnotherReceiver = true
+        
         context.throwing = false
 
         # yield from
@@ -1248,7 +1248,7 @@ initBootClasses = ->
           log "Repeat2 ⇒ the loop exited with Return "
           break
 
-    context.findAnotherReceiver = true
+    
     return toBeReturned
 
   FLRepeat2.addMethod \
@@ -1294,7 +1294,7 @@ initBootClasses = ->
         # yield from
         toBeReturned = trueBranch.eval context, trueBranch
         flContexts.pop()
-        context.findAnotherReceiver = false
+        
       else
         toBeReturned = FLIfFallThrough.createNew()
 
@@ -1310,7 +1310,7 @@ initBootClasses = ->
     (context) ->
       #yield
       log "no more cases for the if"
-      context.findAnotherReceiver = false
+      
       return FLNil.createNew()
 
   FLIfFallThrough.addMethod \
@@ -1327,7 +1327,7 @@ initBootClasses = ->
         # yield from
         toBeReturned = trueBranch.eval context, trueBranch
         flContexts.pop()
-        context.findAnotherReceiver = true
+        
       else
         toBeReturned = FLIfFallThrough.createNew()
 
@@ -1344,7 +1344,7 @@ initBootClasses = ->
       log "FLIfFallThrough else: evalling code "
       toBeReturned = trueBranch.eval context, trueBranch
       flContexts.pop()
-      context.findAnotherReceiver = true
+      
       return toBeReturned
 
 
@@ -1363,7 +1363,7 @@ initBootClasses = ->
       # we do not want another receiver, the thrown
       # exception has to go through some catches
       # hopefully.
-      context.findAnotherReceiver = false
+      
 
       context.throwing = false
       return toBeReturned
@@ -1379,7 +1379,7 @@ initBootClasses = ->
       #yield remainingTime
       "do nothing"
 
-    context.findAnotherReceiver = true
+    
     return @
 
   FLPause.addMethod \
@@ -1433,7 +1433,7 @@ initBootClasses = ->
 
       flContexts.pop()
 
-      context.findAnotherReceiver = true
+      
       return toBeReturned
 
   # there a few tricks that we performs on 'theList
@@ -1463,7 +1463,7 @@ initBootClasses = ->
 
       # trivial case
       if theList.isEmpty()
-        context.findAnotherReceiver = true
+        
         return theList
 
       # you could adjust the examples OK without these two
@@ -1502,7 +1502,6 @@ initBootClasses = ->
       forContext.isTransparent = true
 
       for i in [0...theList.value.length]
-        forContext.findAnotherReceiver = true
         forContext.throwing = false
 
         log "FLEach element at " + i + " : " + (theList.elementAt i).flToString()
@@ -1524,5 +1523,5 @@ initBootClasses = ->
             log "for-each-in-list loop exited with Return "
             break
 
-      context.findAnotherReceiver = true
+      
       return toBeReturned
