@@ -40,6 +40,7 @@
   <option value="factorial">factorial</option>
   <option value="PythagoreanTriplets">Pythagorean Triplets</option>
   <option value="FizzBuzz">FizzBuzz</option>
+  <option value="NonExistingMessage">Non-existing message</option>
 </select>
 <div>
 
@@ -92,6 +93,9 @@ loadExample = function(){
   }
   else if (selected == 5) {
     editor.setValue("for each i in: (1...100) do:\n  if 0 == i % 15:\n    console print \"FizzBuzz \"\n  else if 0 == i % 3:\n    console print \"Fizz \"\n  else if 0 == i % 5:\n    console print \"Buzz \"\n  else:\n    console print i + \" \"");
+  }
+  else if (selected == 6) {
+    editor.setValue("2 nonExistingMessage");
   }
 
 }
