@@ -1,7 +1,4 @@
 flContexts = []
-rWorkspace = null
-environmentPrintout = ""
-environmentErrors = ""
 
 initContext = (context) ->
   keywordsAndTheirInit = [
@@ -53,9 +50,13 @@ initContext = (context) ->
 
 
 quickReset = ->
-  environmentPrintout = ""
-  environmentErrors = ""
+  
+  
   rWorkspace = FLWorkspace.createNew()
+  rWorkspace.environmentPrintout = ""
+  console.log "resetting rWorkspace.environmentErrors"
+  rWorkspace.environmentErrors = ""
+
   outerMostContext = new FLContext null, rWorkspace
   flContexts.jsArrayPush outerMostContext
   initContext outerMostContext
@@ -93,15 +94,19 @@ Fizzylogo.runOneStep = (code) ->
 
   # yield from
   returned = parsed.eval outerMostContext, parsed
-  outerMostContext.returned = returned.value
+  outerMostContext.returned = returned
 
-  log "evaluation " + indentation() + "end of workspace evaluation"
+  console.log "evaluation " + indentation() + "end of workspace evaluation"
+  console.log "rWorkspace.environmentPrintout " + rWorkspace.environmentPrintout
+  console.log "rWorkspace.environmentErrors " + rWorkspace.environmentErrors
+
 
   if outerMostContext.throwing and outerMostContext.returned.flClass == FLException
     log "evaluation " + indentation() + "exception: " + outerMostContext.returned.value
-    environmentErrors += "! exception: " + outerMostContext.returned.value
+    rWorkspace.environmentErrors += "! exception: " + outerMostContext.returned.value
+    log "rWorkspace.environmentErrors " + rWorkspace.environmentErrors
     if textOutputElement?
-      textOutputElement.value += environmentErrors + "\n"
+      textOutputElement.value += rWorkspace.environmentErrors + "\n"
 
   return null
   
@@ -124,9 +129,11 @@ run = (code) ->
     outerMostContext.returned = parsed.eval outerMostContext, parsed
 
   log "evaluation " + indentation() + "end of workspace evaluation"
+  console.log "rWorkspace.environmentErrors " + rWorkspace.environmentErrors
 
   if outerMostContext.throwing and outerMostContext.returned.flClass == FLException
     log "evaluation " + indentation() + "exception: " + outerMostContext.returned.value
-    environmentErrors += "! exception: " + outerMostContext.returned.value
+    rWorkspace.environmentErrors += "! exception: " + outerMostContext.returned.value
+    log "rWorkspace.environmentErrors " + rWorkspace.environmentErrors
 
   return null

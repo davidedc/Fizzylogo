@@ -4003,11 +4003,11 @@ for i in [0...tests.length] by 2
     run testBody
 
     log "final return: " + outerMostContext.returned?.value
-    if environmentPrintout + environmentErrors == testResult
+    if rWorkspace.environmentPrintout + rWorkspace.environmentErrors == testResult
       OKs++
-      log "...test " + (i/2+1) + " OK, obtained: " + environmentPrintout + environmentErrors
+      log "...test " + (i/2+1) + " OK, obtained: " + rWorkspace.environmentPrintout + rWorkspace.environmentErrors
     else
       FAILs++
-      log "...test " + (i/2+1) + " FAIL, test: " + testBodyMultiline + " obtained: " + environmentPrintout + environmentErrors + " expected: " + testResult
+      log "...test " + (i/2+1) + " FAIL, test: " + testBodyMultiline + " obtained: " + rWorkspace.environmentPrintout + rWorkspace.environmentErrors + " expected: " + testResult
 
 log "all tests done. obtained " + OKs + " OKs and " + FAILs + " FAILs"

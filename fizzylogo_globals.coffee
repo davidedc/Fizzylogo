@@ -2,6 +2,8 @@ Fizzylogo = {}
 # export as a global, whether it's in node or in the browser
 (exports ? this).Fizzylogo = Fizzylogo
 
+rWorkspace = null
+
 log = console.log
 dir = console.dir
 

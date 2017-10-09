@@ -64,7 +64,7 @@ addDefaultMethods = (classToAddThemTo) ->
     (context) ->
       #yield
       log "///////// program printout: " + @flToString()
-      environmentPrintout += @flToString()
+      rWorkspace.environmentPrintout += @flToString()
       return @
 
   classToAddThemTo.addMethod \
@@ -1105,7 +1105,7 @@ initBootClasses = ->
       if textOutputElement?
         textOutputElement.value += stringToPrint
 
-      environmentPrintout += stringToPrint
+      rWorkspace.environmentPrintout += stringToPrint
       return thingToPrint
 
 
@@ -1263,7 +1263,7 @@ initBootClasses = ->
       #yield
       stringToPrint = "EvaluationsCounter running the \"empty\" method // "
       log stringToPrint
-      environmentPrintout += stringToPrint
+      rWorkspace.environmentPrintout += stringToPrint
       return @
 
   # Throw -----------------------------------------------------------------------------
