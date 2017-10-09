@@ -363,21 +363,11 @@ tests = [
   "true"
 
   # ---------------------------------------------------------------------------
-  "true⇒(console print 1)"
+  "if true: (console print 1)"
   "1"
 
-  # Boolean's "⇒" message cannot evaluate
-  # its argument automatically (because if it's
-  # false obviously it can't evaluate it), so this means
-  # it must pick the true branch literally, which means it
-  # must be in parens. Here "console" is picked, then the
-  # "remaing part" of the message is considered to be the
-  # false brench and is hence discarded.
-  "true⇒console print 1"
-  ""
-
   # ---------------------------------------------------------------------------
-  "false⇒(console print 1)console print 2"
+  "if false: (console print 1) else: (console print 2)"
   "2"
 
   # ---------------------------------------------------------------------------
@@ -417,7 +407,7 @@ tests = [
 
   # ---------------------------------------------------------------------------
   # can't remove those parens!
-  "true⇒(console print 1)console print 2"
+  "if true: (console print 1) else: (console print 2)"
   "1"
 
   # ---------------------------------------------------------------------------
@@ -518,6 +508,38 @@ tests = [
   "2"
 
   # ---------------------------------------------------------------------------
+  # more "if" as expression
+
+  """
+  to ifAsExpession:
+  ﹍if true:
+  ﹍﹍1
+
+  console print ifAsExpession
+  """
+  "1"
+
+  """
+  to ifAsExpession:
+  ﹍if false:
+  ﹍﹍1
+
+  console print ifAsExpession
+  """
+  "nil"
+
+  """
+  to ifAsExpession:
+  ﹍if false:
+  ﹍﹍1
+  ﹍2
+
+  console print ifAsExpession
+  """
+  "2"
+
+
+  # ---------------------------------------------------------------------------
   "console print 0 factorialsix"
   "1"
 
@@ -574,20 +596,21 @@ tests = [
   "5"
 
   # ---------------------------------------------------------------------------
-  "'a←5;repeat1((a==0)⇒(done)'a←a - 1);console print a"
+  "'a←5;repeat1(if a==0: (done) else: ('a←a - 1));console print a"
   "0"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5;repeat1((a==0)⇒(done)a=a - 1);console print a"
+  "a=5;repeat1(if a==0: (done) else: (a=a - 1));console print a"
   "0"
 
   # ---------------------------------------------------------------------------
   """
   'a←5
   repeat1
-  ﹍(a==0)⇒
+  ﹍if a==0:
   ﹍﹍done
-  ﹍'a←a - 1
+  ﹍else:
+  ﹍﹍'a←a - 1
   
   console print a
   """
@@ -597,9 +620,10 @@ tests = [
   """
   a=5
   repeat1
-  ﹍(a==0)⇒
+  ﹍if a==0:
   ﹍﹍done
-  ﹍a=a - 1
+  ﹍else:
+  ﹍﹍a=a - 1
   
   console print a
   """
@@ -609,9 +633,10 @@ tests = [
   """
   'a←5
   repeat1
-  ﹍(a==0)⇒
+  ﹍if a==0:
   ﹍﹍done
-  ﹍'a←a - 1
+  ﹍else:
+  ﹍﹍'a←a - 1
   ;console print a
   """
   "0"
@@ -620,9 +645,10 @@ tests = [
   """
   a=5
   repeat1
-  ﹍(a==0)⇒
+  ﹍if a==0:
   ﹍﹍done
-  ﹍a=a - 1
+  ﹍else:
+  ﹍﹍a=a - 1
   ;console print a
   """
   "0"
@@ -633,9 +659,10 @@ tests = [
   'a←5
 
   repeat forever:
-  ﹍(a==0)⇒
+  ﹍if a==0:
   ﹍﹍done
-  ﹍'a←a - 1
+  ﹍else:
+  ﹍﹍'a←a - 1
   console print a
   """
   "0"
@@ -645,9 +672,10 @@ tests = [
   a=5
 
   repeat forever:
-  ﹍(a==0)⇒
+  ﹍if a==0:
   ﹍﹍done
-  ﹍a=a - 1
+  ﹍else:
+  ﹍﹍a=a - 1
   console print a
   """
   "0"
@@ -784,31 +812,31 @@ tests = [
 
 
   # ---------------------------------------------------------------------------
-  "'a←5;console print repeat1((a==0)⇒(done)'a←a - 1)"
+  "'a←5;console print repeat1(if a==0: (done) else: ('a←a - 1))"
   "[object of class \"Done\"]"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5;console print repeat1((a==0)⇒(done)a=a - 1)"
+  "a=5;console print repeat1(if a==0: (done) else: (a=a - 1))"
   "[object of class \"Done\"]"
 
   # ---------------------------------------------------------------------------
   # "done" stop the execution from within a loop,
   # nothing is executed after them
-  "'a←5;repeat1((a==0)⇒(done; console print 2)'a←a - 1);console print a"
+  "'a←5;repeat1(if a==0: (done; console print 2) else: ('a←a - 1));console print a"
   "0"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "a=5;repeat1((a==0)⇒(done; console print 2)a=a - 1);console print a"
+  "a=5;repeat1(if a==0: (done; console print 2) else: (a=a - 1));console print a"
   "0"
 
   # ---------------------------------------------------------------------------
   "'a←5;console print repeat1\
-    ((a==0)⇒(done with a+1)'a←a - 1)"
+    (if a==0: (done with a+1) else: ('a←a - 1))"
   "1"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
   "a=5;console print repeat1\
-    ((a==0)⇒(done with a+1)a=a - 1)"
+    (if a==0: (done with a+1) else: (a=a - 1))"
   "1"
 
   # ---------------------------------------------------------------------------
@@ -876,27 +904,27 @@ tests = [
   "[object of class \"MyClass\"]"
 
   # ---------------------------------------------------------------------------
-  "'false←true;false⇒(console print 1)console print 2"
+  "'false←true;if false: (console print 1) else: (console print 2)"
   "1"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "false=true;false⇒(console print 1)console print 2"
+  "false=true;if false: (console print 1) else: (console print 2)"
   "1"
 
   # ---------------------------------------------------------------------------
-  "'temp←true;'true←false;'false←temp;false⇒(console print 1)console print 2"
+  "'temp←true;'true←false;'false←temp;if false: (console print 1) else: (console print 2)"
   "1"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "temp=true;true=false;false=temp;false⇒(console print 1)console print 2"
+  "temp=true;true=false;false=temp;if false: (console print 1) else: (console print 2)"
   "1"
 
   # ---------------------------------------------------------------------------
-  "'temp←true;'true←false;'false←temp;true⇒(console print 1)console print 2"
+  "'temp←true;'true←false;'false←temp;if true: (console print 1) else: (console print 2)"
   "2"
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
-  "temp=true;true=false;false=temp;true⇒(console print 1)console print 2"
+  "temp=true;true=false;false=temp;if true: (console print 1) else: (console print 2)"
   "2"
 
   # ---------------------------------------------------------------------------

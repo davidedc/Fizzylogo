@@ -235,13 +235,6 @@ class FLListClass extends FLClasses
         #  - the message is not understood
         loop
 
-          # this happens for example in the original if statement
-          # (called "⇒"" ). If the true branch is executed,
-          # then everything that comes afterwards must be
-          # skipped.
-          if returnedContext.exhaustPreviousContextMessage
-            restOfMessage = FLList.emptyMessage()
-
           if returnedContext.findAnotherReceiver and !returnedContext.throwing and !restOfMessage.isEmpty()
             returnedContext.findAnotherReceiver = false
             returnedContext = returnedContext.previousContext
@@ -326,7 +319,10 @@ class FLListClass extends FLClasses
           if restOfMessage.isEmpty() and !(theContext.throwing or returnedContext.throwing) and
             # "remaining" thrown exceptions cause us to keep going with the
             # current statement, which causes an exception to be thrown.
-            !(receiver?.flClass == FLException and receiver?.thrown)
+            !(receiver?.flClass == FLException and receiver?.thrown) and
+            # any "remaining" ifFallThrough also need to keep being evaluated
+            # as they'll evaluate themselves to nil
+            !(receiver?.flClass == FLIfFallThrough)
               log "breaking and moving on to next statement"
               break
 
@@ -357,7 +353,7 @@ class FLListClass extends FLClasses
       if @length() >= 2
         if (@elementAt 1).flClass == FLToken
           # test for things like "+=", "*=" etc.
-          if /([+\-^*/⇒%_]+=)/g.test (@elementAt 1).value
+          if /([+\-^*/%_]+=)/g.test (@elementAt 1).value
             log "startsWithCompoundAssignmentOperator: oh yes"
             return true
       log "startsWithCompoundAssignmentOperator: oh no"

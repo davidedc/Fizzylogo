@@ -49,7 +49,7 @@ tokenizeCommand = (command) ->
   # see this playground with an example:
   # https://regex101.com/r/LRqxeN/3
   #
-  command = command.replace /([0-9]*\.[0-9]+([eE][- ]?[0-9]*)?)|([^+\-^*/()=←⇒.!%])([+\-^*/()=←⇒.!%]+)/g, "$1$3 $4 "
+  command = command.replace /([0-9]*\.[0-9]+([eE][- ]?[0-9]*)?)|([^+\-^*/()=←.!%])([+\-^*/()=←.!%]+)/g, "$1$3 $4 "
 
 
   # separates the *end* of a sequence of punctuations from what
@@ -57,12 +57,12 @@ tokenizeCommand = (command) ->
   # not that we can't/donn't need to do that with the dot because
   # a) it was already done by the regex above and
   # b) it would wreck floating point numbers
-  command = command.replace /([+\-^*/()=←⇒!%])([^+\-^*/()=←⇒!%])/g, "$1 $2"
+  command = command.replace /([+\-^*/()=←!%])([^+\-^*/()=←!%])/g, "$1 $2"
 
   # things that are now a / _2 become a /_ 2
   # this is so we can have an "underscore" version of
   # an operator, in this case floor division
-  command = command.replace /([+\-^*/=←⇒!%_])[ ]+_/g, "$1_ "
+  command = command.replace /([+\-^*/=←!%_])[ ]+_/g, "$1_ "
 
   command = command.replace /'/g, " ' "
   command = command.replace /:/g, " : "

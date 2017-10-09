@@ -675,27 +675,27 @@ initBootClasses = ->
 
   FLNumber.addMethod \
     (flTokenize "factorialtwo"),
-    flTokenize "( self == 0 ) ⇒ ( 1 ) self * ( ( self minus 1 ) factorialtwo )"
+    flTokenize "if self == 0: ( 1 ) else: (self * ( ( self minus 1 ) factorialtwo ))"
 
   FLNumber.addMethod \
     (flTokenize "factorialthree"),
-    flTokenize "( self == 0 ) ⇒ ( 1 ) ('temp ← self;console print temp; ( self minus 1 ) factorialthree * temp )"
+    flTokenize "if self == 0: ( 1 ) else: ('temp ← self;console print temp; ( self minus 1 ) factorialthree * temp )"
 
   FLNumber.addMethod \
     (flTokenize "factorialfour"),
     flTokenize \
-      "( self == 0 ) ⇒ ( 1 ) ('temp ← self;\
+      "if self == 0: ( 1 ) else: ('temp ← self;\
       ( self minus 1 ) factorialfour * temp )"
 
   FLNumber.addMethod \
     (flTokenize "factorialfive"),
     flTokenize \
-      "( self == 0 ) ⇒ ( 1 ) (1 + 1;'temp ← self;\
+      "if self == 0: ( 1 ) else: (1 + 1;'temp ← self;\
       ( self minus 1 ) factorialfive * temp )"
 
   FLNumber.addMethod \
     (flTokenize "factorialsix"),
-    flTokenize "( self == 0 ) ⇒ ( 1 ) ( self minus 1 ) factorialsix * self"
+    flTokenize "if self == 0: ( 1 ) else: (( self minus 1 ) factorialsix * self)"
 
 
   FLNumber.addMethod \
@@ -921,34 +921,6 @@ initBootClasses = ->
       #yield
       operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
       return FLBoolean.createNew @value and operandum.value
-
-  FLBoolean.addMethod \
-    (flTokenize "⇒ ( ' trueBranch )"),
-    (context) ->
-      context.isTransparent = true
-      trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
-      log "FLBoolean ⇒ , predicate value is: " + @value
-
-      if @value
-        # yield from
-        toBeReturned = trueBranch.eval context, trueBranch
-        flContexts.pop()
-
-        log "FLBoolean ⇒ returning result of true branch: " + toBeReturned
-        log "FLBoolean ⇒ remaining message after true branch: "
-        log "FLBoolean ⇒ message length:  "
-
-        # in this context we only have visibility of the true branch
-        # but we have to make sure that in the context above, the false
-        # branch is never executed. So we set a flag to "exhaust" the message
-        # in the context above
-        context.exhaustPreviousContextMessage = true
-
-        return toBeReturned
-
-      context.findAnotherReceiver = true
-      return @
-
 
   FLBoolean.addMethod \
     (flTokenize "or ( operandum )"),
@@ -1338,8 +1310,8 @@ initBootClasses = ->
     (context) ->
       #yield
       log "no more cases for the if"
-      context.findAnotherReceiver = true
-      return @
+      context.findAnotherReceiver = false
+      return FLNil.createNew()
 
   FLIfFallThrough.addMethod \
     (flTokenize "else if ( predicate ): ('trueBranch)"),
