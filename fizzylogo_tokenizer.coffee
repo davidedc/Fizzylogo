@@ -295,8 +295,6 @@ linearize = (code) ->
 # Hence, we apply this trick here.
 
 removeStatementSeparatorsBeforeAlignedConstructs = (command) ->
-  command = command.replace /[; ]*(do[ \n])/g, " $1"
-  command = command.replace /[; ]*(by[ \n])/g, " $1"
   command = command.replace /[; ]*(else[ \n])/g, " $1"
   command = command.replace /[; ]*(catch[ \n])/g, " $1"
   command = command.replace /[ ]+/g, " "

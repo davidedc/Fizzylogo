@@ -44,23 +44,6 @@ tests = [
   """
   "22+3"
 
-  """
-  console print 1+1
-  Number answer:
-  ﹍+ (operandum)
-  by:
-  ﹍console print self
-  ﹍console print \"+\"
-  ﹍console print operandum
-  2+3
-
-  Number answer:
-  ﹍+ (operandum)
-  by:
-  ﹍self $plus_binary_default operandum
-  """
-  "22+3"
-
   # ---------------------------------------------------------------------------
   # here "print" takes "print" and does
   # nothing with it, so first (1+1) is
@@ -884,31 +867,9 @@ tests = [
   """
   MyClass = Class new
   MyClass answer:
-  ﹍printtwo
-  by:
-  ﹍console print self
-  myObject = MyClass new
-  myObject printtwo
-  """
-  "[object of class \"MyClass\"]"
-
-  """
-  MyClass = Class new
-  MyClass answer:
   ﹍﹍printtwo
   ﹍by:
   ﹍﹍console print @
-  myObject = MyClass new
-  myObject printtwo
-  """
-  "[object of class \"MyClass\"]"
-
-  """
-  MyClass = Class new
-  MyClass answer:
-  ﹍printtwo
-  by:
-  ﹍console print @
   myObject = MyClass new
   myObject printtwo
   """
@@ -1146,32 +1107,6 @@ tests = [
   """
   "nil2nil2"
 
-  """
-  MyClass = Class new
-  MyClass.counter = nil
-
-  MyClass answer:
-  ﹍setCounterToTwo
-  by:
-  ﹍self.counter←2
-
-  MyClass answer:
-  ﹍printCounter
-  by:
-  ﹍console print self.counter
-
-  myObject = MyClass new
-  myObject printCounter
-  myObject setCounterToTwo
-  myObject printCounter
-
-  myObject2 = MyClass new
-  myObject2 printCounter
-  myObject2 setCounterToTwo
-  myObject2 printCounter
-  """
-  "nil2nil2"
-
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
 
   """
@@ -1187,32 +1122,6 @@ tests = [
   ﹍﹍printCounter
   ﹍by:
   ﹍﹍console print @counter
-
-  myObject = MyClass new
-  myObject printCounter
-  myObject setCounterToTwo
-  myObject printCounter
-
-  myObject2 = MyClass new
-  myObject2 printCounter
-  myObject2 setCounterToTwo
-  myObject2 printCounter
-  """
-  "nil2nil2"
-
-  """
-  MyClass = Class new
-  MyClass.counter = nil
-
-  MyClass answer:
-  ﹍setCounterToTwo
-  by:
-  ﹍@counter←2
-
-  MyClass answer:
-  ﹍printCounter
-  by:
-  ﹍console print @counter
 
   myObject = MyClass new
   myObject printCounter
@@ -1256,19 +1165,6 @@ tests = [
   """
   "2"
 
-  """
-  MyClass = Class new
-  MyClass.counter = nil
-  MyClass answer:
-  ﹍setCounterToTwo
-  by:
-  ﹍self.counter = 2
-  myObject = MyClass new
-  myObject setCounterToTwo
-  console print myObject.counter
-  """
-  "2"
-
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
 
   # dot notation here
@@ -1279,19 +1175,6 @@ tests = [
   ﹍﹍setCounterToTwo
   ﹍by:
   ﹍﹍@counter = 2
-  myObject = MyClass new
-  myObject setCounterToTwo
-  console print myObject.counter
-  """
-  "2"
-
-  """
-  MyClass = Class new
-  MyClass.counter = nil
-  MyClass answer:
-  ﹍setCounterToTwo
-  by:
-  ﹍@counter = 2
   myObject = MyClass new
   myObject setCounterToTwo
   console print myObject.counter
@@ -1410,25 +1293,6 @@ tests = [
 
   "23"
 
-  """
-  codeToBeRun ='
-  ﹍self's counter=2
-
-  MyClass=Class new
-  MyClass.counter = nil
-  MyClass answer:
-  ﹍setCounterToTwo
-  by:
-  ﹍codeToBeRun eval
-  myObject=MyClass new
-  myObject setCounterToTwo
-  console print myObject's counter
-  myObject's counter = 3
-  console print myObject's counter
-  """
-
-  "23"
-
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
@@ -1440,25 +1304,6 @@ tests = [
   ﹍﹍setCounterToTwo
   ﹍by:
   ﹍﹍codeToBeRun eval
-  myObject=MyClass new
-  myObject setCounterToTwo
-  console print myObject.counter
-  myObject.counter = 3
-  console print myObject.counter
-  """
-
-  "23"
-
-  """
-  codeToBeRun ='
-  ﹍self.counter=2
-
-  MyClass=Class new
-  MyClass.counter = nil
-  MyClass answer:
-  ﹍setCounterToTwo
-  by:
-  ﹍codeToBeRun eval
   myObject=MyClass new
   myObject setCounterToTwo
   console print myObject.counter
@@ -1492,29 +1337,6 @@ tests = [
 
   "236"
 
-  """
-  codeToBeRun ='
-  ﹍self's counter=2
-
-  MyClass=Class new
-  MyClass.counter = nil
-  MyClass answer:
-  ﹍setCounterToTwo
-  by:
-  ﹍codeToBeRun eval
-  myObject=MyClass new
-  myObject setCounterToTwo
-  console print myObject's counter
-  in
-  ﹍myObject
-  do
-  ﹍self's counter = 3
-  console print myObject's counter
-  console print myObject's counter+myObject's counter
-  """
-
-  "236"
-
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
@@ -1533,29 +1355,6 @@ tests = [
   ﹍﹍myObject
   ﹍do
   ﹍﹍self.counter = 3
-  console print myObject.counter
-  console print myObject.counter+myObject.counter
-  """
-
-  "236"
-
-  """
-  codeToBeRun ='
-  ﹍self.counter=2
-
-  MyClass=Class new
-  MyClass.counter = nil
-  MyClass answer:
-  ﹍setCounterToTwo
-  by:
-  ﹍codeToBeRun eval
-  myObject=MyClass new
-  myObject setCounterToTwo
-  console print myObject.counter
-  in
-  ﹍myObject
-  do
-  ﹍self.counter = 3
   console print myObject.counter
   console print myObject.counter+myObject.counter
   """
@@ -1586,28 +1385,6 @@ tests = [
 
   "236"
 
-  """
-  codeToBeRun ='
-  ﹍@counter=2
-
-  MyClass=Class new
-  MyClass.counter = nil
-  MyClass answer:
-  ﹍setCounterToTwo
-  by:
-  ﹍codeToBeRun eval
-  myObject=MyClass new
-  myObject setCounterToTwo
-  console print myObject.counter
-  in
-  ﹍myObject
-  do
-  ﹍@counter = 3
-  console print myObject.counter
-  console print myObject.counter+myObject.counter
-  """
-
-  "236"
 
   # ---------------------------------------------------------------------------
   # note that while the dot notation can be used to access instance variables,
@@ -1626,17 +1403,6 @@ tests = [
   """
   "hello"
 
-  """
-  MyClass = Class new
-  MyClass answer:
-  ﹍printtwo (argument)
-  by:
-  ﹍console print argument
-  myObject = MyClass new
-  myObject printtwo "hello"
-  """
-  "hello"
-
   # -.-.-.-.-.-.-.-.--.-             vs.             .--.-.-.--.-.-.-.-.-.-.-.-
 
   """
@@ -1645,17 +1411,6 @@ tests = [
   ﹍﹍printtwo (argument)
   ﹍by:
   ﹍﹍console print argument
-  myObject = MyClass new
-  myObject.printtwo "hello"
-  """
-  "! exception: message was not understood: ( TOKEN:hello )"
-
-  """
-  MyClass = Class new
-  MyClass answer:
-  ﹍printtwo (argument)
-  by:
-  ﹍console print argument
   myObject = MyClass new
   myObject.printtwo "hello"
   """
@@ -1677,15 +1432,6 @@ tests = [
   """
   "Hello Dave"
 
-  """
-  to sayHello:
-  ﹍withName (name)
-  do:
-  ﹍console print "Hello "; console print name
-  sayHello withName "Dave"
-  """
-  "Hello Dave"
-
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
   # FLTO
   """
@@ -1694,16 +1440,6 @@ tests = [
   ﹍do:
   ﹍﹍console print "Hello "
   ﹍﹍console print name
-  sayHello withName "Dave"
-  """
-  "Hello Dave"
-
-  """
-  to sayHello:
-  ﹍withName (name)
-  do:
-  ﹍console print "Hello "
-  ﹍console print name
   sayHello withName "Dave"
   """
   "Hello Dave"
@@ -1722,16 +1458,6 @@ tests = [
   ﹍do:
   ﹍﹍console print "HELLO "
   ﹍﹍console print name
-  sayHello2 "Dave"
-  """
-  "HELLO Dave"
-
-  """
-  to sayHello2:
-  ﹍(name)
-  do:
-  ﹍console print "HELLO "
-  ﹍console print name
   sayHello2 "Dave"
   """
   "HELLO Dave"
@@ -1771,22 +1497,6 @@ tests = [
   """
   "running with a param.running without params.running with a param."
 
-  """
-  to anotherFunc:
-  ﹍withAParameter
-  do:
-  ﹍console print "running with a param."
-
-  anotherFunc withAParameter
-
-  to anotherFunc:
-  ﹍console print "running without params."
-
-  anotherFunc
-  anotherFunc withAParameter
-
-  """
-  "running with a param.running without params.running with a param."
 
   # ---------------------------------------------------------------------------
   # lists that get evaluated but cannot be evaluated fully
@@ -1825,20 +1535,6 @@ tests = [
   """
   "! exception: message was not understood: ( each word in : ( do : ( console print word ) ) )"
 
-  # this was working before I decided to eliminate
-  # all empty lines, because it's difficult to make
-  # them meaningful in this way, since they are completely
-  # invisible. There is still a way to do something
-  # analogous to this, see example
-  # below.
-  """
-  for each word in:
-  ﹍
-  do:
-  ﹍console print word
-  console print "the end."
-  """
-  "! exception: message was not understood: ( each word in : do : ( console print word ) )"
 
   """
   for each word in: () do:
@@ -1856,13 +1552,6 @@ tests = [
   """
   "1+1"
 
-  """
-  for each word in:
-  ﹍'(1 + 1)
-  do:
-  ﹍console print word
-  """
-  "1+1"
 
   # ---------------------------------------------------------------------------
   # since here 1+1 gives us a result that is a number, we throw
@@ -1877,13 +1566,6 @@ tests = [
   """
   "! exception: for...each expects a list"
 
-  """
-  for each word in:
-  ﹍1 + 1
-  do:
-  ﹍console print word
-  """
-  "! exception: for...each expects a list"
 
   # ---------------------------------------------------------------------------
   """
@@ -1894,13 +1576,6 @@ tests = [
   """
   "Hello Dave my dear friend"
 
-  """
-  for each word in:
-  ﹍("Hello " "Dave " "my " "dear " "friend")
-  do:
-  ﹍console print word
-  """
-  "Hello Dave my dear friend"
 
   # ---------------------------------------------------------------------------
   # we try to avaluate that list of strings but since
@@ -1911,14 +1586,6 @@ tests = [
   ﹍﹍"Hello " "Dave " "my " "dear " "friend"
   ﹍do:
   ﹍﹍console print word
-  """
-  "Hello Dave my dear friend"
-
-  """
-  for each word in:
-  ﹍"Hello " "Dave " "my " "dear " "friend"
-  do:
-  ﹍console print word
   """
   "Hello Dave my dear friend"
 
@@ -1954,20 +1621,6 @@ tests = [
 
   """
   for each word in:
-  ﹍(\\
-  ﹍"Hello "\\
-  ﹍"Dave "\\
-  ﹍"my "\\
-  ﹍"dear "\\
-  ﹍"friend"\\
-  ﹍)
-  do:
-  ﹍console print word
-  """
-  "Hello Dave my dear friend"
-
-  """
-  for each word in:
   ﹍﹍"Hello "\\
   ﹍﹍"Dave "\\
   ﹍﹍"my "\\
@@ -1975,18 +1628,6 @@ tests = [
   ﹍﹍"friend"
   ﹍do:
   ﹍﹍console print word
-  """
-  "Hello Dave my dear friend"
-
-  """
-  for each word in:
-  ﹍"Hello "\\
-  ﹍"Dave "\\
-  ﹍"my "\\
-  ﹍"dear "\\
-  ﹍"friend"
-  do:
-  ﹍console print word
   """
   "Hello Dave my dear friend"
 
@@ -2001,16 +1642,6 @@ tests = [
   """
   "Hello Dave my dear friend"
 
-  """
-  codeToBeRun ='
-  ﹍console print word
-  for each word in:
-  ﹍("Hello " "Dave " "my " "dear " "friend")
-  do:
-  ﹍codeToBeRun eval
-  """
-  "Hello Dave my dear friend"
-
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
@@ -2022,16 +1653,6 @@ tests = [
   """
   "Hello Dave my dear friend"
 
-  """
-  codeToBeRun ='
-  ﹍console print word
-  for each word in:
-  ﹍'("Hello " "Dave ") + "my " + "dear " + "friend"
-  do:
-  ﹍codeToBeRun eval
-  """
-  "Hello Dave my dear friend"
-
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
@@ -2044,17 +1665,6 @@ tests = [
   """
   "Hello Dave my dear friend"
 
-  """
-  codeToBeRun ='
-  ﹍console print word
-  myList =' ("Hello " "Dave " "my " "dear " "friend")
-  for each word in:
-  ﹍myList
-  do:
-  ﹍codeToBeRun eval
-  """
-  "Hello Dave my dear friend"
-
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
@@ -2064,17 +1674,6 @@ tests = [
   ﹍﹍myList
   ﹍do:
   ﹍﹍codeToBeRun eval
-  """
-  "Hello Dave my dear friend"
-
-  """
-  codeToBeRun ='
-  ﹍console print word
-  myList = '("Hello " "Dave ") + "my " + "dear " + "friend"
-  for each word in:
-  ﹍myList
-  do:
-  ﹍codeToBeRun eval
   """
   "Hello Dave my dear friend"
 
@@ -2091,18 +1690,6 @@ tests = [
   """
   "Hello Dave my dear friend"
 
-  """
-  codeToBeRun ='
-  ﹍console print word
-  myList = '("Hello " "Dave ")
-  myString = "my dear friend"
-  for each word in:
-  ﹍myList + myString
-  do:
-  ﹍codeToBeRun eval
-  """
-  "Hello Dave my dear friend"
-
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
@@ -2116,18 +1703,6 @@ tests = [
   """
   "Hello Dave my dear friend"
 
-  """
-  codeToBeRun ='
-  ﹍console print word
-  myList ='
-  ﹍"Hello " "Dave " "my " "dear " "friend"
-  for each word in:
-  ﹍myList
-  do:
-  ﹍codeToBeRun eval
-  """
-  "Hello Dave my dear friend"
-
   # ---------------------------------------------------------------------------
   """
   codeToBeRun =:
@@ -2138,18 +1713,6 @@ tests = [
   ﹍﹍myList
   ﹍do:
   ﹍﹍codeToBeRun eval
-  """
-  "Hello Dave my dear friend"
-
-  """
-  codeToBeRun =:
-  ﹍console print word
-  myList =:
-  ﹍"Hello " "Dave " "my " "dear " "friend"
-  for each word in:
-  ﹍myList
-  do:
-  ﹍codeToBeRun eval
   """
   "Hello Dave my dear friend"
 
@@ -2181,18 +1744,6 @@ tests = [
   """
   "Hello Dave my dear friend"
 
-  """
-  codeToBeRun ='
-  ﹍console print word
-  myList =
-  ﹍'("Hello " "Dave " "my " "dear " "friend")
-  for each word in:
-  ﹍myList
-  do:
-  ﹍codeToBeRun eval
-  """
-  "Hello Dave my dear friend"
-
   # ---------------------------------------------------------------------------
   # in this case "myList" ends up being a wrapped list i.e. ((wrapped))
   # so, when the right-side is evaluated, it ends up being the normal
@@ -2209,18 +1760,6 @@ tests = [
   """
   "Hello Dave my dear friend"
 
-  """
-  codeToBeRun ='
-  ﹍console print word
-  myList = '
-  ﹍"Hello " "Dave " "my " "dear " "friend"
-  for each word in:
-  ﹍myList
-  do:
-  ﹍codeToBeRun eval
-  """
-  "Hello Dave my dear friend"
-
   # ---------------------------------------------------------------------------
   """
   acc = 0
@@ -2233,16 +1772,6 @@ tests = [
   "10"
 
 
-  """
-  acc = 0
-  for each number in:
-  ﹍'(1 2 3 4)
-  do:
-  ﹍acc += number
-  console print acc
-  """
-  "10"
-
   # ---------------------------------------------------------------------------
   """
   acc = 0
@@ -2250,16 +1779,6 @@ tests = [
   ﹍﹍1 2 3 4
   ﹍do:
   ﹍﹍acc += number
-  console print acc
-  """
-  "10"
-
-  """
-  acc = 0
-  for each number in:
-  ﹍1 2 3 4
-  do:
-  ﹍acc += number
   console print acc
   """
   "10"
@@ -2275,17 +1794,6 @@ tests = [
   """
   "10"
 
-  """
-  acc = 0
-  for each number in:
-  ﹍(1 2 3 4)
-  do:
-  ﹍acc += number
-  console print acc
-  """
-  "10"
-
-
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
@@ -2295,17 +1803,6 @@ tests = [
   ﹍﹍myList
   ﹍do:
   ﹍﹍codeToBeRun eval
-  """
-  "! exception: for...each expects a list"
-
-  """
-  codeToBeRun ='
-  ﹍console print word
-  myList = 9
-  for each word in:
-  ﹍myList
-  do:
-  ﹍codeToBeRun eval
   """
   "! exception: for...each expects a list"
 
@@ -2668,35 +2165,9 @@ tests = [
   """
   MyClass = Class new
   MyClass answer:
-  ﹍getYourself (param)
-  by:
-  ﹍param
-  myObject = MyClass new
-  myObject getYourself
-  ﹍﹍2
-  ﹍postfixPrint
-  """
-  "2"
-
-  """
-  MyClass = Class new
-  MyClass answer:
   ﹍﹍getYourself (param)
   ﹍by:
   ﹍﹍param
-  myObject = MyClass new
-  myObject getYourself
-  ﹍﹍2
-  ﹍console print 1
-  """
-  "! exception: message was not understood: ( console print 1 )"
-
-  """
-  MyClass = Class new
-  MyClass answer:
-  ﹍getYourself (param)
-  by:
-  ﹍param
   myObject = MyClass new
   myObject getYourself
   ﹍﹍2
@@ -2720,17 +2191,6 @@ tests = [
   """
   MyClass = Class new
   MyClass answer:
-  ﹍getYourself (param)
-  by:
-  ﹍param
-  myObject = MyClass new
-  myObject getYourself 3 postfixPrint
-  """
-  "3"
-
-  """
-  MyClass = Class new
-  MyClass answer:
   ﹍﹍getYourself (param)
   ﹍by:
   ﹍﹍param
@@ -2742,33 +2202,9 @@ tests = [
   """
   MyClass = Class new
   MyClass answer:
-  ﹍getYourself (param)
-  by:
-  ﹍param
-  myObject = MyClass new
-  (myObject getYourself 3) postfixPrint
-  """
-  "3"
-
-
-  """
-  MyClass = Class new
-  MyClass answer:
   ﹍﹍getYourself (param)
   ﹍by:
   ﹍﹍param
-  myObject = MyClass new
-  myObject getYourself 3
-  console print 1
-  """
-  "1"
-
-  """
-  MyClass = Class new
-  MyClass answer:
-  ﹍getYourself (param)
-  by:
-  ﹍param
   myObject = MyClass new
   myObject getYourself 3
   console print 1
@@ -2791,34 +2227,10 @@ tests = [
   """
   MyClass = Class new
   MyClass answer:
-  ﹍whenNew
-  by:
-  ﹍console print "hey I'm new!"
-  ﹍self
-  myObject = MyClass new
-  console print " ...done!"
-  """
-  "hey I'm new! ...done!"
-
-  """
-  MyClass = Class new
-  MyClass answer:
   ﹍﹍whenNew
   ﹍by:
   ﹍﹍console print "hey I'm new!"
   ﹍﹍@
-  myObject = MyClass new
-  console print " ...done!"
-  """
-  "hey I'm new! ...done!"
-
-  """
-  MyClass = Class new
-  MyClass answer:
-  ﹍whenNew
-  by:
-  ﹍console print "hey I'm new!"
-  ﹍@
   myObject = MyClass new
   console print " ...done!"
   """
@@ -2841,16 +2253,6 @@ tests = [
   """
   "1"
 
-  """
-  MyClass = Class new
-  MyClass answer:
-  ﹍whenNew
-  by:
-  ﹍2
-  ﹍self
-  myObject = MyClass new console print 1
-  """
-  "1"
 
   """
   MyClass = Class new
@@ -2859,17 +2261,6 @@ tests = [
   ﹍by:
   ﹍﹍2
   ﹍﹍@
-  myObject = MyClass new console print 1
-  """
-  "1"
-
-  """
-  MyClass = Class new
-  MyClass answer:
-  ﹍whenNew
-  by:
-  ﹍2
-  ﹍@
   myObject = MyClass new console print 1
   """
   "1"
@@ -2890,17 +2281,6 @@ tests = [
   """
   "2"
 
-  """
-  MyClass = Class new
-  MyClass answer:
-  ﹍whenNew
-  by:
-  ﹍2
-  myObject = MyClass new
-  console print myObject
-  """
-  "2"
-
   # ---------------------------------------------------------------------------
   """
   MyClass = Class new
@@ -2919,22 +2299,6 @@ tests = [
   """
   "hey I'm new! hello again! I am... [object of class \"MyClass\"]"
 
-  """
-  MyClass = Class new
-  MyClass answer:
-  ﹍whenNew
-  by:
-  ﹍console print "hey I'm new!"
-  ﹍self
-  MyClass answer:
-  ﹍initWith (param)
-  by:
-  ﹍console print param
-  ﹍self
-  myObject = MyClass new initWith " hello again! I am... "
-  console print myObject
-  """
-  "hey I'm new! hello again! I am... [object of class \"MyClass\"]"
 
   """
   MyClass = Class new
@@ -2948,23 +2312,6 @@ tests = [
   ﹍by:
   ﹍﹍console print param
   ﹍﹍@
-  myObject = MyClass new initWith " hello again! I am... "
-  console print myObject
-  """
-  "hey I'm new! hello again! I am... [object of class \"MyClass\"]"
-
-  """
-  MyClass = Class new
-  MyClass answer:
-  ﹍whenNew
-  by:
-  ﹍console print "hey I'm new!"
-  ﹍@
-  MyClass answer:
-  ﹍initWith (param)
-  by:
-  ﹍console print param
-  ﹍@
   myObject = MyClass new initWith " hello again! I am... "
   console print myObject
   """
@@ -2984,19 +2331,6 @@ tests = [
   """
   "2"
 
-  """
-  // a comment here
-  MyClass = Class new
-  MyClass answer:
-  ﹍whenNew
-  // another comment here
-  by:
-  ﹍2
-  myObject = MyClass new
-  console print myObject
-  """
-  "2"
-
   # ---------------------------------------------------------------------------
   # handling extra indentation
   # ---------------------------------------------------------------------------
@@ -3011,17 +2345,6 @@ tests = [
   """
   "hello"
 
-  """
-  MyClass = Class new
-  MyClass answer:
-  ﹍printtwo (argument)
-  by:
-  ﹍console print argument
-  myObject = MyClass new
-  myObject printtwo "hello"
-  """
-  "hello"
-
   # ---------------------------------------------------------------------------
   """
   MyClass = Class new
@@ -3029,17 +2352,6 @@ tests = [
   ﹍﹍﹍﹍printthree (argument)
   ﹍by:
   ﹍﹍﹍﹍console print argument
-  myObject = MyClass new
-  myObject printthree "hello"
-  """
-  "hello"
-
-  """
-  MyClass = Class new
-  MyClass answer:
-  ﹍﹍﹍printthree (argument)
-  by:
-  ﹍﹍﹍console print argument
   myObject = MyClass new
   myObject printthree "hello"
   """
@@ -3058,17 +2370,6 @@ tests = [
   """
   "hello"
 
-  """
-  MyClass = Class new
-  MyClass answer:
-  ﹍﹍﹍﹍﹍﹍﹍﹍printthree (argument)
-  by:
-  ﹍﹍﹍console print argument
-  myObject = MyClass new
-  myObject printthree "hello"
-  """
-  "hello"
-
   # ---------------------------------------------------------------------------
   # unclear why you'd do this but it works
   """
@@ -3077,17 +2378,6 @@ tests = [
   ﹍﹍﹍﹍printthree (argument)
   ﹍by:
   ﹍﹍﹍﹍﹍﹍﹍﹍﹍console print argument
-  myObject = MyClass new
-  myObject printthree "hello"
-  """
-  "hello"
-
-  """
-  MyClass = Class new
-  MyClass answer:
-  ﹍﹍﹍printthree (argument)
-  by:
-  ﹍﹍﹍﹍﹍﹍﹍﹍console print argument
   myObject = MyClass new
   myObject printthree "hello"
   """
@@ -3179,18 +2469,6 @@ tests = [
   """
   "1234"
 
-  """
-  codeToBeRun ='
-  ﹍console print word
-  myList = '(1 2 3 4)
-  for each word in:
-  ﹍myList
-  do:
-  ﹍codeToBeRun eval
-  """
-  "1234"
-
-
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
@@ -3200,17 +2478,6 @@ tests = [
   ﹍﹍myList
   ﹍do:
   ﹍﹍codeToBeRun eval
-  """
-  "! exception: for...each expects a list"
-
-  """
-  codeToBeRun ='
-  ﹍console print word
-  myList = 9
-  for each word in:
-  ﹍myList
-  do:
-  ﹍codeToBeRun eval
   """
   "! exception: for...each expects a list"
 
@@ -3283,43 +2550,6 @@ tests = [
   Counter.counter = 0
 
   Counter answer:
-  ﹍increment
-  by:
-  ﹍self.counter = self.counter+1
-
-  MyClass = Class new
-  MyClass.instantiationsCounter = Counter new
-
-  MyClass answer:
-  ﹍whenNew
-  by:
-  ﹍self.instantiationsCounter increment
-  ﹍self
-
-  MyClass answer:
-  ﹍getCount
-  by:
-  ﹍self.instantiationsCounter.counter
-
-  console print MyClass getCount
-
-  myObject = MyClass new
-  console print MyClass getCount
-  console print myObject getCount
-
-  myObject2 = MyClass new
-  console print MyClass getCount
-  console print myObject getCount
-  console print myObject2 getCount
-
-  """
-  "011222"
-
-  """
-  Counter = Class new
-  Counter.counter = 0
-
-  Counter answer:
   ﹍﹍increment
   ﹍by:
   ﹍﹍@counter = @counter+1
@@ -3337,43 +2567,6 @@ tests = [
   ﹍﹍getCount
   ﹍by:
   ﹍﹍@instantiationsCounter.counter
-
-  console print MyClass getCount
-
-  myObject = MyClass new
-  console print MyClass getCount
-  console print myObject getCount
-
-  myObject2 = MyClass new
-  console print MyClass getCount
-  console print myObject getCount
-  console print myObject2 getCount
-
-  """
-  "011222"
-
-  """
-  Counter = Class new
-  Counter.counter = 0
-
-  Counter answer:
-  ﹍increment
-  by:
-  ﹍@counter = @counter+1
-
-  MyClass = Class new
-  MyClass.instantiationsCounter = Counter new
-
-  MyClass answer:
-  ﹍whenNew
-  by:
-  ﹍@instantiationsCounter increment
-  ﹍@
-
-  MyClass answer:
-  ﹍getCount
-  by:
-  ﹍@instantiationsCounter.counter
 
   console print MyClass getCount
 
@@ -3421,65 +2614,6 @@ tests = [
   ﹍﹍getCount
   ﹍by:
   ﹍﹍self.instantiationsCounter.counter
-
-  console print MyClass getCount
-  console print myObject getCount
-
-  myObject2 = MyClass new
-  console print MyClass getCount
-  console print myObject getCount
-  console print myObject2 getCount
-
-  myObject2.fieldAddedToObject2 = 2
-
-  console print MyClass.fieldAddedToObject2
-  console print myObject.fieldAddedToObject2
-  console print myObject2.fieldAddedToObject2
-
-  MyClass.fieldAddedToClass = 3
-  console print MyClass.fieldAddedToClass
-  console print myObject.fieldAddedToClass
-  console print myObject2.fieldAddedToClass
-
-  myObject.fieldAddedToClass = 4
-  console print MyClass.fieldAddedToClass
-  console print myObject.fieldAddedToClass
-  console print myObject2.fieldAddedToClass
-
-  myObject2.fieldAddedToClass = 5
-  console print MyClass.fieldAddedToClass
-  console print myObject.fieldAddedToClass
-  console print myObject2.fieldAddedToClass
-
-
-  """
-  "00111nilnil2333343345"
-
-  """
-  Counter = Class new
-  Counter.counter = 0
-
-  Counter answer:
-  ﹍increment
-  by:
-  ﹍self.counter = self.counter+1
-
-  MyClass = Class new
-
-  myObject = MyClass new
-
-  MyClass.instantiationsCounter = Counter new
-
-  MyClass answer:
-  ﹍whenNew
-  by:
-  ﹍self.instantiationsCounter increment
-  ﹍self
-
-  MyClass answer:
-  ﹍getCount
-  by:
-  ﹍self.instantiationsCounter.counter
 
   console print MyClass getCount
   console print myObject getCount
@@ -3573,64 +2707,6 @@ tests = [
   """
   "00111nilnil2333343345"
 
-  """
-  Counter = Class new
-  Counter.counter = 0
-
-  Counter answer:
-  ﹍increment
-  by:
-  ﹍@counter++
-
-  MyClass = Class new
-
-  myObject = MyClass new
-
-  MyClass.instantiationsCounter = Counter new
-
-  MyClass answer:
-  ﹍whenNew
-  by:
-  ﹍@instantiationsCounter increment
-  ﹍@
-
-  MyClass answer:
-  ﹍getCount
-  by:
-  ﹍@instantiationsCounter.counter
-
-  console print MyClass getCount
-  console print myObject getCount
-
-  myObject2 = MyClass new
-  console print MyClass getCount
-  console print myObject getCount
-  console print myObject2 getCount
-
-  myObject2.fieldAddedToObject2 = 2
-
-  console print MyClass.fieldAddedToObject2
-  console print myObject.fieldAddedToObject2
-  console print myObject2.fieldAddedToObject2
-
-  MyClass.fieldAddedToClass = 3
-  console print MyClass.fieldAddedToClass
-  console print myObject.fieldAddedToClass
-  console print myObject2.fieldAddedToClass
-
-  myObject.fieldAddedToClass = 4
-  console print MyClass.fieldAddedToClass
-  console print myObject.fieldAddedToClass
-  console print myObject2.fieldAddedToClass
-
-  myObject2.fieldAddedToClass = 5
-  console print MyClass.fieldAddedToClass
-  console print myObject.fieldAddedToClass
-  console print myObject2.fieldAddedToClass
-
-
-  """
-  "00111nilnil2333343345"
 
   # ---------------------------------------------------------------------------
   # compound assignments operators
@@ -3933,24 +3009,6 @@ tests = [
   """
   "running with a param.running without params.running with a param."
 
-  """
-  to "🚀":
-  ﹍withAParameter
-  do:
-  ﹍console print "running with a param."
-
-  "🚀" withAParameter
-
-  to "🚀":
-  ﹍console print "running without params."
-
-  "🚀"
-  "🚀" withAParameter
-
-  """
-  "running with a param.running without params.running with a param."
-
-
   # ---------------------------------------------------------------------------
   # string concatenation also with type conversion
   # ---------------------------------------------------------------------------
@@ -4214,59 +3272,6 @@ tests = [
   """
   " adding item: Hello  0 node is: [object of class \"Node\"] 0 node has item: Hello  1 node is: [object of class \"Node\"] 1 node has item: Hello  2 node is: [object of class \"Node\"] 2 node has item: Hello  list is empty now? true 3 node is: [object of class \"Node\"] 3 node has item: Hello  list is empty now? false list is empty now? false adding item: World 0 node is: [object of class \"Node\"] 0 node has item: World 1 node is: [object of class \"Node\"] 1 node has item: World 2 node is: [object of class \"Node\"] 2 node has item: World list is empty now? false list is empty now? false list contents: Hello World"
 
-  """
-  Node = Class new
-
-  Node answer:
-  ﹍initWith (item) (next)
-  by:
-  ﹍@item = item
-  ﹍console print " adding item: " + @item
-  ﹍@next = next
-  ﹍@
-
-  LinkedList = Class new
-
-  LinkedList answer:
-  ﹍isEmpty
-  by:
-  ﹍console print " list is empty now? " + @head == nil
-  ﹍@head == nil
-
-  LinkedList answer:
-  ﹍append (item)
-  by:
-  ﹍node = Node new initWith item nil
-  ﹍console print " 0 node is: " + node
-  ﹍console print " 0 node has item: " + node.item
-  ﹍if @tail != nil:
-  ﹍﹍console print " 1 node is: " + node
-  ﹍﹍console print " 1 node has item: " + node.item
-  ﹍﹍@tail.next = node
-  ﹍﹍console print " 2 node is: " + node
-  ﹍﹍console print " 2 node has item: " + node.item
-  ﹍if @ isEmpty:
-  ﹍﹍console print " 3 node is: " + node
-  ﹍﹍console print " 3 node has item: " + node.item
-  ﹍﹍@head = node
-  ﹍if @ isEmpty:
-  ﹍﹍console print " this list should NOT be empty"
-  ﹍@tail = node
-
-  myLinkedList = LinkedList new
-
-  myLinkedList append "Hello "
-  if myLinkedList isEmpty:
-  ﹍console print " this list should NOT be empty"
-
-  myLinkedList append "World"
-
-  console print " list contents: "
-  console print myLinkedList.head.item
-  console print myLinkedList.head.next.item
-  """
-  " adding item: Hello  0 node is: [object of class \"Node\"] 0 node has item: Hello  1 node is: [object of class \"Node\"] 1 node has item: Hello  2 node is: [object of class \"Node\"] 2 node has item: Hello  list is empty now? true 3 node is: [object of class \"Node\"] 3 node has item: Hello  list is empty now? false list is empty now? false adding item: World 0 node is: [object of class \"Node\"] 0 node has item: World 1 node is: [object of class \"Node\"] 1 node has item: World 2 node is: [object of class \"Node\"] 2 node has item: World list is empty now? false list is empty now? false list contents: Hello World"
-
 
 # ---------------------------------------------------------------------------
   """
@@ -4399,14 +3404,6 @@ tests = [
 
   """
   for each number in:
-  ﹍3...10
-  do:
-  ﹍console print number
-  """
-  "3456789"
-
-  """
-  for each number in:
   ﹍﹍10...3
   ﹍do:
   ﹍﹍console print number
@@ -4415,26 +3412,9 @@ tests = [
 
   """
   for each number in:
-  ﹍10...3
-  do:
-  ﹍console print number
-  """
-  "10987654"
-
-  """
-  for each number in:
   ﹍﹍3...3
   ﹍do:
   ﹍﹍console print number
-  console print "the end."
-  """
-  "the end."
-
-  """
-  for each number in:
-  ﹍3...3
-  do:
-  ﹍console print number
   console print "the end."
   """
   "the end."
@@ -4482,23 +3462,6 @@ tests = [
 
   "3-1"
 
-  """
-  codeToBeRun ='
-  ﹍console print 1+2
-
-  MyClass=Class new
-  MyClass.counter = nil
-  MyClass answer:
-  ﹍printOperation
-  by:
-  ﹍codeToBeRun eval
-  myObject=MyClass new
-  myObject printOperation
-  codeToBeRun[3] = '-
-  myObject printOperation
-  """
-
-  "3-1"
 
   # ---------------------------------------------------------------------------
   # signatures in "answer" are evaluated, so they can be closed too,
@@ -4520,22 +3483,6 @@ tests = [
 
   "Hello Flora"
 
-  """
-  //withName = 2
-  name = "Flora"
-
-  MyClass = Class new
-  MyClass answer:
-  ﹍withName (name)
-  by:
-  ﹍console print "Hello "
-  ﹍console print name
-  myObject = MyClass new
-  myObject withName "Dave"
-  """
-
-  "Hello Flora"
-
 
   """
   withName = 2
@@ -4553,21 +3500,6 @@ tests = [
 
   "! exception: signature of a method should only contain tokens or lists. Found instead: 2 . Perhaps some variable in the signature has been closed?"
 
-  """
-  withName = 2
-  name = "Flora"
-
-  MyClass = Class new
-  MyClass answer:
-  ﹍withName (name)
-  by:
-  ﹍console print "Hello "
-  ﹍console print name
-  myObject = MyClass new
-  myObject withName "Dave"
-  """
-
-  "! exception: signature of a method should only contain tokens or lists. Found instead: 2 . Perhaps some variable in the signature has been closed?"
 
   """
   //withName = 2
@@ -4582,18 +3514,6 @@ tests = [
   "Hello Flora"
 
   """
-  //withName = 2
-  name = "Flora"
-  to sayHello:
-  ﹍withName (name)
-  do:
-  ﹍console print "Hello "
-  ﹍console print name
-  sayHello withName "Dave"
-  """
-  "Hello Flora"
-
-  """
   withName = 2
   name = "Flora"
   to sayHello:
@@ -4601,18 +3521,6 @@ tests = [
   ﹍do:
   ﹍﹍console print "Hello "
   ﹍﹍console print name
-  sayHello withName "Dave"
-  """
-  "! exception: signature of a method should only contain tokens or lists. Found instead: 2 . Perhaps some variable in the signature has been closed?"
-
-  """
-  withName = 2
-  name = "Flora"
-  to sayHello:
-  ﹍withName (name)
-  do:
-  ﹍console print "Hello "
-  ﹍console print name
   sayHello withName "Dave"
   """
   "! exception: signature of a method should only contain tokens or lists. Found instead: 2 . Perhaps some variable in the signature has been closed?"
@@ -4802,17 +3710,6 @@ tests = [
   """
   "2[object of class \"Class_of_🚀\"]"
 
-  """
-  to 🚀:
-  ﹍withAParameter
-  do:
-  ﹍console print "running with a param."
-  🚀
-  console print 1+1
-  console print 🚀
-  """
-  "2[object of class \"Class_of_🚀\"]"
-
   # ---------------------------------------------------------------------------
   # factorial using FLTo
 
@@ -4824,19 +3721,6 @@ tests = [
   ﹍﹍﹍return 1
   ﹍﹍else:
   ﹍﹍﹍return n * factorial (n - 1)
-
-  console print factorial 3
-  """
-  "6"
-
-  """
-  to factorial:
-  ﹍(n)
-  do:
-  ﹍if n == 0:
-  ﹍﹍return 1
-  ﹍else:
-  ﹍﹍return n * factorial (n - 1)
 
   console print factorial 3
   """
@@ -4858,19 +3742,6 @@ tests = [
   """
   "6"
 
-  """
-  to factorial:
-  ﹍(n)
-  do:
-  ﹍if n == 0:
-  ﹍﹍1
-  ﹍else:
-  ﹍﹍n * factorial (n - 1)
-
-  console print factorial 3
-  """
-  "6"
-
   # ---------------------------------------------------------------------------
   """
   Number answer:
@@ -4879,18 +3750,6 @@ tests = [
   ﹍﹍if self == 0:
   ﹍﹍﹍return 1
   ﹍﹍else:
-  ﹍﹍﹍(self - 1) factorial * self
-  console print 3 factorial
-  """
-  "6"
-
-  """
-  Number answer:
-  ﹍factorial
-  by:
-  ﹍if self == 0:
-  ﹍﹍return 1
-  ﹍else:
   ﹍﹍﹍(self - 1) factorial * self
   console print 3 factorial
   """
@@ -4910,18 +3769,6 @@ tests = [
 
   """
   Number answer:
-  ﹍factorial
-  by:
-  ﹍if self == 0:
-  ﹍﹍return 1
-  ﹍else:
-  ﹍﹍return (self - 1) factorial * self
-  console print 3 factorial
-  """
-  "6"
-
-  """
-  Number answer:
   ﹍﹍factorial
   ﹍by:
   ﹍﹍if self == 0:
@@ -4932,17 +3779,6 @@ tests = [
   """
   "6"
 
-  """
-  Number answer:
-  ﹍factorial
-  by:
-  ﹍if self == 0:
-  ﹍﹍1
-  ﹍else:
-  ﹍﹍(self - 1) factorial * self
-  console print 3 factorial
-  """
-  "6"
 
   # ---------------------------------------------------------------------------
   # override class default name. class names are really just for more
@@ -5018,41 +3854,6 @@ tests = [
   """
   '53( ( for each x in : ( 1 ... 3 ) do : ) ( for each y in : ( 1 ... 3 ) do : ) ( for each z in : ( 1 ... 3 ) do : ( [object of class "Console"] print x + y + z ) ) ) ----------  ---- ( ( for each x in : ( 1 ... 3 ) do : ( for each y in : ( 1 ... 3 ) do : ( for each z in : ( 1 ... 3 ) do : ( [object of class "Console"] print x + y + z ) ) ) ) ( for each y in : ( 1 ... 3 ) do : ( for each z in : ( 1 ... 3 ) do : ( [object of class "Console"] print x + y + z ) ) ) ( for each z in : ( 1 ... 3 ) do : ( [object of class "Console"] print x + y + z ) ) ) ---- ( for each x in : ( 1 ... 3 ) do : ( for each y in : ( 1 ... 3 ) do : ( for each z in : ( 1 ... 3 ) do : ( [object of class "Console"] print x + y + z ) ) ) )34454556'
 
-  """
-  a = '( (1...3) (console print x + y + z) x y z)
-  console print a length
-  numParams = a length - 2
-  console print numParams
-
-  bodies = '()
-
-  for each number in:
-  ﹍0...numParams
-  do:
-  ﹍bodies[number] = '()
-  ﹍bodies[number] = bodies[number] + 'for + 'each + a[2+number] + 'in + ': + a[0]
-  ﹍bodies[number] = bodies[number] + 'do + ':
-
-  bodies[numParams-1] = bodies[numParams-1] + a[1]
-  console print bodies
-
-  console print " ---------- "
-  for each number in:
-  ﹍numParams...1
-  do:
-  ﹍bodies[number-2] = bodies[number-2] + bodies[number-1]
-
-  console print " ---- "
-  console print bodies
-
-  toRun = bodies[0]
-  console print " ---- "
-  console print toRun
-
-  toRun eval
-  """
-  '53( ( for each x in : ( 1 ... 3 ) do : ) ( for each y in : ( 1 ... 3 ) do : ) ( for each z in : ( 1 ... 3 ) do : ( [object of class "Console"] print x + y + z ) ) ) ----------  ---- ( ( for each x in : ( 1 ... 3 ) do : ( for each y in : ( 1 ... 3 ) do : ( for each z in : ( 1 ... 3 ) do : ( [object of class "Console"] print x + y + z ) ) ) ) ( for each y in : ( 1 ... 3 ) do : ( for each z in : ( 1 ... 3 ) do : ( [object of class "Console"] print x + y + z ) ) ) ( for each z in : ( 1 ... 3 ) do : ( [object of class "Console"] print x + y + z ) ) ) ---- ( for each x in : ( 1 ... 3 ) do : ( for each y in : ( 1 ... 3 ) do : ( for each z in : ( 1 ... 3 ) do : ( [object of class "Console"] print x + y + z ) ) ) )34454556'
-
   # ---------------------------------------------------------------------------
   # same macro, used more cleanly as a keyword
 
@@ -5087,37 +3888,6 @@ tests = [
   """
   "34454556"
 
-  """
-  to nestedRepeat:
-  ﹍(rangeBodyAndVars)
-  do:
-  ﹍accessUpperContext
-  ﹍numParams = rangeBodyAndVars length - 2
-  ﹍body = rangeBodyAndVars[1]
-  ﹍range =  rangeBodyAndVars[0]
-  ﹍
-  ﹍bodies = '()
-  ﹍
-  ﹍for each number in:
-  ﹍﹍0...numParams
-  ﹍do:
-  ﹍﹍bodies[number] = '()
-  ﹍﹍bodies[number] = bodies[number] + 'for + 'each + rangeBodyAndVars[2+number] + 'in + ': + range
-  ﹍﹍bodies[number] = bodies[number] + 'do + ':
-  ﹍
-  ﹍bodies[numParams-1] = bodies[numParams-1] + body
-  ﹍
-  ﹍for each number in:
-  ﹍﹍(numParams-1)...0
-  ﹍do:
-  ﹍﹍bodies[number-1] = bodies[number-1] + bodies[number]
-  ﹍
-  ﹍bodies[0] eval
-
-  nestedRepeat '( (1...3) (console print x + y + z) x y z)
-  """
-  "34454556"
-
 
   # ---------------------------------------------------------------------------
   """
@@ -5126,17 +3896,6 @@ tests = [
   ﹍﹍﹍'(1 + 1)
   ﹍﹍do:
   ﹍﹍﹍console print word
-
-  aToObjectFunction
-  """
-  "1+1"
-
-  """
-  to aToObjectFunction:
-  ﹍for each word in:
-  ﹍﹍'(1 + 1)
-  ﹍do:
-  ﹍﹍console print word
 
   aToObjectFunction
   """
