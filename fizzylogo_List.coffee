@@ -48,6 +48,8 @@ class FLListClass extends FLClasses
     toBeReturned.cursorStart = 0
     toBeReturned.cursorEnd = -1
 
+    toBeReturned.definitionContext = null
+
     # nothing much to do, but it makes it more
     # clear in the code to show "how"
     # one is using the message/list
@@ -131,17 +133,19 @@ class FLListClass extends FLClasses
           evalled = (@elementAt i).evaluatedElementsList context
         else
           if (@elementAt i).flClass == FLToken and (@elementAt i).value == "self"
+            # leave "self" as "self"
             evalled = @elementAt i
           else
             # todo all the callers need to catch the yield so this one can yield too
             # and do the recursive yield from yield
             #catch yields
-            evalled = (@elementAt i).eval context, @
+            evalled = (@elementAt i).eval context, @, true
             if (@elementAt i).flClass == FLToken and evalled.flClass == FLNil
               evalled = @elementAt i
             else if (@elementAt i).flClass == FLToken and evalled.flClass == FLQuote
               evalled = @elementAt i
 
+        log "toBeReturned.evaluatedElementsList evaluated: " + evalled.flToString()
         newList = newList.flListImmutablePush evalled
 
       return newList
@@ -385,6 +389,7 @@ class FLListClass extends FLClasses
       copy.cursorStart = @cursorStart
       copy.cursorEnd = @cursorEnd
       copy.isMessage = @isMessage
+      copy.definitionContext = @definitionContext
       return copy
 
     toBeReturned.shallowCopy = ->

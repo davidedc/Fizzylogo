@@ -52,9 +52,10 @@ class FLContext
     # the top-most context is NOT transparent,
     # so we know this loop will never go "beyond" the top
     while ascendingTheContext.isTransparent
+      log "evaluation " + indentation() + "firstNonTransparentContext: context is transparent at depth " + ascendingTheContext.depth() + " with self: " + ascendingTheContext.self.flToString?()
       ascendingTheContext = ascendingTheContext.previousContext
 
-    log "first non-transparent context is the one at depth: " + ascendingTheContext.depth()
+    log "first non-transparent context is the one at depth: " + ascendingTheContext.depth() + " with self: " + ascendingTheContext.self.flToString?()
 
     ascendingTheContext
 

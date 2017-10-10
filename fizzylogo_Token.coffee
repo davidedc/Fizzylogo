@@ -14,15 +14,22 @@ class FLTokenClass extends FLClasses
       return @value == ";"
 
 
-    toBeReturned.lookup = (theContext) ->
+    toBeReturned.lookup = (theContext, definitionContext) ->
       log "evaluation " + indentation() + "looking up temp token: " + @value
       existingLookedUpValuePlace = theContext.whichDictionaryContainsToken @
+
       if existingLookedUpValuePlace?
-        log "evaluation " + indentation() + "found temp token: " + @value
+        log "evaluation " + indentation() + "found temp token in running context: " + @value
         return theContext.lookUpTokenValue @, existingLookedUpValuePlace
+      else
+        existingLookedUpValuePlace = definitionContext?.whichDictionaryContainsToken @
+        if existingLookedUpValuePlace?
+          log "evaluation " + indentation() + "found temp token in definition context: " + @value
+          return definitionContext.lookUpTokenValue @, existingLookedUpValuePlace
+      return null
     
 
-    toBeReturned.eval = (theContext, remainingMessage) ->
+    toBeReturned.eval = (theContext, remainingMessage, fromListElementsEvaluation) ->
 
       #yield
       # shortcut: instead of using "@a←5"
@@ -30,14 +37,19 @@ class FLTokenClass extends FLClasses
       if remainingMessage? and remainingMessage.flClass == FLList
         log "remainingMessage: " + remainingMessage.flToString()
         log "secondElementIsEqual: " + remainingMessage.secondElementIsEqual()
-        if remainingMessage.startsWithIncrementOrDecrementOperator() or remainingMessage.startsWithCompoundAssignmentOperator() or remainingMessage.secondElementIsEqual()
-          return @
+        if !fromListElementsEvaluation and
+          (
+            remainingMessage.startsWithIncrementOrDecrementOperator() or
+            remainingMessage.startsWithCompoundAssignmentOperator() or
+            remainingMessage.secondElementIsEqual()
+          )
+            return @
 
       # first always look up if there is a value for anything
       # if there is, that wins all the times, so you could
       # have an exotic value for "false", or "2" that is completely
       # different from what it would naturally be.
-      lookup = @lookup theContext
+      lookup = @lookup theContext, remainingMessage.definitionContext
       if lookup? then return lookup
 
       # you could match the leading "+" or "-", however this would

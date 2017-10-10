@@ -861,11 +861,6 @@ tests = [
 
   # ---------------------------------------------------------------------------
   "'MyClass←Class new;\
-    MyClass answer:(printtwo)by'(console print self);\
-    'myObject←MyClass new;myObject printtwo"
-  "[object of anonymous class]"
-
-  "'MyClass←Class new;\
     MyClass answer:(printtwo)by:(console print self);\
     'myObject←MyClass new;myObject printtwo"
   "[object of anonymous class]"
@@ -1275,14 +1270,27 @@ tests = [
   "1"
 
   # ---------------------------------------------------------------------------
-  # something similar to closures, the
+  # Closures
+  # There are two types of closures
+  #
+  # 1) A "read only" closure
+  # which works with degining a code block as a list, and
+  # then evalling it.
+  # It comes from the fact that
   # code is just a list of tokens, and with the quote
   # assignment (or any quote for that matter)
   # its elements (excluding "self") are all evaluated,
   # hence the bound elements are copied in terms of their values, so
   # those can't be changed anymore.
   # The unassigned elements are kept as is and hence
-  # they are free to be bound later
+  # they are free to be bound later.
+  #
+  # 2) A "proper" closure
+  # this one works with "to" and "answer" and works
+  # much more like a closure: one can read and write
+  # variables that come from the context where the
+  # closure was defined.
+
   """
   op1 = 2
   codeToBeRun ='
@@ -1295,6 +1303,84 @@ tests = [
   codeToBeRun eval
   """
   "588"
+
+  """
+  op1 = 2
+  codeToBeRun ='
+  ﹍op1++
+  ﹍console print op1
+  codeToBeRun eval
+  console print op1
+  """
+  "22"
+
+  # "eval" opens up the current context
+  # so both op1 and op2 get modified
+  """
+  op1 = 2
+  codeToBeRun ='
+  ﹍op1++
+  ﹍op2 = 1
+  ﹍console print op1
+  ﹍console print op2
+  codeToBeRun eval
+  console print op1
+  console print op2
+  """
+  "2121"
+
+  """
+  op1 = 2
+  to codeToBeRun:
+  ﹍op1++
+  ﹍console print op1
+  codeToBeRun
+  console print op1
+  """
+  "33"
+
+  """
+  op1 = 2
+  Number answer:
+  ﹍﹍aClosure
+  ﹍by:
+  ﹍﹍op1++
+  ﹍﹍console print op1
+  0 aClosure
+  console print op1
+  """
+  "33"
+
+
+  """
+  op1 = 2
+  to codeToBeRun:
+  ﹍op1++
+  ﹍op2 = 1
+  ﹍console print op1
+  ﹍console print op2
+  codeToBeRun
+  console print op1
+  console print op2
+  """
+  "313nil"
+
+  """
+  op1 = 2
+  Number answer:
+  ﹍﹍aClosure
+  ﹍by:
+  ﹍﹍op1++
+  ﹍﹍op2 = 1
+  ﹍﹍console print op1
+  ﹍﹍console print op2
+  0 aClosure
+  console print op1
+  console print op2
+  """
+  "313nil"
+
+
 
   # ---------------------------------------------------------------------------
   """
@@ -3485,8 +3571,9 @@ tests = [
 
 
   # ---------------------------------------------------------------------------
-  # signatures in "answer" are evaluated, so they can be closed too,
-  # tests the checks.
+  # signatures in "answer" and "to" are not evaluated,
+  # so they can't be closed in read-only mode (see closures)
+  # so there can't be nasty "substitutions" in the signatures
 
   """
   //withName = 2
@@ -3502,7 +3589,7 @@ tests = [
   myObject withName "Dave"
   """
 
-  "Hello Flora"
+  "Hello Dave"
 
 
   """
@@ -3519,7 +3606,7 @@ tests = [
   myObject withName "Dave"
   """
 
-  "! exception: signature of a method should only contain tokens or lists. Found instead: 2 . Perhaps some variable in the signature has been closed?"
+  "Hello Dave"
 
 
   """
@@ -3532,7 +3619,7 @@ tests = [
   ﹍﹍console print name
   sayHello withName "Dave"
   """
-  "Hello Flora"
+  "Hello Dave"
 
   """
   withName = 2
@@ -3544,7 +3631,7 @@ tests = [
   ﹍﹍console print name
   sayHello withName "Dave"
   """
-  "! exception: signature of a method should only contain tokens or lists. Found instead: 2 . Perhaps some variable in the signature has been closed?"
+  "Hello Dave"
 
   # ---------------------------------------------------------------------------
   # class names

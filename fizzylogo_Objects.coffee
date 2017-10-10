@@ -185,7 +185,7 @@ class FLObjects
         log "theContext method invocation after: " + methodInvocation.flToString()
 
         # yield from
-        contextToBeReturned = @methodCall (classContainingMethods.methodBodies[eachSignatureIndex]), newContext
+        contextToBeReturned = @methodCall (classContainingMethods.methodBodies[eachSignatureIndex]), newContext, methodInvocationToBeChecked.definitionContext
 
         return [contextToBeReturned,methodInvocation]
 
@@ -199,7 +199,7 @@ class FLObjects
   # this could be native, in which case it's a JS call,
   # or non-native, in which case it will result into
   # evaluation of the message that makes up the body.
-  methodCall: (methodBody, theContext) ->
+  methodCall: (methodBody, theContext, definitionContext) ->
     #yield
     # note that this doesn't consume from the calling
     # context, because from the caller perspective it only matters
@@ -229,7 +229,7 @@ class FLObjects
       # note that in the yielding version, these must all
       # be generator functions
       # yield from
-      theContext.returned = methodBody.call @, theContext
+      theContext.returned = methodBody.call @, theContext, definitionContext
 
     contextToBeReturned = theContext
     return contextToBeReturned

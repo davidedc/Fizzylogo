@@ -83,8 +83,10 @@ addDefaultMethods = (classToAddThemTo) ->
     (flTokenize "eval"),
     (context) ->
       context.isTransparent = true
+      log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
       newContext = new FLContext context
       newContext.isTransparent = true
+      log "newContext now tramsparent at depth: " + newContext.depth() + " with self: " + newContext.self.flToString?()
       flContexts.jsArrayPush newContext
       # yield from
       toBeReturned = @eval newContext, @
@@ -146,6 +148,7 @@ addDefaultMethods = (classToAddThemTo) ->
   commonPropertyAssignmentFunction = (context) ->
     #yield
     context.isTransparent = true
+    log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
     variable = context.tempVariablesDict[ValidIDfromString "variable"]
     value = context.tempVariablesDict[ValidIDfromString "value"]
 
@@ -157,6 +160,7 @@ addDefaultMethods = (classToAddThemTo) ->
   commonPropertyAccessFunction = (context) ->
     #yield
     context.isTransparent = true
+    log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
     variable = context.tempVariablesDict[ValidIDfromString "variable"]
 
     log ". ('variable) : checking instance variables"
@@ -240,17 +244,33 @@ addDefaultMethods = (classToAddThemTo) ->
     (flTokenize ". ('variable)"),
     commonPropertyAccessFunction
 
-  # If you DON't want the signature to be "closed", then use
+  # we DON't want the signature to be "closed", so we use
   #  (flTokenize "answer : ( 'signature ) by ( methodBody )"),
-  # however then you need another variant of "answer" called "answerEvalSignature"
+  # however then we need another variant of "answer" called "answerEvalSignatureAndBody"
   # that can take an evaluated parameter, because the implementation for
   # "to" needs it.
   #
   # Note that you can call "answer" on both a Class or on any instance
   # of any class. In the second case, you'll still have to add the method
   # to the class, not to the instance.
+
   classToAddThemTo.addMethod \
-    (flTokenize "answer ( signature ) by ( methodBody )"),
+    (flTokenize "answer: ( 'signature ) by: ( 'methodBody )"),
+    (context) ->
+      #yield
+      signature = context.tempVariablesDict[ValidIDfromString "signature"]
+      methodBody = context.tempVariablesDict[ValidIDfromString "methodBody"]
+
+      if @isClass()
+        @addMethod signature, methodBody
+      else
+        @flClass.addMethod signature, methodBody
+
+      
+      return @
+
+  classToAddThemTo.addMethod \
+    (flTokenize "answerEvalSignatureAndBody ( signature ) by ( methodBody )"),
     (context) ->
       #yield
       signature = context.tempVariablesDict[ValidIDfromString "signature"]
@@ -295,7 +315,7 @@ initBootClasses = ->
 
   FLToken.addMethod \
     (flTokenize "← ( valueToAssign )"),
-    (context) ->
+    (context, definitionContext) ->
       #yield
       valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
 
@@ -305,10 +325,15 @@ initBootClasses = ->
       log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
 
       context.isTransparent = true
+      log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
 
       # check if temp variable is visible from here.
       # if not, create it.
       dictToPutValueIn = context.whichDictionaryContainsToken @
+
+      if !dictToPutValueIn?
+        dictToPutValueIn = definitionContext?.whichDictionaryContainsToken @
+
       if !dictToPutValueIn?
         # no such variable, hence we create it as temp, but
         # we can't create them in this very call context, that would
@@ -327,11 +352,12 @@ initBootClasses = ->
       dictToPutValueIn[ValidIDfromString assigneeTokenString] = valueToAssign
 
       log "evaluation " + indentation() + "stored value in dictionary"
+      context.isTransparent = false
       return valueToAssign
 
   FLToken.addMethod \
     (flTokenize "= ( valueToAssign )"),
-    (context) ->
+    (context, definitionContext) ->
       #yield
       valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
 
@@ -341,10 +367,19 @@ initBootClasses = ->
       log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
 
       context.isTransparent = true
+      log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
 
       # check if temp variable is visible from here.
       # if not, create it.
       dictToPutValueIn = context.whichDictionaryContainsToken @
+
+      if dictToPutValueIn?
+        log "evaluation " + indentation() + "token IS in running context"
+
+      if !dictToPutValueIn?
+        log "evaluation " + indentation() + "token not in running context, trying definition context: " + definitionContext
+        dictToPutValueIn = definitionContext?.whichDictionaryContainsToken @
+
       if !dictToPutValueIn?
         # no such variable, hence we create it as temp, but
         # we can't create them in this very call context, that would
@@ -363,10 +398,12 @@ initBootClasses = ->
       dictToPutValueIn[ValidIDfromString assigneeTokenString] = valueToAssign
 
       log "evaluation " + indentation() + "stored value in dictionary"
+
+      context.isTransparent = false
       
       return valueToAssign
 
-  commonClassCreationFunction = (context, assigneeTokenString, className) ->
+  commonClassCreationFunction = (context, definitionContext, assigneeTokenString, className) ->
     #yield
     valueToAssign = FLClass.createNew className
 
@@ -374,10 +411,15 @@ initBootClasses = ->
     log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
 
     context.isTransparent = true
+    log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
 
     # check if temp variable is visible from here.
     # if not, create it.
     dictToPutValueIn = context.whichDictionaryContainsToken @
+
+    if !dictToPutValueIn?
+      dictToPutValueIn = definitionContext?.whichDictionaryContainsToken @
+
     if !dictToPutValueIn?
       # no such variable, hence we create it as temp, but
       # we can't create them in this very call context, that would
@@ -401,17 +443,17 @@ initBootClasses = ->
 
   FLToken.addMethod \
     (flTokenize "= Class new"),
-    (context) ->
+    (context, definitionContext) ->
       # yield from
-      toBeReturned = commonClassCreationFunction context, @value, @value
+      toBeReturned = commonClassCreationFunction context, definitionContext, @value, @value
       return toBeReturned
 
   FLToken.addMethod \
     (flTokenize "= Class new named (theName)"),
-    (context) ->
+    (context, definitionContext) ->
       theName = context.tempVariablesDict[ValidIDfromString "theName"]
       # yield from
-      toBeReturned = commonClassCreationFunction context, @value, theName.value
+      toBeReturned = commonClassCreationFunction context, definitionContext, @value, theName.value
       return toBeReturned
 
   FLToken.addMethod \
@@ -459,11 +501,12 @@ initBootClasses = ->
 
   # TODO it'd be nice if there was a way not to leak the TempClass
   # Note 1----
-  # If you DON't want the signature to be "closed", then use
-  #  (flTokenize "( ' functionObjectName ) : ( 'signature ) do ( functionBody )"),
-  # hoewever at that point you'll have to also adjust the signature in
+  # we DON't want the signature to be "closed", so we use
+  #  (flTokenize "( ' functionObjectName ) : ( 'signature ) do: ( 'functionBody )"),
+  # however at that point we also had to adjust the signature in
   # "answer" otherwise you
-  # have a discrepancy, and "answer" will need both versions because it needs
+  # have a discrepancy, and "answer" needs an additional version
+  # that evaluates the signature because it needs
   # a version where the signature is evalled exactly to implement the "to"
   # here below.
   #
@@ -476,7 +519,7 @@ initBootClasses = ->
   # but that's not that common in other languages either.
 
   FLTo.addMethod \
-    (flTokenize "( ' functionObjectName ) ( signature ) do ( functionBody )"),
+    (flTokenize "( ' functionObjectName ) : ( 'signature ) do: ( 'functionBody )"),
     flTokenize \
       # functionObjectName contains a token i.e.
       # it's a pointer. So to put something inside the
@@ -501,16 +544,16 @@ initBootClasses = ->
       ﹍'TempClass ← Class new
       ﹍TempClass nameit "Class_of_" + functionObjectName
       ﹍functionObjectName ← TempClass new
-      ﹍TempClass answer (signature) by (functionBody)
+      ﹍TempClass answerEvalSignatureAndBody (signature) by (functionBody)
       else:
-      ﹍functionObjectName eval answer (signature) by (functionBody)
+      ﹍functionObjectName eval answerEvalSignatureAndBody (signature) by (functionBody)
 
 
       """
 
   # TODO it'd be nice if there was a way not to leak the TempClass
   FLTo.addMethod \
-    (flTokenize "( ' functionObjectName ) ( functionBody )"),
+    (flTokenize "( ' functionObjectName ) : ( 'functionBody )"),
     flTokenize \
       """
       accessUpperContext
@@ -522,9 +565,9 @@ initBootClasses = ->
       ﹍'TempClass ← Class new
       ﹍TempClass nameit "Class_of_" + functionObjectName
       ﹍functionObjectName ← TempClass new
-      ﹍TempClass answer: () by (functionBody)
+      ﹍TempClass answerEvalSignatureAndBody: () by (functionBody)
       else:
-      ﹍functionObjectName eval answer: () by (functionBody)
+      ﹍functionObjectName eval answerEvalSignatureAndBody: () by (functionBody)
 
       
       """
@@ -1091,6 +1134,7 @@ initBootClasses = ->
       #yield
       log "FLAccessUpperContext running emptyMessage"
       context.previousContext.isTransparent = true
+      log "context.previousContext now tramsparent at depth: " + context.previousContext.depth() + " with self: " + context.previousContext.self.flToString?()
       return @
 
   # Console -----------------------------------------------------------------------------
@@ -1173,6 +1217,7 @@ initBootClasses = ->
     (flTokenize "( ' loopCode )"),
     (context) ->
       context.isTransparent = true
+      log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
       loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
       log "FLRepeat1 ⇒ loop code is: " + loopCode.flToString()
 
@@ -1210,6 +1255,7 @@ initBootClasses = ->
 
   repeatFunctionContinuation = (context) ->
     context.isTransparent = true
+    log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
     howManyTimes = context.tempVariablesDict[ValidIDfromString "howManyTimes"]
     loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
     log "FLRepeat2 ⇒ loop code is: " + loopCode.flToString()
@@ -1285,6 +1331,7 @@ initBootClasses = ->
     (context) ->
       #yield
       context.isTransparent = true
+      log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
       predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
       trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
       log "FLIfThen: predicate value is: " + predicate.value
@@ -1318,6 +1365,7 @@ initBootClasses = ->
     (context) ->
       #yield
       context.isTransparent = true
+      log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
       predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
       trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
       log "FLIfFallThrough: predicate value is: " + predicate.value
@@ -1338,6 +1386,7 @@ initBootClasses = ->
     (context) ->
       log "FLIfFallThrough else: case "
       context.isTransparent = true
+      log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
       trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
 
       # yield from
@@ -1392,6 +1441,7 @@ initBootClasses = ->
     (flTokenize "( ' loopVar ) from ( startIndex ) to ( endIndex ) : ( 'loopCode )"),
     (context) ->
       context.isTransparent = true
+      log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
       loopVar = context.tempVariablesDict[ValidIDfromString "loopVar"]
       startIndex = context.tempVariablesDict[ValidIDfromString "startIndex"]
       endIndex = context.tempVariablesDict[ValidIDfromString "endIndex"]
@@ -1451,6 +1501,7 @@ initBootClasses = ->
     (context) ->
       #yield
       context.isTransparent = true
+      log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
       variable = context.tempVariablesDict[ValidIDfromString "variable"]
       theList = context.tempVariablesDict[ValidIDfromString "theList"]
       code = context.tempVariablesDict[ValidIDfromString "code"]
