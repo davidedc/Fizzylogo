@@ -401,7 +401,7 @@
           log("methodInvocation.cursorStart - originalMethodInvocationStart: " + " " + methodInvocation.cursorStart + " " + originalMethodInvocationStart);
           theContext.unparsedMessage = null;
           log("theContext method invocation after: " + methodInvocation.flToString());
-          contextToBeReturned = (yield* this.methodCall(classContainingMethods.methodBodies[eachSignatureIndex], newContext));
+          contextToBeReturned = (yield* this.methodCall(classContainingMethods.methodBodies[eachSignatureIndex], newContext, methodInvocationToBeChecked.definitionContext));
           return [contextToBeReturned, methodInvocation];
         }
       }
@@ -409,7 +409,7 @@
       return [null, methodInvocationToBeChecked];
     };
 
-    FLObjects.prototype.methodCall = function*(methodBody, theContext) {
+    FLObjects.prototype.methodCall = function*(methodBody, theContext, definitionContext) {
       var contextToBeReturned;
       yield;
       if (methodBody.flClass === FLList) {
@@ -417,7 +417,7 @@
         theContext.returned = (yield* methodBody["eval"](theContext, methodBody));
       } else {
         log("evaluation " + indentation() + "  matching - NATIVE method body: " + methodBody);
-        theContext.returned = (yield* methodBody.call(this, theContext));
+        theContext.returned = (yield* methodBody.call(this, theContext, definitionContext));
       }
       contextToBeReturned = theContext;
       return contextToBeReturned;
@@ -460,12 +460,13 @@
     };
 
     FLContext.prototype.firstNonTransparentContext = function() {
-      var ascendingTheContext;
+      var ascendingTheContext, base, base1;
       ascendingTheContext = this;
       while (ascendingTheContext.isTransparent) {
+        log("evaluation " + indentation() + "firstNonTransparentContext: context is transparent at depth " + ascendingTheContext.depth() + " with self: " + (typeof (base = ascendingTheContext.self).flToString === "function" ? base.flToString() : void 0));
         ascendingTheContext = ascendingTheContext.previousContext;
       }
-      log("first non-transparent context is the one at depth: " + ascendingTheContext.depth());
+      log("first non-transparent context is the one at depth: " + ascendingTheContext.depth() + " with self: " + (typeof (base1 = ascendingTheContext.self).flToString === "function" ? base1.flToString() : void 0));
       return ascendingTheContext;
     };
 
@@ -653,26 +654,33 @@
       toBeReturned.isStatementSeparator = function() {
         return this.value === ";";
       };
-      toBeReturned.lookup = function(theContext) {
+      toBeReturned.lookup = function(theContext, definitionContext) {
         var existingLookedUpValuePlace;
         log("evaluation " + indentation() + "looking up temp token: " + this.value);
         existingLookedUpValuePlace = theContext.whichDictionaryContainsToken(this);
         if (existingLookedUpValuePlace != null) {
-          log("evaluation " + indentation() + "found temp token: " + this.value);
+          log("evaluation " + indentation() + "found temp token in running context: " + this.value);
           return theContext.lookUpTokenValue(this, existingLookedUpValuePlace);
+        } else {
+          existingLookedUpValuePlace = definitionContext != null ? definitionContext.whichDictionaryContainsToken(this) : void 0;
+          if (existingLookedUpValuePlace != null) {
+            log("evaluation " + indentation() + "found temp token in definition context: " + this.value);
+            return definitionContext.lookUpTokenValue(this, existingLookedUpValuePlace);
+          }
         }
+        return null;
       };
-      toBeReturned["eval"] = function*(theContext, remainingMessage) {
+      toBeReturned["eval"] = function*(theContext, remainingMessage, fromListElementsEvaluation) {
         var lookup, ref;
         yield;
         if ((remainingMessage != null) && remainingMessage.flClass === FLList) {
           log("remainingMessage: " + remainingMessage.flToString());
           log("secondElementIsEqual: " + remainingMessage.secondElementIsEqual());
-          if (remainingMessage.startsWithIncrementOrDecrementOperator() || remainingMessage.startsWithCompoundAssignmentOperator() || remainingMessage.secondElementIsEqual()) {
+          if (!fromListElementsEvaluation && (remainingMessage.startsWithIncrementOrDecrementOperator() || remainingMessage.startsWithCompoundAssignmentOperator() || remainingMessage.secondElementIsEqual())) {
             return this;
           }
         }
-        lookup = this.lookup(theContext);
+        lookup = this.lookup(theContext, remainingMessage.definitionContext);
         if (lookup != null) {
           return lookup;
         } else if (/^[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/.test(this.value)) {
@@ -723,6 +731,7 @@
       toBeReturned.value = [];
       toBeReturned.cursorStart = 0;
       toBeReturned.cursorEnd = -1;
+      toBeReturned.definitionContext = null;
       toBeReturned.toList = function() {
         this.isMessage = false;
         return this;
@@ -783,7 +792,7 @@
             if ((this.elementAt(i)).flClass === FLToken && (this.elementAt(i)).value === "self") {
               evalled = this.elementAt(i);
             } else {
-              gen = (this.elementAt(i))["eval"](context, this);
+              gen = (this.elementAt(i))["eval"](context, this, true);
               while (!(ret = gen.next()).done) {
                 log("yielding");
               }
@@ -795,6 +804,7 @@
               }
             }
           }
+          log("toBeReturned.evaluatedElementsList evaluated: " + evalled.flToString());
           newList = newList.flListImmutablePush(evalled);
         }
         return newList;
@@ -977,6 +987,7 @@
         copy.cursorStart = this.cursorStart;
         copy.cursorEnd = this.cursorEnd;
         copy.isMessage = this.isMessage;
+        copy.definitionContext = this.definitionContext;
         return copy;
       };
       toBeReturned.shallowCopy = function() {
@@ -1534,10 +1545,12 @@
       return this;
     });
     classToAddThemTo.addMethod(flTokenize("eval"), function*(context) {
-      var newContext, toBeReturned;
+      var base, base1, newContext, toBeReturned;
       context.isTransparent = true;
+      log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       newContext = new FLContext(context);
       newContext.isTransparent = true;
+      log("newContext now tramsparent at depth: " + newContext.depth() + " with self: " + (typeof (base1 = newContext.self).flToString === "function" ? base1.flToString() : void 0));
       flContexts.jsArrayPush(newContext);
       toBeReturned = (yield* this["eval"](newContext, this));
       flContexts.pop();
@@ -1580,18 +1593,20 @@
       return this;
     });
     commonPropertyAssignmentFunction = function*(context) {
-      var value, variable;
+      var base, value, variable;
       yield;
       context.isTransparent = true;
+      log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       variable = context.tempVariablesDict[ValidIDfromString("variable")];
       value = context.tempVariablesDict[ValidIDfromString("value")];
       this.instanceVariablesDict[ValidIDfromString(variable.value)] = value;
       return this;
     };
     commonPropertyAccessFunction = function*(context) {
-      var objectsBeingChecked, variable;
+      var base, objectsBeingChecked, variable;
       yield;
       context.isTransparent = true;
+      log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       variable = context.tempVariablesDict[ValidIDfromString("variable")];
       log(". ('variable) : checking instance variables");
       objectsBeingChecked = this;
@@ -1638,7 +1653,19 @@
       return toBeReturned;
     });
     classToAddThemTo.addMethod(flTokenize(". ('variable)"), commonPropertyAccessFunction);
-    return classToAddThemTo.addMethod(flTokenize("answer ( signature ) by ( methodBody )"), function*(context) {
+    classToAddThemTo.addMethod(flTokenize("answer: ( 'signature ) by: ( 'methodBody )"), function*(context) {
+      var methodBody, signature;
+      yield;
+      signature = context.tempVariablesDict[ValidIDfromString("signature")];
+      methodBody = context.tempVariablesDict[ValidIDfromString("methodBody")];
+      if (this.isClass()) {
+        this.addMethod(signature, methodBody);
+      } else {
+        this.flClass.addMethod(signature, methodBody);
+      }
+      return this;
+    });
+    return classToAddThemTo.addMethod(flTokenize("answerEvalSignatureAndBody ( signature ) by ( methodBody )"), function*(context) {
       var methodBody, signature;
       yield;
       signature = context.tempVariablesDict[ValidIDfromString("signature")];
@@ -1669,15 +1696,19 @@
       eachClass = bootClasses[j];
       addDefaultMethods(eachClass);
     }
-    FLToken.addMethod(flTokenize("← ( valueToAssign )"), function*(context) {
-      var assigneeTokenString, dictToPutValueIn, valueToAssign;
+    FLToken.addMethod(flTokenize("← ( valueToAssign )"), function*(context, definitionContext) {
+      var assigneeTokenString, base, dictToPutValueIn, valueToAssign;
       yield;
       valueToAssign = context.tempVariablesDict[ValidIDfromString("valueToAssign")];
       assigneeTokenString = this.value;
       log("evaluation " + indentation() + "assignment to token " + assigneeTokenString);
       log("evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value);
       context.isTransparent = true;
+      log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       dictToPutValueIn = context.whichDictionaryContainsToken(this);
+      if (dictToPutValueIn == null) {
+        dictToPutValueIn = definitionContext != null ? definitionContext.whichDictionaryContainsToken(this) : void 0;
+      }
       if (dictToPutValueIn == null) {
         log("evaluation " + indentation() + "creating temp token: " + assigneeTokenString + " at depth: " + context.firstNonTransparentContext().depth() + " with self: " + context.firstNonTransparentContext().self.flToString());
         dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict;
@@ -1686,17 +1717,26 @@
       }
       dictToPutValueIn[ValidIDfromString(assigneeTokenString)] = valueToAssign;
       log("evaluation " + indentation() + "stored value in dictionary");
+      context.isTransparent = false;
       return valueToAssign;
     });
-    FLToken.addMethod(flTokenize("= ( valueToAssign )"), function*(context) {
-      var assigneeTokenString, dictToPutValueIn, valueToAssign;
+    FLToken.addMethod(flTokenize("= ( valueToAssign )"), function*(context, definitionContext) {
+      var assigneeTokenString, base, dictToPutValueIn, valueToAssign;
       yield;
       valueToAssign = context.tempVariablesDict[ValidIDfromString("valueToAssign")];
       assigneeTokenString = this.value;
       log("evaluation " + indentation() + "assignment to token " + assigneeTokenString);
       log("evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value);
       context.isTransparent = true;
+      log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       dictToPutValueIn = context.whichDictionaryContainsToken(this);
+      if (dictToPutValueIn != null) {
+        log("evaluation " + indentation() + "token IS in running context");
+      }
+      if (dictToPutValueIn == null) {
+        log("evaluation " + indentation() + "token not in running context, trying definition context: " + definitionContext);
+        dictToPutValueIn = definitionContext != null ? definitionContext.whichDictionaryContainsToken(this) : void 0;
+      }
       if (dictToPutValueIn == null) {
         log("evaluation " + indentation() + "creating temp token: " + assigneeTokenString);
         dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict;
@@ -1705,16 +1745,21 @@
       }
       dictToPutValueIn[ValidIDfromString(assigneeTokenString)] = valueToAssign;
       log("evaluation " + indentation() + "stored value in dictionary");
+      context.isTransparent = false;
       return valueToAssign;
     });
-    commonClassCreationFunction = function*(context, assigneeTokenString, className) {
-      var dictToPutValueIn, valueToAssign;
+    commonClassCreationFunction = function*(context, definitionContext, assigneeTokenString, className) {
+      var base, dictToPutValueIn, valueToAssign;
       yield;
       valueToAssign = FLClass.createNew(className);
       log("evaluation " + indentation() + "assignment to token " + assigneeTokenString);
       log("evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value);
       context.isTransparent = true;
+      log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       dictToPutValueIn = context.whichDictionaryContainsToken(this);
+      if (dictToPutValueIn == null) {
+        dictToPutValueIn = definitionContext != null ? definitionContext.whichDictionaryContainsToken(this) : void 0;
+      }
       if (dictToPutValueIn == null) {
         log("evaluation " + indentation() + "creating temp token: " + assigneeTokenString);
         dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict;
@@ -1725,15 +1770,15 @@
       log("evaluation " + indentation() + "stored value in dictionary");
       return valueToAssign;
     };
-    FLToken.addMethod(flTokenize("= Class new"), function*(context) {
+    FLToken.addMethod(flTokenize("= Class new"), function*(context, definitionContext) {
       var toBeReturned;
-      toBeReturned = (yield* commonClassCreationFunction(context, this.value, this.value));
+      toBeReturned = (yield* commonClassCreationFunction(context, definitionContext, this.value, this.value));
       return toBeReturned;
     });
-    FLToken.addMethod(flTokenize("= Class new named (theName)"), function*(context) {
+    FLToken.addMethod(flTokenize("= Class new named (theName)"), function*(context, definitionContext) {
       var theName, toBeReturned;
       theName = context.tempVariablesDict[ValidIDfromString("theName")];
-      toBeReturned = (yield* commonClassCreationFunction(context, this.value, theName.value));
+      toBeReturned = (yield* commonClassCreationFunction(context, definitionContext, this.value, theName.value));
       return toBeReturned;
     });
     FLToken.addMethod(flTokenize("+= ( operandum )"), flTokenize("self ← self eval + operandum"));
@@ -1757,8 +1802,8 @@
       toBeReturned = (yield* code["eval"](newContext, code));
       return toBeReturned;
     });
-    FLTo.addMethod(flTokenize("( ' functionObjectName ) ( signature ) do ( functionBody )"), flTokenize("accessUpperContext\nif (nil == functionObjectName eval) or (functionObjectName eval isPrimitiveType):\n﹍'TempClass ← Class new\n﹍TempClass nameit \"Class_of_\" + functionObjectName\n﹍functionObjectName ← TempClass new\n﹍TempClass answer (signature) by (functionBody)\nelse:\n﹍functionObjectName eval answer (signature) by (functionBody)\n\n"));
-    FLTo.addMethod(flTokenize("( ' functionObjectName ) ( functionBody )"), flTokenize("accessUpperContext\n// functionObjectName contains a token i.e.\n// it's a pointer. So to put something inside the\n// variable *it's pointing at*,\n// you need to do \"functionObjectName eval\"\nif (nil == functionObjectName eval) or (functionObjectName eval isPrimitiveType):\n﹍'TempClass ← Class new\n﹍TempClass nameit \"Class_of_\" + functionObjectName\n﹍functionObjectName ← TempClass new\n﹍TempClass answer: () by (functionBody)\nelse:\n﹍functionObjectName eval answer: () by (functionBody)\n\n"));
+    FLTo.addMethod(flTokenize("( ' functionObjectName ) : ( 'signature ) do: ( 'functionBody )"), flTokenize("accessUpperContext\nif (nil == functionObjectName eval) or (functionObjectName eval isPrimitiveType):\n﹍'TempClass ← Class new\n﹍TempClass nameit \"Class_of_\" + functionObjectName\n﹍functionObjectName ← TempClass new\n﹍TempClass answerEvalSignatureAndBody (signature) by (functionBody)\nelse:\n﹍functionObjectName eval answerEvalSignatureAndBody (signature) by (functionBody)\n\n"));
+    FLTo.addMethod(flTokenize("( ' functionObjectName ) : ( 'functionBody )"), flTokenize("accessUpperContext\n// functionObjectName contains a token i.e.\n// it's a pointer. So to put something inside the\n// variable *it's pointing at*,\n// you need to do \"functionObjectName eval\"\nif (nil == functionObjectName eval) or (functionObjectName eval isPrimitiveType):\n﹍'TempClass ← Class new\n﹍TempClass nameit \"Class_of_\" + functionObjectName\n﹍functionObjectName ← TempClass new\n﹍TempClass answerEvalSignatureAndBody: () by (functionBody)\nelse:\n﹍functionObjectName eval answerEvalSignatureAndBody: () by (functionBody)\n\n"));
     FLClass.addMethod(flTokenize("new"), function*(context) {
       yield;
       log("///////// creating a new class for the user!");
@@ -2067,9 +2112,11 @@
       return toBeReturned;
     });
     FLAccessUpperContext.addMethod(FLList.emptyMessage(), function*(context) {
+      var base;
       yield;
       log("FLAccessUpperContext running emptyMessage");
       context.previousContext.isTransparent = true;
+      log("context.previousContext now tramsparent at depth: " + context.previousContext.depth() + " with self: " + (typeof (base = context.previousContext.self).flToString === "function" ? base.flToString() : void 0));
       return this;
     });
     FLConsole.addMethod(flTokenize("print ( thingToPrint )"), function*(context) {
@@ -2124,8 +2171,9 @@
       return this;
     });
     FLRepeat1.addMethod(flTokenize("( ' loopCode )"), function*(context) {
-      var loopCode, toBeReturned;
+      var base, loopCode, toBeReturned;
       context.isTransparent = true;
+      log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       loopCode = context.tempVariablesDict[ValidIDfromString("loopCode")];
       log("FLRepeat1 ⇒ loop code is: " + loopCode.flToString());
       while (true) {
@@ -2155,8 +2203,9 @@
       return toBeReturned;
     });
     repeatFunctionContinuation = function*(context) {
-      var howManyTimes, i, l, limit, loopCode, ref, toBeReturned;
+      var base, howManyTimes, i, l, limit, loopCode, ref, toBeReturned;
       context.isTransparent = true;
+      log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       howManyTimes = context.tempVariablesDict[ValidIDfromString("howManyTimes")];
       loopCode = context.tempVariablesDict[ValidIDfromString("loopCode")];
       log("FLRepeat2 ⇒ loop code is: " + loopCode.flToString());
@@ -2212,9 +2261,10 @@
       return theError;
     });
     FLIfThen.addMethod(flTokenize("( predicate ) : ('trueBranch)"), function*(context) {
-      var predicate, toBeReturned, trueBranch;
+      var base, predicate, toBeReturned, trueBranch;
       yield;
       context.isTransparent = true;
+      log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       predicate = context.tempVariablesDict[ValidIDfromString("predicate")];
       trueBranch = context.tempVariablesDict[ValidIDfromString("trueBranch")];
       log("FLIfThen: predicate value is: " + predicate.value);
@@ -2233,9 +2283,10 @@
       return FLNil.createNew();
     });
     FLIfFallThrough.addMethod(flTokenize("else if ( predicate ): ('trueBranch)"), function*(context) {
-      var predicate, toBeReturned, trueBranch;
+      var base, predicate, toBeReturned, trueBranch;
       yield;
       context.isTransparent = true;
+      log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       predicate = context.tempVariablesDict[ValidIDfromString("predicate")];
       trueBranch = context.tempVariablesDict[ValidIDfromString("trueBranch")];
       log("FLIfFallThrough: predicate value is: " + predicate.value);
@@ -2249,9 +2300,10 @@
       return toBeReturned;
     });
     FLIfFallThrough.addMethod(flTokenize("else: ('trueBranch)"), function*(context) {
-      var toBeReturned, trueBranch;
+      var base, toBeReturned, trueBranch;
       log("FLIfFallThrough else: case ");
       context.isTransparent = true;
+      log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       trueBranch = context.tempVariablesDict[ValidIDfromString("trueBranch")];
       log("FLIfFallThrough else: evalling code ");
       toBeReturned = (yield* trueBranch["eval"](context, trueBranch));
@@ -2279,8 +2331,9 @@
     };
     FLPause.addMethod(flTokenize("( seconds )"), pauseFunctionContinuation);
     FLFor.addMethod(flTokenize("( ' loopVar ) from ( startIndex ) to ( endIndex ) : ( 'loopCode )"), function*(context) {
-      var endIndex, forContext, i, l, loopCode, loopVar, loopVarName, ref, ref1, startIndex, toBeReturned;
+      var base, endIndex, forContext, i, l, loopCode, loopVar, loopVarName, ref, ref1, startIndex, toBeReturned;
       context.isTransparent = true;
+      log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       loopVar = context.tempVariablesDict[ValidIDfromString("loopVar")];
       startIndex = context.tempVariablesDict[ValidIDfromString("startIndex")];
       endIndex = context.tempVariablesDict[ValidIDfromString("endIndex")];
@@ -2314,9 +2367,10 @@
       return toBeReturned;
     });
     return FLFor.addMethod(flTokenize("each ( ' variable ) in: ( 'theList ) do: ( 'code )"), function*(context) {
-      var code, evalledList, forContext, i, l, ref, theList, toBeReturned, variable;
+      var base, code, evalledList, forContext, i, l, ref, theList, toBeReturned, variable;
       yield;
       context.isTransparent = true;
+      log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       variable = context.tempVariablesDict[ValidIDfromString("variable")];
       theList = context.tempVariablesDict[ValidIDfromString("theList")];
       code = context.tempVariablesDict[ValidIDfromString("code")];
