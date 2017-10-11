@@ -1152,6 +1152,67 @@ initBootClasses = ->
       rWorkspace.environmentPrintout += stringToPrint
       return thingToPrint
 
+  # Turtle -----------------------------------------------------------------------------
+
+  FLTurtle.addMethod \
+    (flTokenize "home"),
+    (context) ->
+      #yield
+      if canvasOutputElement?
+        @x = canvasOutputElement.width/2
+        @y = canvasOutputElement.height/2
+        @direction = 0
+
+      return @
+
+
+  FLTurtle.addMethod \
+    (flTokenize "forward ( distance )"),
+    (context) ->
+      #yield
+      distance = context.tempVariablesDict[ValidIDfromString "distance"].value
+      if canvasOutputElement?
+        canvasContext = canvasOutputElement.getContext("2d");
+        canvasContext.strokeStyle = "#000";
+        canvasContext.lineWidth = 1;
+
+        radians = @direction * Math.PI / 180.0
+
+        if @penDown
+          canvasContext.beginPath()
+          canvasContext.moveTo @x, @y
+
+        # new coords. The minus is because of
+        # how HTML5 Canvas orients its y axis (points downwards)
+        @x += distance * Math.sin radians
+        @y -= distance * Math.cos radians
+
+        if @penDown
+          canvasContext.lineTo @x,@y
+          canvasContext.stroke()
+
+      return @
+
+  FLTurtle.addMethod \
+    (flTokenize "right ( degrees )"),
+    (context) ->
+      #yield
+      degrees = context.tempVariablesDict[ValidIDfromString "degrees"].value
+      @direction += degrees
+      @direction = @direction % 360
+    
+      return @
+
+  FLTurtle.addMethod \
+    (flTokenize "left ( degrees )"),
+    (context) ->
+      #yield
+      degrees = context.tempVariablesDict[ValidIDfromString "degrees"].value
+      @direction += (360-degrees)
+      @direction = @direction % 360
+    
+      return @
+
 
   # Done -------------------------------------------------------------------------
 

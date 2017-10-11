@@ -10,6 +10,7 @@ initContext = (context) ->
     "Number", FLNumber
     "Boolean", FLBoolean
     "Console", FLConsole
+    "Turtle", FLTurtle
 
     "not", FLNot.createNew()
     "true", FLBoolean.createNew true
@@ -38,6 +39,7 @@ initContext = (context) ->
     "nil", FLNil.createNew()
 
     "console", FLConsole.createNew()
+    "turtle", FLTurtle.createNew()
     "pause", FLPause.createNew()
 
     "'", FLQuote.createNew()
@@ -73,15 +75,17 @@ reset = ->
   quickReset()
 
 textOutputElement = null
+canvasOutputElement = null
 
 # this is called from the browser
-Fizzylogo.init = (textOutElem) ->
+Fizzylogo.init = (textOutElem, canvasOutElem) ->
   if textOutElem?
     # don't do any logging when used in
     # the browser
     log = ->
     dir = ->
   textOutputElement = textOutElem
+  canvasOutputElement = canvasOutElem
   reset()
 
 # this one is for the browser, and the yielding is always
