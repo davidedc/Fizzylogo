@@ -1,4 +1,5 @@
 flContexts = []
+mainTurtle = null
 
 initContext = (context) ->
   keywordsAndTheirInit = [
@@ -39,7 +40,7 @@ initContext = (context) ->
     "nil", FLNil.createNew()
 
     "console", FLConsole.createNew()
-    "turtle", FLTurtle.createNew()
+    "turtle", (mainTurtle = FLTurtle.createNew())
     "pause", FLPause.createNew()
 
     "'", FLQuote.createNew()
@@ -62,6 +63,9 @@ quickReset = ->
   outerMostContext = new FLContext null, rWorkspace
   flContexts.jsArrayPush outerMostContext
   initContext outerMostContext
+
+  mainTurtle.sendHome()
+
 
 reset = ->
   # resetting the classes and initing them

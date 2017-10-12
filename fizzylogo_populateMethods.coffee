@@ -1158,11 +1158,7 @@ initBootClasses = ->
     (flTokenize "home"),
     (context) ->
       #yield
-      if canvasOutputElement?
-        @x = canvasOutputElement.width/2
-        @y = canvasOutputElement.height/2
-        @direction = 0
-
+      @sendHome()
       return @
 
 
