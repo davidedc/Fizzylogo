@@ -41,6 +41,7 @@
   <option value="PythagoreanTriplets">Pythagorean Triplets</option>
   <option value="FizzBuzz">FizzBuzz</option>
   <option value="NonExistingMessage">Non-existing message</option>
+  <option value="Star">Star</option>
 </select>
 <div>
 
@@ -96,6 +97,10 @@ loadExample = function(){
   else if (selected == 6) {
     editor.setValue("2 nonExistingMessage");
   }
+  else if (selected == 7) {
+    editor.setValue("turtle home\nfor each n in:\n    0...5\n  do:\n    turtle forward 50\n    turtle right 144");
+  }
+
 
 }
 
