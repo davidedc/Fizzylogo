@@ -58,19 +58,27 @@
   <!-- right part, with the canvas and text output -->
   <div style="width: 49%; float: right;">
 
-    <div>
-      <textarea id="output" name="output" rows="23" cols="80" style="width:100%;margin-bottom:-5px;"></textarea>
+    <div style="position: relative;">
+      <textarea id="output" name="output" rows="23" cols="80" style="width:100%;margin-bottom:-5px; background:transparent;"></textarea>
+
+      <!-- we put the turtle canvas absolutely positioned in respect to the parent div
+      (the parent div must have the position:relative in order for this to work)
+      and UNDER the output textarea. So it's basically just peeking through the
+      output textarea. Might need a workaround in case we want to get pointer
+      events from the canvas but we'll sort that out if/when we come to it. -->
+      <div style="position: absolute; z-index: -1; left:0px; top:0px;">
+        <canvas id="turtlesCanvas" width="330" height="326" ></canvas>
+      </div>
+
     </div>
     <button id="clearOutput"           onclick="return clearOutput();"          > clear           </button>
+
 
 
   </div>
 
 </div>
 
-<div>
-  <canvas id="turtlesCanvas" width="330" height="326"></canvas>
-</div>
 
 <script>
 
@@ -106,6 +114,9 @@ loadExample = function(){
 
 clearOutput = function(){
   document.getElementById("output").value = "output ------------\n";
+  canvas = document.getElementById("turtlesCanvas");
+  canvasContext = canvas.getContext("2d");
+  canvasContext.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 var paused = false;
