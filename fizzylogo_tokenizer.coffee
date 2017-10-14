@@ -295,8 +295,9 @@ linearize = (code) ->
 # Hence, we apply this trick here.
 
 removeStatementSeparatorsBeforeAlignedConstructs = (command) ->
-  command = command.replace /[; ]*(else[ \n])/g, " $1"
-  command = command.replace /[; ]*(catch[ \n])/g, " $1"
+  for eachToken in ["else","catch"]
+    command = command.replace (new RegExp("[; ]*(" + eachToken + "[ \n])", "g")), " $1"
+  
   command = command.replace /[ ]+/g, " "
   command = command.trim()
   return command
