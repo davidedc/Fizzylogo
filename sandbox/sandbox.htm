@@ -191,7 +191,20 @@ enablePauseAndStopButtons = function(){
 
 disablePauseAndStopButtons();
 document.getElementById("runSelection").disabled = true;
-Fizzylogo.init(document.getElementById("output"), document.getElementById("turtlesCanvas"));
+
+devicePixelRatio = window.devicePixelRatio || 1;
+
+var canvas = document.getElementById("turtlesCanvas");
+var oldWidth = canvas.width;
+var oldHeight = canvas.height;
+
+canvas.width = oldWidth * devicePixelRatio;
+canvas.height = oldHeight * devicePixelRatio;
+
+canvas.style.width = oldWidth + 'px';
+canvas.style.height = oldHeight + 'px';
+
+Fizzylogo.init(document.getElementById("output"), canvas, devicePixelRatio);
 clearOutput();
 loadExample();
 

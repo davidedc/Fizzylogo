@@ -10,8 +10,8 @@ class FLTurtleClass extends FLClasses
 
     toBeReturned.sendHome = ->
       if canvasOutputElement?
-      	@x = canvasOutputElement.width/2
-      	@y = canvasOutputElement.height/2
+      	@x = canvasOutputElement.clientWidth/2
+      	@y = canvasOutputElement.clientHeight/2
       @direction = 0
 
 

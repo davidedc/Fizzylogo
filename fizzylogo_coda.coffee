@@ -80,9 +80,10 @@ reset = ->
 
 textOutputElement = null
 canvasOutputElement = null
+devicePixelRatio = 1
 
 # this is called from the browser
-Fizzylogo.init = (textOutElem, canvasOutElem) ->
+Fizzylogo.init = (textOutElem, canvasOutElem, devPixRatio) ->
   if textOutElem?
     # don't do any logging when used in
     # the browser
@@ -90,6 +91,15 @@ Fizzylogo.init = (textOutElem, canvasOutElem) ->
     dir = ->
   textOutputElement = textOutElem
   canvasOutputElement = canvasOutElem
+  devicePixelRatio = devPixRatio
+
+  # scale all drawing operations by the
+  # devicePixelRatio value, otherwise, say,
+  # in Retina Displays 2x we'd get drawings that
+  # are much smaller.
+
+  canvasOutputElement.getContext('2d').scale devicePixelRatio, devicePixelRatio
+
   reset()
 
 # this one is for the browser, and the yielding is always
