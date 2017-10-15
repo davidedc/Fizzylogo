@@ -15,6 +15,13 @@ tests = [
   "8"
 
   # ---------------------------------------------------------------------------
+  # another surprise! For the same reason as above,
+  # this gives a different result from C, where the
+  # "-"" is left - associative
+  "console print 8 - 3 - 2"
+  "7"
+
+  # ---------------------------------------------------------------------------
   "console print (2 * 3) + 1"
   "7"
 
