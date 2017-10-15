@@ -170,7 +170,8 @@ class FLObjects
           # parts of the signature
           continue
 
-      # ok a signature has matched completely
+      # ok we took a signature, and now here it either matched or it didn't,
+      # as indicated by the soFarEverythingMatched flag
 
       if eachSignature.isEmpty() and soFarEverythingMatched
 
