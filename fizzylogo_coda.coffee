@@ -98,7 +98,7 @@ Fizzylogo.init = (textOutElem, canvasOutElem, devPixRatio) ->
   # in Retina Displays 2x we'd get drawings that
   # are much smaller.
 
-  canvasOutputElement.getContext('2d').scale devicePixelRatio, devicePixelRatio
+  canvasOutputElement?.getContext('2d').scale devicePixelRatio, devicePixelRatio
 
   reset()
 
