@@ -153,7 +153,7 @@ class FLObjects
             # like in "7 * self" we don't want to bind self to 7
 
             # yield from
-            [returnedContext, methodInvocation] = methodInvocation.partialEvalAsMessage theContext, methodInvocation
+            [returnedContext, methodInvocation] = methodInvocation.partialEvalAsMessage theContext
 
             valueToBeBound = returnedContext.returned
 
