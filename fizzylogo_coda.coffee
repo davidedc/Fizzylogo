@@ -67,6 +67,11 @@ quickReset = ->
 
   mainTurtle.sendHome()
 
+  # instead of clearing and re-initiating all the classes,
+  # let's just get rid of all the classes created after
+  # booting, also so we don't create a memory leak.
+  allClasses = bootClasses.slice()
+
 
 reset = ->
   # resetting the classes and initing them
@@ -77,7 +82,18 @@ reset = ->
   clearClasses()
   initBootClasses()
 
-  quickReset()
+  #flContexts = []
+
+  rWorkspace = FLWorkspace.createNew()
+  rWorkspace.environmentPrintout = ""
+  console.log "resetting rWorkspace.environmentErrors"
+  rWorkspace.environmentErrors = ""
+
+  outerMostContext = new FLContext null, rWorkspace
+  #flContexts.jsArrayPush outerMostContext
+  initContext outerMostContext
+
+  mainTurtle.sendHome()
 
 textOutputElement = null
 canvasOutputElement = null
