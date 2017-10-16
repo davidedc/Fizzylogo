@@ -3826,6 +3826,21 @@ tests = [
   "2[object of class \"Class_of_🚀\"]"
 
   # ---------------------------------------------------------------------------
+  # assigning a function to a var and then running it from there.
+  # This looks like HOF but it's really an object being assigned.
+
+  """
+  to 🚀:
+  ﹍﹍(withAParameter)
+  ﹍do:
+  ﹍﹍" running with param " + withAParameter
+  myFunc = 🚀
+  console print 🚀 1
+  console print myFunc 2
+  """
+  " running with param 1 running with param 2"
+
+  # ---------------------------------------------------------------------------
   # factorial using FLTo
 
   """
