@@ -72,6 +72,9 @@ quickReset = ->
   # booting, also so we don't create a memory leak.
   allClasses = bootClasses.slice()
 
+  for eachClass in allClasses
+    eachClass.resetInstanceVariables()
+
 
 reset = ->
   # resetting the classes and initing them

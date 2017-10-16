@@ -8,7 +8,8 @@ class FLClasses extends FLObjects
   constructor: (@name) ->
     super @
     @flClass = FLClass
-    @instanceVariablesDict[ValidIDfromString "class"] = FLClass
+
+    @resetInstanceVariables()
     
     # this is useful because then we can compare classes
     # (i.e. Number == String)
@@ -33,6 +34,9 @@ class FLClasses extends FLObjects
   resetMethods: ->
     @msgPatterns = []
     @methodBodies = []
+  resetInstanceVariables: ->
+    @instanceVariablesDict = {}
+    @instanceVariablesDict[ValidIDfromString "class"] = FLClass
 
   # this is when you create a new instance of this class,
   # for example a new number or a new string or a new

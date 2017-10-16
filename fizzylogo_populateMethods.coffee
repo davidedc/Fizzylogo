@@ -295,6 +295,7 @@ clearClasses = ->
   # user might have modified some methods in the boot
   # classes.
   for eachClass in bootClasses
+    eachClass.resetInstanceVariables()
     eachClass.resetMethods()
 
   allClasses = []
