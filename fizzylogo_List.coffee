@@ -231,9 +231,9 @@ class FLListClass extends FLClasses
         #dir receiver
         log "3 returnedContext.throwing: " + returnedContext.throwing
 
-        # works as follows: we find a receiver, we send it the rest
-        # of the original message hence getting a new receiver,
-        # whom we send again the rest of the message
+        # works as follows: now that we found the first receiver,
+        # we send it the rest of the original message hence getting a
+        # new receiver, whom we send again the rest of the message
         # and so and and so forth. We keep using the same context, so we
         # accrete the state changes to the same context i.e. the one we
         # are running the method body in.
@@ -316,6 +316,8 @@ class FLListClass extends FLClasses
             !(receiver?.flClass == FLIfFallThrough)
               log "breaking and moving on to next statement"
               break
+
+
 
 
         log "evaluation " + indentation() + "list: nothing more to evaluate"
