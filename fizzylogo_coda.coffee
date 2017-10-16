@@ -1,4 +1,4 @@
-flContexts = []
+#flContexts = []
 mainTurtle = null
 
 initContext = (context) ->
@@ -54,7 +54,7 @@ initContext = (context) ->
 
 quickReset = ->
 
-  flContexts = []
+  #flContexts = []
 
   rWorkspace = FLWorkspace.createNew()
   rWorkspace.environmentPrintout = ""
@@ -62,7 +62,7 @@ quickReset = ->
   rWorkspace.environmentErrors = ""
 
   outerMostContext = new FLContext null, rWorkspace
-  flContexts.jsArrayPush outerMostContext
+  #flContexts.jsArrayPush outerMostContext
   initContext outerMostContext
 
   mainTurtle.sendHome()

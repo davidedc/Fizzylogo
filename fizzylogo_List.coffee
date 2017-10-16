@@ -326,7 +326,7 @@ class FLListClass extends FLClasses
 
       log "evaluation " + indentation() + "list: theContext.returned: " + theContext.returned
       #dir theContext.returned
-      flContexts.pop()
+      #flContexts.pop()
       return [theContext, restOfMessage]
 
     toBeReturned.length = ->

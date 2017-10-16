@@ -60,7 +60,7 @@ class FLObjects
     # the context stack handling easier
     # the for loop
     # TODO check that this is not left hanging
-    flContexts.jsArrayPush null
+    #flContexts.jsArrayPush null
 
     classContainingMethods = @methodsHolder()
 
@@ -77,12 +77,12 @@ class FLObjects
 
       # remove the previous context because it was a
       # botched attempt to match a signature
-      flContexts.pop()
+      #flContexts.pop()
       #log "evaluation " + indentation() + "  ////////////////////////////////////// CREATING NEW CONTEXT WITH NEW SELF " + @
 
       # this is the ONLY place where we change self!
       newContext = new FLContext theContext, @
-      flContexts.jsArrayPush newContext
+      #flContexts.jsArrayPush newContext
       #log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.flToString()
       #log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.flToString()
 

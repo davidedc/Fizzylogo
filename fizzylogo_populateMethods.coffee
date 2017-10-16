@@ -87,10 +87,10 @@ addDefaultMethods = (classToAddThemTo) ->
       newContext = new FLContext context
       newContext.isTransparent = true
       log "newContext now tramsparent at depth: " + newContext.depth() + " with self: " + newContext.self.flToString?()
-      flContexts.jsArrayPush newContext
+      #flContexts.jsArrayPush newContext
       # yield from
       toBeReturned = @eval newContext, @
-      flContexts.pop()
+      #flContexts.pop()
       return toBeReturned
 
 
@@ -899,7 +899,7 @@ initBootClasses = ->
         # yield from
         toBeReturned = loopCode.eval context, loopCode
 
-        flContexts.pop()
+        #flContexts.pop()
 
         # catch any thrown "done" object, used to
         # exit from a loop.
@@ -1285,7 +1285,7 @@ initBootClasses = ->
         # yield from
         toBeReturned = loopCode.eval context, loopCode
 
-        flContexts.pop()
+        #flContexts.pop()
 
         log "Repeat1 ⇒ returning result after loop cycle: " + toBeReturned
         log "Repeat1 ⇒ returning result CLASS after loop cycle: "
@@ -1329,7 +1329,7 @@ initBootClasses = ->
       # yield from
       toBeReturned = loopCode.eval context, loopCode
 
-      flContexts.pop()
+      #flContexts.pop()
 
       log "Repeat2 ⇒ returning result after loop cycle: " + toBeReturned
       log "Repeat2 ⇒ returning result CLASS after loop cycle: "
@@ -1397,7 +1397,7 @@ initBootClasses = ->
         log "FLIfThen: evaling true branch at depth " + context.depth()
         # yield from
         toBeReturned = trueBranch.eval context, trueBranch
-        flContexts.pop()
+        #flContexts.pop()
         
       else
         toBeReturned = FLIfFallThrough.createNew()
@@ -1431,7 +1431,7 @@ initBootClasses = ->
       if predicate.value
         # yield from
         toBeReturned = trueBranch.eval context, trueBranch
-        flContexts.pop()
+        #flContexts.pop()
         
       else
         toBeReturned = FLIfFallThrough.createNew()
@@ -1449,7 +1449,7 @@ initBootClasses = ->
       # yield from
       log "FLIfFallThrough else: evalling code "
       toBeReturned = trueBranch.eval context, trueBranch
-      flContexts.pop()
+      #flContexts.pop()
       
       return toBeReturned
 
@@ -1508,7 +1508,7 @@ initBootClasses = ->
 
       forContext = new FLContext context
       forContext.isTransparent = true
-      flContexts.jsArrayPush forContext
+      #flContexts.jsArrayPush forContext
 
       log "FLFor ⇒ loop code is: " + loopCode.flToString()
 
@@ -1523,7 +1523,7 @@ initBootClasses = ->
         # yield from
         toBeReturned = loopCode.eval forContext, loopCode
 
-        flContexts.pop()
+        #flContexts.pop()
 
         # catch any thrown "done" object, used to
         # exit from a loop.
@@ -1538,7 +1538,7 @@ initBootClasses = ->
             log "For ⇒ the loop exited with Return "
             break
 
-      flContexts.pop()
+      #flContexts.pop()
 
       
       return toBeReturned
