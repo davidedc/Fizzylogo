@@ -53,8 +53,9 @@ initContext = (context) ->
 
 
 quickReset = ->
-  
-  
+
+  flContexts = []
+
   rWorkspace = FLWorkspace.createNew()
   rWorkspace.environmentPrintout = ""
   console.log "resetting rWorkspace.environmentErrors"
