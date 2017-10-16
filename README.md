@@ -14,6 +14,9 @@ notes for later:
 to run the tests using node:
 ```clear; cat $(cat sourceFilesOrder.txt) | coffee --stdio | grep obtained && say done```
 
+to run the tests using the browser (no yielding, so things such as debugging and profiling are easied):
+```cat $(grep -v '^xxxx' sourceFilesOrder.txt) | coffee --stdio -c > ./dist/fizzylogo.js; cp ./dist/fizzylogo.js sandbox/fizzylogo.js```
+
 to generate the JS source (e.g. to use in the browser):
 ```sh makeYieldingVersion.sh; cd yielding-version; cat $(grep -v '^tests' sourceFilesOrder.txt) | coffee --stdio -c > ../dist/fizzylogo.js; cd ..; cp dist/fizzylogo.js sandbox/fizzylogo.js```
 
