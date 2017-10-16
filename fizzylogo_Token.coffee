@@ -73,7 +73,8 @@ class FLTokenClass extends FLClasses
       # which is something that we are going to report.
       # We might even try to send a message to it, in which
       # case we'll report that too.
-      rWorkspace.lastUndefinedArom = @
+      # rWorkspace.lastUndefinedAtom = @
+
       #log "token eval returning nil"
       return FLNil.createNew()
 
