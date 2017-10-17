@@ -70,6 +70,11 @@ class FLListClass extends FLClasses
       copy.cursorEnd++
       copy
 
+    toBeReturned.mutablePush = (theItemToPush) ->
+      @value.jsArrayPush theItemToPush
+      @cursorEnd++
+      @
+
     toBeReturned.elementAt = (theElementNumber) ->
       if @value[@cursorStart + theElementNumber]?
         @value[@cursorStart + theElementNumber]
