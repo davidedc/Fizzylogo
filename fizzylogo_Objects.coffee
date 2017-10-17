@@ -48,7 +48,7 @@ class FLObjects
   # same "method call" and the same "object". I.e. this
   # is not a method call (although it might lead to one),
   # this is progressing within an existing call
-  findSignatureBindParamsAndMakeCall: (methodInvocationToBeChecked, theContext) ->
+  findSignatureBindParamsAndMakeCall: (methodInvocationToBeChecked, theContext, previousPriority) ->
     log "evaluation " + indentation() + "  !!! looking up method invocation " + methodInvocationToBeChecked.flToString() + " with signatures!"
     log "evaluation " + indentation() + "  !!! looking up method invocation, is method empty? " + methodInvocationToBeChecked.isEmpty()
 
@@ -71,6 +71,7 @@ class FLObjects
 
     for eachSignatureIndex in [0...classContainingMethods.msgPatterns.length]
       eachSignature = classContainingMethods.msgPatterns[eachSignatureIndex]
+      eachPriority = classContainingMethods.priorities[eachSignatureIndex]
 
       #log "evaluation " + indentation() + "  matching - checking if this signature matches: " + eachSignature.flToString()
       methodInvocation = methodInvocationToBeChecked
@@ -91,6 +92,19 @@ class FLObjects
 
 
       until eachSignature.isEmpty() or methodInvocation.isEmpty()
+
+        # TODO this should be before the "until" loop
+        # but we put it here for the time being to be
+        # safe
+        #if eachSignature.flToString() == "( + ( operandum ) )"
+        #  log "obtained eachPriority: " + eachPriority
+
+        log "previousPriority, eachPriority: " + previousPriority + " , " + eachPriority
+        if previousPriority? and eachPriority?
+          if previousPriority <= eachPriority
+            log "breaking matching due to priority going up: previousPriority, eachPriority: " + previousPriority + " , " + eachPriority
+            soFarEverythingMatched = false
+            break
 
         log "evaluation " + indentation() + "  matching: - next signature piece: " + eachSignature.flToString() + " is token: " + " with: " + methodInvocation.flToString()
 
@@ -154,7 +168,7 @@ class FLObjects
             # like in "7 * self" we don't want to bind self to 7
 
             # yield from
-            [returnedContext, methodInvocation] = methodInvocation.partialEvalAsMessage theContext
+            [returnedContext, methodInvocation] = methodInvocation.partialEvalAsMessage theContext, eachPriority
 
             valueToBeBound = returnedContext.returned
 

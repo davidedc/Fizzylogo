@@ -2,6 +2,7 @@ class FLClasses extends FLObjects
   name: null # a standard JS string
   msgPatterns: null # an array of FLLists
   methodBodies: null # an array of FLLists
+  priorities: null # an array of JS Numbers
 
   # this is when you create a new class, e.g.
   # Number, String, or custom user-made classes.
@@ -34,6 +35,8 @@ class FLClasses extends FLObjects
   resetMethods: ->
     @msgPatterns = []
     @methodBodies = []
+    @priorities = []
+
   resetInstanceVariables: ->
     @instanceVariablesDict = {}
     @instanceVariablesDict[ValidIDfromString "class"] = FLClass
@@ -50,7 +53,7 @@ class FLClasses extends FLObjects
 
     return toBeReturned
 
-  addMethod: (signature, methodBody) ->
+  addMethod: (signature, methodBody,  priority) ->
     #log "adding method " + signature.flToString() + " to: " + @flToString()
     #log "sort order: " + signature.sortOrderString()
     for i in [0...@msgPatterns.length]
@@ -59,12 +62,14 @@ class FLClasses extends FLObjects
       if eachSignature.flToString() == signature.flToString()
         @msgPatterns[i] = signature
         @methodBodies[i] = methodBody
+        @priorities[i] = priority
         log "adding method  signature (replacing): " + signature.flToString() + " body: " + methodBody.flToString?()
         return
 
     log "adding method  signature (appending): " + signature.flToString() + " body: " + methodBody.flToString?()
     @msgPatterns.jsArrayPush signature
     @methodBodies.jsArrayPush methodBody
+    @priorities.jsArrayPush priority
 
     # sort all signatures in order of increasing genericity i.e.
     # more generic matches will be done last. See "sortOrderString"
@@ -72,6 +77,7 @@ class FLClasses extends FLObjects
     sortOrderStrings = @msgPatterns.map (elem) -> elem.sortOrderString()
     @msgPatterns = sortFirstArrayAccordingToSecond @msgPatterns, sortOrderStrings
     @methodBodies = sortFirstArrayAccordingToSecond @methodBodies, sortOrderStrings
+    @priorities = sortFirstArrayAccordingToSecond @priorities, sortOrderStrings
 
     #for i in [0...@msgPatterns.length]
     #  log "msgPatterns ordered " + sortOrderStrings[i] + " : " + @msgPatterns[i].flToString()
