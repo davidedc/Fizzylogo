@@ -971,6 +971,17 @@ initBootClasses = ->
         return FLBoolean.createNew false
     ,6
 
+  FLNumber.addMethod \
+    (flTokenize "> ( toCompare )"),
+    (context) ->
+      #yield
+      toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
+      if @value > toCompare.value
+        return FLBoolean.createNew true
+      else
+        return FLBoolean.createNew false
+    ,6
+
   # mutating the number
   FLNumber.addMethod \
     (flTokenize "← ( valueToAssign )"),
