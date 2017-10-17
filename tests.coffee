@@ -320,16 +320,97 @@ tests = [
   "( [object of class \"Console\"] print 1 + 2 ) - ( [object of class \"Console\"] print 1 + 2 )"
 
   # ---------------------------------------------------------------------------
+  # initialising Lists via the "more normal" "array literal" notation.
+  # Note that there are no "Array"s in FizzyLogo, only "List"s.
+  # This is just a very very convenient way to initialise them
+  # see the "ListLiteralArrayNotation" file for more insight.
+
+  """
+  a = [-2]
+  console print a length
+  console print a[0]
+  """
+  "1-2"
+
+  """
+  a = [0,-2]
+  console print a length
+  console print a[0]
+  console print a[1]
+  """
+  "20-2"
+
+  """
+  someVariable = 1
+  a = [someVariable,1+2,"a"+"b",-2,-2,1-2]
+  console print a length
+  console print a
   """
   """
+  6( 1 3 "ab" -2 -2 -1 )
+  """
+
+  """
+  a = [(1+2),true,(not not true)]
+  console print a length
+  console print a
   """
   """
+  3( 3 true true )
+  """
+
+  """
+  a = [1,2,[3,4],5]
+  console print a length
+  console print a
+  console print a[2] length
+  console print a[2]
   """
   """
+  4( 1 2 ( 3 4 ) 5 )2( 3 4 )
+  """
+
+  # doing
+  #    a = []
+  # is same as doing
+  #    a = '()
+  """
+  a = []
+  console print a length
+  """
+  "0"
+
+  """
+  a = [[]]
+  console print a length
+  console print a
+  console print a[0] length
+  console print a[0]
+  """
+  "1( empty message )0empty message"
+
+  """
+  someVariable = not not true
+  someOtherVariable = [(1+2),true,someVariable]
+  a = [ 1+2,"a"+"b",someOtherVariable,-2,-2,1-2]
+  console print a length
+  console print a
   """
   """
+  6( 3 "ab" ( 3 true true ) -2 -2 -1 )
+  """
+
+  """
+  someVariable = not not true
+  a = [ 1+2,"a"+"b",[(1+2),true,someVariable],-2,-2,1-2]
+  console print a length
+  console print a
   """
   """
+  6( 3 "ab" ( 3 true true ) -2 -2 -1 )
+  """
+
+  # ---------------------------------------------------------------------------
   "'a←5;'b←'a;console print b;console print a"
   "a5"
 
