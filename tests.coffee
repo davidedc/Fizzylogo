@@ -320,6 +320,16 @@ tests = [
   "( [object of class \"Console\"] print 1 + 2 ) - ( [object of class \"Console\"] print 1 + 2 )"
 
   # ---------------------------------------------------------------------------
+  """
+  """
+  """
+  """
+  """
+  """
+  """
+  """
+  """
+  """
   "'a←5;'b←'a;console print b;console print a"
   "a5"
 

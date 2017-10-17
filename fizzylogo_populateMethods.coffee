@@ -1056,6 +1056,43 @@ initBootClasses = ->
     (flTokenize "( operandum )"),
     flTokenize "0 - operandum",
     4
+
+  # ListLiteralArrayNotationStarter -------------------------------------------------------------------------
+
+  FLListLiteralArrayNotationStarter.addMethod \
+    (flTokenize "]"),
+    (context) ->
+      #yield
+      # returns a List, not an ListLiteralArrayNotation
+      return FLList.createNew()
+
+  FLListLiteralArrayNotationStarter.addMethod \
+    (flTokenize "( elementToBeAppended )"),
+    (context) ->
+      #yield
+      # returns an ListLiteralArrayNotation with the first element put in
+      elementToBeAppended = context.tempVariablesDict[ValidIDfromString "elementToBeAppended"]
+      toBeReturned = FLListLiteralArrayNotation.createNew()
+      toBeReturned.value.mutablePush elementToBeAppended
+      return toBeReturned
+
+  # ListLiteralArrayNotation -------------------------------------------------------------------------
+
+  FLListLiteralArrayNotation.addMethod \
+    (flTokenize "]"),
+    (context) ->
+      #yield
+      # returns a List, not an ListLiteralArrayNotation
+      return @value
+
+  FLListLiteralArrayNotation.addMethod \
+    (flTokenize ", ( elementToBeAppended )"),
+    (context) ->
+      #yield
+      elementToBeAppended = context.tempVariablesDict[ValidIDfromString "elementToBeAppended"]
+      @value.mutablePush elementToBeAppended
+      return @
+
   # List -------------------------------------------------------------------------
 
   FLList.addMethod \

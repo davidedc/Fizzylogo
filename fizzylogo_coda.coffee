@@ -47,6 +47,9 @@ initContext = (context) ->
     ":", FLQuote.createNew()
 
     "-", FLUnaryMinus.createNew()
+
+    "[", FLListLiteralArrayNotationStarter.createNew()
+
   ]
 
   for keywords in [0...keywordsAndTheirInit.length] by 2
