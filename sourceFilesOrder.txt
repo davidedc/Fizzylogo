@@ -27,6 +27,7 @@ fizzylogo_AccessUpperContext.coffee
 fizzylogo_Forever.coffee
 fizzylogo_EvaluationsCounter.coffee
 fizzylogo_Number.coffee
+fizzylogo_UnaryMinus.coffee
 fizzylogo_Nil.coffee
 fizzylogo_String.coffee
 fizzylogo_Workspace.coffee

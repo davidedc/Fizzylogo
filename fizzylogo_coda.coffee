@@ -45,6 +45,8 @@ initContext = (context) ->
 
     "'", FLQuote.createNew()
     ":", FLQuote.createNew()
+
+    "-", FLUnaryMinus.createNew()
   ]
 
   for keywords in [0...keywordsAndTheirInit.length] by 2

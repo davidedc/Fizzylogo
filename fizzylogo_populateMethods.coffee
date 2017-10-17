@@ -1051,6 +1051,11 @@ initBootClasses = ->
     (flTokenize "( operandum )"),
     flTokenize "operandum negate"
 
+  # UnaryMinus --------------------------------------------------------------------------
+  FLUnaryMinus.addMethod \
+    (flTokenize "( operandum )"),
+    flTokenize "0 - operandum",
+    4
   # List -------------------------------------------------------------------------
 
   FLList.addMethod \

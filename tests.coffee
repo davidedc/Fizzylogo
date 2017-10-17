@@ -85,6 +85,15 @@ tests = [
   "9.68"
 
   # ---------------------------------------------------------------------------
+  # unary minus
+
+  """
+  a = -1
+  console print a
+  """
+  "-1"
+
+  # ---------------------------------------------------------------------------
 
   # note that the "ground" operators have a priority
   # so we better use the "answer with priority" with the
