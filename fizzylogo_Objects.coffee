@@ -89,6 +89,7 @@ class FLObjects
       soFarEverythingMatched = true
       originalMethodInvocationStart = methodInvocation.cursorStart
 
+
       until eachSignature.isEmpty() or methodInvocation.isEmpty()
 
         log "evaluation " + indentation() + "  matching: - next signature piece: " + eachSignature.flToString() + " is token: " + " with: " + methodInvocation.flToString()
