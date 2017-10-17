@@ -286,6 +286,23 @@ addDefaultMethods = (classToAddThemTo) ->
       
       return @
 
+  classToAddThemTo.addMethod \
+    (flTokenize "answer with priority (priority) : ( 'signature ) by: ( 'methodBody )"),
+    (context) ->
+      #yield
+      signature = context.tempVariablesDict[ValidIDfromString "signature"]
+      methodBody = context.tempVariablesDict[ValidIDfromString "methodBody"]
+      priority = context.tempVariablesDict[ValidIDfromString "priority"]
+
+      if @isClass()
+        @addMethod signature, methodBody, priority.value
+      else
+        @flClass.addMethod signature, methodBody, priority.value
+
+      
+      return @
+
+
 # with time, allClasses contains all the classes
 # (boot classes and user-defined classes), but right
 # now only the boot classes (i.e. primitive classes +
