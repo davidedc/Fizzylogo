@@ -106,6 +106,7 @@ addDefaultMethods = (classToAddThemTo) ->
         return FLBoolean.createNew true
       else
         return FLBoolean.createNew false
+    ,7
 
   # this is the common object identity function
   # strings, numbers and booleans override this
@@ -119,6 +120,7 @@ addDefaultMethods = (classToAddThemTo) ->
         return FLBoolean.createNew true
       else
         return FLBoolean.createNew false
+    ,7
 
   classToAddThemTo.addMethod \
     (flTokenize "else if ( predicate ): ('trueBranch)"),
@@ -481,6 +483,7 @@ initBootClasses = ->
         return FLBoolean.createNew true
       else
         return FLBoolean.createNew false
+    ,7
 
   # In ---------------------------------------------------------------------------
 
@@ -684,14 +687,17 @@ initBootClasses = ->
       #yield
       stringToBeAppended = context.tempVariablesDict[ValidIDfromString "stringToBeAppended"]
       return FLString.createNew @value + stringToBeAppended.flToString()
+    ,4
 
   FLString.addMethod \
     (flTokenize "== ( toCompare )"),
-    commonSimpleValueEqualityFunction
+    commonSimpleValueEqualityFunction,
+    7
 
   FLString.addMethod \
     (flTokenize "!= ( toCompare )"),
-    commonSimpleValueInequalityFunction
+    commonSimpleValueInequalityFunction,
+    7
 
   # Number -------------------------------------------------------------------------
 
@@ -779,7 +785,8 @@ initBootClasses = ->
 
   FLNumber.addMethod \
     (flTokenize "+ ( operandum )"),
-    (flTokenize "self $plus_binary_default operandum")
+    (flTokenize "self $plus_binary_default operandum"),
+    4
 
   # although there are some good reasons to have this,
   # it can get confusing, consider for example
@@ -809,7 +816,8 @@ initBootClasses = ->
 
   FLNumber.addMethod \
     (flTokenize "% ( operandum )"),
-    (flTokenize "self $percent_binary_default operandum")
+    (flTokenize "self $percent_binary_default operandum"),
+    3
 
   # ---
 
@@ -824,7 +832,8 @@ initBootClasses = ->
 
   FLNumber.addMethod \
     (flTokenize "/_ ( operandum )"),
-    (flTokenize "self $floordivision_binary_default operandum")
+    (flTokenize "self $floordivision_binary_default operandum"),
+    3
 
   # ---
 
@@ -839,7 +848,8 @@ initBootClasses = ->
 
   FLNumber.addMethod \
     (flTokenize "- ( operandum )"),
-    (flTokenize "self $minus_binary_default operandum")
+    (flTokenize "self $minus_binary_default operandum"),
+    4
 
   # ---
 
@@ -854,7 +864,8 @@ initBootClasses = ->
 
   FLNumber.addMethod \
     (flTokenize "/ ( operandum )"),
-    (flTokenize "self $divide_binary_default operandum")
+    (flTokenize "self $divide_binary_default operandum"),
+    3
 
   # ---
 
@@ -869,7 +880,8 @@ initBootClasses = ->
 
   FLNumber.addMethod \
     (flTokenize "* ( operandum )"),
-    (flTokenize "self $multiply_binary_default operandum")
+    (flTokenize "self $multiply_binary_default operandum"),
+    3
 
   # see "++" regarding why this could be confusing
   FLNumber.addMethod \
@@ -923,11 +935,13 @@ initBootClasses = ->
 
   FLNumber.addMethod \
     (flTokenize "== ( toCompare )"),
-    commonSimpleValueEqualityFunction
+    commonSimpleValueEqualityFunction,
+    7
 
   FLNumber.addMethod \
     (flTokenize "!= ( toCompare )"),
-    commonSimpleValueInequalityFunction
+    commonSimpleValueInequalityFunction,
+    7
 
   FLNumber.addMethod \
     (flTokenize "< ( toCompare )"),
@@ -938,6 +952,7 @@ initBootClasses = ->
         return FLBoolean.createNew true
       else
         return FLBoolean.createNew false
+    ,6
 
   # mutating the number
   FLNumber.addMethod \
@@ -976,11 +991,13 @@ initBootClasses = ->
 
   FLBoolean.addMethod \
     (flTokenize "== ( toCompare )"),
-    commonSimpleValueEqualityFunction
+    commonSimpleValueEqualityFunction,
+    7
 
   FLBoolean.addMethod \
     (flTokenize "!= ( toCompare )"),
-    commonSimpleValueInequalityFunction
+    commonSimpleValueInequalityFunction,
+    7
 
 
   # FLQuote --------------------------------------------------------------------------
@@ -1021,6 +1038,7 @@ initBootClasses = ->
       elementToBeAppended = context.tempVariablesDict[ValidIDfromString "elementToBeAppended"]
       log "appending element to: " + @flToString() + " : " + elementToBeAppended.toString()
       return @flListImmutablePush elementToBeAppended
+    ,4
 
   FLList.addMethod \
     (flTokenize "length"),

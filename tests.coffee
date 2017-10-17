@@ -9,17 +9,19 @@ tests = [
   ""
 
   # ---------------------------------------------------------------------------
-  # surprise! this language "chains" to the right
-  # so "streams" of things are run right to left. 
+  # "common math" operator precedence
+  # (contrarily to modern Smalltalk and some Logo
+  # implementations which are left to right,
+  # or Smalltalk-72 / Rosetta Smalltalk / APL which are
+  # right to left) 
   "console print 2 * 3 + 1"
-  "8"
-
-  # ---------------------------------------------------------------------------
-  # another surprise! For the same reason as above,
-  # this gives a different result from C, where the
-  # "-"" is left - associative
-  "console print 8 - 3 - 2"
   "7"
+
+  # left-associative rule: this is read as (8-3)-2
+  # this is fine for most math operators except a^b^c
+  # which in "common math" should actually be a^(b^c)
+  "console print 8 - 3 - 2"
+  "3"
 
   # ---------------------------------------------------------------------------
   "console print (2 * 3) + 1"
