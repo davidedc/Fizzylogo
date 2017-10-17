@@ -923,10 +923,13 @@ tests = [
   "3"
 
   # ---------------------------------------------------------------------------
+  # this one creates a truly anonymous class
   "'MyClass←Class new"
   ""
 
   # -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
+  # the "=" infers the name for the new class: MyClass
+  # in this case
   "MyClass=Class new"
   ""
 
@@ -4154,7 +4157,6 @@ tests = [
   aToObjectFunction
   """
   "1+1"
-
 
 ]
 
