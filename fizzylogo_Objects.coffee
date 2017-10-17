@@ -73,6 +73,17 @@ class FLObjects
       eachSignature = classContainingMethods.msgPatterns[eachSignatureIndex]
       eachPriority = classContainingMethods.priorities[eachSignatureIndex]
 
+      goodMatchSoFar = true
+
+      #if eachSignature.flToString() == "( + ( operandum ) )"
+      #  log "obtained eachPriority: " + eachPriority
+      log "previousPriority, eachPriority: " + previousPriority + " , " + eachPriority
+      if previousPriority? and eachPriority?
+        if previousPriority <= eachPriority
+          log "breaking matching due to priority going up: previousPriority, eachPriority: " + previousPriority + " , " + eachPriority
+          goodMatchSoFar = false
+
+
       #log "evaluation " + indentation() + "  matching - checking if this signature matches: " + eachSignature.flToString()
       methodInvocation = methodInvocationToBeChecked
 
@@ -87,108 +98,95 @@ class FLObjects
       #log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.flToString()
       #log "evaluation " + indentation() + "  matching - checking if signature matches this invocation " + methodInvocation.flToString()
 
-      soFarEverythingMatched = true
       originalMethodInvocationStart = methodInvocation.cursorStart
 
 
-      until eachSignature.isEmpty() or methodInvocation.isEmpty()
+      if goodMatchSoFar
+        until eachSignature.isEmpty() or methodInvocation.isEmpty()
 
-        # TODO this should be before the "until" loop
-        # but we put it here for the time being to be
-        # safe
-        #if eachSignature.flToString() == "( + ( operandum ) )"
-        #  log "obtained eachPriority: " + eachPriority
+          log "evaluation " + indentation() + "  matching: - next signature piece: " + eachSignature.flToString() + " is token: " + " with: " + methodInvocation.flToString()
 
-        log "previousPriority, eachPriority: " + previousPriority + " , " + eachPriority
-        if previousPriority? and eachPriority?
-          if previousPriority <= eachPriority
-            log "breaking matching due to priority going up: previousPriority, eachPriority: " + previousPriority + " , " + eachPriority
-            soFarEverythingMatched = false
-            break
-
-        log "evaluation " + indentation() + "  matching: - next signature piece: " + eachSignature.flToString() + " is token: " + " with: " + methodInvocation.flToString()
-
-        [eachElementOfSignature, eachSignature] = eachSignature.nextElement()
-
-        
-        # the element of a signature can only be of two kinds:
-        # a token or an FLList containing one parameter (with
-        # prepended "@" in case the parameter doesn't require
-        # evaluation)
-
-        if eachElementOfSignature.flClass != FLList and eachElementOfSignature.flClass != FLToken
-          theContext.throwing = true
-          # TODO this error should really be a stock error referanceable
-          # from the workspace because someone might want to catch it.
-          theContext.returned = FLException.createNew "signature of a method should only contain tokens or lists. Found instead: " + eachElementOfSignature.flToString() + " . Perhaps some variable in the signature has been closed?"
-          return [theContext, methodInvocationToBeChecked]
-
-        if eachElementOfSignature.flClass == FLToken
-          # if the signature contains a token, the message
-          # must contain the same token, otherwise we don't
-          # have a match.
-
-          [eachElementOfInvocation, methodInvocation] = methodInvocation.nextElement()
-
-
-          #log "evaluation " + indentation() + "  matching tokens: - next signature piece: " + eachElementOfSignature.flToString() + " is token: " + (eachElementOfSignature.flClass == FLToken) + " with: " + eachElementOfInvocation.flToString()
-
-          # ok at least the message contains a token, but
-          # now we have to check that they spell the same
-          log "******* evaluation " + indentation() +
-            "  matching tokens: - next signature piece: " +
-            eachElementOfSignature.flToString() +
-            " is token: " + (eachElementOfSignature.flClass == FLToken) +
-            " with: " + eachElementOfInvocation.flToString()
-          if eachElementOfSignature.value == eachElementOfInvocation.value
-            log "evaluation " + indentation() + "  matching - token matched: " + eachElementOfSignature.flToString()
-            # OK good match of tokens,
-            # check the next token in the signature
-            continue
-          else
-            # no match between the tokens, check next signature
-            soFarEverythingMatched = false
-            break
-
-        else
-          # the signature has a param. we have to check if
-          # it requires an evaluation or not
-          log "evaluation " + indentation() + "  matching - getting the token inside the parameter: " + eachElementOfSignature.flToString()
-          paramToken = eachElementOfSignature.getParamToken()
-          #dir paramToken
-          log "evaluation " + indentation() + "  matching - token inside the parameter: " + paramToken.flToString()
-          if eachElementOfSignature.isEvaluatingParam()
-            log "evaluation " + indentation() + "  matching - need to evaluate next msg element from invocation: " + methodInvocation.flToString() + " and bind to: " + paramToken.flToString()
-
-            # note how we need to evaluate the params in a context that has the
-            # same SELF as the calling one, not the new one that
-            # we are creating with the new SELF of the callee, otherwise, say,
-            # passing self, self would always bind
-            # to the receiver, which we don't want
-            # like in "7 * self" we don't want to bind self to 7
-
-            # yield from
-            [returnedContext, methodInvocation] = methodInvocation.partialEvalAsMessage theContext, eachPriority
-
-            valueToBeBound = returnedContext.returned
-
-          else
-            # don't need to evaluate the parameter
-            log "evaluation " + indentation() + "  matching - need to get next msg element from invocation: " + methodInvocation.flToString() + " and bind to: " + paramToken.flToString()
-            [valueToBeBound, methodInvocation] = methodInvocation.nextElement()
+          [eachElementOfSignature, eachSignature] = eachSignature.nextElement()
 
           
-          log "evaluation " + indentation() + "  matching - adding paramater " + paramToken.flToString() + " to tempVariables dictionary in current frame"
-          newContext.tempVariablesDict[ValidIDfromString paramToken.value] = valueToBeBound
+          # the element of a signature can only be of two kinds:
+          # a token or an FLList containing one parameter (with
+          # prepended "@" in case the parameter doesn't require
+          # evaluation)
 
-          # ok we matched a paramenter, now let's keep matching further
-          # parts of the signature
-          continue
+          if eachElementOfSignature.flClass != FLList and eachElementOfSignature.flClass != FLToken
+            theContext.throwing = true
+            # TODO this error should really be a stock error referanceable
+            # from the workspace because someone might want to catch it.
+            theContext.returned = FLException.createNew "signature of a method should only contain tokens or lists. Found instead: " + eachElementOfSignature.flToString() + " . Perhaps some variable in the signature has been closed?"
+            return [theContext, methodInvocationToBeChecked]
+
+          if eachElementOfSignature.flClass == FLToken
+            # if the signature contains a token, the message
+            # must contain the same token, otherwise we don't
+            # have a match.
+
+            [eachElementOfInvocation, methodInvocation] = methodInvocation.nextElement()
+
+
+            #log "evaluation " + indentation() + "  matching tokens: - next signature piece: " + eachElementOfSignature.flToString() + " is token: " + (eachElementOfSignature.flClass == FLToken) + " with: " + eachElementOfInvocation.flToString()
+
+            # ok at least the message contains a token, but
+            # now we have to check that they spell the same
+            log "******* evaluation " + indentation() +
+              "  matching tokens: - next signature piece: " +
+              eachElementOfSignature.flToString() +
+              " is token: " + (eachElementOfSignature.flClass == FLToken) +
+              " with: " + eachElementOfInvocation.flToString()
+            if eachElementOfSignature.value == eachElementOfInvocation.value
+              log "evaluation " + indentation() + "  matching - token matched: " + eachElementOfSignature.flToString()
+              # OK good match of tokens,
+              # check the next token in the signature
+              continue
+            else
+              # no match between the tokens, check next signature
+              goodMatchSoFar = false
+              break
+
+          else
+            # the signature has a param. we have to check if
+            # it requires an evaluation or not
+            log "evaluation " + indentation() + "  matching - getting the token inside the parameter: " + eachElementOfSignature.flToString()
+            paramToken = eachElementOfSignature.getParamToken()
+            #dir paramToken
+            log "evaluation " + indentation() + "  matching - token inside the parameter: " + paramToken.flToString()
+            if eachElementOfSignature.isEvaluatingParam()
+              log "evaluation " + indentation() + "  matching - need to evaluate next msg element from invocation: " + methodInvocation.flToString() + " and bind to: " + paramToken.flToString()
+
+              # note how we need to evaluate the params in a context that has the
+              # same SELF as the calling one, not the new one that
+              # we are creating with the new SELF of the callee, otherwise, say,
+              # passing self, self would always bind
+              # to the receiver, which we don't want
+              # like in "7 * self" we don't want to bind self to 7
+
+              # yield from
+              [returnedContext, methodInvocation] = methodInvocation.partialEvalAsMessage theContext, eachPriority
+
+              valueToBeBound = returnedContext.returned
+
+            else
+              # don't need to evaluate the parameter
+              log "evaluation " + indentation() + "  matching - need to get next msg element from invocation: " + methodInvocation.flToString() + " and bind to: " + paramToken.flToString()
+              [valueToBeBound, methodInvocation] = methodInvocation.nextElement()
+
+            
+            log "evaluation " + indentation() + "  matching - adding paramater " + paramToken.flToString() + " to tempVariables dictionary in current frame"
+            newContext.tempVariablesDict[ValidIDfromString paramToken.value] = valueToBeBound
+
+            # ok we matched a paramenter, now let's keep matching further
+            # parts of the signature
+            continue
 
       # ok we took a signature, and now here it either matched or it didn't,
-      # as indicated by the soFarEverythingMatched flag
+      # as indicated by the goodMatchSoFar flag
 
-      if eachSignature.isEmpty() and soFarEverythingMatched
+      if eachSignature.isEmpty() and goodMatchSoFar
 
         # now, the correct PC that we need to report is
         # the original plus what we consumed from matching the
