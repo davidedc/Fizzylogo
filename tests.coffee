@@ -4166,6 +4166,72 @@ tests = [
   "1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz 16 17 Fizz 19 Buzz Fizz 22 23 Fizz Buzz 26 Fizz 28 29 FizzBuzz 31 32 Fizz 34 Buzz Fizz 37 38 Fizz Buzz 41 Fizz 43 44 FizzBuzz 46 47 Fizz 49 Buzz Fizz 52 53 Fizz Buzz 56 Fizz 58 59 FizzBuzz 61 62 Fizz 64 Buzz Fizz 67 68 Fizz Buzz 71 Fizz 73 74 FizzBuzz 76 77 Fizz 79 Buzz Fizz 82 83 Fizz Buzz 86 Fizz 88 89 FizzBuzz 91 92 Fizz 94 Buzz Fizz 97 98 Fizz "
 
   # ---------------------------------------------------------------------------
+  # Matrix class: initialisation from List of Lists, transposition,
+  # multiplication, printing.
+
+  """
+  Matrix = Class new
+  Matrix answer:
+  ﹍﹍initWith (array)
+  ﹍by:
+  ﹍﹍@array = array
+  ﹍﹍@rows = array length
+  ﹍﹍@columns = array[0] length
+
+  Matrix answer:
+  ﹍﹍print
+  ﹍by:
+  ﹍﹍console print "["
+  ﹍﹍for i from 0 to @rows - 1:
+  ﹍﹍﹍console print "["
+  ﹍﹍﹍for j from 0 to @columns - 1:
+  ﹍﹍﹍﹍console print @array[i][j]
+  ﹍﹍﹍﹍if j != @columns - 1:
+  ﹍﹍﹍﹍﹍console print ","
+  ﹍﹍﹍console print "]"
+  ﹍﹍﹍if i != @rows - 1:
+  ﹍﹍﹍﹍console print ","
+  ﹍﹍console print "]"
+
+  Matrix answer:
+  ﹍﹍transpose
+  ﹍by:
+  ﹍﹍transposed = []
+  ﹍﹍for i from 0 to @columns - 1:
+  ﹍﹍﹍transposed[i] = []
+  ﹍﹍﹍for j from 0 to @rows - 1:
+  ﹍﹍﹍﹍transposed[i][j] = @array[j][i]
+  ﹍﹍Matrix new initWith transposed
+
+  Matrix answer:
+  ﹍﹍multiply (other)
+  ﹍by:
+  ﹍﹍result = []
+  ﹍﹍for i from 0 to @rows - 1:
+  ﹍﹍﹍result[i] = []
+  ﹍﹍﹍for j from 0 to other.columns - 1:
+  ﹍﹍﹍﹍sum = 0
+  ﹍﹍﹍﹍for k from 0 to @columns - 1:
+  ﹍﹍﹍﹍﹍sum = sum + @array[i][k] * other.array[k][j]
+  ﹍﹍﹍﹍result[i][j] = sum
+  ﹍﹍Matrix new initWith result
+
+  myMatrix = Matrix new initWith [[1,2,3],[4,5,6],[7,8,9]]
+  myMatrix print
+  console print " "
+  myMatrix transpose print
+
+  console print " "
+  a = Matrix new initWith [[1,2],[3,4]]
+  b = Matrix new initWith [[-3,-8,3],[-2,1,4]]
+  (a multiply b) print
+
+  """
+
+  "[[1,2,3],[4,5,6],[7,8,9]] [[1,4,7],[2,5,8],[3,6,9]] [[-7,-6,11],[-17,-20,25]]"
+
+
+  # ---------------------------------------------------------------------------
   # a macro
   """
   a = '( (1...3) (console print x + y + z) x y z)
