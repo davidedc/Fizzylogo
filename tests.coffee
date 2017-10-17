@@ -23,6 +23,59 @@ tests = [
   "console print 8 - 3 - 2"
   "3"
 
+  "console print 10 - 3 + 2"
+  "9"
+
+  "console print 2 + 3 * 4 - 1"
+  "13"
+
+  """
+  a = 20
+  b = 10
+  c = 15
+  d = 5
+  console print (a+b)*c/d
+  console print " "
+  console print ((a+b)*c)/d
+  console print " "
+  console print (a+b)*c/d
+  console print " "
+  console print a+(b*c)/d
+  """
+  "90 90 90 50"
+
+  """
+  if 30 < 30 + 1:
+  ﹍console print "ok"
+  else:
+  ﹍console print "nok"
+  """
+  "ok"
+
+  """
+  if 30 + 1 > 30:
+  ﹍console print "ok"
+  else:
+  ﹍console print "nok"
+  """
+  "ok"
+
+  """
+  if 30 < 30 - 1:
+  ﹍console print "nok"
+  else:
+  ﹍console print "ok"
+  """
+  "ok"
+
+  """
+  if 30 - 1 > 30:
+  ﹍console print "nok"
+  else:
+  ﹍console print "ok"
+  """
+  "ok"
+
   # ---------------------------------------------------------------------------
   "console print (2 * 3) + 1"
   "7"
@@ -33,12 +86,17 @@ tests = [
 
   # ---------------------------------------------------------------------------
 
-  "console print 1+1;Number answer:(+(operandum))by:(console print self;console print \"+\";console print operandum);2+3;Number answer:(+(operandum))by:(self $plus_binary_default operandum);"
+  # note that the "ground" operators have a priority
+  # so we better use the "answer with priority" with the
+  # correct priority when we want to modify those, otherwise
+  # precedence of operators changes!
+  "console print 1+1;Number answer with priority 4 :(+(operandum))by:(console print self;console print \"+\";console print operandum);2+3;Number answer with priority 4 :(+(operandum))by:(self $plus_binary_default operandum);"
   "22+3"
 
+  # see above about "answer with priority"
   """
   console print 1+1
-  Number answer:
+  Number answer with priority 4:
   ﹍﹍+ (operandum)
   ﹍by:
   ﹍﹍console print self
@@ -46,7 +104,7 @@ tests = [
   ﹍﹍console print operandum
   2+3
 
-  Number answer:
+  Number answer with priority 4:
   ﹍﹍+ (operandum)
   ﹍by:
   ﹍﹍self $plus_binary_default operandum
@@ -3351,7 +3409,7 @@ tests = [
   LinkedList answer:
   ﹍﹍isEmpty
   ﹍by:
-  ﹍﹍console print " list is empty now? " + @head == nil
+  ﹍﹍console print " list is empty now? " + (@head == nil)
   ﹍﹍@head == nil
 
   LinkedList answer:
@@ -3474,6 +3532,31 @@ tests = [
   """
   "97-292-146-73-220-110-55-166-83-250-125-376-188-94-47-142-71-214-107-322-161-484-242-121-364-182-91-274-137-412-206-103-310-155-466-233-700-350-175-526-263-790-395-1186-593-1780-890-445-1336-668-334-167-502-251-754-377-1132-566-283-850-425-1276-638-319-958-479-1438-719-2158-1079-3238-1619-4858-2429-7288-3644-1822-911-2734-1367-4102-2051-6154-3077-9232-4616-2308-1154-577-1732-866-433-1300-650-325-976-488-244-122-61-184-92-46-23-70-35-106-53-160-80-40-20-10-5-16-8-4-2-1- steps: 118"
 
+  # using "common math" operator precedence
+  # and associativity:
+
+  """
+  startingNumber = 97
+  steps = 0
+
+  n = startingNumber
+
+  repeat forever:
+  ﹍console print n + "-"
+  ﹍if n==1:
+  ﹍﹍break
+  ﹍else:
+  ﹍﹍if n%2==0:
+  ﹍﹍﹍n=n/2
+  ﹍﹍else:
+  ﹍﹍﹍n=n*3+1
+  ﹍﹍steps++
+
+  console print " steps: " + steps
+
+  """
+  "97-292-146-73-220-110-55-166-83-250-125-376-188-94-47-142-71-214-107-322-161-484-242-121-364-182-91-274-137-412-206-103-310-155-466-233-700-350-175-526-263-790-395-1186-593-1780-890-445-1336-668-334-167-502-251-754-377-1132-566-283-850-425-1276-638-319-958-479-1438-719-2158-1079-3238-1619-4858-2429-7288-3644-1822-911-2734-1367-4102-2051-6154-3077-9232-4616-2308-1154-577-1732-866-433-1300-650-325-976-488-244-122-61-184-92-46-23-70-35-106-53-160-80-40-20-10-5-16-8-4-2-1- steps: 118"
+
 # ---------------------------------------------------------------------------
 
   # 20 digits of pi using Jeremy Gibbons's unbounded spigot
@@ -3506,6 +3589,36 @@ tests = [
   ﹍﹍r = nr
   """
   "31415926535897932384"
+
+  # using "common math" operator precedence
+  # and associativity:
+
+  """
+  q = 1
+  r = 0
+  t = 1
+  k = 1
+  n = 3
+  l = 3
+  repeat 82:
+  ﹍if 4*q+r-t < n*t:
+  ﹍﹍console print n
+  ﹍﹍nr = 10*(r-n*t)
+  ﹍﹍n = 10*(3*q+r) /_ t - 10*n
+  ﹍﹍q *= 10
+  ﹍﹍r = nr
+  ﹍else:
+  ﹍﹍nr = (2*q+r) * l
+  ﹍﹍nn = (q*(7*k+2)+r*l) /_ (t*l)
+  ﹍﹍q *= k
+  ﹍﹍t *= l
+  ﹍﹍l += 2
+  ﹍﹍k += 1
+  ﹍﹍n = nn
+  ﹍﹍r = nr
+  """
+  "31415926535897932384"
+
 
 # ---------------------------------------------------------------------------
 # ranges
