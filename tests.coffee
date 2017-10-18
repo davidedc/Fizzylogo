@@ -328,15 +328,15 @@ tests = [
   """
   a = [-2]
   console print a length
-  console print a[0]
+  console print a[1]
   """
   "1-2"
 
   """
   a = [0,-2]
   console print a length
-  console print a[0]
   console print a[1]
+  console print a[2]
   """
   "20-2"
 
@@ -363,8 +363,8 @@ tests = [
   a = [1,2,[3,4],5]
   console print a length
   console print a
-  console print a[2] length
-  console print a[2]
+  console print a[3] length
+  console print a[3]
   """
   """
   4( 1 2 ( 3 4 ) 5 )2( 3 4 )
@@ -384,8 +384,8 @@ tests = [
   a = [[]]
   console print a length
   console print a
-  console print a[0] length
-  console print a[0]
+  console print a[1] length
+  console print a[1]
   """
   "1( empty message )0empty message"
 
@@ -1413,9 +1413,9 @@ tests = [
   array = false
   myLittleArray =' (my little array)
   console print myLittleArray
-  console print myLittleArray[0]+1
-  console print myLittleArray[1]
-  if myLittleArray[2]:
+  console print myLittleArray[1]+1
+  console print myLittleArray[2]
+  if myLittleArray[3]:
   ﹍console print "true!"
   else:
   ﹍console print "false!"
@@ -2328,24 +2328,24 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   myList =' ("Hello " "Dave " "my " "dear " "friend")
-  console print myList[0]
-  console print myList[1+1]
+  console print myList[1]
+  console print myList[1+1+1]
   """
   "Hello my "
 
   # ---------------------------------------------------------------------------
   """
   myList =' ("Hello " "Dave " "my " "dear " "friend")
-  myList[1+1] = "oh "
+  myList[1+1+1] = "oh "
   console print myList
   """
   "( \"Hello \" \"Dave \" \"oh \" \"dear \" \"friend\" )"
 
   # ---------------------------------------------------------------------------
   """
-  numbers =' (9 3 2 5 7)
+  numbers =' (9 4 3 5 7)
   myList =' ("Hello " "Dave " "my " "dear " "friend")
-  myList[numbers[1+1]] = "oh "
+  myList[numbers[1+1+1]] = "oh "
   console print myList
   """
   "( \"Hello \" \"Dave \" \"oh \" \"dear \" \"friend\" )"
@@ -2353,15 +2353,15 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   numbers =' (9 3 2 5 7)
-  console print numbers[0]+numbers[1]
+  console print numbers[1]+numbers[2]
   """
   "12"
 
   # ---------------------------------------------------------------------------
   """
-  numbers =' (9 3 2 5 7)
+  numbers =' (9 4 3 5 7)
   myList =' ("Hello " "Dave " ("oh " "so ") "dear " "friend")
-  console print myList[numbers[2]]
+  console print myList[numbers[3]]
   """
   "( \"oh \" \"so \" )"
 
@@ -2372,25 +2372,25 @@ tests = [
   console print myObject.someField
   console print myObject.someOtherField
   myObject.someField =' (9 3 15 5 7)
-  myObject.someField[1+1] = 1+1
+  myObject.someField[1+1+1] = 1+1+1
   myObject.someOtherField =' ("Hello " "Dave " ("oh " "so ") "dear " "friend")
-  console print myObject.someOtherField[myObject.someField[1+1]]
+  console print myObject.someOtherField[myObject.someField[1+1+1]]
 
   """
   "nilnil( \"oh \" \"so \" )"
 
   # ---------------------------------------------------------------------------
   """
-  numbers =' (9 3 2 5 7)
+  numbers =' (9 4 3 5 7)
   myList =' ("Hello " "Dave " ("oh " "so ") "dear " "friend")
-  console print myList[numbers[1+1]][0+1]
+  console print myList[numbers[1+1+1]][0+1+1]
   """
   "so "
 
   # ---------------------------------------------------------------------------
   """
   things =' (false true)
-  console print things[0] or things[1]
+  console print things[1] or things[2]
   """
   "true"
 
@@ -2398,9 +2398,9 @@ tests = [
   """
   foo = 3
   things =' (foo bar 2)
-  console print things[0]
   console print things[1]
   console print things[2]
+  console print things[3]
   console print things
   """
   "3bar2( 3 bar 2 )"
@@ -2411,8 +2411,8 @@ tests = [
   things2 = things1
   console print things1
   console print things2
-  things1[0] = 'your
-  things2[1] = 'big
+  things1[1] = 'your
+  things2[2] = 'big
   console print things1
   console print things2
   things1 = " no more a list "
@@ -3132,41 +3132,41 @@ tests = [
 
   """
   myArray = '(1 2 3)
-  myArray[0]++
+  myArray[1]++
   console print myArray
   """
   "( 2 2 3 )"
 
   """
   myArray = '(1 2 3)
-  console print myArray[0]++ ++
+  console print myArray[1]++ ++
   console print myArray
   """
   "3( 2 2 3 )"
 
   """
   myArray = '(1 2 3)
-  console print myArray[0] += myArray[1]+myArray[2]
+  console print myArray[1] += myArray[2]+myArray[3]
   console print myArray
   """
   "6( 6 2 3 )"
 
   """
   myArray = '(1 2 3)
-  console print myArray[0]++
+  console print myArray[1]++
   """
   "2"
 
   """
   myArray = '(1 2 3)
-  console print myArray[0]++ ++
-  console print myArray[0]
+  console print myArray[1]++ ++
+  console print myArray[2]
   """
   "32"
 
   """
   a = '()
-  a[4] = 1
+  a[5] = 1
   console print a
   """
   "( nil nil nil nil 1 )"
@@ -3764,14 +3764,14 @@ tests = [
   """
   codeToBeRun ='
   ﹍console print 1+2
-  console print codeToBeRun[3]
+  console print codeToBeRun[4]
   """
   "+"
 
   """
   codeToBeRun ='
   ﹍console print 1+2
-  codeToBeRun[3] = '-
+  codeToBeRun[4] = '-
   codeToBeRun eval
   """
   "-1"
@@ -3788,7 +3788,7 @@ tests = [
   ﹍﹍codeToBeRun eval
   myObject=MyClass new
   myObject printOperation
-  codeToBeRun[3] = '-
+  codeToBeRun[4] = '-
   myObject printOperation
   """
 
@@ -4176,20 +4176,20 @@ tests = [
   ﹍by:
   ﹍﹍@array = array
   ﹍﹍@rows = array length
-  ﹍﹍@columns = array[0] length
+  ﹍﹍@columns = array[1] length
 
   Matrix answer:
   ﹍﹍print
   ﹍by:
   ﹍﹍console print "["
-  ﹍﹍for i from 0 to @rows - 1:
+  ﹍﹍for i from 1 to @rows:
   ﹍﹍﹍console print "["
-  ﹍﹍﹍for j from 0 to @columns - 1:
+  ﹍﹍﹍for j from 1 to @columns:
   ﹍﹍﹍﹍console print @array[i][j]
-  ﹍﹍﹍﹍if j != @columns - 1:
+  ﹍﹍﹍﹍if j != @columns:
   ﹍﹍﹍﹍﹍console print ","
   ﹍﹍﹍console print "]"
-  ﹍﹍﹍if i != @rows - 1:
+  ﹍﹍﹍if i != @rows:
   ﹍﹍﹍﹍console print ","
   ﹍﹍console print "]"
 
@@ -4197,9 +4197,9 @@ tests = [
   ﹍﹍transpose
   ﹍by:
   ﹍﹍transposed = []
-  ﹍﹍for i from 0 to @columns - 1:
+  ﹍﹍for i from 1 to @columns:
   ﹍﹍﹍transposed[i] = []
-  ﹍﹍﹍for j from 0 to @rows - 1:
+  ﹍﹍﹍for j from 1 to @rows:
   ﹍﹍﹍﹍transposed[i][j] = @array[j][i]
   ﹍﹍Matrix new initWith transposed
 
@@ -4207,11 +4207,11 @@ tests = [
   ﹍﹍multiply (other)
   ﹍by:
   ﹍﹍result = []
-  ﹍﹍for i from 0 to @rows - 1:
+  ﹍﹍for i from 1 to @rows:
   ﹍﹍﹍result[i] = []
-  ﹍﹍﹍for j from 0 to other.columns - 1:
+  ﹍﹍﹍for j from 1 to other.columns:
   ﹍﹍﹍﹍sum = 0
-  ﹍﹍﹍﹍for k from 0 to @columns - 1:
+  ﹍﹍﹍﹍for k from 1 to @columns:
   ﹍﹍﹍﹍﹍sum = sum + @array[i][k] * other.array[k][j]
   ﹍﹍﹍﹍result[i][j] = sum
   ﹍﹍Matrix new initWith result
@@ -4230,7 +4230,6 @@ tests = [
 
   "[[1,2,3],[4,5,6],[7,8,9]] [[1,4,7],[2,5,8],[3,6,9]] [[-7,-6,11],[-17,-20,25]]"
 
-
   # ---------------------------------------------------------------------------
   # a macro
   """
@@ -4242,25 +4241,25 @@ tests = [
   bodies = '()
 
   for each number in:
-  ﹍﹍0...numParams
+  ﹍﹍1...numParams + 1
   ﹍do:
   ﹍﹍bodies[number] = '()
-  ﹍﹍bodies[number] = bodies[number] + 'for + 'each + a[2+number] + 'in + ': + a[0]
+  ﹍﹍bodies[number] = bodies[number] + 'for + 'each + a[2+number] + 'in + ': + a[1]
   ﹍﹍bodies[number] = bodies[number] + 'do + ':
 
-  bodies[numParams-1] = bodies[numParams-1] + a[1]
+  bodies[numParams] = bodies[numParams] + a[2]
   console print bodies
 
   console print " ---------- "
   for each number in:
   ﹍﹍numParams...1
   ﹍do:
-  ﹍﹍bodies[number-2] = bodies[number-2] + bodies[number-1]
+  ﹍﹍bodies[number-1] = bodies[number-1] + bodies[number]
 
   console print " ---- "
   console print bodies
 
-  toRun = bodies[0]
+  toRun = bodies[1]
   console print " ---- "
   console print toRun
 
@@ -4277,26 +4276,26 @@ tests = [
   ﹍do:
   ﹍﹍accessUpperContext
   ﹍﹍numParams = rangeBodyAndVars length - 2
-  ﹍﹍body = rangeBodyAndVars[1]
-  ﹍﹍range =  rangeBodyAndVars[0]
+  ﹍﹍body = rangeBodyAndVars[2]
+  ﹍﹍range =  rangeBodyAndVars[1]
   ﹍﹍
   ﹍﹍bodies = '()
   ﹍﹍
   ﹍﹍for each number in:
-  ﹍﹍﹍﹍0...numParams
+  ﹍﹍﹍﹍1...numParams + 1
   ﹍﹍﹍do:
   ﹍﹍﹍﹍bodies[number] = '()
   ﹍﹍﹍﹍bodies[number] = bodies[number] + 'for + 'each + rangeBodyAndVars[2+number] + 'in + ': + range
   ﹍﹍﹍﹍bodies[number] = bodies[number] + 'do + ':
   ﹍﹍
-  ﹍﹍bodies[numParams-1] = bodies[numParams-1] + body
+  ﹍﹍bodies[numParams] = bodies[numParams] + body
   ﹍﹍
   ﹍﹍for each number in:
-  ﹍﹍﹍﹍(numParams-1)...0
+  ﹍﹍﹍﹍numParams...1
   ﹍﹍﹍do:
   ﹍﹍﹍﹍bodies[number-1] = bodies[number-1] + bodies[number]
   ﹍﹍
-  ﹍﹍bodies[0] eval
+  ﹍﹍bodies[1] eval
 
   nestedRepeat '( (1...3) (console print x + y + z) x y z)
   """

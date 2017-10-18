@@ -1123,7 +1123,8 @@ initBootClasses = ->
       indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
       value = context.tempVariablesDict[ValidIDfromString "value"]
       
-      return @elementAtSetMutable indexValue.value, value
+      # -1 here is because arrays in Fizzylogo are 1-based
+      return @elementAtSetMutable indexValue.value - 1, value
 
   FLList.addMethod \
     (flTokenize "[ (indexValue) ] += (value)"),
@@ -1136,9 +1137,8 @@ initBootClasses = ->
       # yield from
       toBeReturned = runThis.eval context, runThis
 
-      
-
-      @elementAtSetMutable indexValue.value, toBeReturned
+      # -1 here is because arrays in Fizzylogo are 1-based
+      @elementAtSetMutable indexValue.value - 1, toBeReturned
 
       return toBeReturned
 
@@ -1153,9 +1153,8 @@ initBootClasses = ->
       # yield from
       toBeReturned = runThis.eval context, runThis
 
-      
-
-      @elementAtSetMutable indexValue.value, toBeReturned
+      # -1 here is because arrays in Fizzylogo are 1-based
+      @elementAtSetMutable indexValue.value - 1, toBeReturned
 
       return toBeReturned
 
@@ -1169,7 +1168,8 @@ initBootClasses = ->
       # yield from
       toBeReturned = runThis.eval context, runThis
 
-      @elementAtSetMutable indexValue.value, toBeReturned
+      # -1 here is because arrays in Fizzylogo are 1-based
+      @elementAtSetMutable indexValue.value - 1, toBeReturned
 
       return toBeReturned
 
@@ -1179,7 +1179,8 @@ initBootClasses = ->
     (context) ->
       #yield
       indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
-      return @elementAt indexValue.value
+      # -1 here is because arrays in Fizzylogo are 1-based
+      return @elementAt indexValue.value - 1
 
 
   FLList.addMethod \
