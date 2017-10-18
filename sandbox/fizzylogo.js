@@ -2018,12 +2018,12 @@
       yield;
       endRange = context.tempVariablesDict[ValidIDfromString("endRange")];
       listToBeReturned = FLList.createNew();
-      for (i = l = ref = this.value, ref1 = endRange.value; ref <= ref1 ? l < ref1 : l > ref1; i = ref <= ref1 ? ++l : --l) {
+      for (i = l = ref = this.value, ref1 = endRange.value; ref <= ref1 ? l <= ref1 : l >= ref1; i = ref <= ref1 ? ++l : --l) {
         listToBeReturned.value.jsArrayPush(FLNumber.createNew(i));
         listToBeReturned.cursorEnd++;
       }
       return listToBeReturned;
-    });
+    }, 5);
     BasePlusFunction = function*(context) {
       var operandum;
       yield;
@@ -2212,7 +2212,7 @@
       yield;
       indexValue = context.tempVariablesDict[ValidIDfromString("indexValue")];
       value = context.tempVariablesDict[ValidIDfromString("value")];
-      return this.elementAtSetMutable(indexValue.value, value);
+      return this.elementAtSetMutable(indexValue.value - 1, value);
     });
     FLList.addMethod(flTokenize("[ (indexValue) ] += (value)"), function*(context) {
       var indexValue, runThis, toBeReturned, value;
@@ -2220,7 +2220,7 @@
       value = context.tempVariablesDict[ValidIDfromString("value")];
       runThis = flTokenize("(self [indexValue]) += value");
       toBeReturned = (yield* runThis["eval"](context, runThis));
-      this.elementAtSetMutable(indexValue.value, toBeReturned);
+      this.elementAtSetMutable(indexValue.value - 1, toBeReturned);
       return toBeReturned;
     });
     FLList.addMethod(flTokenize("[ (indexValue) ] *= (value)"), function*(context) {
@@ -2229,7 +2229,7 @@
       value = context.tempVariablesDict[ValidIDfromString("value")];
       runThis = flTokenize("(self [indexValue]) *= value");
       toBeReturned = (yield* runThis["eval"](context, runThis));
-      this.elementAtSetMutable(indexValue.value, toBeReturned);
+      this.elementAtSetMutable(indexValue.value - 1, toBeReturned);
       return toBeReturned;
     });
     FLList.addMethod(flTokenize("[ (indexValue) ] ++"), function*(context) {
@@ -2237,14 +2237,14 @@
       indexValue = context.tempVariablesDict[ValidIDfromString("indexValue")];
       runThis = flTokenize("(self [indexValue]) ++");
       toBeReturned = (yield* runThis["eval"](context, runThis));
-      this.elementAtSetMutable(indexValue.value, toBeReturned);
+      this.elementAtSetMutable(indexValue.value - 1, toBeReturned);
       return toBeReturned;
     });
     FLList.addMethod(flTokenize("[ (indexValue) ]"), function*(context) {
       var indexValue;
       yield;
       indexValue = context.tempVariablesDict[ValidIDfromString("indexValue")];
-      return this.elementAt(indexValue.value);
+      return this.elementAt(indexValue.value - 1);
     });
     FLList.addMethod(flTokenize("each ( ' variable ) do ( ' code )"), function*(context) {
       var code, i, l, newContext, ref, toBeReturned, variable;
