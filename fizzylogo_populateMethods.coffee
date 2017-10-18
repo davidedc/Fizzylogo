@@ -773,18 +773,22 @@ initBootClasses = ->
     (flTokenize "printAFromDeeperCall"),
     flTokenize "console print a"
 
-  # higher priority NUMBER (i.e. lower precedence) than +,-,*,/
-  # so things like this can work:
+  # generates a range list including the extremes
+  # e.g. 1...1 is (1), 1...0 is (1 0), 1...2 is (1 2)
+  #
+  # hs higher priority NUMBER (i.e. lower precedence)
+  # than +,-,*,/ so things like this can work:
   #    
   #   for each number in:
   #     numParams-1...0
+  #
   FLNumber.addMethod \
     (flTokenize "...(endRange)"),
     (context) ->
       #yield
       endRange = context.tempVariablesDict[ValidIDfromString "endRange"]
       listToBeReturned = FLList.createNew()
-      for i in [@value...endRange.value]
+      for i in [@value..endRange.value]
         listToBeReturned.value.jsArrayPush FLNumber.createNew i
         listToBeReturned.cursorEnd++
 

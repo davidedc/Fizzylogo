@@ -3732,7 +3732,7 @@ tests = [
   ﹍do:
   ﹍﹍console print number
   """
-  "3456789"
+  "345678910"
 
   """
   for each number in:
@@ -3740,7 +3740,7 @@ tests = [
   ﹍do:
   ﹍﹍console print number
   """
-  "10987654"
+  "109876543"
 
   """
   for each number in:
@@ -3749,7 +3749,7 @@ tests = [
   ﹍﹍console print number
   console print "the end."
   """
-  "the end."
+  "3the end."
 
 # ---------------------------------------------------------------------------
 # homoiconicity
@@ -4142,9 +4142,9 @@ tests = [
   # ---------------------------------------------------------------------------
   # pythagorean triplets
   """
-  for each c in: (1...10) do:
-  ﹍for each b in: (1...c) do:
-  ﹍﹍for each a in: (1...b) do:
+  for each c in: (2...9) do:
+  ﹍for each b in: (2...c-1) do:
+  ﹍﹍for each a in: (1...b-1) do:
   ﹍﹍﹍if ((a * a) + (b * b)) == (c * c):
   ﹍﹍﹍﹍console print "a: " + a + " b: " + b + " c: " + c
   """
@@ -4153,7 +4153,7 @@ tests = [
   # ---------------------------------------------------------------------------
   # fizzbuzz
   """
-  for each i in: (1...100) do:
+  for each i in: (1...99) do:
   ﹍if 0 == i % 15:
   ﹍﹍console print "FizzBuzz "
   ﹍else if 0 == i % 3:
@@ -4233,7 +4233,7 @@ tests = [
   # ---------------------------------------------------------------------------
   # a macro
   """
-  a = '( (1...3) (console print x + y + z) x y z)
+  a = '( (1...2) (console print x + y + z) x y z)
   console print a length
   numParams = a length - 2
   console print numParams
@@ -4241,7 +4241,7 @@ tests = [
   bodies = '()
 
   for each number in:
-  ﹍﹍1...numParams + 1
+  ﹍﹍1...numParams
   ﹍do:
   ﹍﹍bodies[number] = '()
   ﹍﹍bodies[number] = bodies[number] + 'for + 'each + a[2+number] + 'in + ': + a[1]
@@ -4252,7 +4252,7 @@ tests = [
 
   console print " ---------- "
   for each number in:
-  ﹍﹍numParams-1...0
+  ﹍﹍numParams-1...1
   ﹍do:
   ﹍﹍bodies[number] = bodies[number] + bodies[number+1]
 
@@ -4265,7 +4265,7 @@ tests = [
 
   toRun eval
   """
-  '53( ( for each x in : ( 1 ... 3 ) do : ) ( for each y in : ( 1 ... 3 ) do : ) ( for each z in : ( 1 ... 3 ) do : ( [object of class "Console"] print x + y + z ) ) ) ----------  ---- ( ( for each x in : ( 1 ... 3 ) do : ( for each y in : ( 1 ... 3 ) do : ( for each z in : ( 1 ... 3 ) do : ( [object of class "Console"] print x + y + z ) ) ) ) ( for each y in : ( 1 ... 3 ) do : ( for each z in : ( 1 ... 3 ) do : ( [object of class "Console"] print x + y + z ) ) ) ( for each z in : ( 1 ... 3 ) do : ( [object of class "Console"] print x + y + z ) ) ) ---- ( for each x in : ( 1 ... 3 ) do : ( for each y in : ( 1 ... 3 ) do : ( for each z in : ( 1 ... 3 ) do : ( [object of class "Console"] print x + y + z ) ) ) )34454556'
+  '53( ( for each x in : ( 1 ... 2 ) do : ) ( for each y in : ( 1 ... 2 ) do : ) ( for each z in : ( 1 ... 2 ) do : ( [object of class "Console"] print x + y + z ) ) ) ----------  ---- ( ( for each x in : ( 1 ... 2 ) do : ( for each y in : ( 1 ... 2 ) do : ( for each z in : ( 1 ... 2 ) do : ( [object of class "Console"] print x + y + z ) ) ) ) ( for each y in : ( 1 ... 2 ) do : ( for each z in : ( 1 ... 2 ) do : ( [object of class "Console"] print x + y + z ) ) ) ( for each z in : ( 1 ... 2 ) do : ( [object of class "Console"] print x + y + z ) ) ) ---- ( for each x in : ( 1 ... 2 ) do : ( for each y in : ( 1 ... 2 ) do : ( for each z in : ( 1 ... 2 ) do : ( [object of class "Console"] print x + y + z ) ) ) )34454556'
 
   # ---------------------------------------------------------------------------
   # same macro, used more cleanly as a keyword
@@ -4282,7 +4282,7 @@ tests = [
   ﹍﹍bodies = '()
   ﹍﹍
   ﹍﹍for each number in:
-  ﹍﹍﹍﹍1...numParams + 1
+  ﹍﹍﹍﹍1...numParams
   ﹍﹍﹍do:
   ﹍﹍﹍﹍bodies[number] = '()
   ﹍﹍﹍﹍bodies[number] = bodies[number] + 'for + 'each + rangeBodyAndVars[2+number] + 'in + ': + range
@@ -4291,13 +4291,13 @@ tests = [
   ﹍﹍bodies[numParams] = bodies[numParams] + body
   ﹍﹍
   ﹍﹍for each number in:
-  ﹍﹍﹍﹍numParams-1...0
+  ﹍﹍﹍﹍numParams-1...1
   ﹍﹍﹍do:
   ﹍﹍﹍﹍bodies[number] = bodies[number] + bodies[number+1]
   ﹍﹍
   ﹍﹍bodies[1] eval
 
-  nestedRepeat '( (1...3) (console print x + y + z) x y z)
+  nestedRepeat '( (1...2) (console print x + y + z) x y z)
   """
   "34454556"
 
