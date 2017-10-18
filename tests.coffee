@@ -4252,9 +4252,9 @@ tests = [
 
   console print " ---------- "
   for each number in:
-  ﹍﹍numParams...1
+  ﹍﹍numParams-1...0
   ﹍do:
-  ﹍﹍bodies[number-1] = bodies[number-1] + bodies[number]
+  ﹍﹍bodies[number] = bodies[number] + bodies[number+1]
 
   console print " ---- "
   console print bodies
@@ -4291,9 +4291,9 @@ tests = [
   ﹍﹍bodies[numParams] = bodies[numParams] + body
   ﹍﹍
   ﹍﹍for each number in:
-  ﹍﹍﹍﹍numParams...1
+  ﹍﹍﹍﹍numParams-1...0
   ﹍﹍﹍do:
-  ﹍﹍﹍﹍bodies[number-1] = bodies[number-1] + bodies[number]
+  ﹍﹍﹍﹍bodies[number] = bodies[number] + bodies[number+1]
   ﹍﹍
   ﹍﹍bodies[1] eval
 

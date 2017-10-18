@@ -773,6 +773,11 @@ initBootClasses = ->
     (flTokenize "printAFromDeeperCall"),
     flTokenize "console print a"
 
+  # higher priority NUMBER (i.e. lower precedence) than +,-,*,/
+  # so things like this can work:
+  #    
+  #   for each number in:
+  #     numParams-1...0
   FLNumber.addMethod \
     (flTokenize "...(endRange)"),
     (context) ->
@@ -784,6 +789,7 @@ initBootClasses = ->
         listToBeReturned.cursorEnd++
 
       return listToBeReturned
+    ,5
 
   # ---
 
