@@ -216,24 +216,29 @@ linearize = (code) ->
     leftOrRightOrAligned = startOfThisLine.length - actualLineTabs[actualLineTabs.length - 1]
     actualLineTabs.push startOfThisLine.length
 
-    log "linearize startOfThisLine: " + startOfThisLine + " " + startOfThisLine.length + " difference in alignment: " + leftOrRightOrAligned + " content: " + line
+    if tokenizerDebug
+      log "linearize startOfThisLine: " + startOfThisLine + " " + startOfThisLine.length + " difference in alignment: " + leftOrRightOrAligned + " content: " + line
     if leftOrRightOrAligned == 0
       correctedIndentationDifference = 0
       # this is the statement separator
       outputSource += " ; " + line
     else if leftOrRightOrAligned > 0
       correctedIndentationDifference = 1
-      log "linearize adding a ( "
+      if tokenizerDebug
+        log "linearize adding a ( "
       outputSource += (Array(correctedIndentationDifference+1).join "(") + line
     else # leftOrRightOrAligned < 0
       for k in [(actualLineTabs.length - 2)..0]
-        log " k: " + k + " checking line " + sourceByLine[k] + " for alignment "
+        if tokenizerDebug
+          log " k: " + k + " checking line " + sourceByLine[k] + " for alignment "
         if actualLineTabs[k] <= startOfThisLine.length
-          log "line " + sourceByLine[k] + " is aligned with me and the corrected tabs for that were: " + correctedLineTabs[k]
+          if tokenizerDebug
+            log "line " + sourceByLine[k] + " is aligned with me and the corrected tabs for that were: " + correctedLineTabs[k]
           correctedIndentationDifference = correctedLineTabs[k] - correctedLineTabs[correctedLineTabs.length - 1]
           break
 
-      log "linearize adding " + (-correctedIndentationDifference) + " ) "
+      if tokenizerDebug
+        log "linearize adding " + (-correctedIndentationDifference) + " ) "
       
       # if a line is aligned exactly with a line above,
       # then we add a ";" as well. So for example in
@@ -269,7 +274,8 @@ linearize = (code) ->
 
   #log "code length at identifyBlockStarts: " + code.split("\n").length
 
-  log "linearized program: " + outputSource.replace /^[ ]*/g, ""
+  if tokenizerDebug
+    log "linearized program: " + outputSource.replace /^[ ]*/g, ""
 
   return outputSource.replace /^[ ]*/g, ""
 
@@ -320,28 +326,35 @@ flTokenize = (command) ->
   command = removeComments command
 
   command = removeStrings command
-  log "codeWithoutStrings: " + command
+  if tokenizerDebug
+    log "codeWithoutStrings: " + command
 
   command = linearize command
-  log "linearized command: " + command
+  if tokenizerDebug
+    log "linearized command: " + command
 
 
   # let's normalise the input string so we can
   # tokenise it just by looking at the spaces.
-  log "command before replacements: " + command
+  if tokenizerDebug
+    log "command before replacements: " + command
   command = tokenizeCommand command
-  log "command after replacements: " + command
+  if tokenizerDebug
+    log "command after replacements: " + command
   #log "obtained: command after replacements: " + command
 
   command = removeStatementSeparatorsBeforeAlignedConstructs command
-  log "removed statement separators before aligned constructs: " + command
+  if tokenizerDebug
+    log "removed statement separators before aligned constructs: " + command
 
   simpleTokenization = command.split(" ")
   for eachToken in simpleTokenization
-    log "eachToken: " + eachToken
+    if tokenizerDebug
+      log "eachToken: " + eachToken
 
     if /\$STRING_TOKEN_([\$a-zA-Z0-9_]+)/g.test(eachToken)
-      log eachToken + " is a string literal"
+      if tokenizerDebug
+        log eachToken + " is a string literal"
       listsStack[listsStack.length-1] = listsStack[listsStack.length-1].flListImmutablePush FLToken.createNew eachToken
     else if /^\($/.test(eachToken)
       nestedList = FLList.createNew()
@@ -350,7 +363,8 @@ flTokenize = (command) ->
       nestedList = listsStack.pop()
       listsStack[listsStack.length-1] = listsStack[listsStack.length-1].flListImmutablePush nestedList
     else
-      log eachToken + " is something else"
+      if tokenizerDebug
+        log eachToken + " is something else"
       listsStack[listsStack.length-1] = listsStack[listsStack.length-1].flListImmutablePush FLToken.createNew eachToken
 
   return listsStack[listsStack.length-1]

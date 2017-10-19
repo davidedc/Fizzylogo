@@ -63,7 +63,8 @@ addDefaultMethods = (classToAddThemTo) ->
     (flTokenize "postfixPrint"),
     (context) ->
       #yield
-      log "///////// program printout: " + @flToString()
+      if methodsExecutionDebug
+        log "///////// program printout: " + @flToString()
       rWorkspace.environmentPrintout += @flToString()
       return @
 
@@ -83,10 +84,12 @@ addDefaultMethods = (classToAddThemTo) ->
     (flTokenize "eval"),
     (context) ->
       context.isTransparent = true
-      log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
+      if methodsExecutionDebug
+        log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
       newContext = new FLContext context
       newContext.isTransparent = true
-      log "newContext now tramsparent at depth: " + newContext.depth() + " with self: " + newContext.self.flToString?()
+      if methodsExecutionDebug
+        log "newContext now tramsparent at depth: " + newContext.depth() + " with self: " + newContext.self.flToString?()
       #flContexts.jsArrayPush newContext
       # yield from
       toBeReturned = @eval newContext, @
@@ -150,7 +153,8 @@ addDefaultMethods = (classToAddThemTo) ->
   commonPropertyAssignmentFunction = (context) ->
     #yield
     context.isTransparent = true
-    log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
+    if methodsExecutionDebug
+      log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
     variable = context.tempVariablesDict[ValidIDfromString "variable"]
     value = context.tempVariablesDict[ValidIDfromString "value"]
 
@@ -162,18 +166,21 @@ addDefaultMethods = (classToAddThemTo) ->
   commonPropertyAccessFunction = (context) ->
     #yield
     context.isTransparent = true
-    log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
+    if methodsExecutionDebug
+      log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
     variable = context.tempVariablesDict[ValidIDfromString "variable"]
 
-    log ". ('variable) : checking instance variables"
+    if methodsExecutionDebug
+      log ". ('variable) : checking instance variables"
 
     # somewhat similar to Javascript, the lookup starts at the object
     # and climbs up to its class.
     objectsBeingChecked = @
     loop
       if objectsBeingChecked.instanceVariablesDict[ValidIDfromString variable.value]?
-        log "yes it's an instance variable: "
-        #dir objectsBeingChecked.instanceVariablesDict[ValidIDfromString variable.value]
+        if methodsExecutionDebug
+          log "yes it's an instance variable: "
+          #dir objectsBeingChecked.instanceVariablesDict[ValidIDfromString variable.value]
         return objectsBeingChecked.instanceVariablesDict[ValidIDfromString variable.value]
       if objectsBeingChecked == objectsBeingChecked.flClass
         break
@@ -341,11 +348,12 @@ initBootClasses = ->
 
       assigneeTokenString = @value
 
-      log "evaluation " + indentation() + "assignment to token " + assigneeTokenString
-      log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
+      if methodsExecutionDebug
+        log "evaluation " + indentation() + "assignment to token " + assigneeTokenString
+        log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
+        log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
 
       context.isTransparent = true
-      log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
 
       # check if temp variable is visible from here.
       # if not, create it.
@@ -364,14 +372,17 @@ initBootClasses = ->
         # could be achieved for example by marking in a special way contexts
         # that have been created because of method calls and climbing back
         # to the last one of those...
-        log "evaluation " + indentation() + "creating temp token: " + assigneeTokenString + " at depth: " + context.firstNonTransparentContext().depth() + " with self: " + context.firstNonTransparentContext().self.flToString()
+        if methodsExecutionDebug
+          log "evaluation " + indentation() + "creating temp token: " + assigneeTokenString + " at depth: " + context.firstNonTransparentContext().depth() + " with self: " + context.firstNonTransparentContext().self.flToString()
         dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict
       else
-        log "evaluation " + indentation() + "found temp token: " + assigneeTokenString
+        if methodsExecutionDebug
+          log "evaluation " + indentation() + "found temp token: " + assigneeTokenString
 
       dictToPutValueIn[ValidIDfromString assigneeTokenString] = valueToAssign
 
-      log "evaluation " + indentation() + "stored value in dictionary"
+      if methodsExecutionDebug
+        log "evaluation " + indentation() + "stored value in dictionary"
       context.isTransparent = false
       return valueToAssign
 
@@ -383,21 +394,24 @@ initBootClasses = ->
 
       assigneeTokenString = @value
 
-      log "evaluation " + indentation() + "assignment to token " + assigneeTokenString
-      log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
+      if methodsExecutionDebug
+        log "evaluation " + indentation() + "assignment to token " + assigneeTokenString
+        log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
+        log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
 
       context.isTransparent = true
-      log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
 
       # check if temp variable is visible from here.
       # if not, create it.
       dictToPutValueIn = context.whichDictionaryContainsToken @
 
       if dictToPutValueIn?
-        log "evaluation " + indentation() + "token IS in running context"
+        if methodsExecutionDebug
+          log "evaluation " + indentation() + "token IS in running context"
 
       if !dictToPutValueIn?
-        log "evaluation " + indentation() + "token not in running context, trying definition context: " + definitionContext
+        if methodsExecutionDebug
+          log "evaluation " + indentation() + "token not in running context, trying definition context: " + definitionContext
         dictToPutValueIn = definitionContext?.whichDictionaryContainsToken @
 
       if !dictToPutValueIn?
@@ -410,14 +424,17 @@ initBootClasses = ->
         # could be achieved for example by marking in a special way contexts
         # that have been created because of method calls and climbing back
         # to the last one of those...
-        log "evaluation " + indentation() + "creating temp token: " + assigneeTokenString
+        if methodsExecutionDebug
+          log "evaluation " + indentation() + "creating temp token: " + assigneeTokenString
         dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict
       else
-        log "evaluation " + indentation() + "found temp token: " + assigneeTokenString
+        if methodsExecutionDebug
+          log "evaluation " + indentation() + "found temp token: " + assigneeTokenString
 
       dictToPutValueIn[ValidIDfromString assigneeTokenString] = valueToAssign
 
-      log "evaluation " + indentation() + "stored value in dictionary"
+      if methodsExecutionDebug
+        log "evaluation " + indentation() + "stored value in dictionary"
 
       context.isTransparent = false
       
@@ -427,11 +444,12 @@ initBootClasses = ->
     #yield
     valueToAssign = FLClass.createNew className
 
-    log "evaluation " + indentation() + "assignment to token " + assigneeTokenString
-    log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
+    if methodsExecutionDebug
+      log "evaluation " + indentation() + "assignment to token " + assigneeTokenString
+      log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
+      log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
 
     context.isTransparent = true
-    log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
 
     # check if temp variable is visible from here.
     # if not, create it.
@@ -450,14 +468,17 @@ initBootClasses = ->
       # could be achieved for example by marking in a special way contexts
       # that have been created because of method calls and climbing back
       # to the last one of those...
-      log "evaluation " + indentation() + "creating temp token: " + assigneeTokenString
+      if methodsExecutionDebug
+        log "evaluation " + indentation() + "creating temp token: " + assigneeTokenString
       dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict
     else
-      log "evaluation " + indentation() + "found temp token: " + assigneeTokenString
+      if methodsExecutionDebug
+        log "evaluation " + indentation() + "found temp token: " + assigneeTokenString
 
     dictToPutValueIn[ValidIDfromString assigneeTokenString] = valueToAssign
 
-    log "evaluation " + indentation() + "stored value in dictionary"
+    if methodsExecutionDebug
+      log "evaluation " + indentation() + "stored value in dictionary"
     
     return valueToAssign
 
@@ -603,7 +624,8 @@ initBootClasses = ->
     (flTokenize "new"),
     (context) ->
       #yield
-      log "///////// creating a new class for the user!"
+      if methodsExecutionDebug
+        log "///////// creating a new class for the user!"
       @createNew()
 
   # Exception -------------------------------------------------------------------------
@@ -627,9 +649,10 @@ initBootClasses = ->
     (context) ->
       errorHandle = context.tempVariablesDict[ValidIDfromString "errorHandle"]
 
-      log "catch: being thrown? " + context.throwing
-
-      log "catch: got right exception, catching it"
+      if methodsExecutionDebug
+        log "catch: being thrown? " + context.throwing
+        log "catch: got right exception, catching it"
+      
       if @thrown
         # yield from
         toBeReturned = errorHandle.eval context, errorHandle
@@ -663,10 +686,12 @@ initBootClasses = ->
       # yield from
       theError = theError.eval context, theError
 
-      log "catch: same as one to catch?" + (@ == theError) + " being thrown? " + context.throwing
+      if methodsExecutionDebug
+        log "catch: same as one to catch?" + (@ == theError) + " being thrown? " + context.throwing
 
       if @ == theError
-        log "catch: got right exception, catching it"
+        if methodsExecutionDebug
+          log "catch: got right exception, catching it"
         if @thrown
           # yield from
           toBeReturned = errorHandle.eval context, errorHandle
@@ -675,7 +700,8 @@ initBootClasses = ->
 
         
       else
-        log "catch: got wrong exception, propagating it"
+        if methodsExecutionDebug
+          log "catch: got wrong exception, propagating it"
         toBeReturned = @
         
 
@@ -932,7 +958,8 @@ initBootClasses = ->
     (flTokenize "times ( ' loopCode )"),
     (context) ->
       loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
-      log "FLNumber ⇒ DO loop code is: " + loopCode.flToString()
+      if methodsExecutionDebug
+        log "FLNumber: times loop code is: " + loopCode.flToString()
 
 
       for i in [0...@value]
@@ -948,10 +975,12 @@ initBootClasses = ->
             context.throwing = false
             if toBeReturned.value?
               toBeReturned = toBeReturned.value
-            log "times loop exited with Done "
+            if methodsExecutionDebug
+              log "times loop exited with Done "
             break
           if context.throwing and toBeReturned.flClass == FLReturn
-            log "times loop exited with Return "
+            if methodsExecutionDebug
+              log "times loop exited with Return "
             break
 
       
@@ -997,7 +1026,8 @@ initBootClasses = ->
     (flTokenize "← ( valueToAssign )"),
     (context) ->
       #yield
-      log "evaluation " + indentation() + "assigning to number! "
+      if methodsExecutionDebug
+        log "evaluation " + indentation() + "assigning to number! "
       valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
       @value = valueToAssign.value
       return @
@@ -1023,7 +1053,8 @@ initBootClasses = ->
     (flTokenize "or ( operandum )"),
     (context) ->
       #yield
-      log "executing an or! "
+      if methodsExecutionDebug
+        log "executing an or! "
       operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
       return FLBoolean.createNew @value or operandum.value
 
@@ -1116,7 +1147,8 @@ initBootClasses = ->
     (context) ->
       #yield
       elementToBeAppended = context.tempVariablesDict[ValidIDfromString "elementToBeAppended"]
-      log "appending element to: " + @flToString() + " : " + elementToBeAppended.toString()
+      if methodsExecutionDebug
+        log "appending element to: " + @flToString() + " : " + elementToBeAppended.toString()
       return @flListImmutablePush elementToBeAppended
     ,4
 
@@ -1200,7 +1232,8 @@ initBootClasses = ->
       variable = context.tempVariablesDict[ValidIDfromString "variable"]
       code = context.tempVariablesDict[ValidIDfromString "code"]
 
-      log "FLList each do "
+      if methodsExecutionDebug
+        log "FLList each do "
 
       newContext = new FLContext context
 
@@ -1217,10 +1250,12 @@ initBootClasses = ->
             context.throwing = false
             if toBeReturned.value?
               toBeReturned = toBeReturned.value
-            log "list-each-do loop exited with Done "
+            if methodsExecutionDebug
+              log "list-each-do loop exited with Done "
             break
           if context.throwing and toBeReturned.flClass == FLReturn
-            log "list-each-do loop exited with Return "
+            if methodsExecutionDebug
+              log "list-each-do loop exited with Return "
             break
 
       return toBeReturned
@@ -1232,9 +1267,10 @@ initBootClasses = ->
     FLList.emptyMessage(),
     (context) ->
       #yield
-      log "FLAccessUpperContext running emptyMessage"
+      if methodsExecutionDebug
+        log "FLAccessUpperContext running emptyMessage"
+        log "context.previousContext now tramsparent at depth: " + context.previousContext.depth() + " with self: " + context.previousContext.self.flToString?()
       context.previousContext.isTransparent = true
-      log "context.previousContext now tramsparent at depth: " + context.previousContext.depth() + " with self: " + context.previousContext.self.flToString?()
       return @
 
   # Console -----------------------------------------------------------------------------
@@ -1245,7 +1281,8 @@ initBootClasses = ->
       #yield
       thingToPrint = context.tempVariablesDict[ValidIDfromString "thingToPrint"]
       stringToPrint = thingToPrint.flToString()
-      log "///////// program printout: " + stringToPrint
+      if methodsExecutionDebug
+        log "///////// program printout: " + stringToPrint
       if textOutputElement?
         textOutputElement.value += stringToPrint
 
@@ -1317,7 +1354,8 @@ initBootClasses = ->
     (context) ->
       #yield
       valueToReturn = context.tempVariablesDict[ValidIDfromString "valueToReturn"]
-      log "Done_object thrown with return value: " + valueToReturn.flToString()
+      if methodsExecutionDebug
+        log "Done_object thrown with return value: " + valueToReturn.flToString()
       @value = valueToReturn
       context.throwing = true
       @thrown = true
@@ -1327,7 +1365,8 @@ initBootClasses = ->
     FLList.emptyMessage(),
     (context) ->
       #yield
-      log "Done_object running emptyMessage"
+      if methodsExecutionDebug
+        log "Done_object running emptyMessage"
       context.throwing = true
       @thrown = true
       return @
@@ -1338,7 +1377,8 @@ initBootClasses = ->
     FLList.emptyMessage(),
     (context) ->
       #yield
-      log "Break_object"
+      if methodsExecutionDebug
+        log "Break_object"
       context.throwing = true
       return @
 
@@ -1350,7 +1390,8 @@ initBootClasses = ->
       #yield
       valueToReturn = context.tempVariablesDict[ValidIDfromString "valueToReturn"]
 
-      log "Return_object running a value"
+      if methodsExecutionDebug
+        log "Return_object running a value"
 
       @value = valueToReturn
       context.throwing = true
@@ -1360,7 +1401,8 @@ initBootClasses = ->
     FLList.emptyMessage(),
     (context) ->
       #yield
-      log "Return_object running emptyMessage"
+      if methodsExecutionDebug
+        log "Return_object running emptyMessage"
       context.throwing = true
       @value = FLNil.createNew()
       return @
@@ -1374,9 +1416,10 @@ initBootClasses = ->
     (flTokenize "( ' loopCode )"),
     (context) ->
       context.isTransparent = true
-      log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
+      if methodsExecutionDebug
+        log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
+        log "FLRepeat1 ⇒ loop code is: " + loopCode.flToString()
       loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
-      log "FLRepeat1 ⇒ loop code is: " + loopCode.flToString()
 
       loop
         
@@ -1387,11 +1430,12 @@ initBootClasses = ->
 
         #flContexts.pop()
 
-        log "Repeat1 ⇒ returning result after loop cycle: " + toBeReturned
-        log "Repeat1 ⇒ returning result CLASS after loop cycle: "
-        log "Repeat1 ⇒ remaining message after loop cycle: "
-        log "Repeat1 ⇒ message length:  "
-        log "Repeat1 ⇒ did I receive a Done? " + (if toBeReturned?.flClass == FLDone then "yes" else "no")
+        if methodsExecutionDebug
+          log "Repeat1 ⇒ returning result after loop cycle: " + toBeReturned
+          log "Repeat1 ⇒ returning result CLASS after loop cycle: "
+          log "Repeat1 ⇒ remaining message after loop cycle: "
+          log "Repeat1 ⇒ message length:  "
+          log "Repeat1 ⇒ did I receive a Done? " + (if toBeReturned?.flClass == FLDone then "yes" else "no")
 
         # catch any thrown "done" object, used to
         # exit from a loop.
@@ -1400,10 +1444,12 @@ initBootClasses = ->
             context.throwing = false
             if toBeReturned.value?
               toBeReturned = toBeReturned.value
-            log "Repeat1 ⇒ the loop exited with Done at context depth " + context.depth()
+            if methodsExecutionDebug
+              log "Repeat1 ⇒ the loop exited with Done at context depth " + context.depth()
             break
           if context.throwing and toBeReturned.flClass == FLReturn
-            log "Repeat1 ⇒ the loop exited with Return "
+            if methodsExecutionDebug
+              log "Repeat1 ⇒ the loop exited with Return "
             break
 
       return toBeReturned
@@ -1412,10 +1458,12 @@ initBootClasses = ->
 
   repeatFunctionContinuation = (context) ->
     context.isTransparent = true
-    log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
+    if methodsExecutionDebug
+      log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
     howManyTimes = context.tempVariablesDict[ValidIDfromString "howManyTimes"]
     loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
-    log "FLRepeat2 ⇒ loop code is: " + loopCode.flToString()
+    if methodsExecutionDebug
+      log "FLRepeat2 ⇒ loop code is: " + loopCode.flToString()
 
     if howManyTimes.flClass == FLForever
       limit = Number.MAX_SAFE_INTEGER
@@ -1425,18 +1473,20 @@ initBootClasses = ->
 
     for i in [0...limit]
       #yield "from repeatFunctionContinuation"
-      log "Repeat2 ⇒ starting a(nother) cycle: "
+      if methodsExecutionDebug
+        log "Repeat2 ⇒ starting a(nother) cycle: "
       # yield from
       toBeReturned = loopCode.eval context, loopCode
 
       #flContexts.pop()
 
-      log "Repeat2 ⇒ returning result after loop cycle: " + toBeReturned
-      log "Repeat2 ⇒ returning result CLASS after loop cycle: "
-      log "Repeat2 ⇒ remaining message after loop cycle: "
-      log "Repeat2 ⇒ message length:  "
-      log "Repeat2 ⇒ did I receive a Done? " + (if toBeReturned?.flClass == FLDone then "yes" else "no")
-      log "Repeat2 ⇒ did I receive a thrown object? " + (if context.throwing then "yes" else "no")
+      if methodsExecutionDebug
+        log "Repeat2 ⇒ returning result after loop cycle: " + toBeReturned
+        log "Repeat2 ⇒ returning result CLASS after loop cycle: "
+        log "Repeat2 ⇒ remaining message after loop cycle: "
+        log "Repeat2 ⇒ message length:  "
+        log "Repeat2 ⇒ did I receive a Done? " + (if toBeReturned?.flClass == FLDone then "yes" else "no")
+        log "Repeat2 ⇒ did I receive a thrown object? " + (if context.throwing then "yes" else "no")
 
       # catch any thrown "done" object, used to
       # exit from a loop.
@@ -1445,10 +1495,12 @@ initBootClasses = ->
           context.throwing = false
           if toBeReturned.value?
             toBeReturned = toBeReturned.value
-          log "Repeat2 ⇒ the loop exited with Done at context depth " + context.depth()
+          if methodsExecutionDebug
+            log "Repeat2 ⇒ the loop exited with Done at context depth " + context.depth()
           break
         if context.throwing and toBeReturned.flClass == FLReturn
-          log "Repeat2 ⇒ the loop exited with Return "
+          if methodsExecutionDebug
+            log "Repeat2 ⇒ the loop exited with Return "
           break
 
     
@@ -1465,7 +1517,8 @@ initBootClasses = ->
     (context) ->
       #yield
       stringToPrint = "EvaluationsCounter running the \"empty\" method // "
-      log stringToPrint
+      if methodsExecutionDebug
+        log stringToPrint
       rWorkspace.environmentPrintout += stringToPrint
       return @
 
@@ -1477,7 +1530,8 @@ initBootClasses = ->
       #yield
       theError = context.tempVariablesDict[ValidIDfromString "theError"]
       theError.thrown = true
-      log "throwing an error: " + theError.value
+      if methodsExecutionDebug
+        log "throwing an error: " + theError.value
       context.throwing = true
       return theError
 
@@ -1488,13 +1542,16 @@ initBootClasses = ->
     (context) ->
       #yield
       context.isTransparent = true
-      log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
+      if methodsExecutionDebug
+        log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
       predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
       trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
-      log "FLIfThen: predicate value is: " + predicate.value
+      if methodsExecutionDebug
+        log "FLIfThen: predicate value is: " + predicate.value
 
       if predicate.value
-        log "FLIfThen: evaling true branch at depth " + context.depth()
+        if methodsExecutionDebug
+          log "FLIfThen: evaling true branch at depth " + context.depth()
         # yield from
         toBeReturned = trueBranch.eval context, trueBranch
         #flContexts.pop()
@@ -1513,7 +1570,8 @@ initBootClasses = ->
     FLList.emptyMessage(),
     (context) ->
       #yield
-      log "no more cases for the if"
+      if methodsExecutionDebug
+        log "no more cases for the if"
       
       return FLNil.createNew()
 
@@ -1522,11 +1580,13 @@ initBootClasses = ->
     (context) ->
       #yield
       context.isTransparent = true
-      log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
+      if methodsExecutionDebug
+        log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
       predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
       trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
-      log "FLIfFallThrough: predicate value is: " + predicate.value
-      log "FLIfFallThrough: true branch is: " + trueBranch.flToString()
+      if methodsExecutionDebug
+        log "FLIfFallThrough: predicate value is: " + predicate.value
+        log "FLIfFallThrough: true branch is: " + trueBranch.flToString()
 
       if predicate.value
         # yield from
@@ -1541,13 +1601,15 @@ initBootClasses = ->
   FLIfFallThrough.addMethod \
     (flTokenize "else: ('trueBranch)"),
     (context) ->
-      log "FLIfFallThrough else: case "
+      if methodsExecutionDebug
+        log "FLIfFallThrough else: case "
+        log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
       context.isTransparent = true
-      log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
       trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
 
       # yield from
-      log "FLIfFallThrough else: evalling code "
+      if methodsExecutionDebug
+        log "FLIfFallThrough else: evalling code "
       toBeReturned = trueBranch.eval context, trueBranch
       #flContexts.pop()
       
@@ -1598,7 +1660,8 @@ initBootClasses = ->
     (flTokenize "( ' loopVar ) from ( startIndex ) to ( endIndex ) : ( 'loopCode )"),
     (context) ->
       context.isTransparent = true
-      log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
+      if methodsExecutionDebug
+        log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
       loopVar = context.tempVariablesDict[ValidIDfromString "loopVar"]
       startIndex = context.tempVariablesDict[ValidIDfromString "startIndex"]
       endIndex = context.tempVariablesDict[ValidIDfromString "endIndex"]
@@ -1610,10 +1673,12 @@ initBootClasses = ->
       forContext.isTransparent = true
       #flContexts.jsArrayPush forContext
 
-      log "FLFor ⇒ loop code is: " + loopCode.flToString()
+      if methodsExecutionDebug
+        log "FLFor ⇒ loop code is: " + loopCode.flToString()
 
       for i in [startIndex.value..endIndex.value]
-        log "FLFor ⇒ loop iterating variable to " + i
+        if methodsExecutionDebug
+          log "FLFor ⇒ loop iterating variable to " + i
 
         # the looping var is always in the new local for context
         # so it keeps any previous instance safe, and goes
@@ -1632,10 +1697,12 @@ initBootClasses = ->
             context.throwing = false
             if toBeReturned.value?
               toBeReturned = toBeReturned.value
-            log "For ⇒ the loop exited with Done "
+            if methodsExecutionDebug
+              log "For ⇒ the loop exited with Done "
             break
           if context.throwing and toBeReturned.flClass == FLReturn
-            log "For ⇒ the loop exited with Return "
+            if methodsExecutionDebug
+              log "For ⇒ the loop exited with Return "
             break
 
       #flContexts.pop()
@@ -1658,7 +1725,8 @@ initBootClasses = ->
     (context) ->
       #yield
       context.isTransparent = true
-      log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
+      if methodsExecutionDebug
+        log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
       variable = context.tempVariablesDict[ValidIDfromString "variable"]
       theList = context.tempVariablesDict[ValidIDfromString "theList"]
       code = context.tempVariablesDict[ValidIDfromString "code"]
@@ -1681,10 +1749,12 @@ initBootClasses = ->
       if theList.length() == 1
         theList = theList.firstElement()
 
-      log "evalling list: " + theList.flToString()
+      if methodsExecutionDebug
+        log "evalling list: " + theList.flToString()
       # yield from
       evalledList = theList.eval context, theList
-      log "evalled list: " + evalledList.flToString()
+      if methodsExecutionDebug
+        log "evalled list: " + evalledList.flToString()
 
       if context.throwing
         # the list doesn't run as a program, so we just
@@ -1704,7 +1774,8 @@ initBootClasses = ->
         # from the workspace because someone might want to catch it.
         return FLException.createNew "for...each expects a list"
 
-      log "FLEach do on the list: " + theList.flToString()
+      if methodsExecutionDebug
+        log "FLEach do on the list: " + theList.flToString()
 
       forContext = new FLContext context
       forContext.isTransparent = true
@@ -1712,9 +1783,11 @@ initBootClasses = ->
       for i in [0...theList.value.length]
         forContext.throwing = false
 
-        log "FLEach element at " + i + " : " + (theList.elementAt i).flToString()
+        if methodsExecutionDebug
+          log "FLEach element at " + i + " : " + (theList.elementAt i).flToString()
         forContext.tempVariablesDict[ValidIDfromString variable.value] = theList.elementAt i
-        log "FLEach do evaling...: " + code.flToString()
+        if methodsExecutionDebug
+          log "FLEach do evaling...: " + code.flToString()
         # yield from
         toBeReturned = code.eval forContext, code
 
@@ -1725,10 +1798,12 @@ initBootClasses = ->
             context.throwing = false
             if toBeReturned.value?
               toBeReturned = toBeReturned.value
-            log "for-each-in-list loop exited with Done "
+            if methodsExecutionDebug
+              log "for-each-in-list loop exited with Done "
             break
           if context.throwing and toBeReturned.flClass == FLReturn
-            log "for-each-in-list loop exited with Return "
+            if methodsExecutionDebug
+              log "for-each-in-list loop exited with Return "
             break
 
       

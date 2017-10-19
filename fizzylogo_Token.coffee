@@ -15,16 +15,19 @@ class FLTokenClass extends FLClasses
 
 
     toBeReturned.lookup = (theContext, definitionContext) ->
-      log "evaluation " + indentation() + "looking up temp token: " + @value
+      if tokensDebug
+        log "evaluation " + indentation() + "looking up temp token: " + @value
       existingLookedUpValuePlace = theContext.whichDictionaryContainsToken @
 
       if existingLookedUpValuePlace?
-        log "evaluation " + indentation() + "found temp token in running context: " + @value
+        if tokensDebug
+          log "evaluation " + indentation() + "found temp token in running context: " + @value
         return theContext.lookUpTokenValue @, existingLookedUpValuePlace
       else
         existingLookedUpValuePlace = definitionContext?.whichDictionaryContainsToken @
         if existingLookedUpValuePlace?
-          log "evaluation " + indentation() + "found temp token in definition context: " + @value
+          if tokensDebug
+            log "evaluation " + indentation() + "found temp token in definition context: " + @value
           return definitionContext.lookUpTokenValue @, existingLookedUpValuePlace
       return null
     
@@ -35,8 +38,9 @@ class FLTokenClass extends FLClasses
       # shortcut: instead of using "@a←5"
       # one can now just use "a=5"
       if remainingMessage? and remainingMessage.flClass == FLList
-        log "remainingMessage: " + remainingMessage.flToString()
-        log "secondElementIsEqual: " + remainingMessage.secondElementIsEqual()
+        if tokensDebug
+          log "remainingMessage: " + remainingMessage.flToString()
+          log "secondElementIsEqual: " + remainingMessage.secondElementIsEqual()
         if !fromListElementsEvaluation and
           (
             remainingMessage.startsWithIncrementOrDecrementOperator() or
@@ -65,8 +69,9 @@ class FLTokenClass extends FLClasses
       else if /^false$/.test @value
         return FLBoolean.createNew false
 
-      log "evaluation " + indentation() + "token " + @value + " contents: " + theContext.returned?.value
-      log "evaluation " + indentation() + "not found temp token: " + @value
+      if tokensDebug
+        log "evaluation " + indentation() + "token " + @value + " contents: " + theContext.returned?.value
+        log "evaluation " + indentation() + "not found temp token: " + @value
 
       # if we are here it means that we can't find any
       # meaning for this token,

@@ -132,7 +132,8 @@ class FLListClass extends FLClasses
     toBeReturned.evaluatedElementsList = (context) ->
       newList = FLList.createNew()
       for i in [0...@length()]
-        log "toBeReturned.evaluatedElementsList evaluating " + (@elementAt i).flToString()
+        if listEvaluationsDebug
+          log "toBeReturned.evaluatedElementsList evaluating " + (@elementAt i).flToString()
         
         if (@elementAt i).flClass == FLList
           evalled = (@elementAt i).evaluatedElementsList context
@@ -150,7 +151,8 @@ class FLListClass extends FLClasses
             else if (@elementAt i).flClass == FLToken and evalled.flClass == FLQuote
               evalled = @elementAt i
 
-        log "toBeReturned.evaluatedElementsList evaluated: " + evalled.flToString()
+        if listEvaluationsDebug
+          log "toBeReturned.evaluatedElementsList evaluated: " + evalled.flToString()
         newList = newList.flListImmutablePush evalled
 
       return newList
@@ -172,7 +174,8 @@ class FLListClass extends FLClasses
 
     toBeReturned.evalFirstListElementAndTurnRestIntoMessage = (theContext) ->
       firstElement = @firstElement()
-      log "           " + indentation() + "evaling element " + firstElement.value
+      if listEvaluationsDebug
+        log "           " + indentation() + "evaling element " + firstElement.value
       # yield from
       theContext.returned = firstElement.eval theContext, @
 
@@ -185,7 +188,8 @@ class FLListClass extends FLClasses
 
       receiver = returnedContext.returned
 
-      log "evaluation " + indentation() + "remaining part of list to be sent as message is: " + restOfMessage.flToString()
+      if listEvaluationsDebug
+        log "evaluation " + indentation() + "remaining part of list to be sent as message is: " + restOfMessage.flToString()
       return [returnedContext, restOfMessage, receiver]
 
     # this eval requires that the whole list is consumed
@@ -194,13 +198,15 @@ class FLListClass extends FLClasses
       # yield from
       [returnedContext, returnedMessage] = @partialEvalAsMessage theContext
 
-      log "list eval - returned message: " + returnedMessage.flToString()
-      log "list eval - returned context: " + returnedContext?.flToString?()
-      log "list eval - returnedcontext.returned: " + returnedContext.returned?.flToString?()
-      log "list eval - returnedcontext.unparsedMessage: " + returnedContext.unparsedMessage?.flToString?()
+      if listEvaluationsDebug
+        log "list eval - returned message: " + returnedMessage.flToString()
+        log "list eval - returned context: " + returnedContext?.flToString?()
+        log "list eval - returnedcontext.returned: " + returnedContext.returned?.flToString?()
+        log "list eval - returnedcontext.unparsedMessage: " + returnedContext.unparsedMessage?.flToString?()
 
       if !returnedMessage.isEmpty()
-        log "list couldn't be fully evaluated: " + @flToString() + " unexecutable: " + returnedMessage.flToString()
+        if listEvaluationsDebug
+          log "list couldn't be fully evaluated: " + @flToString() + " unexecutable: " + returnedMessage.flToString()
         theContext.throwing = true
         return FLException.createNew "message was not understood: " + returnedMessage.flToString()
 
@@ -215,8 +221,9 @@ class FLListClass extends FLClasses
       #  b) for each statement, evaluate its first element as the receiver
       #  c) send to the receiver the remaining part of the statement, as the message
 
-      log "evaluation " + indentation() + "list received empty message, evaluating content of list"
-      log "evaluation " + indentation() + "  i.e. " + @flToString()
+      if listEvaluationsDebug
+        log "evaluation " + indentation() + "list received empty message, evaluating content of list"
+        log "evaluation " + indentation() + "  i.e. " + @flToString()
 
       # todo this doesn't seem to be needed
       @toList()
@@ -224,17 +231,19 @@ class FLListClass extends FLClasses
       statements = @separateStatements()
 
       for eachStatement in statements
-        log "evaluation " + indentation() + "evaluating single statement"
-        log "evaluation " + indentation() + "  i.e. " + eachStatement.flToString()
+        if listEvaluationsDebug
+          log "evaluation " + indentation() + "evaluating single statement"
+          log "evaluation " + indentation() + "  i.e. " + eachStatement.flToString()
 
         returnedContext = theContext
         restOfMessage = eachStatement
 
         # yield from
         [returnedContext, restOfMessage, receiver] = restOfMessage.findReceiver returnedContext
-        log "found next receiver and now message is: " + restOfMessage.flToString()
-        #dir receiver
-        log "3 returnedContext.throwing: " + returnedContext.throwing
+        if listEvaluationsDebug
+          log "found next receiver and now message is: " + restOfMessage.flToString()
+          #dir receiver
+          log "3 returnedContext.throwing: " + returnedContext.throwing
 
         # works as follows: now that we found the first receiver,
         # we send it the rest of the original message hence getting a
@@ -251,27 +260,32 @@ class FLListClass extends FLClasses
 
           # where we detect an exception being thrown
           if theContext.throwing or returnedContext.throwing
-            log "throw escape"
+            if listEvaluationsDebug
+              log "throw escape"
 
             # the return is a special type of exception that
             # we can catch before doing the next "method call"
             # so we catch it here. We have to go up a level
             # while the context is transparent, because "proper"
             # method calls are done in a non-transparent context
-            log "context at depth " + theContext.depth()+ " with self: " + theContext.self.flToString?() + " is transparent: "  + theContext.isTransparent
+            if listEvaluationsDebug
+              log "context at depth " + theContext.depth()+ " with self: " + theContext.self.flToString?() + " is transparent: "  + theContext.isTransparent
             if receiver.flClass == FLReturn and !theContext.isTransparent
-              log "got a return!"
+              if listEvaluationsDebug
+                log "got a return!"
               theContext.throwing = false
               theContext.returned = receiver.value
             else
-              log " throwing the receiver up " + receiver.flToString()
+              if listEvaluationsDebug
+                log " throwing the receiver up " + receiver.flToString()
               theContext.throwing = true
               theContext.returned = receiver
 
             return [theContext, FLList.emptyMessage()]
 
-          log "evaluation " + indentation() + "receiver: " + receiver?.flToString?()
-          log "evaluation " + indentation() + "message: " + restOfMessage.flToString()
+          if listEvaluationsDebug
+            log "evaluation " + indentation() + "receiver: " + receiver?.flToString?()
+            log "evaluation " + indentation() + "message: " + restOfMessage.flToString()
 
           # now actually send the message to the receiver. Note that
           # only part of the message might be consumed, in which case
@@ -283,7 +297,8 @@ class FLListClass extends FLClasses
             returnedContext = theContext
             returnedMessage = restOfMessage
             returnedContext.returned = receiver
-            log "skipping empty evaluation because basic type "
+            if listEvaluationsDebug
+              log "skipping empty evaluation because basic type "
           else
             # yield from
             [returnedContext, returnedMessage] = receiver.findSignatureBindParamsAndMakeCall restOfMessage, theContext, priority
@@ -291,8 +306,9 @@ class FLListClass extends FLClasses
           if !returnedContext?
             returnedContext = theContext
             returnedContext.returned = receiver
-            log "restOfMessage: " + restOfMessage.flToString()
-            log "receiver: " + receiver.flToString()
+            if listEvaluationsDebug
+              log "restOfMessage: " + restOfMessage.flToString()
+              log "receiver: " + receiver.flToString()
             returnedContext.unparsedMessage = returnedMessage
 
             # if the object was sent the empty message and it wasn't
@@ -307,10 +323,11 @@ class FLListClass extends FLClasses
           receiver = returnedContext.returned
           restOfMessage = returnedMessage
 
-          log "evaluation " + indentation() + "list evaluation returned: " + receiver?.flToString?()
-          log "theContext.throwing: " + theContext.throwing
-          log "returnedContext.throwing: " + returnedContext.throwing
-          log "restOfMessage: " + restOfMessage
+          if listEvaluationsDebug
+            log "evaluation " + indentation() + "list evaluation returned: " + receiver?.flToString?()
+            log "theContext.throwing: " + theContext.throwing
+            log "returnedContext.throwing: " + returnedContext.throwing
+            log "restOfMessage: " + restOfMessage
 
           if restOfMessage.isEmpty() and !(theContext.throwing or returnedContext.throwing) and
             # "remaining" thrown exceptions cause us to keep going with the
@@ -319,17 +336,20 @@ class FLListClass extends FLClasses
             # any "remaining" ifFallThrough also need to keep being evaluated
             # as they'll evaluate themselves to nil
             !(receiver?.flClass == FLIfFallThrough)
-              log "breaking and moving on to next statement"
+              if listEvaluationsDebug
+                log "breaking and moving on to next statement"
               break
 
 
 
 
-        log "evaluation " + indentation() + "list: nothing more to evaluate"
+        if listEvaluationsDebug
+          log "evaluation " + indentation() + "list: nothing more to evaluate"
         theContext.returned = receiver
 
 
-      log "evaluation " + indentation() + "list: theContext.returned: " + theContext.returned
+      if listEvaluationsDebug
+        log "evaluation " + indentation() + "list: theContext.returned: " + theContext.returned
       #dir theContext.returned
       #flContexts.pop()
       return [theContext, restOfMessage]
@@ -352,18 +372,22 @@ class FLListClass extends FLClasses
         if (@elementAt 1).flClass == FLToken
           # test for things like "+=", "*=" etc.
           if /([+\-^*/%_]+=)/g.test (@elementAt 1).value
-            log "startsWithCompoundAssignmentOperator: oh yes"
+            if listEvaluationsDebug
+              log "startsWithCompoundAssignmentOperator: yes"
             return true
-      log "startsWithCompoundAssignmentOperator: oh no"
+      if listEvaluationsDebug
+        log "startsWithCompoundAssignmentOperator: no"
       return false
 
     toBeReturned.startsWithIncrementOrDecrementOperator =  ->
       if @length() >= 2
         if (@elementAt 1).flClass == FLToken
           if (@elementAt 1).value == "++" or (@elementAt 1).value == "--"
-            log "startsWithIncrementOrDecrementOperator: oh yes"
+            if listEvaluationsDebug
+              log "startsWithIncrementOrDecrementOperator: yes"
             return true
-      log "startsWithIncrementOrDecrementOperator: oh no"
+      if listEvaluationsDebug
+        log "startsWithIncrementOrDecrementOperator: no"
       return false
 
     toBeReturned.secondElementIsEqual =  ->
@@ -428,7 +452,7 @@ class FLListClass extends FLClasses
             statementToBeAdded.cursorEnd++
           lastStatementEnd = i
           if !statementToBeAdded.isEmpty() and !statementToBeAdded.firstElement().isStatementSeparator?()
-            log " adding: " + statementToBeAdded.flToString()
+            #log " adding: " + statementToBeAdded.flToString()
             arrayOfStatements.jsArrayPush statementToBeAdded
           #log "evaluation " + indentation() + "separating statements isolated new statement " + statementToBeAdded.flToString()
 

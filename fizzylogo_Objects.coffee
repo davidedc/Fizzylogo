@@ -49,11 +49,10 @@ class FLObjects
   # is not a method call (although it might lead to one),
   # this is progressing within an existing call
   findSignatureBindParamsAndMakeCall: (methodInvocationToBeChecked, theContext, previousPriority) ->
-    log "evaluation " + indentation() + "  !!! looking up method invocation " + methodInvocationToBeChecked.flToString() + " with signatures!"
-    log "evaluation " + indentation() + "  !!! looking up method invocation, is method empty? " + methodInvocationToBeChecked.isEmpty()
-
-    log "evaluation " + indentation() + "  I am: " + @value
-    log "evaluation " + indentation() + "  matching - my class patterns: "
+    if objectFindSignatureMakeCallDebug
+      log "object findSignature+makeCall: looking up method invocation " + methodInvocationToBeChecked.flToString() + " with signatures!"
+      log "object findSignature+makeCall: looking up method invocation, is method empty? " + methodInvocationToBeChecked.isEmpty()
+      log "object findSignature+makeCall: I am: " + @value
 
 
     # fake context push so that we can make
@@ -77,10 +76,12 @@ class FLObjects
 
       #if eachSignature.flToString() == "( + ( operandum ) )"
       #  log "obtained eachPriority: " + eachPriority
-      log "previousPriority, eachPriority: " + previousPriority + " , " + eachPriority
+      if objectFindSignatureMakeCallDebug
+        log "object findSignature+makeCall: previousPriority, eachPriority: " + previousPriority + " , " + eachPriority
       if previousPriority? and eachPriority?
         if previousPriority <= eachPriority
-          log "breaking matching due to priority going up: previousPriority, eachPriority: " + previousPriority + " , " + eachPriority
+          if objectFindSignatureMakeCallDebug
+            log "breaking matching due to priority going up: previousPriority, eachPriority: " + previousPriority + " , " + eachPriority
           goodMatchSoFar = false
 
 
@@ -104,7 +105,8 @@ class FLObjects
       if goodMatchSoFar
         until eachSignature.isEmpty() or methodInvocation.isEmpty()
 
-          log "evaluation " + indentation() + "  matching: - next signature piece: " + eachSignature.flToString() + " is token: " + " with: " + methodInvocation.flToString()
+          if objectFindSignatureMakeCallDebug
+            log "evaluation " + indentation() + "  matching: - next signature piece: " + eachSignature.flToString() + " is token: " + " with: " + methodInvocation.flToString()
 
           [eachElementOfSignature, eachSignature] = eachSignature.nextElement()
 
@@ -133,13 +135,15 @@ class FLObjects
 
             # ok at least the message contains a token, but
             # now we have to check that they spell the same
-            log "******* evaluation " + indentation() +
-              "  matching tokens: - next signature piece: " +
-              eachElementOfSignature.flToString() +
-              " is token: " + (eachElementOfSignature.flClass == FLToken) +
-              " with: " + eachElementOfInvocation.flToString()
+            if objectFindSignatureMakeCallDebug
+              log "******* evaluation " + indentation() +
+                "  matching tokens: - next signature piece: " +
+                eachElementOfSignature.flToString() +
+                " is token: " + (eachElementOfSignature.flClass == FLToken) +
+                " with: " + eachElementOfInvocation.flToString()
             if eachElementOfSignature.value == eachElementOfInvocation.value
-              log "evaluation " + indentation() + "  matching - token matched: " + eachElementOfSignature.flToString()
+              if objectFindSignatureMakeCallDebug
+                log "evaluation " + indentation() + "  matching - token matched: " + eachElementOfSignature.flToString()
               # OK good match of tokens,
               # check the next token in the signature
               continue
@@ -151,12 +155,15 @@ class FLObjects
           else
             # the signature has a param. we have to check if
             # it requires an evaluation or not
-            log "evaluation " + indentation() + "  matching - getting the token inside the parameter: " + eachElementOfSignature.flToString()
+            if objectFindSignatureMakeCallDebug
+              log "evaluation " + indentation() + "  matching - getting the token inside the parameter: " + eachElementOfSignature.flToString()
             paramToken = eachElementOfSignature.getParamToken()
             #dir paramToken
-            log "evaluation " + indentation() + "  matching - token inside the parameter: " + paramToken.flToString()
+            if objectFindSignatureMakeCallDebug
+              log "evaluation " + indentation() + "  matching - token inside the parameter: " + paramToken.flToString()
             if eachElementOfSignature.isEvaluatingParam()
-              log "evaluation " + indentation() + "  matching - need to evaluate next msg element from invocation: " + methodInvocation.flToString() + " and bind to: " + paramToken.flToString()
+              if objectFindSignatureMakeCallDebug
+                log "evaluation " + indentation() + "  matching - need to evaluate next msg element from invocation: " + methodInvocation.flToString() + " and bind to: " + paramToken.flToString()
 
               # note how we need to evaluate the params in a context that has the
               # same SELF as the calling one, not the new one that
@@ -172,11 +179,12 @@ class FLObjects
 
             else
               # don't need to evaluate the parameter
-              log "evaluation " + indentation() + "  matching - need to get next msg element from invocation: " + methodInvocation.flToString() + " and bind to: " + paramToken.flToString()
+              if objectFindSignatureMakeCallDebug
+                log "evaluation " + indentation() + "  matching - need to get next msg element from invocation: " + methodInvocation.flToString() + " and bind to: " + paramToken.flToString()
               [valueToBeBound, methodInvocation] = methodInvocation.nextElement()
 
-            
-            log "evaluation " + indentation() + "  matching - adding paramater " + paramToken.flToString() + " to tempVariables dictionary in current frame"
+            if objectFindSignatureMakeCallDebug
+              log "evaluation " + indentation() + "  matching - adding paramater " + paramToken.flToString() + " to tempVariables dictionary in current frame"
             newContext.tempVariablesDict[ValidIDfromString paramToken.value] = valueToBeBound
 
             # ok we matched a paramenter, now let's keep matching further
@@ -191,13 +199,13 @@ class FLObjects
         # now, the correct PC that we need to report is
         # the original plus what we consumed from matching the
         # signature.
-        log "evaluation " + indentation() + "  matching - consumed from matching this sig: " + (methodInvocation.cursorStart - originalMethodInvocationStart)
-        log "evaluation " + indentation() + "             methodInvocation: " + methodInvocation.flToString() + " cursor start: " + methodInvocation.cursorStart  + " original methodInvocation start: " + originalMethodInvocationStart
+        if objectFindSignatureMakeCallDebug
+          log "evaluation " + indentation() + "  matching - consumed from matching this sig: " + (methodInvocation.cursorStart - originalMethodInvocationStart)
+          log "evaluation " + indentation() + "             methodInvocation: " + methodInvocation.flToString() + " cursor start: " + methodInvocation.cursorStart  + " original methodInvocation start: " + originalMethodInvocationStart
+          log "methodInvocation.cursorStart - originalMethodInvocationStart: " + " " + methodInvocation.cursorStart  + " " + originalMethodInvocationStart
+          log "theContext method invocation after: " + methodInvocation.flToString()
 
-        log "methodInvocation.cursorStart - originalMethodInvocationStart: " + " " + methodInvocation.cursorStart  + " " + originalMethodInvocationStart
         theContext.unparsedMessage = null
-        log "theContext method invocation after: " + methodInvocation.flToString()
-
         # yield from
         contextToBeReturned = @methodCall (classContainingMethods.methodBodies[eachSignatureIndex]), newContext, methodInvocationToBeChecked.definitionContext
 
@@ -206,7 +214,8 @@ class FLObjects
 
     # we are still here trying to match but
     # there are no signatures left, time to give up.
-    log "evaluation " + indentation() + "  matching - no match found"
+    if objectFindSignatureMakeCallDebug
+      log "evaluation " + indentation() + "  matching - no match found"
     return [null, methodInvocationToBeChecked]
 
 
@@ -227,7 +236,8 @@ class FLObjects
     # However we do affect the PC of the callee context.
     
     if methodBody.flClass == FLList
-      log "evaluation " + indentation() + "  matching - method body: " + methodBody.flToString()
+      if objectFindSignatureMakeCallDebug
+        log "evaluation " + indentation() + "  matching - method body: " + methodBody.flToString()
       # non-native method, i.e. further fizzylogo code
       # creates a context and evals the message in it
       # the rest of the message is not used because all of the list should
@@ -237,7 +247,8 @@ class FLObjects
       theContext.returned = methodBody.eval theContext, methodBody
 
     else
-      log "evaluation " + indentation() + "  matching - NATIVE method body: " + methodBody
+      if objectFindSignatureMakeCallDebug
+        log "evaluation " + indentation() + "  matching - NATIVE method body: " + methodBody
 
       # native method, i.e. coffeescript/javascript code
       # note that in the yielding version, these must all

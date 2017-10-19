@@ -63,10 +63,12 @@ class FLClasses extends FLObjects
         @msgPatterns[i] = signature
         @methodBodies[i] = methodBody
         @priorities[i] = priority
-        log "adding method  signature (replacing): " + signature.flToString() + " body: " + methodBody.flToString?()
+        if flClassesDebug
+          log "adding method  signature (replacing): " + signature.flToString() + " body: " + methodBody.flToString?()
         return
 
-    log "adding method  signature (appending): " + signature.flToString() + " body: " + methodBody.flToString?()
+    if flClassesDebug
+      log "adding method  signature (appending): " + signature.flToString() + " body: " + methodBody.flToString?()
     @msgPatterns.jsArrayPush signature
     @methodBodies.jsArrayPush methodBody
     @priorities.jsArrayPush priority

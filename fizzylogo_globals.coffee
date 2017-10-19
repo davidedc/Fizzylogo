@@ -2,6 +2,15 @@ Fizzylogo = {}
 # export as a global, whether it's in node or in the browser
 (exports ? this).Fizzylogo = Fizzylogo
 
+# Debug logging flags
+objectFindSignatureMakeCallDebug = false
+listEvaluationsDebug = false
+tokensDebug = false
+tokenizerDebug = false
+contextDebug = false
+flClassesDebug = false
+methodsExecutionDebug = false
+
 rWorkspace = null
 
 log = console.log
