@@ -20,7 +20,7 @@ repeatFunctionContinuation = null
 
 outerMostContext = null
 
-DEBUG_STRINGIFICATION_CHECKS = true
+DEBUG_STRINGIFICATION_CHECKS = false
 
 if DEBUG_STRINGIFICATION_CHECKS
   stringsTable_TO_CHECK_CONVERTIONS = {}
