@@ -121,41 +121,16 @@ class FLListClass extends FLClasses
       paddingLength = 10 - sortOrderString.length
       sortOrderString += new Array(paddingLength).join('d')
 
-    # TODO this can be done much cheaper
-    # Permits something similar to closures:
-    # code is just a list of tokens, and with the quote
-    # assignment (or any quote for that matter)
-    # its elements (excluding "self") are all evaluated,
-    # hence the bound elements are copied in terms of their values.
-    # The unassigned elements are kept as is and hence
-    # they are free to be bound later.
-    toBeReturned.evaluatedElementsList = (context) ->
-      newList = FLList.createNew()
+    toBeReturned.giveDefinitionContextToElements = (context) ->
       for i in [0...@length()]
         if listEvaluationsDebug
-          log "toBeReturned.evaluatedElementsList evaluating " + (@elementAt i).flToString()
+          log "toBeReturned.giveDefinitionContextToElements"
         
         if (@elementAt i).flClass == FLList
-          evalled = (@elementAt i).evaluatedElementsList context
+          (@elementAt i).giveDefinitionContextToElements context
         else
-          if (@elementAt i).flClass == FLToken and (@elementAt i).value == "self"
-            # leave "self" as "self"
-            evalled = @elementAt i
-          else
-            # todo all the callers need to catch the yield so this one can yield too
-            # and do the recursive yield from yield
-            #catch yields
-            evalled = (@elementAt i).eval context, @, true
-            if (@elementAt i).flClass == FLToken and evalled.flClass == FLNil
-              evalled = @elementAt i
-            else if (@elementAt i).flClass == FLToken and evalled.flClass == FLQuote
-              evalled = @elementAt i
+          (@elementAt i).definitionContext = context
 
-        if listEvaluationsDebug
-          log "toBeReturned.evaluatedElementsList evaluated: " + evalled.flToString()
-        newList = newList.flListImmutablePush evalled
-
-      return newList
 
     toBeReturned.flToString = ->
       #log "@value:" + @value

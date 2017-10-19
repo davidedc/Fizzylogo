@@ -1078,11 +1078,9 @@ initBootClasses = ->
       operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
 
       if operandum.flClass == FLList
-        # in the unfortunate case that the list contains the element
-        # "operandum" - we can't bind that to the "operandum" RIGHT IN THIS
-        # CONTEXT! Hence we need to evaluate the list elements in the
-        # previous context!
-        operandum = operandum.evaluatedElementsList context.previousContext
+        log "list quote, giving it a definitionContext!"
+        operandum.definitionContext = context.previousContext
+        operandum.giveDefinitionContextToElements context.previousContext
 
       return operandum
 
@@ -1721,7 +1719,7 @@ initBootClasses = ->
   # If the evaluation returns a list, then we take that as
   # input. If not, we take the original list as input.
   FLFor.addMethod \
-    (flTokenize "each ( ' variable ) in: ( 'theList ) do: ( 'code )"),
+    (flTokenize "each ( ' variable ) in: ( theList ) do: ( 'code )"),
     (context) ->
       #yield
       context.isTransparent = true
@@ -1741,38 +1739,6 @@ initBootClasses = ->
       if theList.isEmpty()
         
         return theList
-
-      # you could adjust the examples OK without these two
-      # lines, but why not give the chance for clarity
-      # to add an extra pair or parens to make sure that
-      # lists are clearly visible?
-      if theList.length() == 1
-        theList = theList.firstElement()
-
-      if methodsExecutionDebug
-        log "evalling list: " + theList.flToString()
-      # yield from
-      evalledList = theList.eval context, theList
-      if methodsExecutionDebug
-        log "evalled list: " + evalledList.flToString()
-
-      if context.throwing
-        # the list doesn't run as a program, so we just
-        # consider the original list to be the input
-        theList = theList.evaluatedElementsList context
-        # remember to turn off the "throwing" flag as we
-        # do nothing with tha aborted evaluation.
-        context.throwing = false
-      else
-        # the list DOES run as a program, so we use
-        # the evaluation result as the input
-        theList = evalledList
-
-      if theList.flClass != FLList
-        context.throwing = true
-        # TODO this error should really be a stock error referanceable
-        # from the workspace because someone might want to catch it.
-        return FLException.createNew "for...each expects a list"
 
       if methodsExecutionDebug
         log "FLEach do on the list: " + theList.flToString()

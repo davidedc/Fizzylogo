@@ -317,7 +317,15 @@ tests = [
   console print " - "
   console print '(console print 1+2)
   """
-  "( [object of class \"Console\"] print 1 + 2 ) - ( [object of class \"Console\"] print 1 + 2 )"
+  "( console print 1 + 2 ) - ( console print 1 + 2 )"
+
+  """
+  codeToBeRun = '(console print 1+2)
+  codeToBeRun eval
+  codeToBeRun = '(console print "hello")
+  codeToBeRun eval
+  """
+  "3hello"
 
   # ---------------------------------------------------------------------------
   # initialising Lists via the "more normal" "array literal" notation.
@@ -1225,6 +1233,9 @@ tests = [
   "console print ('()+\"how to enclose something in a list\")"
   "( \"how to enclose something in a list\" )"
 
+  "console print ([]+\"how to enclose something in a list\")"
+  "( \"how to enclose something in a list\" )"
+
   # ---------------------------------------------------------------------------
   # note that the + evaluates
   # its argument, so the passed list
@@ -1411,7 +1422,7 @@ tests = [
   my = 1
   little = "hello"
   array = false
-  myLittleArray =' (my little array)
+  myLittleArray = [my, little, array]
   console print myLittleArray
   console print myLittleArray[1]+1
   console print myLittleArray[2]
@@ -1441,26 +1452,40 @@ tests = [
 
   # ---------------------------------------------------------------------------
   # Closures
-  # There are two types of closures
-  #
-  # 1) A "read only" closure
-  # which works with degining a code block as a list, and
-  # then evalling it.
-  # It comes from the fact that
-  # code is just a list of tokens, and with the quote
-  # assignment (or any quote for that matter)
-  # its elements (excluding "self") are all evaluated,
-  # hence the bound elements are copied in terms of their values, so
-  # those can't be changed anymore.
-  # The unassigned elements are kept as is and hence
-  # they are free to be bound later.
-  #
-  # 2) A "proper" closure
-  # this one works with "to" and "answer" and works
-  # much more like a closure: one can read and write
+  # work with "to" and "answer" and any time a list is quote-assigned:
+  # the "code list" is assigned a special "context of assignment"
+  # that is looked up when the "context of use" doesn't give a lookup
+  # value. This is one can read and write
   # variables that come from the context where the
   # closure was defined.
+  # Note that you can read/write variables initialised AFTER the
+  # definition of the "code list" i.e. the code list has access
+  # to the whole context in which it was defined.
 
+  """
+  to codeToBeRun2:
+  ﹍op1 = 2
+  ﹍// this will be the definition context that we'll  
+  ﹍// stick to the piece of code "( console print op1 )"
+  ﹍codeToBeRun ='
+  ﹍﹍console print op1
+
+  console print op1 // -> nil
+
+  codeToBeRun3 = codeToBeRun2
+  console print codeToBeRun3 // -> ( console print op1 )
+
+  // op1 is not defined in the running context but it
+  // is defined in the
+  // context where ( console print op1 ) was defined
+  codeToBeRun3 eval
+  """
+  "nil( console print op1 )2"
+
+
+  # note that this is not a demonstration of closures,
+  # here simply op1 and op2 are defined
+  # in the running context
   """
   op1 = 2
   codeToBeRun ='
@@ -1472,8 +1497,11 @@ tests = [
   op1 = 1000
   codeToBeRun eval
   """
-  "588"
+  "581006"
 
+  # note that this is not a demonstration of closures,
+  # here simply op1 is defined
+  # in the running context
   """
   op1 = 2
   codeToBeRun ='
@@ -1482,8 +1510,11 @@ tests = [
   codeToBeRun eval
   console print op1
   """
-  "22"
+  "33"
 
+  # note that this is not a demonstration of closures,
+  # here simply op1 and op2 are defined
+  # in the running context
   # "eval" opens up the current context
   # so both op1 and op2 get modified
   """
@@ -1497,8 +1528,11 @@ tests = [
   console print op1
   console print op2
   """
-  "2121"
+  "3131"
 
+  # note that this is not a demonstration of closures,
+  # here simply op1 is defined
+  # in the running context
   """
   op1 = 2
   to codeToBeRun:
@@ -1509,19 +1543,25 @@ tests = [
   """
   "33"
 
+  # note that this is not a demonstration of closures,
+  # here simply op1 is defined
+  # in the running context
   """
   op1 = 2
   Number answer:
-  ﹍﹍aClosure
+  ﹍﹍aFunction
   ﹍by:
   ﹍﹍op1++
   ﹍﹍console print op1
-  0 aClosure
+  0 aFunction
   console print op1
   """
   "33"
 
 
+  # note that this is not a demonstration of closures,
+  # here simply op1 and op2 are defined
+  # in the running context
   """
   op1 = 2
   to codeToBeRun:
@@ -1535,16 +1575,19 @@ tests = [
   """
   "313nil"
 
+  # note that this is not a demonstration of closures,
+  # here simply op1 and op2 are defined
+  # in the running context
   """
   op1 = 2
   Number answer:
-  ﹍﹍aClosure
+  ﹍﹍aFunction
   ﹍by:
   ﹍﹍op1++
   ﹍﹍op2 = 1
   ﹍﹍console print op1
   ﹍﹍console print op2
-  0 aClosure
+  0 aFunction
   console print op1
   console print op2
   """
@@ -1794,7 +1837,7 @@ tests = [
   "! exception: message was not understood: ( TOKEN:Dave  TOKEN:my  TOKEN:dear  TOKEN:friend )"
 
   # ---------------------------------------------------------------------------
-  "'( \"Hello \" \"Dave \" \"my \" \"dear \" \"friend\") each word do (console print word)"
+  "'( \"Hello \" \"Dave \" \"my \" \"dear \" \"friend\") each word do (console print word eval)"
   "Hello Dave my dear friend"
 
   # ---------------------------------------------------------------------------
@@ -1814,9 +1857,22 @@ tests = [
   """
   "! exception: message was not understood: ( each word in : ( do : ( console print word ) ) )"
 
+  """
+  for each word in: '() do:
+  ﹍console print word
+  console print "the end."
+  """
+  "the end."
 
   """
-  for each word in: () do:
+  for each word in: [] do:
+  ﹍console print word
+  console print "the end."
+  """
+  "the end."
+
+  """
+  for each word in: ([]) do:
   ﹍console print word
   console print "the end."
   """
@@ -1824,10 +1880,8 @@ tests = [
 
   # ---------------------------------------------------------------------------
   """
-  for each word in:
-  ﹍﹍'(1 + 1)
-  ﹍do:
-  ﹍﹍console print word
+  for each word in: '(1 + 1) do:
+  ﹍console print word
   """
   "1+1"
 
@@ -1848,8 +1902,23 @@ tests = [
 
   # ---------------------------------------------------------------------------
   """
+  for each word in: ["Hello ","Dave ","my ","dear ","friend"] do:
+  ﹍﹍console print word
+  """
+  "Hello Dave my dear friend"
+
+  """
   for each word in:
-  ﹍﹍("Hello " "Dave " "my " "dear " "friend")
+  ﹍﹍["Hello ","Dave ","my ","dear ","friend"]
+  ﹍do:
+  ﹍﹍console print word
+  """
+  "Hello Dave my dear friend"
+
+  """
+  myList = ["Hello ","Dave ","my ","dear ","friend"]
+  for each word in:
+  ﹍﹍myList
   ﹍do:
   ﹍﹍console print word
   """
@@ -1857,36 +1926,18 @@ tests = [
 
 
   # ---------------------------------------------------------------------------
-  # we try to avaluate that list of strings but since
-  # it gives an error we revert to interpret it
-  # as the list of strings
+
   """
-  for each word in:
-  ﹍﹍"Hello " "Dave " "my " "dear " "friend"
-  ﹍do:
-  ﹍﹍console print word
+  for each word in: '("Hello " "Dave " "my " "dear " "friend") do:
+  ﹍console print word eval
   """
   "Hello Dave my dear friend"
 
-  """
-  for each word in: ('("Hello " "Dave " "my " "dear " "friend")) do:
-  ﹍console print word
-  """
-  "Hello Dave my dear friend"
-
-  # we try to avaluate that list of strings but since
-  # it gives an error we revert to interpret it
-  # as the list of strings
-  """
-  for each word in: ("Hello " "Dave " "my " "dear " "friend") do:
-  ﹍console print word
-  """
-  "Hello Dave my dear friend"
 
   # ---------------------------------------------------------------------------
   """
   for each word in:
-  ﹍﹍(\\
+  ﹍﹍'(\\
   ﹍﹍"Hello "\\
   ﹍﹍"Dave "\\
   ﹍﹍"my "\\
@@ -1894,28 +1945,52 @@ tests = [
   ﹍﹍"friend"\\
   ﹍﹍)
   ﹍do:
-  ﹍﹍console print word
+  ﹍﹍console print word eval
   """
   "Hello Dave my dear friend"
 
   """
   for each word in:
+  ﹍﹍[\\
+  ﹍﹍"Hello ",\\
+  ﹍﹍"Dave ",\\
+  ﹍﹍"my ",\\
+  ﹍﹍"dear ",\\
+  ﹍﹍"friend"\\
+  ﹍﹍]
+  ﹍do:
+  ﹍﹍console print word
+  """
+  "Hello Dave my dear friend"
+
+  """
+  for each word in: '
   ﹍﹍"Hello "\\
   ﹍﹍"Dave "\\
   ﹍﹍"my "\\
   ﹍﹍"dear "\\
   ﹍﹍"friend"
   ﹍do:
-  ﹍﹍console print word
+  ﹍﹍console print word eval
   """
   "Hello Dave my dear friend"
 
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
+  ﹍console print word eval
+  for each word in:
+  ﹍﹍'("Hello " "Dave " "my " "dear " "friend")
+  ﹍do:
+  ﹍﹍codeToBeRun eval
+  """
+  "Hello Dave my dear friend"
+
+  """
+  codeToBeRun ='
   ﹍console print word
   for each word in:
-  ﹍﹍("Hello " "Dave " "my " "dear " "friend")
+  ﹍﹍["Hello ","Dave ","my ","dear ","friend"]
   ﹍do:
   ﹍﹍codeToBeRun eval
   """
@@ -1924,18 +1999,30 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
-  ﹍console print word
+  ﹍console print word eval
   for each word in:
+  ﹍﹍// this plus is the list adding an element (a string in this case)
   ﹍﹍'("Hello " "Dave ") + "my " + "dear " + "friend"
   ﹍do:
   ﹍﹍codeToBeRun eval
   """
   "Hello Dave my dear friend"
 
-  # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
   ﹍console print word
+  for each word in:
+  ﹍﹍// this plus is the list adding an element (a string in this case)
+  ﹍﹍["Hello ","Dave "] + "my " + "dear " + "friend"
+  ﹍do:
+  ﹍﹍codeToBeRun eval
+  """
+  "Hello Dave my dear friend"
+
+  # ---------------------------------------------------------------------------
+  """
+  codeToBeRun ='
+  ﹍console print word eval
   myList =' ("Hello " "Dave " "my " "dear " "friend")
   for each word in:
   ﹍﹍myList
@@ -1944,11 +2031,10 @@ tests = [
   """
   "Hello Dave my dear friend"
 
-  # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
   ﹍console print word
-  myList = '("Hello " "Dave ") + "my " + "dear " + "friend"
+  myList = ["Hello ","Dave ","my ","dear ","friend"]
   for each word in:
   ﹍﹍myList
   ﹍do:
@@ -1959,8 +2045,43 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
+  ﹍console print word eval
+  myList = '("Hello " "Dave ") + "my " + "dear " + "friend"
+  for each word in:
+  ﹍﹍myList
+  ﹍do:
+  ﹍﹍codeToBeRun eval
+  """
+  "Hello Dave my dear friend"
+
+  """
+  codeToBeRun ='
   ﹍console print word
+  myList = ["Hello ","Dave "] + "my " + "dear " + "friend"
+  for each word in:
+  ﹍﹍myList
+  ﹍do:
+  ﹍﹍codeToBeRun eval
+  """
+  "Hello Dave my dear friend"
+
+  # ---------------------------------------------------------------------------
+  """
+  codeToBeRun ='
+  ﹍console print word eval
   myList = '("Hello " "Dave ")
+  myString = "my dear friend"
+  for each word in:
+  ﹍﹍myList + myString
+  ﹍do:
+  ﹍﹍codeToBeRun eval
+  """
+  "Hello Dave my dear friend"
+
+  """
+  codeToBeRun ='
+  ﹍console print word
+  myList = ["Hello ","Dave "]
   myString = "my dear friend"
   for each word in:
   ﹍﹍myList + myString
@@ -1972,9 +2093,20 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   codeToBeRun ='
-  ﹍console print word
+  ﹍console print word eval
   myList ='
   ﹍"Hello " "Dave " "my " "dear " "friend"
+  for each word in:
+  ﹍﹍myList
+  ﹍do:
+  ﹍﹍codeToBeRun eval
+  """
+  "Hello Dave my dear friend"
+
+  """
+  codeToBeRun ='
+  ﹍console print word
+  myList = ["Hello ","Dave ","my ","dear ","friend"]
   for each word in:
   ﹍﹍myList
   ﹍do:
@@ -1985,7 +2117,7 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   codeToBeRun =:
-  ﹍console print word
+  ﹍console print word eval
   myList =:
   ﹍"Hello " "Dave " "my " "dear " "friend"
   for each word in:
@@ -2007,13 +2139,14 @@ tests = [
   """
   "! exception: message was not understood: ( TOKEN:Dave  TOKEN:my  TOKEN:dear  TOKEN:friend )"
 
+
   # ---------------------------------------------------------------------------
   # in this case "myList" ends up being a wrapped list i.e. ((wrapped))
   # so, when the right-side is evaluated, it ends up being the normal
   # un-wrapped contents, so it all works out without the ' after the =
   """
   codeToBeRun ='
-  ﹍console print word
+  ﹍console print word eval
   myList =
   ﹍'("Hello " "Dave " "my " "dear " "friend")
   for each word in:
@@ -2023,13 +2156,23 @@ tests = [
   """
   "Hello Dave my dear friend"
 
-  # ---------------------------------------------------------------------------
-  # in this case "myList" ends up being a wrapped list i.e. ((wrapped))
-  # so, when the right-side is evaluated, it ends up being the normal
-  # un-wrapped contents, so it all works out without the ' after the =
   """
   codeToBeRun ='
   ﹍console print word
+  myList =
+  ﹍["Hello ","Dave ","my ","dear ","friend"]
+  for each word in:
+  ﹍﹍myList
+  ﹍do:
+  ﹍﹍codeToBeRun eval
+  """
+  "Hello Dave my dear friend"
+
+  # ---------------------------------------------------------------------------
+
+  """
+  codeToBeRun ='
+  ﹍console print word eval
   myList = '
   ﹍"Hello " "Dave " "my " "dear " "friend"
   for each word in:
@@ -2039,39 +2182,39 @@ tests = [
   """
   "Hello Dave my dear friend"
 
+
   # ---------------------------------------------------------------------------
   """
   acc = 0
   for each number in:
   ﹍﹍'(1 2 3 4)
   ﹍do:
+  ﹍﹍acc += number eval
+  console print acc
+  """
+  "10"
+
+  """
+  acc = 0
+  for each number in:
+  ﹍﹍[1,2,3,4]
+  ﹍do:
   ﹍﹍acc += number
   console print acc
   """
   "10"
 
-
   # ---------------------------------------------------------------------------
   """
   acc = 0
-  for each number in:
+  for each number in: '
   ﹍﹍1 2 3 4
   ﹍do:
-  ﹍﹍acc += number
+  ﹍﹍acc += number eval
   console print acc
   """
   "10"
 
-  # ---------------------------------------------------------------------------
-  """
-  acc = 0
-  for each number in:
-  ﹍﹍(1 2 3 4)
-  ﹍do:
-  ﹍﹍acc += number
-  console print acc
-  """
-  "10"
 
   # ---------------------------------------------------------------------------
   """
@@ -2328,6 +2471,13 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   myList =' ("Hello " "Dave " "my " "dear " "friend")
+  console print myList[1] eval
+  console print myList[1+1+1] eval
+  """
+  "Hello my "
+
+  """
+  myList = ["Hello ","Dave ","my ","dear ","friend"]
   console print myList[1]
   console print myList[1+1+1]
   """
@@ -2336,6 +2486,20 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   myList =' ("Hello " "Dave " "my " "dear " "friend")
+  // the list contains tokens, to make it
+  // contain strings instead, we need to
+  // evaluate each token.
+  myList[1] = myList[1] eval
+  myList[1+1] = myList[1+1] eval
+  myList[1+1+1] = "oh "
+  myList[1+1+1+1] = myList[1+1+1+1] eval
+  myList[1+1+1+1+1] = myList[1+1+1+1+1] eval
+  console print myList
+  """
+  "( \"Hello \" \"Dave \" \"oh \" \"dear \" \"friend\" )"
+
+  """
+  myList = ["Hello ","Dave ","my ","dear ","friend"]
   myList[1+1+1] = "oh "
   console print myList
   """
@@ -2344,8 +2508,9 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   numbers =' (9 4 3 5 7)
-  myList =' ("Hello " "Dave " "my " "dear " "friend")
-  myList[numbers[1+1+1]] = "oh "
+  myList = ["Hello ","Dave ","my ","dear ","friend"]
+  // we need to evaluate the TOKEN 3 into the number 3
+  myList[numbers[1+1+1] eval] = "oh "
   console print myList
   """
   "( \"Hello \" \"Dave \" \"oh \" \"dear \" \"friend\" )"
@@ -2353,6 +2518,12 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   numbers =' (9 3 2 5 7)
+  console print numbers[1] eval + numbers[2] eval
+  """
+  "12"
+
+  """
+  numbers = [9,3,2,5,7]
   console print numbers[1]+numbers[2]
   """
   "12"
@@ -2360,8 +2531,8 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   numbers =' (9 4 3 5 7)
-  myList =' ("Hello " "Dave " ("oh " "so ") "dear " "friend")
-  console print myList[numbers[3]]
+  myList = ["Hello ","Dave ",["oh ","so "],"dear ","friend"]
+  console print myList[numbers[3] eval]
   """
   "( \"oh \" \"so \" )"
 
@@ -2373,8 +2544,8 @@ tests = [
   console print myObject.someOtherField
   myObject.someField =' (9 3 15 5 7)
   myObject.someField[1+1+1] = 1+1+1
-  myObject.someOtherField =' ("Hello " "Dave " ("oh " "so ") "dear " "friend")
-  console print myObject.someOtherField[myObject.someField[1+1+1]]
+  myObject.someOtherField = ["Hello ","Dave ",["oh ","so "],"dear ","friend"]
+  console print myObject.someOtherField[myObject.someField[1+1+1] eval]
 
   """
   "nilnil( \"oh \" \"so \" )"
@@ -2382,14 +2553,20 @@ tests = [
   # ---------------------------------------------------------------------------
   """
   numbers =' (9 4 3 5 7)
-  myList =' ("Hello " "Dave " ("oh " "so ") "dear " "friend")
-  console print myList[numbers[1+1+1]][0+1+1]
+  myList = ["Hello ","Dave ",["oh ","so "],"dear ","friend"]
+  console print myList[numbers[1+1+1] eval][0+1+1]
   """
   "so "
 
   # ---------------------------------------------------------------------------
   """
   things =' (false true)
+  console print things[1] eval or things[2] eval
+  """
+  "true"
+
+  """
+  things = [false,true]
   console print things[1] or things[2]
   """
   "true"
@@ -2398,12 +2575,40 @@ tests = [
   """
   foo = 3
   things =' (foo bar 2)
+  console print things[1] eval
+  console print things[2] eval
+  console print things[3] eval
+  """
+  "3nil2"
+
+  """
+  foo = 3
+  things = [foo,bar,2]
   console print things[1]
   console print things[2]
   console print things[3]
+  """
+  "3nil2"
+
+  # ---------------------------------------------------------------------------
+  """
+  foo = 3
+  things =' (foo bar 2)
   console print things
   """
-  "3bar2( 3 bar 2 )"
+  "( foo bar 2 )"
+
+  # note how "foo" evaluates to 3
+  # and "bar" evaluates to nil
+  # when printing the whole list when
+  # it's defined via array literal
+  # notation
+  """
+  foo = 3
+  things = [foo,bar,2]
+  console print things
+  """
+  "( 3 nil 2 )"
 
   # ---------------------------------------------------------------------------
   """
@@ -3145,11 +3350,19 @@ tests = [
   "3( 2 2 3 )"
 
   """
-  myArray = '(1 2 3)
+  myArray = [1,2,3]
   console print myArray[1] += myArray[2]+myArray[3]
   console print myArray
   """
   "6( 6 2 3 )"
+
+  """
+  myArray = '(1 2 3)
+  console print (myArray[1] eval) += myArray[2] eval +myArray[3] eval
+  // notw how the first element of the array is unchanged
+  console print myArray
+  """
+  "6( 1 2 3 )"
 
   """
   myArray = '(1 2 3)
@@ -3165,7 +3378,7 @@ tests = [
   "32"
 
   """
-  a = '()
+  a = []
   a[5] = 1
   console print a
   """
@@ -4238,12 +4451,12 @@ tests = [
   numParams = a length - 2
   console print numParams
 
-  bodies = '()
+  bodies = []
 
   for each number in:
   ﹍﹍1...numParams
   ﹍do:
-  ﹍﹍bodies[number] = '()
+  ﹍﹍bodies[number] = []
   ﹍﹍bodies[number] = bodies[number] + 'for + 'each + a[2+number] + 'in + ': + a[1]
   ﹍﹍bodies[number] = bodies[number] + 'do + ':
 
@@ -4265,7 +4478,7 @@ tests = [
 
   toRun eval
   """
-  '53( ( for each x in : ( 1 ... 2 ) do : ) ( for each y in : ( 1 ... 2 ) do : ) ( for each z in : ( 1 ... 2 ) do : ( [object of class "Console"] print x + y + z ) ) ) ----------  ---- ( ( for each x in : ( 1 ... 2 ) do : ( for each y in : ( 1 ... 2 ) do : ( for each z in : ( 1 ... 2 ) do : ( [object of class "Console"] print x + y + z ) ) ) ) ( for each y in : ( 1 ... 2 ) do : ( for each z in : ( 1 ... 2 ) do : ( [object of class "Console"] print x + y + z ) ) ) ( for each z in : ( 1 ... 2 ) do : ( [object of class "Console"] print x + y + z ) ) ) ---- ( for each x in : ( 1 ... 2 ) do : ( for each y in : ( 1 ... 2 ) do : ( for each z in : ( 1 ... 2 ) do : ( [object of class "Console"] print x + y + z ) ) ) )34454556'
+  '53( ( for each x in : ( 1 ... 2 ) do : ) ( for each y in : ( 1 ... 2 ) do : ) ( for each z in : ( 1 ... 2 ) do : ( console print x + y + z ) ) ) ----------  ---- ( ( for each x in : ( 1 ... 2 ) do : ( for each y in : ( 1 ... 2 ) do : ( for each z in : ( 1 ... 2 ) do : ( console print x + y + z ) ) ) ) ( for each y in : ( 1 ... 2 ) do : ( for each z in : ( 1 ... 2 ) do : ( console print x + y + z ) ) ) ( for each z in : ( 1 ... 2 ) do : ( console print x + y + z ) ) ) ---- ( for each x in : ( 1 ... 2 ) do : ( for each y in : ( 1 ... 2 ) do : ( for each z in : ( 1 ... 2 ) do : ( console print x + y + z ) ) ) )34454556'
 
   # ---------------------------------------------------------------------------
   # same macro, used more cleanly as a keyword
@@ -4279,12 +4492,12 @@ tests = [
   ﹍﹍body = rangeBodyAndVars[2]
   ﹍﹍range =  rangeBodyAndVars[1]
   ﹍﹍
-  ﹍﹍bodies = '()
+  ﹍﹍bodies = []
   ﹍﹍
   ﹍﹍for each number in:
   ﹍﹍﹍﹍1...numParams
   ﹍﹍﹍do:
-  ﹍﹍﹍﹍bodies[number] = '()
+  ﹍﹍﹍﹍bodies[number] = []
   ﹍﹍﹍﹍bodies[number] = bodies[number] + 'for + 'each + rangeBodyAndVars[2+number] + 'in + ': + range
   ﹍﹍﹍﹍bodies[number] = bodies[number] + 'do + ':
   ﹍﹍
@@ -4315,6 +4528,17 @@ tests = [
   "1+1"
 
 ]
+
+###
+  """
+  for each word in:
+  ﹍﹍[1,'+,1]
+  ﹍do:
+  ﹍﹍console print word
+  """
+  "1+1"
+###
+
 
 ###
 # You can't mention a "@" (or "self") in this way, you'll
