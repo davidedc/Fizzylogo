@@ -1483,6 +1483,29 @@ tests = [
   "nil( console print op1 )2"
 
 
+  """
+  to codeToBeRun2:
+  ﹍op1 = 2
+  ﹍// this will be the definition context that we'll  
+  ﹍// stick to the piece of code "( console print op1 )"
+  ﹍to codeToBeRun:
+  ﹍﹍﹍doit
+  ﹍﹍do:
+  ﹍﹍﹍console print op1
+  ﹍return codeToBeRun
+
+  console print op1 // -> nil
+
+  codeToBeRun3 = codeToBeRun2
+  console print codeToBeRun3 // -> ( console print op1 )
+
+  // op1 is not defined in the running context but it
+  // is defined in the
+  // context where ( console print op1 ) was defined
+  codeToBeRun3 doit
+  """
+  "nil[object of class \"Class_of_codeToBeRun\"]2"
+
   # note that this is not a demonstration of closures,
   # here simply op1 and op2 are defined
   # in the running context

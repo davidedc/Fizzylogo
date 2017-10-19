@@ -285,6 +285,10 @@ addDefaultMethods = (classToAddThemTo) ->
       signature = context.tempVariablesDict[ValidIDfromString "signature"]
       methodBody = context.tempVariablesDict[ValidIDfromString "methodBody"]
 
+      log "answer: giving the method body a definitionContext!"
+      methodBody.definitionContext = context.previousContext
+      methodBody.giveDefinitionContextToElements context.previousContext
+
       if @isClass()
         @addMethod signature, methodBody
       else
