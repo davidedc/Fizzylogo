@@ -27,6 +27,7 @@ class FLTokenClass extends FLClasses
           log "evaluation " + indentation() + "found token " + @value + " in running context"
         return existingLookedUpValuePlace
       else
+        if tokensDebug
           log "evaluation " + indentation() + " not found token " + @value + " in running context, ...trying in definitionContext"
         existingLookedUpValuePlace = definitionContext?.whichDictionaryContainsToken @
         if existingLookedUpValuePlace?
