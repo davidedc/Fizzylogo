@@ -2597,9 +2597,76 @@ tests = [
   myObject.someField[1+1+1] = 1+1+1
   myObject.someOtherField = ["Hello ","Dave ",["oh ","so "],"dear ","friend"]
   console print myObject.someOtherField[myObject.someField[1+1+1] eval]
-
   """
   "nilnil( \"oh \" \"so \" )"
+
+  # ---------------------------------------------------------------------------
+  # "functions" in fields, and having them to run when they are
+  # accessed
+
+  """
+  to rocket:
+  ﹍﹍with param (withAParameter)
+  ﹍do:
+  ﹍﹍console print " running with param " + withAParameter
+
+  MyClass = Class new
+  myObject = MyClass new
+
+  myObject.🚀 = rocket
+  myObject.🚀 with param 2
+
+  """
+  " running with param 2"
+
+  """
+  🚀 = to rocket:
+  ﹍console print " running without param!"
+
+  🚀
+  """
+  " running without param!"
+
+  """
+  MyClass = Class new
+  myObject = MyClass new
+
+  myObject.🚀 = to rocket:
+  ﹍console print " running without param!"
+
+  myObject.🚀
+  """
+  " running without param!"
+
+  # ---------------------------------------------------------------------------
+  # "functions" in lists, and having them to run when they are
+  # accessed
+
+  """
+  myList = []
+  myList[1] = to rocket:
+  ﹍﹍with param (withAParameter)
+  ﹍do:
+  ﹍﹍console print " running with param " + withAParameter
+  myList[1] with param 2
+  """
+  " running with param 2"
+
+  """
+  myList = []
+  myList[1] = to rocket:
+  ﹍console print " running without param!"
+  """
+  ""
+
+  """
+  myList = []
+  myList[1] = to rocket:
+  ﹍console print " running without param!"
+
+  myList[1]
+  """
+  " running without param!"
 
   # ---------------------------------------------------------------------------
   """

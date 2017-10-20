@@ -304,7 +304,13 @@ class FLListClass extends FLClasses
             log "returnedContext.throwing: " + returnedContext.throwing
             log "restOfMessage: " + restOfMessage
 
-          if restOfMessage.isEmpty() and !(theContext.throwing or returnedContext.throwing) and
+          if restOfMessage.isEmpty() and
+            # field or array access should still let the content
+            # just looked up to "run" further on. That's because
+            # it's as if we looked up a token, so it should behave
+            # the same.
+            !returnedContext.justDidAFieldOrArrayAccess? and
+            !(theContext.throwing or returnedContext.throwing) and
             # "remaining" thrown exceptions cause us to keep going with the
             # current statement, which causes an exception to be thrown.
             !(receiver?.flClass == FLException and receiver?.thrown) and

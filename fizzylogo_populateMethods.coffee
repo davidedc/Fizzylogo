@@ -181,6 +181,7 @@ addDefaultMethods = (classToAddThemTo) ->
         if methodsExecutionDebug
           log "yes it's an instance variable: "
           #dir objectsBeingChecked.instanceVariablesDict[ValidIDfromString variable.value]
+        context.justDidAFieldOrArrayAccess = true
         return objectsBeingChecked.instanceVariablesDict[ValidIDfromString variable.value]
       if objectsBeingChecked == objectsBeingChecked.flClass
         break
@@ -1125,6 +1126,10 @@ initBootClasses = ->
     (context) ->
       #yield
       indexValue = context.lookupTemp "indexValue"
+      if methodsExecutionDebug
+        log "reading list element at index: "+ indexValue.value
+
+      context.justDidAFieldOrArrayAccess = true
       # -1 here is because arrays in Fizzylogo are 1-based
       return @elementAt indexValue.value - 1
 
