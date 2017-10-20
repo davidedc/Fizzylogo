@@ -4558,6 +4558,25 @@ tests = [
   """
   "34454556"
 
+  # ---------------------------------------------------------------------------
+  """
+  to ackermann:
+  ﹍﹍(m)(n)
+  ﹍do:
+  ﹍﹍if m == 0:
+  ﹍﹍﹍n + 1
+  ﹍﹍else if m > 0 and n == 0:
+  ﹍﹍﹍ackermann m - 1 1
+  ﹍﹍else:
+  ﹍﹍﹍ackermann m - 1 ackermann m n - 1
+  console print " " + ackermann 0 5
+  console print " " + ackermann 0 6
+  console print " " + ackermann 1 4
+  console print " " + ackermann 1 5
+  console print " " + ackermann 2 3
+  console print " " + ackermann 2 4
+  """
+  " 6 7 6 7 9 11"
 
   # ---------------------------------------------------------------------------
   """
