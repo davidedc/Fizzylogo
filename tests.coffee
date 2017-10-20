@@ -3582,6 +3582,18 @@ tests = [
   """
   " running without param!"
 
+  # you can assign then re-assign the variable
+  # without triggering the function
+  """
+  🚀 = to rocket:
+  ﹍console print " running without param!"
+
+  🚀 = 2
+  console print 🚀
+  """
+  "2"
+
+
   """
   to 🚀:
   ﹍console print "launch!"
