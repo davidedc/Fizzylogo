@@ -305,7 +305,8 @@ class FLListClass extends FLClasses
             log "restOfMessage: " + restOfMessage
 
           if restOfMessage.isEmpty() and
-            # field or array access should still let the content
+            # field or array access is just like a token access, and
+            # hence should still let the content
             # just looked up to "run" further on. That's because
             # it's as if we looked up a token, so it should behave
             # the same.

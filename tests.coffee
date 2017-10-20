@@ -2620,14 +2620,6 @@ tests = [
   " running with param 2"
 
   """
-  🚀 = to rocket:
-  ﹍console print " running without param!"
-
-  🚀
-  """
-  " running without param!"
-
-  """
   MyClass = Class new
   myObject = MyClass new
 
@@ -3580,6 +3572,15 @@ tests = [
   🚀
   """
   "launch!"
+
+  # you can assign the "function" to a variable
+  """
+  🚀 = to rocket:
+  ﹍console print " running without param!"
+
+  🚀
+  """
+  " running without param!"
 
   """
   to 🚀:
