@@ -1929,6 +1929,13 @@ tests = [
   """
   "1+1"
 
+  """
+  for each word in:
+  ﹍﹍[1,'+,1]
+  ﹍do:
+  ﹍﹍console print word
+  """
+  "1+1"
 
   # ---------------------------------------------------------------------------
   # since here 1+1 gives us a result that is a number, we throw
@@ -4591,16 +4598,6 @@ tests = [
   "1+1"
 
 ]
-
-###
-  """
-  for each word in:
-  ﹍﹍[1,'+,1]
-  ﹍do:
-  ﹍﹍console print word
-  """
-  "1+1"
-###
 
 
 ###
