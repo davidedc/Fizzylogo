@@ -1068,7 +1068,7 @@
               log("returnedContext.throwing: " + returnedContext.throwing);
               log("restOfMessage: " + restOfMessage);
             }
-            if (restOfMessage.isEmpty() && !(theContext.throwing || returnedContext.throwing) && !((receiver != null ? receiver.flClass : void 0) === FLException && (receiver != null ? receiver.thrown : void 0)) && !((receiver != null ? receiver.flClass : void 0) === FLIfFallThrough)) {
+            if (restOfMessage.isEmpty() && (returnedContext.justDidAFieldOrArrayAccess == null) && !(theContext.throwing || returnedContext.throwing) && !((receiver != null ? receiver.flClass : void 0) === FLException && (receiver != null ? receiver.thrown : void 0)) && !((receiver != null ? receiver.flClass : void 0) === FLIfFallThrough)) {
               if (listEvaluationsDebug) {
                 log("breaking and moving on to next statement");
               }
@@ -1888,6 +1888,7 @@
           if (methodsExecutionDebug) {
             log("yes it's an instance variable: ");
           }
+          context.justDidAFieldOrArrayAccess = true;
           return objectsBeingChecked.instanceVariablesDict[ValidIDfromString(variable.value)];
         }
         if (objectsBeingChecked === objectsBeingChecked.flClass) {
@@ -2401,6 +2402,10 @@
       var indexValue;
       yield;
       indexValue = context.lookupTemp("indexValue");
+      if (methodsExecutionDebug) {
+        log("reading list element at index: " + indexValue.value);
+      }
+      context.justDidAFieldOrArrayAccess = true;
       return this.elementAt(indexValue.value - 1);
     });
     FLList.addMethod(flTokenize("each ( ' variable ) do ( ' code )"), function*(context) {
