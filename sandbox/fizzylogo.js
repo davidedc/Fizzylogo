@@ -557,6 +557,14 @@
       return ascendingTheContext;
     };
 
+    FLContext.prototype.lookupTemp = function(variableNameAsString) {
+      return this.tempVariablesDict[ValidIDfromString(variableNameAsString)];
+    };
+
+    FLContext.prototype.lookupTempValue = function(variableNameAsString) {
+      return (this.lookupTemp(variableNameAsString)).value;
+    };
+
     FLContext.prototype.whichDictionaryContainsToken = function(theToken) {
       var base, base1, contextBeingSearched, tokenString;
       contextBeingSearched = this;
@@ -590,23 +598,6 @@
         log("evaluation " + indentation() + "lookup: " + tokenString + " not found!");
       }
       return null;
-    };
-
-    FLContext.prototype.lookUpTokenValue = function(theToken, alreadyKnowWhichDict) {
-      var dictWhereValueIs;
-      if (alreadyKnowWhichDict != null) {
-        dictWhereValueIs = alreadyKnowWhichDict;
-      } else {
-        dictWhereValueIs = this.whichDictionaryContainsToken(theToken);
-      }
-      if (dictWhereValueIs == null) {
-        dictWhereValueIs = this.firstNonTransparentContext().tempVariablesDict;
-      }
-      if (contextDebug) {
-        log("evaluation " + indentation() + "lookup: " + theToken.value + " also known as " + (ValidIDfromString(theToken.value)));
-        log("evaluation " + indentation() + "lookup: value looked up: ");
-      }
-      return dictWhereValueIs[ValidIDfromString(theToken.value)];
     };
 
     return FLContext;
@@ -766,31 +757,57 @@
       toBeReturned.isStatementSeparator = function() {
         return this.value === ";";
       };
-      toBeReturned.lookup = function(theContext, definitionContext) {
+      toBeReturned.whichDictionaryContainsToken = function(theContext, definitionContext) {
         var existingLookedUpValuePlace;
         if (tokensDebug) {
-          log("evaluation " + indentation() + "looking up temp token: " + this.value);
+          log("evaluation " + indentation() + "finding location of token: " + this.value);
         }
         existingLookedUpValuePlace = theContext.whichDictionaryContainsToken(this);
         if (existingLookedUpValuePlace != null) {
           if (tokensDebug) {
-            log("evaluation " + indentation() + "found temp token in running context: " + this.value);
+            log("evaluation " + indentation() + "found token " + this.value + " in running context");
           }
-          return theContext.lookUpTokenValue(this, existingLookedUpValuePlace);
+          return existingLookedUpValuePlace;
         } else {
-          log("evaluation " + indentation() + " not found temp token in running context: " + this.value + " ...trying in definitionContext");
-        }
-        existingLookedUpValuePlace = definitionContext != null ? definitionContext.whichDictionaryContainsToken(this) : void 0;
-        if (existingLookedUpValuePlace != null) {
           if (tokensDebug) {
-            log("evaluation " + indentation() + "found temp token in definition context: " + this.value);
+            log("evaluation " + indentation() + " not found token " + this.value + " in running context, ...trying in definitionContext");
           }
-          return definitionContext.lookUpTokenValue(this, existingLookedUpValuePlace);
+          existingLookedUpValuePlace = definitionContext != null ? definitionContext.whichDictionaryContainsToken(this) : void 0;
+          if (existingLookedUpValuePlace != null) {
+            if (tokensDebug) {
+              log("evaluation " + indentation() + "found token " + this.value + " in definition context");
+            }
+            return existingLookedUpValuePlace;
+          }
         }
-        return null;
+        if (tokensDebug) {
+          log("evaluation " + indentation() + "not found token " + this.value + " anywhere");
+          log("evaluation " + indentation() + "creating temp token: " + this.value + " at depth: " + theContext.firstNonTransparentContext().depth() + " with self: " + theContext.firstNonTransparentContext().self.flToString());
+        }
+        return theContext.firstNonTransparentContext().tempVariablesDict;
+      };
+      toBeReturned.assignValue = function(theContext, definitionContext, valueToAssign) {
+        var dictToPutValueIn;
+        dictToPutValueIn = this.whichDictionaryContainsToken(theContext, definitionContext);
+        dictToPutValueIn[ValidIDfromString(this.value)] = valueToAssign;
+        if (tokensDebug) {
+          return log("evaluation " + indentation() + "stored value in dictionary");
+        }
+      };
+      toBeReturned.lookupValue = function(theContext, definitionContext) {
+        var existingLookedUpValuePlace;
+        if (tokensDebug) {
+          log("evaluation " + indentation() + "looking up value of token: " + this.value);
+        }
+        existingLookedUpValuePlace = this.whichDictionaryContainsToken(theContext, definitionContext);
+        if (contextDebug) {
+          log("evaluation " + indentation() + "lookup: " + this.value + " also known as " + (ValidIDfromString(this.value)));
+          log("evaluation " + indentation() + "lookup: value looked up: ");
+        }
+        return existingLookedUpValuePlace[ValidIDfromString(this.value)];
       };
       toBeReturned["eval"] = function*(theContext, remainingMessage, fromListElementsEvaluation) {
-        var lookup, ref;
+        var lookupValue, ref;
         yield;
         if ((remainingMessage != null) && remainingMessage.flClass === FLList) {
           if (tokensDebug) {
@@ -801,9 +818,9 @@
             return this;
           }
         }
-        lookup = this.lookup(theContext, remainingMessage.definitionContext);
-        if (lookup != null) {
-          return lookup;
+        lookupValue = this.lookupValue(theContext, remainingMessage.definitionContext);
+        if (lookupValue != null) {
+          return lookupValue;
         } else if (/^[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/.test(this.value)) {
           return FLNumber.createNew(this.value);
         } else if (/\$STRING_TOKEN_([\$a-zA-Z0-9_]+)/g.test(this.value)) {
@@ -1754,7 +1771,7 @@
   commonSimpleValueEqualityFunction = function*(context) {
     var toCompare;
     yield;
-    toCompare = context.tempVariablesDict[ValidIDfromString("toCompare")];
+    toCompare = context.lookupTemp("toCompare");
     if (this.value === toCompare.value) {
       return FLBoolean.createNew(true);
     } else {
@@ -1765,7 +1782,7 @@
   commonSimpleValueInequalityFunction = function*(context) {
     var toCompare;
     yield;
-    toCompare = context.tempVariablesDict[ValidIDfromString("toCompare")];
+    toCompare = context.lookupTemp("toCompare");
     if (this.value !== toCompare.value) {
       return FLBoolean.createNew(true);
     } else {
@@ -1809,7 +1826,7 @@
     classToAddThemTo.addMethod(flTokenize("== ( toCompare )"), function*(context) {
       var toCompare;
       yield;
-      toCompare = context.tempVariablesDict[ValidIDfromString("toCompare")];
+      toCompare = context.lookupTemp("toCompare");
       if (this === toCompare) {
         return FLBoolean.createNew(true);
       } else {
@@ -1819,7 +1836,7 @@
     classToAddThemTo.addMethod(flTokenize("!= ( toCompare )"), function*(context) {
       var toCompare;
       yield;
-      toCompare = context.tempVariablesDict[ValidIDfromString("toCompare")];
+      toCompare = context.lookupTemp("toCompare");
       if (this !== toCompare) {
         return FLBoolean.createNew(true);
       } else {
@@ -1849,8 +1866,8 @@
       if (methodsExecutionDebug) {
         log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       }
-      variable = context.tempVariablesDict[ValidIDfromString("variable")];
-      value = context.tempVariablesDict[ValidIDfromString("value")];
+      variable = context.lookupTemp("variable");
+      value = context.lookupTemp("value");
       this.instanceVariablesDict[ValidIDfromString(variable.value)] = value;
       return this;
     };
@@ -1861,7 +1878,7 @@
       if (methodsExecutionDebug) {
         log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       }
-      variable = context.tempVariablesDict[ValidIDfromString("variable")];
+      variable = context.lookupTemp("variable");
       if (methodsExecutionDebug) {
         log(". ('variable) : checking instance variables");
       }
@@ -1886,8 +1903,8 @@
     classToAddThemTo.addMethod(flTokenize(". evaluating (variable)"), commonPropertyAccessFunction);
     classToAddThemTo.addMethod(flTokenize(". ('variable) += (value)"), function*(context) {
       var runThis, toBeReturned, value, variable;
-      variable = context.tempVariablesDict[ValidIDfromString("variable")];
-      value = context.tempVariablesDict[ValidIDfromString("value")];
+      variable = context.lookupTemp("variable");
+      value = context.lookupTemp("value");
       runThis = flTokenize("(self . evaluating variable) += value");
       toBeReturned = (yield* runThis["eval"](context, runThis));
       this.instanceVariablesDict[ValidIDfromString(variable.value)] = toBeReturned;
@@ -1895,8 +1912,8 @@
     });
     classToAddThemTo.addMethod(flTokenize(". ('variable) *= (value)"), function*(context) {
       var runThis, toBeReturned, value, variable;
-      variable = context.tempVariablesDict[ValidIDfromString("variable")];
-      value = context.tempVariablesDict[ValidIDfromString("value")];
+      variable = context.lookupTemp("variable");
+      value = context.lookupTemp("value");
       runThis = flTokenize("(self . evaluating variable) *= value");
       toBeReturned = (yield* runThis["eval"](context, runThis));
       this.instanceVariablesDict[ValidIDfromString(variable.value)] = toBeReturned;
@@ -1904,7 +1921,7 @@
     });
     classToAddThemTo.addMethod(flTokenize(". ('variable) ++"), function*(context) {
       var runThis, toBeReturned, variable;
-      variable = context.tempVariablesDict[ValidIDfromString("variable")];
+      variable = context.lookupTemp("variable");
       runThis = flTokenize("(self . evaluating variable) ++");
       toBeReturned = (yield* runThis["eval"](context, runThis));
       this.instanceVariablesDict[ValidIDfromString(variable.value)] = toBeReturned;
@@ -1914,8 +1931,8 @@
     classToAddThemTo.addMethod(flTokenize("answer: ( 'signature ) by: ( 'methodBody )"), function*(context) {
       var methodBody, signature;
       yield;
-      signature = context.tempVariablesDict[ValidIDfromString("signature")];
-      methodBody = context.tempVariablesDict[ValidIDfromString("methodBody")];
+      signature = context.lookupTemp("signature");
+      methodBody = context.lookupTemp("methodBody");
       if (this.isClass()) {
         this.addMethod(signature, methodBody);
       } else {
@@ -1926,8 +1943,11 @@
     classToAddThemTo.addMethod(flTokenize("answerEvalSignatureAndBody ( signature ) by ( methodBody )"), function*(context) {
       var methodBody, signature;
       yield;
-      signature = context.tempVariablesDict[ValidIDfromString("signature")];
-      methodBody = context.tempVariablesDict[ValidIDfromString("methodBody")];
+      signature = context.lookupTemp("signature");
+      methodBody = context.lookupTemp("methodBody");
+      log("answer: giving the method body a definitionContext!");
+      methodBody.definitionContext = context.previousContext;
+      methodBody.giveDefinitionContextToElements(context.previousContext);
       if (this.isClass()) {
         this.addMethod(signature, methodBody);
       } else {
@@ -1938,9 +1958,9 @@
     return classToAddThemTo.addMethod(flTokenize("answer with priority (priority) : ( 'signature ) by: ( 'methodBody )"), function*(context) {
       var methodBody, priority, signature;
       yield;
-      signature = context.tempVariablesDict[ValidIDfromString("signature")];
-      methodBody = context.tempVariablesDict[ValidIDfromString("methodBody")];
-      priority = context.tempVariablesDict[ValidIDfromString("priority")];
+      signature = context.lookupTemp("signature");
+      methodBody = context.lookupTemp("methodBody");
+      priority = context.lookupTemp("priority");
       if (this.isClass()) {
         this.addMethod(signature, methodBody, priority.value);
       } else {
@@ -1969,9 +1989,9 @@
       addDefaultMethods(eachClass);
     }
     FLToken.addMethod(flTokenize("← ( valueToAssign )"), function*(context, definitionContext) {
-      var assigneeTokenString, base, dictToPutValueIn, valueToAssign;
+      var assigneeTokenString, base, valueToAssign;
       yield;
-      valueToAssign = context.tempVariablesDict[ValidIDfromString("valueToAssign")];
+      valueToAssign = context.lookupTemp("valueToAssign");
       assigneeTokenString = this.value;
       if (methodsExecutionDebug) {
         log("evaluation " + indentation() + "assignment to token " + assigneeTokenString);
@@ -1979,31 +1999,14 @@
         log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       }
       context.isTransparent = true;
-      dictToPutValueIn = context.whichDictionaryContainsToken(this);
-      if (dictToPutValueIn == null) {
-        dictToPutValueIn = definitionContext != null ? definitionContext.whichDictionaryContainsToken(this) : void 0;
-      }
-      if (dictToPutValueIn == null) {
-        if (methodsExecutionDebug) {
-          log("evaluation " + indentation() + "creating temp token: " + assigneeTokenString + " at depth: " + context.firstNonTransparentContext().depth() + " with self: " + context.firstNonTransparentContext().self.flToString());
-        }
-        dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict;
-      } else {
-        if (methodsExecutionDebug) {
-          log("evaluation " + indentation() + "found temp token: " + assigneeTokenString);
-        }
-      }
-      dictToPutValueIn[ValidIDfromString(assigneeTokenString)] = valueToAssign;
-      if (methodsExecutionDebug) {
-        log("evaluation " + indentation() + "stored value in dictionary");
-      }
+      this.assignValue(context, definitionContext, valueToAssign);
       context.isTransparent = false;
       return valueToAssign;
     });
     FLToken.addMethod(flTokenize("= ( valueToAssign )"), function*(context, definitionContext) {
-      var assigneeTokenString, base, dictToPutValueIn, valueToAssign;
+      var assigneeTokenString, base, valueToAssign;
       yield;
-      valueToAssign = context.tempVariablesDict[ValidIDfromString("valueToAssign")];
+      valueToAssign = context.lookupTemp("valueToAssign");
       assigneeTokenString = this.value;
       if (methodsExecutionDebug) {
         log("evaluation " + indentation() + "assignment to token " + assigneeTokenString);
@@ -2011,74 +2014,32 @@
         log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       }
       context.isTransparent = true;
-      dictToPutValueIn = context.whichDictionaryContainsToken(this);
-      if (dictToPutValueIn != null) {
-        if (methodsExecutionDebug) {
-          log("evaluation " + indentation() + "token IS in running context");
-        }
-      }
-      if (dictToPutValueIn == null) {
-        if (methodsExecutionDebug) {
-          log("evaluation " + indentation() + "token not in running context, trying definition context: " + definitionContext);
-        }
-        dictToPutValueIn = definitionContext != null ? definitionContext.whichDictionaryContainsToken(this) : void 0;
-      }
-      if (dictToPutValueIn == null) {
-        if (methodsExecutionDebug) {
-          log("evaluation " + indentation() + "creating temp token: " + assigneeTokenString);
-        }
-        dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict;
-      } else {
-        if (methodsExecutionDebug) {
-          log("evaluation " + indentation() + "found temp token: " + assigneeTokenString);
-        }
-      }
-      dictToPutValueIn[ValidIDfromString(assigneeTokenString)] = valueToAssign;
-      if (methodsExecutionDebug) {
-        log("evaluation " + indentation() + "stored value in dictionary");
-      }
+      this.assignValue(context, definitionContext, valueToAssign);
       context.isTransparent = false;
       return valueToAssign;
     });
-    commonClassCreationFunction = function*(context, definitionContext, assigneeTokenString, className) {
-      var base, dictToPutValueIn, valueToAssign;
+    commonClassCreationFunction = function*(context, definitionContext, assigneeToken, className) {
+      var base, valueToAssign;
       yield;
       valueToAssign = FLClass.createNew(className);
       if (methodsExecutionDebug) {
-        log("evaluation " + indentation() + "assignment to token " + assigneeTokenString);
-        log("evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value);
+        log("evaluation " + indentation() + "assignment to token " + assigneeToken.value);
+        log("evaluation " + indentation() + "value to assign to token: " + assigneeToken.value + " : " + valueToAssign.value);
         log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       }
       context.isTransparent = true;
-      dictToPutValueIn = context.whichDictionaryContainsToken(this);
-      if (dictToPutValueIn == null) {
-        dictToPutValueIn = definitionContext != null ? definitionContext.whichDictionaryContainsToken(this) : void 0;
-      }
-      if (dictToPutValueIn == null) {
-        if (methodsExecutionDebug) {
-          log("evaluation " + indentation() + "creating temp token: " + assigneeTokenString);
-        }
-        dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict;
-      } else {
-        if (methodsExecutionDebug) {
-          log("evaluation " + indentation() + "found temp token: " + assigneeTokenString);
-        }
-      }
-      dictToPutValueIn[ValidIDfromString(assigneeTokenString)] = valueToAssign;
-      if (methodsExecutionDebug) {
-        log("evaluation " + indentation() + "stored value in dictionary");
-      }
+      assigneeToken.assignValue(context, definitionContext, valueToAssign);
       return valueToAssign;
     };
     FLToken.addMethod(flTokenize("= Class new"), function*(context, definitionContext) {
       var toBeReturned;
-      toBeReturned = (yield* commonClassCreationFunction(context, definitionContext, this.value, this.value));
+      toBeReturned = (yield* commonClassCreationFunction(context, definitionContext, this, this.value));
       return toBeReturned;
     });
     FLToken.addMethod(flTokenize("= Class new named (theName)"), function*(context, definitionContext) {
       var theName, toBeReturned;
-      theName = context.tempVariablesDict[ValidIDfromString("theName")];
-      toBeReturned = (yield* commonClassCreationFunction(context, definitionContext, this.value, theName.value));
+      theName = context.lookupTemp("theName");
+      toBeReturned = (yield* commonClassCreationFunction(context, definitionContext, this, theName.value));
       return toBeReturned;
     });
     FLToken.addMethod(flTokenize("+= ( operandum )"), flTokenize("self ← self eval + operandum"));
@@ -2087,7 +2048,7 @@
     FLNil.addMethod(flTokenize("== ( toCompare )"), function*(context) {
       var toCompare;
       yield;
-      toCompare = context.tempVariablesDict[ValidIDfromString("toCompare")];
+      toCompare = context.lookupTemp("toCompare");
       if (toCompare.flClass === FLNil) {
         return FLBoolean.createNew(true);
       } else {
@@ -2096,14 +2057,14 @@
     }, 7);
     FLIn.addMethod(flTokenize("(object) do ('code)"), function*(context) {
       var code, newContext, object, toBeReturned;
-      object = context.tempVariablesDict[ValidIDfromString("object")];
-      code = context.tempVariablesDict[ValidIDfromString("code")];
+      object = context.lookupTemp("object");
+      code = context.lookupTemp("code");
       newContext = new FLContext(context, object);
       toBeReturned = (yield* code["eval"](newContext, code));
       return toBeReturned;
     });
-    FLTo.addMethod(flTokenize("( ' functionObjectName ) : ( 'signature ) do: ( 'functionBody )"), flTokenize("accessUpperContext\nif (nil == functionObjectName eval) or (functionObjectName eval isPrimitiveType):\n﹍'TempClass ← Class new\n﹍TempClass nameit \"Class_of_\" + functionObjectName\n﹍functionObjectName ← TempClass new\n﹍TempClass answerEvalSignatureAndBody (signature) by (functionBody)\nelse:\n﹍functionObjectName eval answerEvalSignatureAndBody (signature) by (functionBody)\n\n"));
-    FLTo.addMethod(flTokenize("( ' functionObjectName ) : ( 'functionBody )"), flTokenize("accessUpperContext\n// functionObjectName contains a token i.e.\n// it's a pointer. So to put something inside the\n// variable *it's pointing at*,\n// you need to do \"functionObjectName eval\"\nif (nil == functionObjectName eval) or (functionObjectName eval isPrimitiveType):\n﹍'TempClass ← Class new\n﹍TempClass nameit \"Class_of_\" + functionObjectName\n﹍functionObjectName ← TempClass new\n﹍TempClass answerEvalSignatureAndBody: () by (functionBody)\nelse:\n﹍functionObjectName eval answerEvalSignatureAndBody: () by (functionBody)\n\n"));
+    FLTo.addMethod(flTokenize("( ' functionObjectName ) : ( 'signature ) do: ( 'functionBody )"), flTokenize("accessUpperContext\nif (nil == functionObjectName eval) or (functionObjectName eval isPrimitiveType):\n﹍'TempClass ← Class new\n﹍TempClass nameit \"Class_of_\" + functionObjectName\n﹍functionObjectName ← TempClass new\n﹍TempClass answerEvalSignatureAndBody (signature) by (functionBody)\nfunctionObjectName eval answerEvalSignatureAndBody (signature) by (functionBody)"));
+    FLTo.addMethod(flTokenize("( ' functionObjectName ) : ( 'functionBody )"), flTokenize("accessUpperContext\nif (nil == functionObjectName eval) or (functionObjectName eval isPrimitiveType):\n﹍'TempClass ← Class new\n﹍TempClass nameit \"Class_of_\" + functionObjectName\n﹍functionObjectName ← TempClass new\nfunctionObjectName eval answerEvalSignatureAndBody: () by (functionBody)"));
     FLClass.addMethod(flTokenize("new"), function*(context) {
       yield;
       if (methodsExecutionDebug) {
@@ -2118,13 +2079,13 @@
     FLException.addMethod(flTokenize("initWith ( errorMessage )"), function*(context) {
       var errorMessage;
       yield;
-      errorMessage = context.tempVariablesDict[ValidIDfromString("errorMessage")];
+      errorMessage = context.lookupTemp("errorMessage");
       this.value = errorMessage.value;
       return this;
     });
     FLException.addMethod(flTokenize("catch all : ( ' errorHandle )"), function*(context) {
       var errorHandle, toBeReturned;
-      errorHandle = context.tempVariablesDict[ValidIDfromString("errorHandle")];
+      errorHandle = context.lookupTemp("errorHandle");
       if (methodsExecutionDebug) {
         log("catch: being thrown? " + context.throwing);
         log("catch: got right exception, catching it");
@@ -2139,8 +2100,8 @@
     FLException.addMethod(flTokenize("catch ( 'theError ) : ( ' errorHandle )"), function*(context) {
       var errorHandle, theError, toBeReturned;
       yield;
-      theError = context.tempVariablesDict[ValidIDfromString("theError")];
-      errorHandle = context.tempVariablesDict[ValidIDfromString("errorHandle")];
+      theError = context.lookupTemp("theError");
+      errorHandle = context.lookupTemp("errorHandle");
       theError = (yield* theError["eval"](context, theError));
       if (methodsExecutionDebug) {
         log("catch: same as one to catch?" + (this === theError) + " being thrown? " + context.throwing);
@@ -2176,7 +2137,7 @@
     FLString.addMethod(flTokenize("+ ( stringToBeAppended )"), function*(context) {
       var stringToBeAppended;
       yield;
-      stringToBeAppended = context.tempVariablesDict[ValidIDfromString("stringToBeAppended")];
+      stringToBeAppended = context.lookupTemp("stringToBeAppended");
       return FLString.createNew(this.value + stringToBeAppended.flToString());
     }, 4);
     FLString.addMethod(flTokenize("== ( toCompare )"), commonSimpleValueEqualityFunction, 7);
@@ -2198,7 +2159,7 @@
     FLNumber.addMethod(flTokenize("...(endRange)"), function*(context) {
       var endRange, i, l, listToBeReturned, ref, ref1;
       yield;
-      endRange = context.tempVariablesDict[ValidIDfromString("endRange")];
+      endRange = context.lookupTemp("endRange");
       listToBeReturned = FLList.createNew();
       for (i = l = ref = this.value, ref1 = endRange.value; ref <= ref1 ? l <= ref1 : l >= ref1; i = ref <= ref1 ? ++l : --l) {
         listToBeReturned.value.jsArrayPush(FLNumber.createNew(i));
@@ -2209,7 +2170,7 @@
     BasePlusFunction = function*(context) {
       var operandum;
       yield;
-      operandum = context.tempVariablesDict[ValidIDfromString("operandum")];
+      operandum = context.lookupTemp("operandum");
       if (operandum.flClass === FLString) {
         return FLString.createNew(this.value + operandum.value);
       } else {
@@ -2223,7 +2184,7 @@
     BasePercentFunction = function*(context) {
       var operandum;
       yield;
-      operandum = context.tempVariablesDict[ValidIDfromString("operandum")];
+      operandum = context.lookupTemp("operandum");
       return FLNumber.createNew(this.value % operandum.value);
     };
     FLNumber.addMethod(flTokenize("$percent_binary_default ( operandum )"), BasePercentFunction);
@@ -2231,7 +2192,7 @@
     BaseFloorDivisionFunction = function*(context) {
       var operandum;
       yield;
-      operandum = context.tempVariablesDict[ValidIDfromString("operandum")];
+      operandum = context.lookupTemp("operandum");
       return FLNumber.createNew(Math.floor(this.value / operandum.value));
     };
     FLNumber.addMethod(flTokenize("$floordivision_binary_default ( operandum )"), BaseFloorDivisionFunction);
@@ -2239,7 +2200,7 @@
     BaseMinusFunction = function*(context) {
       var operandum;
       yield;
-      operandum = context.tempVariablesDict[ValidIDfromString("operandum")];
+      operandum = context.lookupTemp("operandum");
       return FLNumber.createNew(this.value - operandum.value);
     };
     FLNumber.addMethod(flTokenize("$minus_binary_default ( operandum )"), BaseMinusFunction);
@@ -2247,7 +2208,7 @@
     BaseDivideFunction = function*(context) {
       var operandum;
       yield;
-      operandum = context.tempVariablesDict[ValidIDfromString("operandum")];
+      operandum = context.lookupTemp("operandum");
       return FLNumber.createNew(this.value / operandum.value);
     };
     FLNumber.addMethod(flTokenize("$divide_binary_default ( operandum )"), BaseDivideFunction);
@@ -2255,7 +2216,7 @@
     BaseMultiplyFunction = function*(context) {
       var operandum;
       yield;
-      operandum = context.tempVariablesDict[ValidIDfromString("operandum")];
+      operandum = context.lookupTemp("operandum");
       return FLNumber.createNew(this.value * operandum.value);
     };
     FLNumber.addMethod(flTokenize("$multiply_binary_default ( operandum )"), BaseMultiplyFunction);
@@ -2264,13 +2225,13 @@
     FLNumber.addMethod(flTokenize("minus ( operandum )"), function*(context) {
       var operandum;
       yield;
-      operandum = context.tempVariablesDict[ValidIDfromString("operandum")];
+      operandum = context.lookupTemp("operandum");
       return FLNumber.createNew(this.value - operandum.value);
     });
     FLNumber.addMethod(flTokenize("selftimesminusone"), flTokenize("self * self minus 1"));
     FLNumber.addMethod(flTokenize("times ( ' loopCode )"), function*(context) {
       var i, l, loopCode, ref, toBeReturned;
-      loopCode = context.tempVariablesDict[ValidIDfromString("loopCode")];
+      loopCode = context.lookupTemp("loopCode");
       if (methodsExecutionDebug) {
         log("FLNumber: times loop code is: " + loopCode.flToString());
       }
@@ -2302,7 +2263,7 @@
     FLNumber.addMethod(flTokenize("< ( toCompare )"), function*(context) {
       var toCompare;
       yield;
-      toCompare = context.tempVariablesDict[ValidIDfromString("toCompare")];
+      toCompare = context.lookupTemp("toCompare");
       if (this.value < toCompare.value) {
         return FLBoolean.createNew(true);
       } else {
@@ -2312,7 +2273,7 @@
     FLNumber.addMethod(flTokenize("> ( toCompare )"), function*(context) {
       var toCompare;
       yield;
-      toCompare = context.tempVariablesDict[ValidIDfromString("toCompare")];
+      toCompare = context.lookupTemp("toCompare");
       if (this.value > toCompare.value) {
         return FLBoolean.createNew(true);
       } else {
@@ -2325,7 +2286,7 @@
       if (methodsExecutionDebug) {
         log("evaluation " + indentation() + "assigning to number! ");
       }
-      valueToAssign = context.tempVariablesDict[ValidIDfromString("valueToAssign")];
+      valueToAssign = context.lookupTemp("valueToAssign");
       this.value = valueToAssign.value;
       return this;
     });
@@ -2336,7 +2297,7 @@
     FLBoolean.addMethod(flTokenize("and ( operandum )"), function*(context) {
       var operandum;
       yield;
-      operandum = context.tempVariablesDict[ValidIDfromString("operandum")];
+      operandum = context.lookupTemp("operandum");
       return FLBoolean.createNew(this.value && operandum.value);
     });
     FLBoolean.addMethod(flTokenize("or ( operandum )"), function*(context) {
@@ -2345,7 +2306,7 @@
       if (methodsExecutionDebug) {
         log("executing an or! ");
       }
-      operandum = context.tempVariablesDict[ValidIDfromString("operandum")];
+      operandum = context.lookupTemp("operandum");
       return FLBoolean.createNew(this.value || operandum.value);
     });
     FLBoolean.addMethod(flTokenize("== ( toCompare )"), commonSimpleValueEqualityFunction, 7);
@@ -2353,7 +2314,7 @@
     FLQuote.addMethod(flTokenize("( ' operandum )"), function*(context) {
       var operandum;
       yield;
-      operandum = context.tempVariablesDict[ValidIDfromString("operandum")];
+      operandum = context.lookupTemp("operandum");
       if (operandum.flClass === FLList) {
         log("list quote, giving it a definitionContext!");
         operandum.definitionContext = context.previousContext;
@@ -2370,7 +2331,7 @@
     FLListLiteralArrayNotationStarter.addMethod(flTokenize("( elementToBeAppended )"), function*(context) {
       var elementToBeAppended, toBeReturned;
       yield;
-      elementToBeAppended = context.tempVariablesDict[ValidIDfromString("elementToBeAppended")];
+      elementToBeAppended = context.lookupTemp("elementToBeAppended");
       toBeReturned = FLListLiteralArrayNotation.createNew();
       toBeReturned.value.mutablePush(elementToBeAppended);
       return toBeReturned;
@@ -2382,7 +2343,7 @@
     FLListLiteralArrayNotation.addMethod(flTokenize(", ( elementToBeAppended )"), function*(context) {
       var elementToBeAppended;
       yield;
-      elementToBeAppended = context.tempVariablesDict[ValidIDfromString("elementToBeAppended")];
+      elementToBeAppended = context.lookupTemp("elementToBeAppended");
       this.value.mutablePush(elementToBeAppended);
       return this;
     });
@@ -2393,7 +2354,7 @@
     FLList.addMethod(flTokenize("+ ( elementToBeAppended )"), function*(context) {
       var elementToBeAppended;
       yield;
-      elementToBeAppended = context.tempVariablesDict[ValidIDfromString("elementToBeAppended")];
+      elementToBeAppended = context.lookupTemp("elementToBeAppended");
       if (methodsExecutionDebug) {
         log("appending element to: " + this.flToString() + " : " + elementToBeAppended.toString());
       }
@@ -2406,14 +2367,14 @@
     FLList.addMethod(flTokenize("[ (indexValue) ] = (value)"), function*(context) {
       var indexValue, value;
       yield;
-      indexValue = context.tempVariablesDict[ValidIDfromString("indexValue")];
-      value = context.tempVariablesDict[ValidIDfromString("value")];
+      indexValue = context.lookupTemp("indexValue");
+      value = context.lookupTemp("value");
       return this.elementAtSetMutable(indexValue.value - 1, value);
     });
     FLList.addMethod(flTokenize("[ (indexValue) ] += (value)"), function*(context) {
       var indexValue, runThis, toBeReturned, value;
-      indexValue = context.tempVariablesDict[ValidIDfromString("indexValue")];
-      value = context.tempVariablesDict[ValidIDfromString("value")];
+      indexValue = context.lookupTemp("indexValue");
+      value = context.lookupTemp("value");
       runThis = flTokenize("(self [indexValue]) += value");
       toBeReturned = (yield* runThis["eval"](context, runThis));
       this.elementAtSetMutable(indexValue.value - 1, toBeReturned);
@@ -2421,8 +2382,8 @@
     });
     FLList.addMethod(flTokenize("[ (indexValue) ] *= (value)"), function*(context) {
       var indexValue, runThis, toBeReturned, value;
-      indexValue = context.tempVariablesDict[ValidIDfromString("indexValue")];
-      value = context.tempVariablesDict[ValidIDfromString("value")];
+      indexValue = context.lookupTemp("indexValue");
+      value = context.lookupTemp("value");
       runThis = flTokenize("(self [indexValue]) *= value");
       toBeReturned = (yield* runThis["eval"](context, runThis));
       this.elementAtSetMutable(indexValue.value - 1, toBeReturned);
@@ -2430,7 +2391,7 @@
     });
     FLList.addMethod(flTokenize("[ (indexValue) ] ++"), function*(context) {
       var indexValue, runThis, toBeReturned;
-      indexValue = context.tempVariablesDict[ValidIDfromString("indexValue")];
+      indexValue = context.lookupTemp("indexValue");
       runThis = flTokenize("(self [indexValue]) ++");
       toBeReturned = (yield* runThis["eval"](context, runThis));
       this.elementAtSetMutable(indexValue.value - 1, toBeReturned);
@@ -2439,13 +2400,13 @@
     FLList.addMethod(flTokenize("[ (indexValue) ]"), function*(context) {
       var indexValue;
       yield;
-      indexValue = context.tempVariablesDict[ValidIDfromString("indexValue")];
+      indexValue = context.lookupTemp("indexValue");
       return this.elementAt(indexValue.value - 1);
     });
     FLList.addMethod(flTokenize("each ( ' variable ) do ( ' code )"), function*(context) {
       var code, i, l, newContext, ref, toBeReturned, variable;
-      variable = context.tempVariablesDict[ValidIDfromString("variable")];
-      code = context.tempVariablesDict[ValidIDfromString("code")];
+      variable = context.lookupTemp("variable");
+      code = context.lookupTemp("code");
       if (methodsExecutionDebug) {
         log("FLList each do ");
       }
@@ -2487,7 +2448,7 @@
     FLConsole.addMethod(flTokenize("print ( thingToPrint )"), function*(context) {
       var stringToPrint, thingToPrint;
       yield;
-      thingToPrint = context.tempVariablesDict[ValidIDfromString("thingToPrint")];
+      thingToPrint = context.lookupTemp("thingToPrint");
       stringToPrint = thingToPrint.flToString();
       if (methodsExecutionDebug) {
         log("///////// program printout: " + stringToPrint);
@@ -2506,7 +2467,7 @@
     FLTurtle.addMethod(flTokenize("forward ( distance )"), function*(context) {
       var canvasContext, distance, radians;
       yield;
-      distance = context.tempVariablesDict[ValidIDfromString("distance")].value;
+      distance = context.lookupTempValue("distance");
       if (typeof canvasOutputElement !== "undefined" && canvasOutputElement !== null) {
         canvasContext = canvasOutputElement.getContext("2d");
         canvasContext.strokeStyle = "#000";
@@ -2528,7 +2489,7 @@
     FLTurtle.addMethod(flTokenize("right ( degrees )"), function*(context) {
       var degrees;
       yield;
-      degrees = context.tempVariablesDict[ValidIDfromString("degrees")].value;
+      degrees = context.lookupTempValue("degrees");
       this.direction += degrees;
       this.direction = this.direction % 360;
       return this;
@@ -2536,7 +2497,7 @@
     FLTurtle.addMethod(flTokenize("left ( degrees )"), function*(context) {
       var degrees;
       yield;
-      degrees = context.tempVariablesDict[ValidIDfromString("degrees")].value;
+      degrees = context.lookupTempValue("degrees");
       this.direction += 360 - degrees;
       this.direction = this.direction % 360;
       return this;
@@ -2544,7 +2505,7 @@
     FLDone.addMethod(flTokenize("with ( valueToReturn )"), function*(context) {
       var valueToReturn;
       yield;
-      valueToReturn = context.tempVariablesDict[ValidIDfromString("valueToReturn")];
+      valueToReturn = context.lookupTemp("valueToReturn");
       if (methodsExecutionDebug) {
         log("Done_object thrown with return value: " + valueToReturn.flToString());
       }
@@ -2573,7 +2534,7 @@
     FLReturn.addMethod(flTokenize("( valueToReturn )"), function*(context) {
       var valueToReturn;
       yield;
-      valueToReturn = context.tempVariablesDict[ValidIDfromString("valueToReturn")];
+      valueToReturn = context.lookupTemp("valueToReturn");
       if (methodsExecutionDebug) {
         log("Return_object running a value");
       }
@@ -2597,7 +2558,7 @@
         log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
         log("FLRepeat1 ⇒ loop code is: " + loopCode.flToString());
       }
-      loopCode = context.tempVariablesDict[ValidIDfromString("loopCode")];
+      loopCode = context.lookupTemp("loopCode");
       while (true) {
         context.throwing = false;
         toBeReturned = (yield* loopCode["eval"](context, loopCode));
@@ -2635,8 +2596,8 @@
       if (methodsExecutionDebug) {
         log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       }
-      howManyTimes = context.tempVariablesDict[ValidIDfromString("howManyTimes")];
-      loopCode = context.tempVariablesDict[ValidIDfromString("loopCode")];
+      howManyTimes = context.lookupTemp("howManyTimes");
+      loopCode = context.lookupTemp("loopCode");
       if (methodsExecutionDebug) {
         log("FLRepeat2 ⇒ loop code is: " + loopCode.flToString());
       }
@@ -2694,7 +2655,7 @@
     FLThrow.addMethod(flTokenize("( theError )"), function*(context) {
       var theError;
       yield;
-      theError = context.tempVariablesDict[ValidIDfromString("theError")];
+      theError = context.lookupTemp("theError");
       theError.thrown = true;
       if (methodsExecutionDebug) {
         log("throwing an error: " + theError.value);
@@ -2709,8 +2670,8 @@
       if (methodsExecutionDebug) {
         log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       }
-      predicate = context.tempVariablesDict[ValidIDfromString("predicate")];
-      trueBranch = context.tempVariablesDict[ValidIDfromString("trueBranch")];
+      predicate = context.lookupTemp("predicate");
+      trueBranch = context.lookupTemp("trueBranch");
       if (methodsExecutionDebug) {
         log("FLIfThen: predicate value is: " + predicate.value);
       }
@@ -2738,8 +2699,8 @@
       if (methodsExecutionDebug) {
         log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       }
-      predicate = context.tempVariablesDict[ValidIDfromString("predicate")];
-      trueBranch = context.tempVariablesDict[ValidIDfromString("trueBranch")];
+      predicate = context.lookupTemp("predicate");
+      trueBranch = context.lookupTemp("trueBranch");
       if (methodsExecutionDebug) {
         log("FLIfFallThrough: predicate value is: " + predicate.value);
         log("FLIfFallThrough: true branch is: " + trueBranch.flToString());
@@ -2758,7 +2719,7 @@
         log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       }
       context.isTransparent = true;
-      trueBranch = context.tempVariablesDict[ValidIDfromString("trueBranch")];
+      trueBranch = context.lookupTemp("trueBranch");
       if (methodsExecutionDebug) {
         log("FLIfFallThrough else: evalling code ");
       }
@@ -2767,7 +2728,7 @@
     });
     FLTry.addMethod(flTokenize(": ( ' code )"), function*(context) {
       var code, toBeReturned;
-      code = context.tempVariablesDict[ValidIDfromString("code")];
+      code = context.lookupTemp("code");
       toBeReturned = (yield* code["eval"](context, code));
       context.throwing = false;
       return toBeReturned;
@@ -2775,7 +2736,7 @@
     pauseFunctionContinuation = function*(context) {
       var endTime, remainingTime, seconds, startTime;
       yield;
-      seconds = context.tempVariablesDict[ValidIDfromString("seconds")];
+      seconds = context.lookupTemp("seconds");
       startTime = new Date().getTime();
       endTime = startTime + seconds.value * 1000;
       while ((remainingTime = new Date().getTime() - endTime) < 0) {
@@ -2791,10 +2752,10 @@
       if (methodsExecutionDebug) {
         log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       }
-      loopVar = context.tempVariablesDict[ValidIDfromString("loopVar")];
-      startIndex = context.tempVariablesDict[ValidIDfromString("startIndex")];
-      endIndex = context.tempVariablesDict[ValidIDfromString("endIndex")];
-      loopCode = context.tempVariablesDict[ValidIDfromString("loopCode")];
+      loopVar = context.lookupTemp("loopVar");
+      startIndex = context.lookupTemp("startIndex");
+      endIndex = context.lookupTemp("endIndex");
+      loopCode = context.lookupTemp("loopCode");
       loopVarName = loopVar.value;
       forContext = new FLContext(context);
       forContext.isTransparent = true;
@@ -2835,9 +2796,9 @@
       if (methodsExecutionDebug) {
         log("context now tramsparent at depth: " + context.depth() + " with self: " + (typeof (base = context.self).flToString === "function" ? base.flToString() : void 0));
       }
-      variable = context.tempVariablesDict[ValidIDfromString("variable")];
-      theList = context.tempVariablesDict[ValidIDfromString("theList")];
-      code = context.tempVariablesDict[ValidIDfromString("code")];
+      variable = context.lookupTemp("variable");
+      theList = context.lookupTemp("theList");
+      code = context.lookupTemp("code");
       if (theList.flClass !== FLList) {
         context.throwing = true;
         return FLException.createNew("for...each expects a list");
