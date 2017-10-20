@@ -4586,6 +4586,42 @@ tests = [
   " 6 7 6 7 9 11"
 
   # ---------------------------------------------------------------------------
+  # Towers of Hanoi
+  # checked solution at:
+  # http://zylla.wipos.p.lodz.pl/games/hanoi4e.html
+  """
+  pegsNames = ["L","M","R"]
+  to hanoi:
+  ﹍﹍(ndisks)(start_peg)(end_peg)
+  ﹍do:
+  ﹍﹍if start_peg == nil:
+  ﹍﹍﹍start_peg = 1
+  ﹍﹍﹍end_peg = 3
+  ﹍﹍if ndisks != 0:
+  ﹍﹍﹍staging_peg = 1 + 2 + 3 - start_peg - end_peg
+  ﹍﹍﹍hanoi ndisks-1 start_peg staging_peg
+  ﹍﹍﹍console print " / Move disk " + ndisks + " from peg " + pegsNames[start_peg] + " to " + pegsNames[end_peg]
+  ﹍﹍﹍hanoi ndisks-1 staging_peg end_peg
+   
+  hanoi 4 nil nil
+  """
+  " / Move disk 1 from peg L to M / \
+  Move disk 2 from peg L to R / \
+  Move disk 1 from peg M to R / \
+  Move disk 3 from peg L to M / \
+  Move disk 1 from peg R to L / \
+  Move disk 2 from peg R to M / \
+  Move disk 1 from peg L to M / \
+  Move disk 4 from peg L to R / \
+  Move disk 1 from peg M to R / \
+  Move disk 2 from peg M to L / \
+  Move disk 1 from peg R to L / \
+  Move disk 3 from peg M to R / \
+  Move disk 1 from peg L to M / \
+  Move disk 2 from peg L to R / \
+  Move disk 1 from peg M to R"
+
+  # ---------------------------------------------------------------------------
   """
   to aToObjectFunction:
   ﹍for each word in:
