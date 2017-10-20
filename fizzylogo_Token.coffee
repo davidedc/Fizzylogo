@@ -14,23 +14,63 @@ class FLTokenClass extends FLClasses
       return @value == ";"
 
 
-    toBeReturned.lookup = (theContext, definitionContext) ->
+    # check if temp variable is visible in either the running context or the
+    # definition context.
+    # if not, create it as a temp variable in the current running context
+    toBeReturned.whichDictionaryContainsToken = (theContext, definitionContext) ->
       if tokensDebug
-        log "evaluation " + indentation() + "looking up temp token: " + @value
+        log "evaluation " + indentation() + "finding location of token: " + @value
       existingLookedUpValuePlace = theContext.whichDictionaryContainsToken @
 
       if existingLookedUpValuePlace?
         if tokensDebug
-          log "evaluation " + indentation() + "found temp token in running context: " + @value
-        return theContext.lookUpTokenValue @, existingLookedUpValuePlace
+          log "evaluation " + indentation() + "found token " + @value + " in running context"
+        return existingLookedUpValuePlace
       else
-          log "evaluation " + indentation() + " not found temp token in running context: " + @value + " ...trying in definitionContext"
+          log "evaluation " + indentation() + " not found token " + @value + " in running context, ...trying in definitionContext"
         existingLookedUpValuePlace = definitionContext?.whichDictionaryContainsToken @
         if existingLookedUpValuePlace?
           if tokensDebug
-            log "evaluation " + indentation() + "found temp token in definition context: " + @value
-          return definitionContext.lookUpTokenValue @, existingLookedUpValuePlace
-      return null
+            log "evaluation " + indentation() + "found token " + @value + " in definition context"
+          return existingLookedUpValuePlace
+
+      if tokensDebug
+        log "evaluation " + indentation() + "not found token " + @value + " anywhere"
+        log "evaluation " + indentation() + "creating temp token: " + @value + " at depth: " + theContext.firstNonTransparentContext().depth() + " with self: " + theContext.firstNonTransparentContext().self.flToString()
+
+      # no such variable, hence we create it as temp, but
+      # we can't create them in this very call context, that would
+      # be useless, we place it in the context of the _previous_ context
+      # note that this means that any construct that creates a new context
+      # will seal the temp variables in it. For example "for" loops. This
+      # is like the block scoping of C or Java. If you want function scoping, it
+      # could be achieved for example by marking in a special way contexts
+      # that have been created because of method calls and climbing back
+      # to the last one of those...
+
+      return theContext.firstNonTransparentContext().tempVariablesDict
+
+    toBeReturned.assignValue = (theContext, definitionContext, valueToAssign) ->
+      dictToPutValueIn = @whichDictionaryContainsToken theContext, definitionContext
+      dictToPutValueIn[ValidIDfromString @value] = valueToAssign
+
+      if tokensDebug
+        log "evaluation " + indentation() + "stored value in dictionary"
+
+
+    toBeReturned.lookupValue = (theContext, definitionContext) ->
+      if tokensDebug
+        log "evaluation " + indentation() + "looking up value of token: " + @value
+      existingLookedUpValuePlace = @whichDictionaryContainsToken theContext, definitionContext
+
+      if contextDebug
+        #log "evaluation " + indentation() + "lookup: " + @value + " found dictionary and it contains:"
+        #dir existingLookedUpValuePlace
+        log "evaluation " + indentation() + "lookup: " + @value + " also known as " + (ValidIDfromString @value)
+        log "evaluation " + indentation() + "lookup: value looked up: "
+        #dir existingLookedUpValuePlace[ValidIDfromString @value]
+
+      return existingLookedUpValuePlace[ValidIDfromString @value]
     
 
     toBeReturned.eval = (theContext, remainingMessage, fromListElementsEvaluation) ->
@@ -54,8 +94,8 @@ class FLTokenClass extends FLClasses
       # if there is, that wins all the times, so you could
       # have an exotic value for "false", or "2" that is completely
       # different from what it would naturally be.
-      lookup = @lookup theContext, remainingMessage.definitionContext
-      if lookup? then return lookup
+      lookupValue = @lookupValue theContext, remainingMessage.definitionContext
+      if lookupValue? then return lookupValue
 
       # you could match the leading "+" or "-", however this would
       # be uneven with the general case of handling leading + and - 

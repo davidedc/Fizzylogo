@@ -61,6 +61,12 @@ class FLContext
 
     ascendingTheContext
 
+  lookupTemp: (variableNameAsString) ->
+    return @tempVariablesDict[ValidIDfromString variableNameAsString]
+
+  lookupTempValue: (variableNameAsString) ->
+    return (@lookupTemp variableNameAsString).value
+
   # from here, a Token matches a temp variable, which could be
   # in this context, or further up across transparent contexts,
   # OR at the top level context.
@@ -104,26 +110,4 @@ class FLContext
     if contextDebug
       log "evaluation " + indentation() + "lookup: " + tokenString + " not found!"
     return null
-
-  lookUpTokenValue: (theToken, alreadyKnowWhichDict) ->
-    # we first look _where_ the value of the token is,
-    # then we fetch it
-
-    if alreadyKnowWhichDict?
-      dictWhereValueIs = alreadyKnowWhichDict
-    else  
-      dictWhereValueIs = @whichDictionaryContainsToken theToken
-
-    if !dictWhereValueIs?
-      dictWhereValueIs = @firstNonTransparentContext().tempVariablesDict
-
-    if contextDebug
-      #log "evaluation " + indentation() + "lookup: " + theToken.value + " found dictionary and it contains:"
-      #dir dictWhereValueIs
-      log "evaluation " + indentation() + "lookup: " + theToken.value + " also known as " + (ValidIDfromString theToken.value)
-      log "evaluation " + indentation() + "lookup: value looked up: "
-      #dir dictWhereValueIs[ValidIDfromString theToken.value]
-
-    return dictWhereValueIs[ValidIDfromString theToken.value]
-
 

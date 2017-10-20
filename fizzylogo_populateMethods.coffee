@@ -29,7 +29,7 @@
 
 commonSimpleValueEqualityFunction = (context) ->
   #yield
-  toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
+  toCompare = context.lookupTemp "toCompare"
   if @value == toCompare.value
     return FLBoolean.createNew true
   else
@@ -37,7 +37,7 @@ commonSimpleValueEqualityFunction = (context) ->
 
 commonSimpleValueInequalityFunction = (context) ->
   #yield
-  toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
+  toCompare = context.lookupTemp "toCompare"
   if @value != toCompare.value
     return FLBoolean.createNew true
   else
@@ -104,7 +104,7 @@ addDefaultMethods = (classToAddThemTo) ->
     (flTokenize "== ( toCompare )"),
     (context) ->
       #yield
-      toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
+      toCompare = context.lookupTemp "toCompare"
       if @ == toCompare
         return FLBoolean.createNew true
       else
@@ -118,7 +118,7 @@ addDefaultMethods = (classToAddThemTo) ->
     (flTokenize "!= ( toCompare )"),
     (context) ->
       #yield
-      toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
+      toCompare = context.lookupTemp "toCompare"
       if @ != toCompare
         return FLBoolean.createNew true
       else
@@ -155,8 +155,8 @@ addDefaultMethods = (classToAddThemTo) ->
     context.isTransparent = true
     if methodsExecutionDebug
       log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
-    variable = context.tempVariablesDict[ValidIDfromString "variable"]
-    value = context.tempVariablesDict[ValidIDfromString "value"]
+    variable = context.lookupTemp "variable"
+    value = context.lookupTemp "value"
 
     @instanceVariablesDict[ValidIDfromString variable.value] = value
     
@@ -168,7 +168,7 @@ addDefaultMethods = (classToAddThemTo) ->
     context.isTransparent = true
     if methodsExecutionDebug
       log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
-    variable = context.tempVariablesDict[ValidIDfromString "variable"]
+    variable = context.lookupTemp "variable"
 
     if methodsExecutionDebug
       log ". ('variable) : checking instance variables"
@@ -204,8 +204,8 @@ addDefaultMethods = (classToAddThemTo) ->
     (flTokenize ". ('variable) += (value)"),
     (context) ->
       # this is a token
-      variable = context.tempVariablesDict[ValidIDfromString "variable"]
-      value = context.tempVariablesDict[ValidIDfromString "value"]
+      variable = context.lookupTemp "variable"
+      value = context.lookupTemp "value"
 
       runThis = flTokenize "(self . evaluating variable) += value"
 
@@ -221,8 +221,8 @@ addDefaultMethods = (classToAddThemTo) ->
     (flTokenize ". ('variable) *= (value)"),
     (context) ->
       # this is a token
-      variable = context.tempVariablesDict[ValidIDfromString "variable"]
-      value = context.tempVariablesDict[ValidIDfromString "value"]
+      variable = context.lookupTemp "variable"
+      value = context.lookupTemp "value"
 
       runThis = flTokenize "(self . evaluating variable) *= value"
 
@@ -238,7 +238,7 @@ addDefaultMethods = (classToAddThemTo) ->
     (flTokenize ". ('variable) ++"),
     (context) ->
       # this is a token
-      variable = context.tempVariablesDict[ValidIDfromString "variable"]
+      variable = context.lookupTemp "variable"
 
       runThis = flTokenize "(self . evaluating variable) ++"
 
@@ -267,8 +267,8 @@ addDefaultMethods = (classToAddThemTo) ->
     (flTokenize "answer: ( 'signature ) by: ( 'methodBody )"),
     (context) ->
       #yield
-      signature = context.tempVariablesDict[ValidIDfromString "signature"]
-      methodBody = context.tempVariablesDict[ValidIDfromString "methodBody"]
+      signature = context.lookupTemp "signature"
+      methodBody = context.lookupTemp "methodBody"
 
       if @isClass()
         @addMethod signature, methodBody
@@ -282,8 +282,8 @@ addDefaultMethods = (classToAddThemTo) ->
     (flTokenize "answerEvalSignatureAndBody ( signature ) by ( methodBody )"),
     (context) ->
       #yield
-      signature = context.tempVariablesDict[ValidIDfromString "signature"]
-      methodBody = context.tempVariablesDict[ValidIDfromString "methodBody"]
+      signature = context.lookupTemp "signature"
+      methodBody = context.lookupTemp "methodBody"
 
       log "answer: giving the method body a definitionContext!"
       methodBody.definitionContext = context.previousContext
@@ -301,9 +301,9 @@ addDefaultMethods = (classToAddThemTo) ->
     (flTokenize "answer with priority (priority) : ( 'signature ) by: ( 'methodBody )"),
     (context) ->
       #yield
-      signature = context.tempVariablesDict[ValidIDfromString "signature"]
-      methodBody = context.tempVariablesDict[ValidIDfromString "methodBody"]
-      priority = context.tempVariablesDict[ValidIDfromString "priority"]
+      signature = context.lookupTemp "signature"
+      methodBody = context.lookupTemp "methodBody"
+      priority = context.lookupTemp "priority"
 
       if @isClass()
         @addMethod signature, methodBody, priority.value
@@ -348,7 +348,7 @@ initBootClasses = ->
     (flTokenize "← ( valueToAssign )"),
     (context, definitionContext) ->
       #yield
-      valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
+      valueToAssign = context.lookupTemp "valueToAssign"
 
       assigneeTokenString = @value
 
@@ -359,34 +359,8 @@ initBootClasses = ->
 
       context.isTransparent = true
 
-      # check if temp variable is visible from here.
-      # if not, create it.
-      dictToPutValueIn = context.whichDictionaryContainsToken @
+      @assignValue context, definitionContext, valueToAssign
 
-      if !dictToPutValueIn?
-        dictToPutValueIn = definitionContext?.whichDictionaryContainsToken @
-
-      if !dictToPutValueIn?
-        # no such variable, hence we create it as temp, but
-        # we can't create them in this very call context, that would
-        # be useless, we place it in the context of the _previous_ context
-        # note that this means that any construct that creates a new context
-        # will seal the temp variables in it. For example "for" loops. This
-        # is like the block scoping of C or Java. If you want function scoping, it
-        # could be achieved for example by marking in a special way contexts
-        # that have been created because of method calls and climbing back
-        # to the last one of those...
-        if methodsExecutionDebug
-          log "evaluation " + indentation() + "creating temp token: " + assigneeTokenString + " at depth: " + context.firstNonTransparentContext().depth() + " with self: " + context.firstNonTransparentContext().self.flToString()
-        dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict
-      else
-        if methodsExecutionDebug
-          log "evaluation " + indentation() + "found temp token: " + assigneeTokenString
-
-      dictToPutValueIn[ValidIDfromString assigneeTokenString] = valueToAssign
-
-      if methodsExecutionDebug
-        log "evaluation " + indentation() + "stored value in dictionary"
       context.isTransparent = false
       return valueToAssign
 
@@ -394,7 +368,7 @@ initBootClasses = ->
     (flTokenize "= ( valueToAssign )"),
     (context, definitionContext) ->
       #yield
-      valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
+      valueToAssign = context.lookupTemp "valueToAssign"
 
       assigneeTokenString = @value
 
@@ -405,84 +379,24 @@ initBootClasses = ->
 
       context.isTransparent = true
 
-      # check if temp variable is visible from here.
-      # if not, create it.
-      dictToPutValueIn = context.whichDictionaryContainsToken @
-
-      if dictToPutValueIn?
-        if methodsExecutionDebug
-          log "evaluation " + indentation() + "token IS in running context"
-
-      if !dictToPutValueIn?
-        if methodsExecutionDebug
-          log "evaluation " + indentation() + "token not in running context, trying definition context: " + definitionContext
-        dictToPutValueIn = definitionContext?.whichDictionaryContainsToken @
-
-      if !dictToPutValueIn?
-        # no such variable, hence we create it as temp, but
-        # we can't create them in this very call context, that would
-        # be useless, we place it in the context of the _previous_ context
-        # note that this means that any construct that creates a new context
-        # will seal the temp variables in it. For example "for" loops. This
-        # is like the block scoping of C or Java. If you want function scoping, it
-        # could be achieved for example by marking in a special way contexts
-        # that have been created because of method calls and climbing back
-        # to the last one of those...
-        if methodsExecutionDebug
-          log "evaluation " + indentation() + "creating temp token: " + assigneeTokenString
-        dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict
-      else
-        if methodsExecutionDebug
-          log "evaluation " + indentation() + "found temp token: " + assigneeTokenString
-
-      dictToPutValueIn[ValidIDfromString assigneeTokenString] = valueToAssign
-
-      if methodsExecutionDebug
-        log "evaluation " + indentation() + "stored value in dictionary"
+      @assignValue context, definitionContext, valueToAssign
 
       context.isTransparent = false
       
       return valueToAssign
 
-  commonClassCreationFunction = (context, definitionContext, assigneeTokenString, className) ->
+  commonClassCreationFunction = (context, definitionContext, assigneeToken, className) ->
     #yield
     valueToAssign = FLClass.createNew className
 
     if methodsExecutionDebug
-      log "evaluation " + indentation() + "assignment to token " + assigneeTokenString
-      log "evaluation " + indentation() + "value to assign to token: " + assigneeTokenString + " : " + valueToAssign.value
+      log "evaluation " + indentation() + "assignment to token " + assigneeToken.value
+      log "evaluation " + indentation() + "value to assign to token: " + assigneeToken.value + " : " + valueToAssign.value
       log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
 
     context.isTransparent = true
 
-    # check if temp variable is visible from here.
-    # if not, create it.
-    dictToPutValueIn = context.whichDictionaryContainsToken @
-
-    if !dictToPutValueIn?
-      dictToPutValueIn = definitionContext?.whichDictionaryContainsToken @
-
-    if !dictToPutValueIn?
-      # no such variable, hence we create it as temp, but
-      # we can't create them in this very call context, that would
-      # be useless, we place it in the context of the _previous_ context
-      # note that this means that any construct that creates a new context
-      # will seal the temp variables in it. For example "for" loops. This
-      # is like the block scoping of C or Java. If you want function scoping, it
-      # could be achieved for example by marking in a special way contexts
-      # that have been created because of method calls and climbing back
-      # to the last one of those...
-      if methodsExecutionDebug
-        log "evaluation " + indentation() + "creating temp token: " + assigneeTokenString
-      dictToPutValueIn = context.firstNonTransparentContext().tempVariablesDict
-    else
-      if methodsExecutionDebug
-        log "evaluation " + indentation() + "found temp token: " + assigneeTokenString
-
-    dictToPutValueIn[ValidIDfromString assigneeTokenString] = valueToAssign
-
-    if methodsExecutionDebug
-      log "evaluation " + indentation() + "stored value in dictionary"
+    assigneeToken.assignValue context, definitionContext, valueToAssign
     
     return valueToAssign
 
@@ -490,15 +404,15 @@ initBootClasses = ->
     (flTokenize "= Class new"),
     (context, definitionContext) ->
       # yield from
-      toBeReturned = commonClassCreationFunction context, definitionContext, @value, @value
+      toBeReturned = commonClassCreationFunction context, definitionContext, @, @value
       return toBeReturned
 
   FLToken.addMethod \
     (flTokenize "= Class new named (theName)"),
     (context, definitionContext) ->
-      theName = context.tempVariablesDict[ValidIDfromString "theName"]
+      theName = context.lookupTemp "theName"
       # yield from
-      toBeReturned = commonClassCreationFunction context, definitionContext, @value, theName.value
+      toBeReturned = commonClassCreationFunction context, definitionContext, @, theName.value
       return toBeReturned
 
   FLToken.addMethod \
@@ -520,7 +434,7 @@ initBootClasses = ->
     (flTokenize "== ( toCompare )"),
     (context) ->
       #yield
-      toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
+      toCompare = context.lookupTemp "toCompare"
       if toCompare.flClass == FLNil
         return FLBoolean.createNew true
       else
@@ -532,8 +446,8 @@ initBootClasses = ->
   FLIn.addMethod \
     (flTokenize "(object) do ('code)"),
     (context) ->
-      object = context.tempVariablesDict[ValidIDfromString "object"]
-      code = context.tempVariablesDict[ValidIDfromString "code"]
+      object = context.lookupTemp "object"
+      code = context.lookupTemp "code"
 
       newContext = new FLContext context, object
 
@@ -632,14 +546,14 @@ initBootClasses = ->
     (flTokenize "initWith ( errorMessage )"),
     (context) ->
       #yield
-      errorMessage = context.tempVariablesDict[ValidIDfromString "errorMessage"]
+      errorMessage = context.lookupTemp "errorMessage"
       @value = errorMessage.value
       return @
 
   FLException.addMethod \
     (flTokenize "catch all : ( ' errorHandle )"),
     (context) ->
-      errorHandle = context.tempVariablesDict[ValidIDfromString "errorHandle"]
+      errorHandle = context.lookupTemp "errorHandle"
 
       if methodsExecutionDebug
         log "catch: being thrown? " + context.throwing
@@ -659,8 +573,8 @@ initBootClasses = ->
     (flTokenize "catch ( 'theError ) : ( ' errorHandle )"),
     (context) ->
       #yield
-      theError = context.tempVariablesDict[ValidIDfromString "theError"]
-      errorHandle = context.tempVariablesDict[ValidIDfromString "errorHandle"]
+      theError = context.lookupTemp "theError"
+      errorHandle = context.lookupTemp "errorHandle"
 
       # OK this is tricky: we'd normally just evaluate this from the
       # signature BUT we can't, because it's going to be in this form:
@@ -720,7 +634,7 @@ initBootClasses = ->
     (flTokenize "+ ( stringToBeAppended )"),
     (context) ->
       #yield
-      stringToBeAppended = context.tempVariablesDict[ValidIDfromString "stringToBeAppended"]
+      stringToBeAppended = context.lookupTemp "stringToBeAppended"
       return FLString.createNew @value + stringToBeAppended.flToString()
     ,4
 
@@ -804,7 +718,7 @@ initBootClasses = ->
     (flTokenize "...(endRange)"),
     (context) ->
       #yield
-      endRange = context.tempVariablesDict[ValidIDfromString "endRange"]
+      endRange = context.lookupTemp "endRange"
       listToBeReturned = FLList.createNew()
       for i in [@value..endRange.value]
         listToBeReturned.value.jsArrayPush FLNumber.createNew i
@@ -817,7 +731,7 @@ initBootClasses = ->
 
   BasePlusFunction =  (context) ->
     #yield
-    operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+    operandum = context.lookupTemp "operandum"
     # todo more type conversions needed, and also in the other operations
     if operandum.flClass == FLString
       return FLString.createNew @value + operandum.value
@@ -852,7 +766,7 @@ initBootClasses = ->
 
   BasePercentFunction =  (context) ->
     #yield
-    operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+    operandum = context.lookupTemp "operandum"
     return FLNumber.createNew @value % operandum.value
 
   FLNumber.addMethod \
@@ -868,7 +782,7 @@ initBootClasses = ->
 
   BaseFloorDivisionFunction =  (context) ->
     #yield
-    operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+    operandum = context.lookupTemp "operandum"
     return FLNumber.createNew Math.floor(@value / operandum.value)
 
   FLNumber.addMethod \
@@ -884,7 +798,7 @@ initBootClasses = ->
 
   BaseMinusFunction =  (context) ->
     #yield
-    operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+    operandum = context.lookupTemp "operandum"
     return FLNumber.createNew @value - operandum.value
 
   FLNumber.addMethod \
@@ -900,7 +814,7 @@ initBootClasses = ->
 
   BaseDivideFunction =  (context) ->
     #yield
-    operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+    operandum = context.lookupTemp "operandum"
     return FLNumber.createNew @value / operandum.value
 
   FLNumber.addMethod \
@@ -916,7 +830,7 @@ initBootClasses = ->
 
   BaseMultiplyFunction =  (context) ->
     #yield
-    operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+    operandum = context.lookupTemp "operandum"
     return FLNumber.createNew @value * operandum.value
 
   FLNumber.addMethod \
@@ -939,7 +853,7 @@ initBootClasses = ->
     (flTokenize "minus ( operandum )"),
     (context) ->
       #yield
-      operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+      operandum = context.lookupTemp "operandum"
       return FLNumber.createNew @value - operandum.value
 
   FLNumber.addMethod \
@@ -949,7 +863,7 @@ initBootClasses = ->
   FLNumber.addMethod \
     (flTokenize "times ( ' loopCode )"),
     (context) ->
-      loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
+      loopCode = context.lookupTemp "loopCode"
       if methodsExecutionDebug
         log "FLNumber: times loop code is: " + loopCode.flToString()
 
@@ -995,7 +909,7 @@ initBootClasses = ->
     (flTokenize "< ( toCompare )"),
     (context) ->
       #yield
-      toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
+      toCompare = context.lookupTemp "toCompare"
       if @value < toCompare.value
         return FLBoolean.createNew true
       else
@@ -1006,7 +920,7 @@ initBootClasses = ->
     (flTokenize "> ( toCompare )"),
     (context) ->
       #yield
-      toCompare = context.tempVariablesDict[ValidIDfromString "toCompare"]
+      toCompare = context.lookupTemp "toCompare"
       if @value > toCompare.value
         return FLBoolean.createNew true
       else
@@ -1020,7 +934,7 @@ initBootClasses = ->
       #yield
       if methodsExecutionDebug
         log "evaluation " + indentation() + "assigning to number! "
-      valueToAssign = context.tempVariablesDict[ValidIDfromString "valueToAssign"]
+      valueToAssign = context.lookupTemp "valueToAssign"
       @value = valueToAssign.value
       return @
 
@@ -1038,7 +952,7 @@ initBootClasses = ->
     (flTokenize "and ( operandum )"),
     (context) ->
       #yield
-      operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+      operandum = context.lookupTemp "operandum"
       return FLBoolean.createNew @value and operandum.value
 
   FLBoolean.addMethod \
@@ -1047,7 +961,7 @@ initBootClasses = ->
       #yield
       if methodsExecutionDebug
         log "executing an or! "
-      operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+      operandum = context.lookupTemp "operandum"
       return FLBoolean.createNew @value or operandum.value
 
   FLBoolean.addMethod \
@@ -1067,7 +981,7 @@ initBootClasses = ->
     (flTokenize "( ' operandum )"),
     (context) ->
       #yield
-      operandum = context.tempVariablesDict[ValidIDfromString "operandum"]
+      operandum = context.lookupTemp "operandum"
 
       if operandum.flClass == FLList
         log "list quote, giving it a definitionContext!"
@@ -1102,7 +1016,7 @@ initBootClasses = ->
     (context) ->
       #yield
       # returns an ListLiteralArrayNotation with the first element put in
-      elementToBeAppended = context.tempVariablesDict[ValidIDfromString "elementToBeAppended"]
+      elementToBeAppended = context.lookupTemp "elementToBeAppended"
       toBeReturned = FLListLiteralArrayNotation.createNew()
       toBeReturned.value.mutablePush elementToBeAppended
       return toBeReturned
@@ -1120,7 +1034,7 @@ initBootClasses = ->
     (flTokenize ", ( elementToBeAppended )"),
     (context) ->
       #yield
-      elementToBeAppended = context.tempVariablesDict[ValidIDfromString "elementToBeAppended"]
+      elementToBeAppended = context.lookupTemp "elementToBeAppended"
       @value.mutablePush elementToBeAppended
       return @
 
@@ -1136,7 +1050,7 @@ initBootClasses = ->
     (flTokenize "+ ( elementToBeAppended )"),
     (context) ->
       #yield
-      elementToBeAppended = context.tempVariablesDict[ValidIDfromString "elementToBeAppended"]
+      elementToBeAppended = context.lookupTemp "elementToBeAppended"
       if methodsExecutionDebug
         log "appending element to: " + @flToString() + " : " + elementToBeAppended.toString()
       return @flListImmutablePush elementToBeAppended
@@ -1152,8 +1066,8 @@ initBootClasses = ->
     (flTokenize "[ (indexValue) ] = (value)"),
     (context) ->
       #yield
-      indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
-      value = context.tempVariablesDict[ValidIDfromString "value"]
+      indexValue = context.lookupTemp "indexValue"
+      value = context.lookupTemp "value"
       
       # -1 here is because arrays in Fizzylogo are 1-based
       return @elementAtSetMutable indexValue.value - 1, value
@@ -1161,8 +1075,8 @@ initBootClasses = ->
   FLList.addMethod \
     (flTokenize "[ (indexValue) ] += (value)"),
     (context) ->
-      indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
-      value = context.tempVariablesDict[ValidIDfromString "value"]
+      indexValue = context.lookupTemp "indexValue"
+      value = context.lookupTemp "value"
 
       runThis = flTokenize "(self [indexValue]) += value"
 
@@ -1177,8 +1091,8 @@ initBootClasses = ->
   FLList.addMethod \
     (flTokenize "[ (indexValue) ] *= (value)"),
     (context) ->
-      indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
-      value = context.tempVariablesDict[ValidIDfromString "value"]
+      indexValue = context.lookupTemp "indexValue"
+      value = context.lookupTemp "value"
 
       runThis = flTokenize "(self [indexValue]) *= value"
 
@@ -1193,7 +1107,7 @@ initBootClasses = ->
   FLList.addMethod \
     (flTokenize "[ (indexValue) ] ++"),
     (context) ->
-      indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
+      indexValue = context.lookupTemp "indexValue"
 
       runThis = flTokenize "(self [indexValue]) ++"
 
@@ -1210,7 +1124,7 @@ initBootClasses = ->
     (flTokenize "[ (indexValue) ]"),
     (context) ->
       #yield
-      indexValue = context.tempVariablesDict[ValidIDfromString "indexValue"]
+      indexValue = context.lookupTemp "indexValue"
       # -1 here is because arrays in Fizzylogo are 1-based
       return @elementAt indexValue.value - 1
 
@@ -1219,8 +1133,8 @@ initBootClasses = ->
     (flTokenize "each ( ' variable ) do ( ' code )"),
     (context) ->
 
-      variable = context.tempVariablesDict[ValidIDfromString "variable"]
-      code = context.tempVariablesDict[ValidIDfromString "code"]
+      variable = context.lookupTemp "variable"
+      code = context.lookupTemp "code"
 
       if methodsExecutionDebug
         log "FLList each do "
@@ -1269,7 +1183,7 @@ initBootClasses = ->
     (flTokenize "print ( thingToPrint )"),
     (context) ->
       #yield
-      thingToPrint = context.tempVariablesDict[ValidIDfromString "thingToPrint"]
+      thingToPrint = context.lookupTemp "thingToPrint"
       stringToPrint = thingToPrint.flToString()
       if methodsExecutionDebug
         log "///////// program printout: " + stringToPrint
@@ -1293,7 +1207,7 @@ initBootClasses = ->
     (flTokenize "forward ( distance )"),
     (context) ->
       #yield
-      distance = context.tempVariablesDict[ValidIDfromString "distance"].value
+      distance = context.lookupTempValue "distance"
       if canvasOutputElement?
         canvasContext = canvasOutputElement.getContext("2d");
         canvasContext.strokeStyle = "#000";
@@ -1320,7 +1234,7 @@ initBootClasses = ->
     (flTokenize "right ( degrees )"),
     (context) ->
       #yield
-      degrees = context.tempVariablesDict[ValidIDfromString "degrees"].value
+      degrees = context.lookupTempValue "degrees"
       @direction += degrees
       @direction = @direction % 360
     
@@ -1330,7 +1244,7 @@ initBootClasses = ->
     (flTokenize "left ( degrees )"),
     (context) ->
       #yield
-      degrees = context.tempVariablesDict[ValidIDfromString "degrees"].value
+      degrees = context.lookupTempValue "degrees"
       @direction += (360-degrees)
       @direction = @direction % 360
     
@@ -1343,7 +1257,7 @@ initBootClasses = ->
     (flTokenize "with ( valueToReturn )"),
     (context) ->
       #yield
-      valueToReturn = context.tempVariablesDict[ValidIDfromString "valueToReturn"]
+      valueToReturn = context.lookupTemp "valueToReturn"
       if methodsExecutionDebug
         log "Done_object thrown with return value: " + valueToReturn.flToString()
       @value = valueToReturn
@@ -1378,7 +1292,7 @@ initBootClasses = ->
     (flTokenize "( valueToReturn )"),
     (context) ->
       #yield
-      valueToReturn = context.tempVariablesDict[ValidIDfromString "valueToReturn"]
+      valueToReturn = context.lookupTemp "valueToReturn"
 
       if methodsExecutionDebug
         log "Return_object running a value"
@@ -1409,7 +1323,7 @@ initBootClasses = ->
       if methodsExecutionDebug
         log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
         log "FLRepeat1 ⇒ loop code is: " + loopCode.flToString()
-      loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
+      loopCode = context.lookupTemp "loopCode"
 
       loop
         
@@ -1450,8 +1364,8 @@ initBootClasses = ->
     context.isTransparent = true
     if methodsExecutionDebug
       log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
-    howManyTimes = context.tempVariablesDict[ValidIDfromString "howManyTimes"]
-    loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
+    howManyTimes = context.lookupTemp "howManyTimes"
+    loopCode = context.lookupTemp "loopCode"
     if methodsExecutionDebug
       log "FLRepeat2 ⇒ loop code is: " + loopCode.flToString()
 
@@ -1518,7 +1432,7 @@ initBootClasses = ->
     (flTokenize "( theError )"),
     (context) ->
       #yield
-      theError = context.tempVariablesDict[ValidIDfromString "theError"]
+      theError = context.lookupTemp "theError"
       theError.thrown = true
       if methodsExecutionDebug
         log "throwing an error: " + theError.value
@@ -1534,8 +1448,8 @@ initBootClasses = ->
       context.isTransparent = true
       if methodsExecutionDebug
         log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
-      predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
-      trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
+      predicate = context.lookupTemp "predicate"
+      trueBranch = context.lookupTemp "trueBranch"
       if methodsExecutionDebug
         log "FLIfThen: predicate value is: " + predicate.value
 
@@ -1572,8 +1486,8 @@ initBootClasses = ->
       context.isTransparent = true
       if methodsExecutionDebug
         log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
-      predicate = context.tempVariablesDict[ValidIDfromString "predicate"]
-      trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
+      predicate = context.lookupTemp "predicate"
+      trueBranch = context.lookupTemp "trueBranch"
       if methodsExecutionDebug
         log "FLIfFallThrough: predicate value is: " + predicate.value
         log "FLIfFallThrough: true branch is: " + trueBranch.flToString()
@@ -1595,7 +1509,7 @@ initBootClasses = ->
         log "FLIfFallThrough else: case "
         log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
       context.isTransparent = true
-      trueBranch = context.tempVariablesDict[ValidIDfromString "trueBranch"]
+      trueBranch = context.lookupTemp "trueBranch"
 
       # yield from
       if methodsExecutionDebug
@@ -1613,7 +1527,7 @@ initBootClasses = ->
   FLTry.addMethod \
     (flTokenize ": ( ' code )"),
     (context) ->
-      code = context.tempVariablesDict[ValidIDfromString "code"]
+      code = context.lookupTemp "code"
       # yield from
       toBeReturned = code.eval context, code
 
@@ -1630,7 +1544,7 @@ initBootClasses = ->
 
   pauseFunctionContinuation = (context) ->
     #yield
-    seconds = context.tempVariablesDict[ValidIDfromString "seconds"]
+    seconds = context.lookupTemp "seconds"
     startTime = new Date().getTime()
     endTime = startTime + seconds.value * 1000
     while (remainingTime = new Date().getTime() - endTime) < 0
@@ -1652,10 +1566,10 @@ initBootClasses = ->
       context.isTransparent = true
       if methodsExecutionDebug
         log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
-      loopVar = context.tempVariablesDict[ValidIDfromString "loopVar"]
-      startIndex = context.tempVariablesDict[ValidIDfromString "startIndex"]
-      endIndex = context.tempVariablesDict[ValidIDfromString "endIndex"]
-      loopCode = context.tempVariablesDict[ValidIDfromString "loopCode"]
+      loopVar = context.lookupTemp "loopVar"
+      startIndex = context.lookupTemp "startIndex"
+      endIndex = context.lookupTemp "endIndex"
+      loopCode = context.lookupTemp "loopCode"
 
       loopVarName = loopVar.value
 
@@ -1717,9 +1631,9 @@ initBootClasses = ->
       context.isTransparent = true
       if methodsExecutionDebug
         log "context now tramsparent at depth: " + context.depth() + " with self: " + context.self.flToString?()
-      variable = context.tempVariablesDict[ValidIDfromString "variable"]
-      theList = context.tempVariablesDict[ValidIDfromString "theList"]
-      code = context.tempVariablesDict[ValidIDfromString "code"]
+      variable = context.lookupTemp "variable"
+      theList = context.lookupTemp "theList"
+      code = context.lookupTemp "code"
 
       if theList.flClass != FLList
         context.throwing = true
