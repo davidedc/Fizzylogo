@@ -4702,6 +4702,93 @@ tests = [
   Move disk 1 from peg M to R"
 
   # ---------------------------------------------------------------------------
+  # leap year and some variants (rephrasing the logic tests)
+  """
+  to leap:
+  ﹍﹍(y)
+  ﹍do:
+  ﹍﹍y%4==0 and (y<1582 or y%400==0 or y%100!=0)
+
+  for each year in:
+  ﹍﹍[2400, 2012, 2000, 1600, 1500, 1400]
+  ﹍do:
+  ﹍﹍console print leap year
+
+  console print " "
+
+  for each year in:
+  ﹍﹍[2100, 2014, 1900, 1800, 1700, 1499]
+  ﹍do:
+  ﹍﹍console print leap year
+
+  """
+  "truetruetruetruetruetrue falsefalsefalsefalsefalsefalse"
+
+  """
+  to leap:
+  ﹍﹍(y)
+  ﹍do:
+  ﹍﹍0==y%4 and (y<1582 or 0==y%400 or 0!=y%100)
+
+  for each year in:
+  ﹍﹍[2400, 2012, 2000, 1600, 1500, 1400]
+  ﹍do:
+  ﹍﹍console print leap year
+
+  console print " "
+
+  for each year in:
+  ﹍﹍[2100, 2014, 1900, 1800, 1700, 1499]
+  ﹍do:
+  ﹍﹍console print leap year
+
+  """
+  "truetruetruetruetruetrue falsefalsefalsefalsefalsefalse"
+
+
+  """
+  to leap:
+  ﹍﹍(y)
+  ﹍do:
+  ﹍﹍y%4==0 and not (y%100==0 and y>1581 and y%400!=0)
+
+  for each year in:
+  ﹍﹍[2400, 2012, 2000, 1600, 1500, 1400]
+  ﹍do:
+  ﹍﹍console print leap year
+
+  console print " "
+
+  for each year in:
+  ﹍﹍[2100, 2014, 1900, 1800, 1700, 1499]
+  ﹍do:
+  ﹍﹍console print leap year
+
+  """
+  "truetruetruetruetruetrue falsefalsefalsefalsefalsefalse"
+
+  """
+  to leap:
+  ﹍﹍(y)
+  ﹍do:
+  ﹍﹍0==y%4 and not (0==y%100 and y>1581 and 0!=y%400)
+
+  for each year in:
+  ﹍﹍[2400, 2012, 2000, 1600, 1500, 1400]
+  ﹍do:
+  ﹍﹍console print leap year
+
+  console print " "
+
+  for each year in:
+  ﹍﹍[2100, 2014, 1900, 1800, 1700, 1499]
+  ﹍do:
+  ﹍﹍console print leap year
+
+  """
+  "truetruetruetruetruetrue falsefalsefalsefalsefalsefalse"
+
+  # ---------------------------------------------------------------------------
   """
   to aToObjectFunction:
   ﹍for each word in:
