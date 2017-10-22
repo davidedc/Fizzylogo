@@ -314,6 +314,22 @@ addDefaultMethods = (classToAddThemTo) ->
       
       return @
 
+  classToAddThemTo.addMethod \
+    (flTokenize "answer with priority (priority) associativeRightToLeft: ( 'signature ) by: ( 'methodBody )"),
+    (context) ->
+      #yield
+      signature = context.lookupTemp "signature"
+      methodBody = context.lookupTemp "methodBody"
+      priority = context.lookupTemp "priority"
+
+      if @isClass()
+        @addMethod signature, methodBody, priority.value, ASSOCIATIVITY_RIGHT_TO_LEFT
+      else
+        @flClass.addMethod signature, methodBody, priority.value, ASSOCIATIVITY_RIGHT_TO_LEFT
+
+      
+      return @
+
 
 # with time, allClasses contains all the classes
 # (boot classes and user-defined classes), but right
@@ -955,6 +971,7 @@ initBootClasses = ->
       #yield
       operandum = context.lookupTemp "operandum"
       return FLBoolean.createNew @value and operandum.value
+    ,11
 
   FLBoolean.addMethod \
     (flTokenize "or ( operandum )"),
@@ -964,6 +981,7 @@ initBootClasses = ->
         log "executing an or! "
       operandum = context.lookupTemp "operandum"
       return FLBoolean.createNew @value or operandum.value
+    ,12
 
   FLBoolean.addMethod \
     (flTokenize "== ( toCompare )"),
@@ -995,13 +1013,16 @@ initBootClasses = ->
   # Not --------------------------------------------------------------------------
   FLNot.addMethod \
     (flTokenize "( operandum )"),
-    flTokenize "operandum negate"
+    (flTokenize "operandum negate"),
+    2,
+    ASSOCIATIVITY_RIGHT_TO_LEFT
 
   # UnaryMinus --------------------------------------------------------------------------
   FLUnaryMinus.addMethod \
     (flTokenize "( operandum )"),
-    flTokenize "0 - operandum",
-    4
+    (flTokenize "0 - operandum"),
+    4,
+    ASSOCIATIVITY_RIGHT_TO_LEFT
 
   # ListLiteralArrayNotationStarter -------------------------------------------------------------------------
 

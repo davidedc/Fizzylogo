@@ -11,6 +11,8 @@ contextDebug = false
 flClassesDebug = false
 methodsExecutionDebug = false
 
+ASSOCIATIVITY_RIGHT_TO_LEFT = true
+
 rWorkspace = null
 
 log = console.log

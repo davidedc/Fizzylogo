@@ -48,7 +48,7 @@ class FLObjects
   # same "method call" and the same "object". I.e. this
   # is not a method call (although it might lead to one),
   # this is progressing within an existing call
-  findSignatureBindParamsAndMakeCall: (methodInvocationToBeChecked, theContext, previousPriority) ->
+  findSignatureBindParamsAndMakeCall: (methodInvocationToBeChecked, theContext, previousPriority, previousAssociativity, previousReceiver, previousSignature) ->
     if objectFindSignatureMakeCallDebug
       log "object findSignature+makeCall: looking up method invocation " + methodInvocationToBeChecked.flToString() + " with signatures!"
       log "object findSignature+makeCall: looking up method invocation, is method empty? " + methodInvocationToBeChecked.isEmpty()
@@ -71,18 +71,35 @@ class FLObjects
     for eachSignatureIndex in [0...classContainingMethods.msgPatterns.length]
       eachSignature = classContainingMethods.msgPatterns[eachSignatureIndex]
       eachPriority = classContainingMethods.priorities[eachSignatureIndex]
+      eachAssociativity = classContainingMethods.associativities[eachSignatureIndex]
 
       goodMatchSoFar = true
 
       #if eachSignature.flToString() == "( + ( operandum ) )"
       #  log "obtained eachPriority: " + eachPriority
       if objectFindSignatureMakeCallDebug
+        log "object findSignature+makeCall: signature: " + eachSignature.flToString()
         log "object findSignature+makeCall: previousPriority, eachPriority: " + previousPriority + " , " + eachPriority
+        log "object findSignature+makeCall: previousAssociativity, eachAssociativity: " + previousAssociativity + " , " + eachAssociativity
       if previousPriority? and eachPriority?
-        if previousPriority <= eachPriority
+        if previousPriority < eachPriority
           if objectFindSignatureMakeCallDebug
             log "breaking matching due to priority going up: previousPriority, eachPriority: " + previousPriority + " , " + eachPriority
           goodMatchSoFar = false
+        # IF there is a case of same-priority, then we need to check
+        # whether we are in a case of right-to-left associativity
+        # such as in the case of "not not tue" and "- - 2"
+        # in which case we don't want to break, we want to continue
+        else if previousPriority == eachPriority
+          if objectFindSignatureMakeCallDebug
+            log "object findSignature+makeCall: eachAssociativity != ASSOCIATIVITY_RIGHT_TO_LEFT: " + (eachAssociativity != ASSOCIATIVITY_RIGHT_TO_LEFT)
+            log "object findSignature+makeCall: previousReceiver.flClass != @flClass: " + (previousReceiver.flClass != @flClass)
+            log "object findSignature+makeCall: eachSignature.flToString() != previousSignature.flToString(): " + (eachSignature.flToString() != previousSignature.flToString())
+            log "object findSignature+makeCall: eachSignature.flToString(), previousSignature.flToString(): " + eachSignature.flToString() + " , "  + previousSignature.flToString()
+          if eachAssociativity != ASSOCIATIVITY_RIGHT_TO_LEFT or
+           previousReceiver.flClass != @flClass or
+           eachSignature.flToString() != previousSignature.flToString()
+            goodMatchSoFar = false
 
 
       #log "evaluation " + indentation() + "  matching - checking if this signature matches: " + eachSignature.flToString()
@@ -173,7 +190,7 @@ class FLObjects
               # like in "7 * self" we don't want to bind self to 7
 
               # yield from
-              [returnedContext, methodInvocation] = methodInvocation.partialEvalAsMessage theContext, eachPriority
+              [returnedContext, methodInvocation] = methodInvocation.partialEvalAsMessage theContext, eachPriority, eachAssociativity, @, classContainingMethods.msgPatterns[eachSignatureIndex]
 
               valueToBeBound = returnedContext.returned
 

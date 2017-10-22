@@ -93,6 +93,24 @@ tests = [
   """
   "-1"
 
+  # right-to-left associativity of unary minus
+  """
+  console print - -2
+  console print - - 2
+  console print - - - -2
+  console print - - - - 2
+  console print - - - - - -2
+  console print - - - - - - 2
+  console print " "
+  console print -2
+  console print - 2
+  console print - - -2
+  console print - - - 2
+  console print - - - - -2
+  console print - - - - - 2
+  """
+  "222222 -2-2-2-2-2-2"
+
   # ---------------------------------------------------------------------------
 
   # note that the "ground" operators have a priority
@@ -553,6 +571,159 @@ tests = [
 
   "console print 1==0"
   "false"
+
+  # ---------------------------------------------------------------------------
+  # precedence tests for boolean operators and, or, not
+  """
+  console print " " + (false or false and false)
+  console print " " + (false or false and true)
+  console print " " + (false or true and false)
+  console print " " + (false or true and true)
+  console print " " + (true or false and false)
+  console print " " + (true or false and true)
+  console print " " + (true or true and false)
+  console print " " + (true or true and true)
+  console print "----------------------------"
+  console print " " + (false or (false and false))
+  console print " " + (false or (false and true ))
+  console print " " + (false or (true and false))
+  console print " " + (false or (true and true ))
+  console print " " + (true or (false and false))
+  console print " " + (true or (false and true ))
+  console print " " + (true or (true and false))
+  console print " " + (true or (true and true ))
+  console print "----------------------------"
+  console print " " + (false or false and false)
+  console print " " + (false or true and false)
+  console print " " + (false or false and true)
+  console print " " + (false or true and true)
+  console print " " + (true or false and false)
+  console print " " + (true or true and false)
+  console print " " + (true or false and true)
+  console print " " + (true or true and true)
+  console print "----------------------------"
+  console print " " + (false or (false and false))
+  console print " " + (false or (true and false))
+  console print " " + (false or (false and true))
+  console print " " + (false or (true and true))
+  console print " " + (true or (false and false))
+  console print " " + (true or (true and false))
+  console print " " + (true or (false and true))
+  console print " " + (true or (true and true ))
+  console print "----------------------------"
+  console print "----------------------------"
+  console print " " + (false and false or false)
+  console print " " + (false and true or false)
+  console print " " + (true and false or false)
+  console print " " + (true and true or false)
+  console print " " + (false and false or true)
+  console print " " + (false and true or true)
+  console print " " + (true and false or true)
+  console print " " + (true and true or true)
+  console print "----------------------------"
+  console print " " + ((false and false) or false)
+  console print " " + ((false and true ) or false)
+  console print " " + ((true and false) or false)
+  console print " " + ((true and true ) or false)
+  console print " " + ((false and false) or true)
+  console print " " + ((false and true ) or true)
+  console print " " + ((true and false) or true)
+  console print " " + ((true and true ) or true)
+  console print "----------------------------"
+  console print " " + (false and false or false)
+  console print " " + (true and false or false)
+  console print " " + (false and true or false)
+  console print " " + (true and true or false)
+  console print " " + (false and false or true)
+  console print " " + (true and false or true)
+  console print " " + (false and true or true)
+  console print " " + (true and true or true)
+  console print "----------------------------"
+  console print " " + ((false and false) or false)
+  console print " " + ((true and false) or false)
+  console print " " + ((false and true) or false)
+  console print " " + ((true and true) or false)
+  console print " " + ((false and false) or true)
+  console print " " + ((true and false) or true)
+  console print " " + ((false and true) or true)
+  console print " " + ((true and true ) or true)
+  console print "++++++++++++++++++++++++++++"
+  console print " " + (not true or not true and not true)
+  console print " " + (not true or not true and not false)
+  console print " " + (not true or not false and not true)
+  console print " " + (not true or not false and not false)
+  console print " " + (not false or not true and not true)
+  console print " " + (not false or not true and not false)
+  console print " " + (not false or not false and not true)
+  console print " " + (not false or not false and not false)
+  console print "----------------------------"
+  console print " " + (not true or (not true and not true))
+  console print " " + (not true or (not true and not false ))
+  console print " " + (not true or (not false and not true))
+  console print " " + (not true or (not false and not false ))
+  console print " " + (not false or (not true and not true))
+  console print " " + (not false or (not true and not false ))
+  console print " " + (not false or (not false and not true))
+  console print " " + (not false or (not false and not false ))
+  console print "----------------------------"
+  console print " " + (not true or not true and not true)
+  console print " " + (not true or not false and not true)
+  console print " " + (not true or not true and not false)
+  console print " " + (not true or not false and not false)
+  console print " " + (not false or not true and not true)
+  console print " " + (not false or not false and not true)
+  console print " " + (not false or not true and not false)
+  console print " " + (not false or not false and not false)
+  console print "----------------------------"
+  console print " " + (not true or (not true and not true))
+  console print " " + (not true or (not false and not true))
+  console print " " + (not true or (not true and not false))
+  console print " " + (not true or (not false and not false))
+  console print " " + (not false or (not true and not true))
+  console print " " + (not false or (not false and not true))
+  console print " " + (not false or (not true and not false))
+  console print " " + (not false or (not false and not false ))
+  console print "----------------------------"
+  console print "----------------------------"
+  console print " " + (not true and not true or not true)
+  console print " " + (not true and not false or not true)
+  console print " " + (not false and not true or not true)
+  console print " " + (not false and not false or not true)
+  console print " " + (not true and not true or not false)
+  console print " " + (not true and not false or not false)
+  console print " " + (not false and not true or not false)
+  console print " " + (not false and not false or not false)
+  console print "----------------------------"
+  console print " " + ((not true and not true) or not true)
+  console print " " + ((not true and not false ) or not true)
+  console print " " + ((not false and not true) or not true)
+  console print " " + ((not false and not false ) or not true)
+  console print " " + ((not true and not true) or not false)
+  console print " " + ((not true and not false ) or not false)
+  console print " " + ((not false and not true) or not false)
+  console print " " + ((not false and not false ) or not false)
+  console print "----------------------------"
+  console print " " + (not true and not true or not true)
+  console print " " + (not false and not true or not true)
+  console print " " + (not true and not false or not true)
+  console print " " + (not false and not false or not true)
+  console print " " + (not true and not true or not false)
+  console print " " + (not false and not true or not false)
+  console print " " + (not true and not false or not false)
+  console print " " + (not false and not false or not false)
+  console print "----------------------------"
+  console print " " + ((not true and not true) or not true)
+  console print " " + ((not false and not true) or not true)
+  console print " " + ((not true and not false) or not true)
+  console print " " + ((not false and not false) or not true)
+  console print " " + ((not true and not true) or not false)
+  console print " " + ((not false and not true) or not false)
+  console print " " + ((not true and not false) or not false)
+  console print " " + ((not false and not false ) or not false)
+  """
+  # all the segments must evaluate to:
+  # false false false true true true true true
+  " false false false true true true true true---------------------------- false false false true true true true true---------------------------- false false false true true true true true---------------------------- false false false true true true true true-------------------------------------------------------- false false false true true true true true---------------------------- false false false true true true true true---------------------------- false false false true true true true true---------------------------- false false false true true true true true++++++++++++++++++++++++++++ false false false true true true true true---------------------------- false false false true true true true true---------------------------- false false false true true true true true---------------------------- false false false true true true true true-------------------------------------------------------- false false false true true true true true---------------------------- false false false true true true true true---------------------------- false false false true true true true true---------------------------- false false false true true true true true"
 
   # ---------------------------------------------------------------------------
   "console print (0 amIZero)"

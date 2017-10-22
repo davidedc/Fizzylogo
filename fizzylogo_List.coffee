@@ -189,7 +189,7 @@ class FLListClass extends FLClasses
 
     # this eval doesn't require that the whole list is consumed,
     # it just consumes what it can
-    toBeReturned.partialEvalAsMessage = (theContext, priority) ->
+    toBeReturned.partialEvalAsMessage = (theContext, priority, associativity, theReceiver, theSignature) ->
       # a list without any messages just evaluates itself, which
       # consists of the following:
       #  a) separate all the statements (parts separated by ";")
@@ -276,7 +276,7 @@ class FLListClass extends FLClasses
               log "skipping empty evaluation because basic type "
           else
             # yield from
-            [returnedContext, returnedMessage] = receiver.findSignatureBindParamsAndMakeCall restOfMessage, theContext, priority
+            [returnedContext, returnedMessage] = receiver.findSignatureBindParamsAndMakeCall restOfMessage, theContext, priority, associativity, theReceiver, theSignature
 
           if !returnedContext?
             returnedContext = theContext
