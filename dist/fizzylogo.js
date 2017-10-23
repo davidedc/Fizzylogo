@@ -180,6 +180,8 @@
     command = command.replace(/([0-9]*\.[0-9]+([eE][- ]?[0-9]*)?)|([^+\-^*\/<>()\[\]=←.!%])([+\-^*\/<>()\[\]=←.!%]+)/g, "$1$3 $4 ");
     command = command.replace(/([+\-^*\/<>()\[\]=←!%])([^+\-^*\/<>()\[\]=←!%])/g, "$1 $2");
     command = command.replace(/([+\-^*\/<>=←!%_])[ ]+_/g, "$1_ ");
+    command = command.replace(/([+\-^*\/<>()\[\]=←!%])-/g, "$1 -");
+    command = command.replace(/- -/g, "--");
     command = command.replace(/'/g, " ' ");
     command = command.replace(/:/g, " : ");
     command = command.replace(/[ ]+/g, " ");
@@ -2018,7 +2020,7 @@
   };
 
   initBootClasses = function() {
-    var BaseDivideFunction, BaseFloorDivisionFunction, BaseMinusFunction, BaseMultiplyFunction, BasePercentFunction, BasePlusFunction, commonClassCreationFunction, eachClass, j, len, pauseFunctionContinuation;
+    var BaseDivideFunction, BaseFloorDivisionFunction, BaseMinusFunction, BaseMultiplyFunction, BasePercentFunction, BasePlusFunction, BasePowerFunction, commonClassCreationFunction, eachClass, j, len, pauseFunctionContinuation;
     for (j = 0, len = bootClasses.length; j < len; j++) {
       eachClass = bootClasses[j];
       addDefaultMethods(eachClass);
@@ -2213,7 +2215,15 @@
       }
     };
     FLNumber.addMethod(flTokenize("$plus_binary_default ( operandum )"), BasePlusFunction);
+    BasePowerFunction = function*(context) {
+      var operandum;
+      yield;
+      operandum = context.lookupTemp("operandum");
+      return FLNumber.createNew(Math.pow(this.value, operandum.value));
+    };
+    FLNumber.addMethod(flTokenize("$power_binary_default ( operandum )"), BasePowerFunction);
     FLNumber.addMethod(flTokenize("+ ( operandum )"), flTokenize("self $plus_binary_default operandum"), 4);
+    FLNumber.addMethod(flTokenize("^ ( operandum )"), flTokenize("self $power_binary_default operandum"), 1, ASSOCIATIVITY_RIGHT_TO_LEFT);
     FLNumber.addMethod(flTokenize("++"), flTokenize("self + 1"));
     FLNumber.addMethod(flTokenize("+= (value)"), flTokenize("self + value"));
     BasePercentFunction = function*(context) {
@@ -2358,7 +2368,7 @@
       return operandum;
     });
     FLNot.addMethod(flTokenize("( operandum )"), flTokenize("operandum negate"), 2, ASSOCIATIVITY_RIGHT_TO_LEFT);
-    FLUnaryMinus.addMethod(flTokenize("( operandum )"), flTokenize("0 - operandum"), 4, ASSOCIATIVITY_RIGHT_TO_LEFT);
+    FLUnaryMinus.addMethod(flTokenize("( operandum )"), flTokenize("0 - operandum"), 2, ASSOCIATIVITY_RIGHT_TO_LEFT);
     FLListLiteralArrayNotationStarter.addMethod(flTokenize("]"), function*(context) {
       yield;
       return FLList.createNew();
