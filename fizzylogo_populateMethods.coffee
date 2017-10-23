@@ -25,6 +25,11 @@
 # evaluated so it's actually closed (in read-only mode). This is
 # because in those cases one is less prone towards changing variables
 # from the outer scope. You can read them, but you can't write them.
+#
+# ---
+# For the precedence, we use the same numbers as here
+# https://en.wikipedia.org/wiki/Order_of_operations
+# (plus the the power operator which has precedence 1)
 
 
 commonSimpleValueEqualityFunction = (context) ->
