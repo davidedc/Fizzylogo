@@ -103,6 +103,8 @@ class FLObjects
            # right-associativity, depending on just the first token.
            # For example, "^" and "^ -" should be lumped together, and same for
            # all assignment methods all starting with "="
+           # (although we get right-associativity for "=" by just leaving its
+           # precedence to null for the time being)
            eachSignature.firstElement().flToString() != previousSignature.firstElement().flToString()
             goodMatchSoFar = false
 
