@@ -140,6 +140,18 @@ tests = [
   """
   "-1"
 
+  """
+  a = -(1)
+  console print a
+  """
+  "-1"
+
+  """
+  a = -(-1)
+  console print a
+  """
+  "1"
+
   # this is fairly perverse and we
   # reject it. We could make sense of this if the
   # minuses were separated (i.e. we make sense of "- -1")
