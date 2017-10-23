@@ -118,6 +118,20 @@ tests = [
   "0.0625"
 
   # ---------------------------------------------------------------------------
+  # assignments are right-associative (the default if
+  # the precedence is not set)
+  """
+  console print a
+  console print b
+  console print c
+  a = b = c = 1
+  console print a
+  console print b
+  console print c
+  """
+  "nilnilnil111"
+
+  # ---------------------------------------------------------------------------
   # unary minus checks
 
   """
