@@ -98,7 +98,12 @@ class FLObjects
             log "object findSignature+makeCall: eachSignature.flToString(), previousSignature.flToString(): " + eachSignature.flToString() + " , "  + previousSignature.flToString()
           if eachAssociativity != ASSOCIATIVITY_RIGHT_TO_LEFT or
            previousReceiver.flClass != @flClass or
-           eachSignature.flToString() != previousSignature.flToString()
+           # turns out that it's useful to lump together many operators
+           # that start with the same token when we consider their
+           # right-associativity, depending on just the first token.
+           # For example, "^" and "^ -" should be lumped together, and same for
+           # all assignment methods all starting with "="
+           eachSignature.firstElement().flToString() != previousSignature.firstElement().flToString()
             goodMatchSoFar = false
 
 

@@ -779,6 +779,12 @@ initBootClasses = ->
     1,
     ASSOCIATIVITY_RIGHT_TO_LEFT
 
+  FLNumber.addMethod \
+    (flTokenize "^ - ( operandum )"),
+    (flTokenize "self $power_binary_default ( - operandum )"),
+    1,
+    ASSOCIATIVITY_RIGHT_TO_LEFT
+
   # although there are some good reasons to have this,
   # it can get confusing, consider for example
   # a++ ++

@@ -265,29 +265,62 @@ tests = [
   """
   "0.25"
 
-  # This is tricky to get right without creating a mess.
-  # Basically we'd have to consider unary minus and
-  # ^ right associative ALL THE SAME. But we can't now,
-  # we can right-associate only THE SAME operator, not
-  # two of them at the same time.
-  # Note that PHP, Python, D and Javascript get this
-  # right (however for example Haskell doesn't allow this)
-  # ...but at least we get an error and user can write
-  # the parenthesised version
+  # same as PHP, Python, Haskell, D, Javascript
+  # Haskell throws syntax error
   """
   console print 2^-2
   """
-  "NaN! exception: message was not understood: ( 2 )"
+  "0.25"
 
-  # This is tricky to get right without creating a mess,
-  # note that PHP, Python, D and Javascript get this
-  # right (however for example Haskell doesn't allow this)
-  # ...but at least we get an error and user can write
-  # the parenthesised version
   """
-  console print 2^-2
+  console print -2^-2
   """
-  "NaN! exception: message was not understood: ( 2 )"
+  "-0.25"
+
+  """
+  console print 2^2^2
+  """
+  "16"
+
+  """
+  console print 2^2^-2
+  """
+  "1.189207115002721"
+
+  """
+  console print 2^-2^2
+  """
+  "0.0625"
+
+  """
+  console print 2^-2^-2
+  """
+  "0.8408964152537145"
+
+  """
+  console print -2^2^2
+  """
+  "-16"
+
+  """
+  console print -2^2^-2
+  """
+  "-1.189207115002721"
+
+  """
+  console print -2^-2^2
+  """
+  "-0.0625"
+
+  """
+  console print -2^-2^-2
+  """
+  "-0.8408964152537145"
+
+  """
+  console print -2^-2-2
+  """
+  "-2.25"
 
   # ---------------------------------------------------------------------------
   # here "print" takes "print" and does
