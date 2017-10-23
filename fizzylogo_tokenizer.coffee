@@ -69,6 +69,12 @@ tokenizeCommand = (command) ->
   # an operator, in this case floor division
   command = command.replace /([+\-^*/<>=←!%_])[ ]+_/g, "$1_ "
 
+  # separate the minuses from everything else other than
+  # the decrement case "--". This is so we can make sense
+  # of things like "1*-2" like most language can
+  command = command.replace /([+\-^*/<>()\[\]=←!%])-/g, "$1 -"
+  command = command.replace /- -/g, "--"
+
   command = command.replace /'/g, " ' "
   command = command.replace /:/g, " : "
 

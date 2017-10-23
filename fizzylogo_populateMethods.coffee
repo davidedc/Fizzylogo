@@ -759,10 +759,25 @@ initBootClasses = ->
     (flTokenize "$plus_binary_default ( operandum )"),
     BasePlusFunction
 
+  BasePowerFunction =  (context) ->
+    #yield
+    operandum = context.lookupTemp "operandum"
+    return FLNumber.createNew Math.pow(@value, operandum.value)
+
+  FLNumber.addMethod \
+    (flTokenize "$power_binary_default ( operandum )"),
+    BasePowerFunction
+
   FLNumber.addMethod \
     (flTokenize "+ ( operandum )"),
     (flTokenize "self $plus_binary_default operandum"),
     4
+
+  FLNumber.addMethod \
+    (flTokenize "^ ( operandum )"),
+    (flTokenize "self $power_binary_default operandum"),
+    1,
+    ASSOCIATIVITY_RIGHT_TO_LEFT
 
   # although there are some good reasons to have this,
   # it can get confusing, consider for example
@@ -1021,7 +1036,7 @@ initBootClasses = ->
   FLUnaryMinus.addMethod \
     (flTokenize "( operandum )"),
     (flTokenize "0 - operandum"),
-    4,
+    2,
     ASSOCIATIVITY_RIGHT_TO_LEFT
 
   # ListLiteralArrayNotationStarter -------------------------------------------------------------------------

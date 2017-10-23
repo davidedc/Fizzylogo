@@ -85,33 +85,6 @@ tests = [
   "9.68"
 
   # ---------------------------------------------------------------------------
-  # unary minus
-
-  """
-  a = -1
-  console print a
-  """
-  "-1"
-
-  # right-to-left associativity of unary minus
-  """
-  console print - -2
-  console print - - 2
-  console print - - - -2
-  console print - - - - 2
-  console print - - - - - -2
-  console print - - - - - - 2
-  console print " "
-  console print -2
-  console print - 2
-  console print - - -2
-  console print - - - 2
-  console print - - - - -2
-  console print - - - - - 2
-  """
-  "222222 -2-2-2-2-2-2"
-
-  # ---------------------------------------------------------------------------
 
   # note that the "ground" operators have a priority
   # so we better use the "answer with priority" with the
@@ -137,6 +110,184 @@ tests = [
   ﹍﹍self $plus_binary_default operandum
   """
   "22+3"
+
+  # / is left associative
+  """
+  console print 1/2/2/2/2
+  """
+  "0.0625"
+
+  # ---------------------------------------------------------------------------
+  # unary minus checks
+
+  """
+  a = -1
+  console print a
+  """
+  "-1"
+
+  # this is fairly perverse and we
+  # reject it. We could make sense of this if the
+  # minuses were separated (i.e. we make sense of "- -1")
+  # but we can't separate the --
+  # since -- is the decrement operator.
+  """
+  console print --1
+  """
+  "nil! exception: message was not understood: ( 1 )"
+
+  # right-to-left associativity of unary minus
+  # not sure this is ever going to be used
+  # also since we don't accept the "--" form
+  # see test above
+  """
+  console print - -2
+  console print - - 2
+  console print - - - -2
+  console print - - - - 2
+  console print - - - - - -2
+  console print - - - - - - 2
+  console print " "
+  console print -2
+  console print - 2
+  console print - - -2
+  console print - - - 2
+  console print - - - - -2
+  console print - - - - - 2
+  """
+  "222222 -2-2-2-2-2-2"
+
+
+  """
+  console print -1*4
+  console print 4*-1
+  """
+  "-4-4"
+
+  """
+  console print -1-1
+  """
+  "-2"
+
+
+  """
+  console print 1/-2/2/-2/-2
+  """
+  "-0.0625"
+
+  """
+  console print 1/-2/-2/-2/2
+  """
+  "-0.0625"
+
+  """
+  console print 1/2/-2/-2/-2
+  """
+  "-0.0625"
+
+  """
+  console print 1/-2/-2/-2/-2
+  """
+  "0.0625"
+
+  """
+  console print -2*2+1
+  """
+  "-3"
+
+  """
+  console print 1+-2*2
+  """
+  "-3"
+
+  """
+  console print 1*-2
+  """
+  "-2"
+
+  """
+  console print -2*1
+  """
+  "-2"
+
+  """
+  console print -2*-1
+  """
+  "2"
+
+  # ---------------------------------------------------------------------------
+  # power (exponent) operator, also with unary minus
+
+  #it's right-associative
+  """
+  console print 4^3^2
+  """
+  "262144"
+
+  """
+  console print 2^2
+  """
+  "4"
+
+  """
+  console print 1+2^2
+  """
+  "5"
+
+  """
+  console print 2^2+1
+  """
+  "5"
+
+  # traditional algebraic notation
+  # same as PHP, Python, Haskell, and D
+  # Javascript rules this out on the grounds of simplicity and
+  # the fact that it's not that common to have a leading
+  # unary minus like that, usually you have
+  # somehting - 2 ^ 2 which makes that minus a binary minus
+  """
+  console print -2^2
+  """
+  "-4"
+
+  """
+  console print 0+-2^2
+  """
+  "-4"
+
+  """
+  console print 1-2^2
+  """
+  "-3"
+
+  """
+  console print 2^(-2)
+  """
+  "0.25"
+
+  # This is tricky to get right without creating a mess.
+  # Basically we'd have to consider unary minus and
+  # ^ right associative ALL THE SAME. But we can't now,
+  # we can right-associate only THE SAME operator, not
+  # two of them at the same time.
+  # Note that PHP, Python, D and Javascript get this
+  # right (however for example Haskell doesn't allow this)
+  # ...but at least we get an error and user can write
+  # the parenthesised version
+  """
+  console print 2^-2
+  """
+  "NaN! exception: message was not understood: ( 2 )"
+
+  # This is tricky to get right without creating a mess,
+  # note that PHP, Python, D and Javascript get this
+  # right (however for example Haskell doesn't allow this)
+  # ...but at least we get an error and user can write
+  # the parenthesised version
+  """
+  console print 2^-2
+  """
+  "NaN! exception: message was not understood: ( 2 )"
 
   # ---------------------------------------------------------------------------
   # here "print" takes "print" and does
