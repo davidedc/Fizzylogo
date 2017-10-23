@@ -778,6 +778,10 @@ initBootClasses = ->
     (flTokenize "self $plus_binary_default operandum"),
     4
 
+  # for power operator precedence discussions see
+  # https://esdiscuss.org/topic/exponentiation-operator-precedence
+  # Also, you can check Wolfram Alpha for what the
+  # mathematically-accurate results should be
   FLNumber.addMethod \
     (flTokenize "^ ( operandum )"),
     (flTokenize "self $power_binary_default operandum"),
