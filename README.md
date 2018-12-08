@@ -7,14 +7,16 @@ notes for later:
 * you can use dot notation to read/write instance variables, but not to invoke methods (because a method signature can be complex and contain spaces and it wouldn't make sense for a complex invocation to follow the dot). If one things that "." really stands for "'s", then it's a natural distinction, but if one comes from other OO languages this can be confusing.
 * some tricks happen behind the scene on the use of : as quote, and it plays on the perception of what users think are explicit lists, and other things that users don't perceive as lists but are actually lists behind the scenes, e.g. signatures and method bodies.
 
-```npm install coffeescript -g```
-```npm install replace```
-
+Install needed dependencies ("coffeescript" and "replace"):
+```npm install```
 
 to run the tests using node:
 ```clear; cat $(cat sourceFilesOrder.txt) | coffee --stdio | grep obtained && say done```
 
-to run the tests using the browser (no yielding, so things such as debugging and profiling are easied):
+to generate the .js to then run the tests using node:
+```cat $(cat sourceFilesOrder.txt) | coffee --stdio -c > ./dist/fizzylogo.js```
+
+to run the tests using the browser (no yielding, so things such as debugging and profiling are easier):
 ```cat $(grep -v '^xxxx' sourceFilesOrder.txt) | coffee --stdio -c > ./dist/fizzylogo.js; cp ./dist/fizzylogo.js sandbox/fizzylogo.js```
 
 to generate the JS source (e.g. to use in the browser):
