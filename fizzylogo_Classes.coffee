@@ -7,8 +7,9 @@ class FLClasses extends FLObjects
 
   # this is when you create a new class, e.g.
   # Number, String, or custom user-made classes.
-  constructor: (@name) ->
-    super @
+  constructor: (name) ->
+    super name
+    @name = name
     @flClass = FLClass
 
     @resetInstanceVariables()
