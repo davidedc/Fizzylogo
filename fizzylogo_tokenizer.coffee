@@ -113,8 +113,7 @@ removeComments = (code) ->
     ///gm, "$1$2$3$4"
 
 # replace all the strings with
-# references to a table, which we'll replace back
-# later with string objects.
+# something similar to their base64 encoding.
 removeStrings = (code) ->
   codeWithoutStrings = code.replace(/"((?:[^"\\\n]|\\.)*)"/g, (all, quoted) ->
     if DEBUG_STRINGIFICATION_CHECKS

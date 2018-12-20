@@ -39,7 +39,7 @@ Array::jsArrayPush = (element) ->
 
 # variation of base64, generates valid IDs from
 # an arbitrary string. Little known fact, javascript
-# IDs can start with and have some pretty wild chars
+# IDs can be of arbitrary length and can start with and have some pretty wild chars
 # see https://stackoverflow.com/questions/1661197/what-characters-are-valid-for-javascript-variable-names
 keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789Γಠ_'
 ValidIDfromString = (input) ->
